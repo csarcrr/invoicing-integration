@@ -2,16 +2,16 @@
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Services\Vendus;
+use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 
 class InvoicingIntegration
 {
     protected InvoicingClient $client;
     protected array $items = [];
+    protected DocumentType $type;
 
     public function __construct(
-        protected string $key,
-        protected string $mode
+        protected string $provider
     ) {}
 
     public function create()
@@ -27,16 +27,30 @@ class InvoicingIntegration
 
     public function withItem(InvoicingItem $item): self
     {
-        // Logic to add item to the invoice would go here
         $this->items[] = $item;
         return $this;
     }
 
-    public function invoice()
+    public function asFaturaRecibo(): self
     {
-        $request = new Vendus($this->key, $this->client, $this->items);
-        $request->send();
-
+        $this->type = DocumentType::FaturaSimples;
         return $this;
+    }
+
+    public function asSimpleInvoice(): self
+    {
+        $this->type = DocumentType::FaturaSimples;
+        return $this;
+    }
+
+    public function invoice(): InvoiceData
+    {
+        $resolve = app($this->provider)
+            ->client($this->client)
+            ->items($this->items)
+            ->type($this->type)
+            ->send();
+
+        return $resolve->invoiceData();
     }
 }

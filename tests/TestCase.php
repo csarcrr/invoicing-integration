@@ -18,11 +18,6 @@ class TestCase extends Orchestra
         );
 
         Http::preventStrayRequests();
-
-        // Set up your fakes
-        Http::fake([
-            'vendus.pt/*' => Http::response(['data' => 'example'], 200)
-        ]);
     }
 
     protected function getPackageProviders($app)
