@@ -14,14 +14,14 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
 
         Http::preventStrayRequests();
 
         // Set up your fakes
         Http::fake([
-            'vendus.pt/*' => Http::response(['data' => 'example'], 200)
+            'vendus.pt/*' => Http::response(['data' => 'example'], 200),
         ]);
     }
 

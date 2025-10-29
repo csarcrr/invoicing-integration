@@ -7,6 +7,7 @@ use CsarCrr\InvoicingIntegration\Services\Vendus;
 class InvoicingIntegration
 {
     protected InvoicingClient $client;
+
     protected array $items = [];
 
     public function __construct(
@@ -22,6 +23,7 @@ class InvoicingIntegration
     public function forClient(InvoicingClient $client): self
     {
         $this->client = $client;
+
         return $this;
     }
 
@@ -29,6 +31,7 @@ class InvoicingIntegration
     {
         // Logic to add item to the invoice would go here
         $this->items[] = $item;
+
         return $this;
     }
 

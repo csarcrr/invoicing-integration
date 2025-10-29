@@ -25,7 +25,7 @@ class Vendus
         $this->formatItems();
 
         Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post('https://www.vendus.pt/api/ws/v1.1/documents/', $this->data);
     }
 
@@ -36,7 +36,7 @@ class Vendus
 
     protected function formatClient(): void
     {
-        if (!($this->client instanceof InvoicingClient)) {
+        if (! ($this->client instanceof InvoicingClient)) {
             throw new \Exception('Invalid client provided');
         }
 
@@ -49,7 +49,7 @@ class Vendus
     protected function formatItems(): void
     {
         foreach ($this->items as $item) {
-            if (!($item instanceof \CsarCrr\InvoicingIntegration\InvoicingItem)) {
+            if (! ($item instanceof \CsarCrr\InvoicingIntegration\InvoicingItem)) {
                 throw new \Exception('Invalid item provided');
             }
 
