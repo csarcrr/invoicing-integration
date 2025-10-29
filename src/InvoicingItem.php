@@ -5,8 +5,7 @@ namespace CsarCrr\InvoicingIntegration;
 class InvoicingItem
 {
     /**
-     * @param string $reference - avoids duplicate products in some providers
-     * @param int $quantity
+     * @param  string  $reference  - avoids duplicate products in some providers
      */
     public function __construct(
         public string $reference,

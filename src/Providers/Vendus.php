@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Http;
 class Vendus
 {
     public InvoicingClient $client;
+
     public array $items = [];
 
     protected InvoiceData $invoiceData;
+
     protected ?string $sequenceNumber = null;
+
     protected DocumentType $type = DocumentType::Fatura;
 
     protected array $data = [
@@ -40,12 +43,14 @@ class Vendus
     public function client(InvoicingClient $client): self
     {
         $this->client = $client;
+
         return $this;
     }
 
     public function items(array $items): self
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -57,12 +62,13 @@ class Vendus
     public function type(DocumentType $type): self
     {
         $this->type = $type;
+
         return $this;
     }
 
     protected function generateInvoiceData(array $data): void
     {
-        $invoice = new InvoiceData();
+        $invoice = new InvoiceData;
 
         $invoice->setSequenceNumber($data['number']);
 
@@ -72,7 +78,7 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post('https://www.vendus.pt/ws/v1.1/documents/', $this->data);
 
         return $request->json();
@@ -101,7 +107,7 @@ class Vendus
     protected function formatItems(): void
     {
         foreach ($this->items as $item) {
-            if (!($item instanceof \CsarCrr\InvoicingIntegration\InvoicingItem)) {
+            if (! ($item instanceof \CsarCrr\InvoicingIntegration\InvoicingItem)) {
                 throw new \Exception('Invalid item provided');
             }
 

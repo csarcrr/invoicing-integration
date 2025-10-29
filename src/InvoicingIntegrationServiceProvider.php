@@ -33,11 +33,11 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
     protected function guardAgainstInvalidConfig(array $config): void
     {
-        if (!isset($config['provider'])) {
-            throw new \InvalidArgumentException("A provider is needed to use the Invoicing Integration package.");
+        if (! isset($config['provider'])) {
+            throw new \InvalidArgumentException('A provider is needed to use the Invoicing Integration package.');
         }
 
-        if (!isset($config['providers'][$config['provider']])) {
+        if (! isset($config['providers'][$config['provider']])) {
             throw new \InvalidArgumentException("The specified provider [{$config['provider']}] is not configured.");
         }
     }
