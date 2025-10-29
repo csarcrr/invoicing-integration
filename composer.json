@@ -1,16 +1,16 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "csarcrr/invoicing-integration",
+    "description": "This package aims to help integrations with invoicing systems",
     "keywords": [
-        ":vendor_name",
+        "csarcrr",
         "laravel",
-        ":package_slug"
+        "invoicing-integration"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/csarcrr/invoicing-integration",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
+            "name": "Cesar Correia",
             "email": "author@domain.com",
             "role": "Developer"
         }
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "CsarCrr\\InvoicingIntegration\\": "src/",
+            "CsarCrr\\InvoicingIntegration\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "CsarCrr\\InvoicingIntegration\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +63,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "CsarCrr\\InvoicingIntegration\\InvoicingIntegrationServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "InvoicingIntegration": "CsarCrr\\InvoicingIntegration\\Facades\\InvoicingIntegration"
             }
         }
     },
