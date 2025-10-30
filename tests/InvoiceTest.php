@@ -1,8 +1,13 @@
 <?php
 
+use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoicingPayment;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -11,25 +16,68 @@ beforeEach(function () {
     config()->set('invoicing-integration.providers.vendus.mode', 'test');
 });
 
-it('can invoice ', function ($url, $response) {
-    $response['type'] = 'FS';
-    Http::fake([
-        $url => Http::response($response, 200),
-    ]);
+it('assigns one simple item to the invoice', function () {
+    $invoice = InvoicingIntegration::create();
+    $invoice->addItem(new InvoicingItem('reference-1'));
 
-    $invoice = InvoicingIntegration::create()
-        ->forClient(new InvoicingClient(name: 'Client Name', vat: '123456789'))
-        ->withItem(new InvoicingItem(reference: 'ref-1'))
-        ->asFaturaRecibo()
-        ->invoice();
+    expect($invoice->items()->count())->toBe(1);
+    expect($invoice->items()->first()->reference)->toBe('reference-1');
+});
 
-    expect($invoice->sequenceNumber())->toBe('FT 2025/0001');
-})->with([
-    [
-        'vendus.pt/ws/v1.1/documents/',
-        [
-            'type' => 'FT',
-            'number' => 'FT 2025/0001',
-        ],
-    ],
-]);
+it('assigns a client to an invoice', function () {
+    $invoice = InvoicingIntegration::create();
+    $invoice->setClient(new InvoicingClient(vat: '123456789'));
+
+    expect($invoice->client()->vat)->toBe('123456789');
+});
+
+it('assigns multiple items to the invoice', function () {
+    $invoice = InvoicingIntegration::create();
+    $invoice->addItem(new InvoicingItem('reference-1'));
+    $invoice->addItem(new InvoicingItem('reference-2'));
+
+    expect($invoice->items()->count())->toBe(2);
+    expect($invoice->items()->first()->reference)->toBe('reference-1');
+    expect($invoice->items()->last()->reference)->toBe('reference-2');
+});
+
+it('can assign all different invoice types', function (DocumentType $type) {
+    $invoice = InvoicingIntegration::create();
+    $invoice->setType($type);
+
+    expect($invoice->type())->toBe($type);
+})->with([...DocumentType::cases()]);
+
+it('automatically defines a date when no date is provided', function () {
+    $invoice = InvoicingIntegration::create();
+
+    expect($invoice->date())->toBeInstanceOf(Carbon::class);
+});
+
+it('can change the date', function () {
+    $invoice = InvoicingIntegration::create();
+    $invoice->setDate(Carbon::now()->addDays(5));
+
+    expect($invoice->date())->toBeInstanceOf(Carbon::class);
+    expect($invoice->date()->toDateString())->toBe(Carbon::now()->addDays(5)->toDateString());
+});
+
+it('fails to invoice when no item is present', function () {
+    $invoice = InvoicingIntegration::create();
+    $invoice->setClient(new InvoicingClient(vat: '123456789'));
+
+    $invoice->invoice();
+})->throws(InvoiceRequiresItemsException::class);
+
+it('assigns a payment', function () {
+    $invoice = InvoicingIntegration::create();
+    $invoice->addPayment(new InvoicingPayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
+
+    expect($invoice->payments()->count())->toBe(1);
+    expect($invoice->payments()->first())->toBeInstanceOf(InvoicingPayment::class);
+    expect($invoice->payments()->first()->method)->toBe(DocumentPaymentMethod::CREDIT_CARD);
+    expect($invoice->payments()->first()->amount)->toBe(500);
+});
+
+
+it('changes the mode', function () {})->todo();
