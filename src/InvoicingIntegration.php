@@ -10,9 +10,13 @@ use Illuminate\Support\Collection;
 class InvoicingIntegration
 {
     protected InvoicingClient $client;
+
     protected Collection $items;
+
     protected DocumentType $type;
+
     protected Carbon $date;
+
     protected Collection $payments;
 
     public function __construct(

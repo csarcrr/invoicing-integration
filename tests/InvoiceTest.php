@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use CsarCrr\InvoicingIntegration\InvoicingPayment;
-use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -78,6 +77,5 @@ it('assigns a payment', function () {
     expect($invoice->payments()->first()->method)->toBe(DocumentPaymentMethod::CREDIT_CARD);
     expect($invoice->payments()->first()->amount)->toBe(500);
 });
-
 
 it('changes the mode', function () {})->todo();
