@@ -8,8 +8,8 @@ enum DocumentType: string
     case FaturaRecibo = 'FR';
     case FaturaSimples = 'FS';
 
-    static public function options(): array
+    public static function options(): array
     {
-        return array_map(fn($case) => $case->value, self::cases());
+        return array_map(fn ($case) => $case->value, self::cases());
     }
 }

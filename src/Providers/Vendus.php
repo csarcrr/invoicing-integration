@@ -13,9 +13,13 @@ use Illuminate\Support\Facades\Http;
 class Vendus
 {
     protected ?InvoicingClient $client = null;
+
     protected Collection $items;
+
     protected ?string $sequenceNumber = null;
+
     protected InvoiceData $invoiceData;
+
     protected DocumentType $type = DocumentType::Fatura;
 
     protected Collection $data;
@@ -91,7 +95,7 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post('https://www.vendus.pt/ws/v1.1/documents/', $this->payload()->toArray());
 
         return $request->json();
@@ -104,7 +108,7 @@ class Vendus
 
     protected function ensureClientFormat(): void
     {
-        if (!$this->client) {
+        if (! $this->client) {
             return;
         }
 
@@ -134,6 +138,6 @@ class Vendus
 
     protected function ensureItemIsValid($item): void
     {
-        throw_if(!($item instanceof InvoicingItem), InvoiceItemIsNotValidException::class, 'The item is not a valid InvoicingItem instance.');
+        throw_if(! ($item instanceof InvoicingItem), InvoiceItemIsNotValidException::class, 'The item is not a valid InvoicingItem instance.');
     }
 }

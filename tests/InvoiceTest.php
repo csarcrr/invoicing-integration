@@ -4,7 +4,6 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
@@ -98,6 +97,5 @@ it('fails to invoice when vat is not valid', function () {
 
     $invoice->invoice();
 })->throws(InvoiceRequiresClientVatException::class);
-
 
 it('changes the mode', function () {})->todo();

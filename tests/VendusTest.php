@@ -2,11 +2,8 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
-use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
-use CsarCrr\InvoicingIntegration\Facades\Providers\Vendus;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
-use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -42,7 +39,7 @@ it('has a valid client payload', function () {
 });
 
 it('fails when item format is not valid', function () {
-    $item = new stdClass();
+    $item = new stdClass;
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
