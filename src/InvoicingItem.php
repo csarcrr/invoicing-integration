@@ -10,6 +10,7 @@ class InvoicingItem
     public function __construct(
         public string $reference,
         public int $quantity = 1,
+        public ?int $price = null
     ) {}
 
     public function setTax() {}

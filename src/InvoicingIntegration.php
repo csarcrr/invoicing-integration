@@ -4,7 +4,9 @@ namespace CsarCrr\InvoicingIntegration;
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use Illuminate\Support\Collection;
 
 class InvoicingIntegration
@@ -95,6 +97,7 @@ class InvoicingIntegration
     public function invoice(): InvoiceData
     {
         $this->ensureHasItems();
+        $this->ensureClientHasNeededDetails();
 
         $resolve = app($this->provider)
             ->client($this->client)
@@ -108,5 +111,22 @@ class InvoicingIntegration
     protected function ensureHasItems(): void
     {
         throw_if($this->items->isEmpty(), InvoiceRequiresItemsException::class);
+    }
+
+    protected function ensureClientHasNeededDetails()
+    {
+        if (!$this->client) {
+            return;
+        }
+
+        throw_if(
+            !$this->client->vat || empty($this->client->vat),
+            InvoiceRequiresClientVatException::class
+        );
+
+        throw_if(
+            $this->client->name && !$this->client->vat,
+            InvoiceRequiresVatWhenClientHasName::class
+        );
     }
 }
