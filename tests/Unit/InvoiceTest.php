@@ -99,5 +99,3 @@ it('fails to invoice when vat is not valid', function () {
 
     $invoice->invoice();
 })->throws(InvoiceRequiresClientVatException::class);
-
-it('changes the mode', function () {})->todo();
