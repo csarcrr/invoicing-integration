@@ -7,7 +7,9 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 class InvoicingItem
 {
     protected ?int $price = null;
+
     protected ?string $description = null;
+
     protected DocumentItemType $type;
 
     /**

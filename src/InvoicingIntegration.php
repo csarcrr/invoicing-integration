@@ -123,12 +123,12 @@ class InvoicingIntegration
 
     protected function ensureClientHasNeededDetails()
     {
-        if (!$this->client) {
+        if (! $this->client) {
             return;
         }
 
         throw_if(
-            !is_null($this->client->vat) && empty($this->client->vat),
+            ! is_null($this->client->vat) && empty($this->client->vat),
             InvoiceRequiresClientVatException::class
         );
 

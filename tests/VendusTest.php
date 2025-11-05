@@ -62,4 +62,4 @@ it('fails when item format is not valid', function () {
         ->type(DocumentType::Fatura);
 
     $resolve->buildPayload();
-})->throws(InvoiceItemIsNotValidException::class);;
+})->throws(InvoiceItemIsNotValidException::class);
