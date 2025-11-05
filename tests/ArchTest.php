@@ -2,6 +2,7 @@
 
 if (getenv('CI')) {
     test('skip arch tests on CI')->skip('Skipping Pest Arch tests on CI due to Testbench bug.');
+
     return;
 }
 
