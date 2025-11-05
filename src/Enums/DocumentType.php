@@ -2,14 +2,13 @@
 
 namespace CsarCrr\InvoicingIntegration\Enums;
 
+use CsarCrr\InvoicingIntegration\Traits\EnumOptions;
+
 enum DocumentType: string
 {
+    use EnumOptions;
+
     case Fatura = 'FT';
     case FaturaRecibo = 'FR';
     case FaturaSimples = 'FS';
-
-    public static function options(): array
-    {
-        return array_map(fn ($case) => $case->value, self::cases());
-    }
 }

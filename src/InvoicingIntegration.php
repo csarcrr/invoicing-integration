@@ -7,15 +7,16 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceTypeIsNotSetException;
 use Illuminate\Support\Collection;
 
 class InvoicingIntegration
 {
-    protected InvoicingClient $client;
+    protected ?InvoicingClient $client = null;
 
     protected Collection $items;
 
-    protected DocumentType $type;
+    protected ?DocumentType $type = null;
 
     protected Carbon $date;
 
@@ -27,6 +28,7 @@ class InvoicingIntegration
         $this->items = collect();
         $this->payments = collect();
         $this->date = Carbon::now();
+        $this->type = DocumentType::Fatura;
     }
 
     public function create()
@@ -97,6 +99,7 @@ class InvoicingIntegration
     public function invoice(): InvoiceData
     {
         $this->ensureHasItems();
+        $this->ensureTypeIsSet();
         $this->ensureClientHasNeededDetails();
 
         $resolve = app($this->provider)
@@ -108,6 +111,11 @@ class InvoicingIntegration
         return $resolve->invoiceData();
     }
 
+    protected function ensureTypeIsSet(): void
+    {
+        throw_if(is_null($this->type), InvoiceTypeIsNotSetException::class);
+    }
+
     protected function ensureHasItems(): void
     {
         throw_if($this->items->isEmpty(), InvoiceRequiresItemsException::class);
@@ -115,12 +123,12 @@ class InvoicingIntegration
 
     protected function ensureClientHasNeededDetails()
     {
-        if (! $this->client) {
+        if (!$this->client) {
             return;
         }
 
         throw_if(
-            ! $this->client->vat || empty($this->client->vat),
+            !is_null($this->client->vat) && empty($this->client->vat),
             InvoiceRequiresClientVatException::class
         );
 

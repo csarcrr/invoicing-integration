@@ -95,7 +95,7 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
         ])->post('https://www.vendus.pt/ws/v1.1/documents/', $this->payload()->toArray());
 
         return $request->json();
@@ -128,8 +128,8 @@ class Vendus
                 'qty' => $item->quantity,
             ];
 
-            if ($item->price) {
-                $data['gross_price'] = (float) ($item->price / 100);
+            if ($item->price()) {
+                $data['gross_price'] = (float) ($item->price() / 100);
             }
 
             $this->data->put('items', $this->data->get('items', collect())->push($data));

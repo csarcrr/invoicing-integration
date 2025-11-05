@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
@@ -63,13 +64,14 @@ it('can change the date', function () {
 });
 
 it('can assign a custom price to an item', function () {
-    $item = new InvoicingItem(reference: 'reference-1', price: 500);
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
 
     $invoice = InvoicingIntegration::create();
     $invoice->addItem($item);
 
     expect($invoice->items()->first())->toBeInstanceOf(InvoicingItem::class);
-    expect($invoice->items()->first()->price)->toBe(500);
+    expect($invoice->items()->first()->price())->toBe(500);
 });
 
 it('assigns a payment', function () {
@@ -88,11 +90,11 @@ it('fails to invoice when client has name but no vat', function () {
     $invoice->addItem(new InvoicingItem('reference-1'));
 
     $invoice->invoice();
-})->throws(InvoiceRequiresClientVatException::class);
+})->throws(InvoiceRequiresVatWhenClientHasName::class);
 
 it('fails to invoice when vat is not valid', function () {
     $invoice = InvoicingIntegration::create();
-    $invoice->setClient(new InvoicingClient(name: 'John Doe', vat: null));
+    $invoice->setClient(new InvoicingClient(vat: ''));
     $invoice->addItem(new InvoicingItem('reference-1'));
 
     $invoice->invoice();

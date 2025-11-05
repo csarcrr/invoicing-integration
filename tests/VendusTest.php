@@ -12,7 +12,8 @@ beforeEach(function () {
 });
 
 it('has a valid price payload', function () {
-    $item = new InvoicingItem(reference: 'reference-1', price: 500);
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
@@ -24,7 +25,9 @@ it('has a valid price payload', function () {
 });
 
 it('has a valid client payload', function () {
-    $item = new InvoicingItem(reference: 'reference-1', price: 500);
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
+
     $client = new InvoicingClient(vat: '123456789', name: 'Client Name');
 
     $resolve = app(config('invoicing-integration.provider'))
@@ -38,6 +41,19 @@ it('has a valid client payload', function () {
     expect($resolve->payload()->get('client')['name'])->toBe('Client Name');
 });
 
+it('has a valid type', function () {
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]))
+        ->type(DocumentType::Fatura);
+
+    $resolve->buildPayload();
+
+    expect($resolve->payload()->get('type'))->toBe('FT');
+});
+
 it('fails when item format is not valid', function () {
     $item = new stdClass;
 
@@ -46,4 +62,4 @@ it('fails when item format is not valid', function () {
         ->type(DocumentType::Fatura);
 
     $resolve->buildPayload();
-})->throws(InvoiceItemIsNotValidException::class);
+})->throws(InvoiceItemIsNotValidException::class);;
