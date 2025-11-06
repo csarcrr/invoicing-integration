@@ -1,7 +1,11 @@
 <?php
 
-// config for CsarCrr/InvoicingIntegration
 return [
-    'vendus' => env('VENDUS_API_KEY'),
-    'test_mode' => env('INVOICING_INTEGRATION_TEST_MODE'),
+    'provider' => env('INVOICING_INTEGRATION_PROVIDER', null),
+    'providers' => [
+        'vendus' => [
+            'key' => env('VENDUS_API_KEY', null),
+            'mode' => env('VENDUS_MODE', null),
+        ],
+    ],
 ];

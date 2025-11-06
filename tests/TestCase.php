@@ -5,6 +5,7 @@ namespace CsarCrr\InvoicingIntegration\Tests;
 use CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Http;
+use Mockery;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -14,15 +15,10 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn(string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
 
         Http::preventStrayRequests();
-
-        // Set up your fakes
-        Http::fake([
-            'vendus.pt/*' => Http::response(['data' => 'example'], 200),
-        ]);
     }
 
     protected function getPackageProviders($app)
@@ -34,12 +30,19 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        // config()->set('database.default', 'testing');
 
         /*
          foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/../database/migrations') as $migration) {
             (include $migration->getRealPath())->up();
          }
          */
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+
+        parent::tearDown();
     }
 }
