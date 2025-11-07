@@ -95,7 +95,7 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post('https://www.vendus.pt/ws/v1.1/documents/', $this->payload()->toArray());
 
         return $request->json();
