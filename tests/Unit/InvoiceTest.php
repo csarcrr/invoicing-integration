@@ -6,9 +6,11 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
+use CsarCrr\InvoicingIntegration\InvoiceData;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use CsarCrr\InvoicingIntegration\InvoicingPayment;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -82,6 +84,20 @@ it('assigns a payment', function () {
     expect($invoice->payments()->first())->toBeInstanceOf(InvoicingPayment::class);
     expect($invoice->payments()->first()->method)->toBe(DocumentPaymentMethod::CREDIT_CARD);
     expect($invoice->payments()->first()->amount)->toBe(500);
+});
+
+it('can invoice successfully with minimum data', function () {
+    Http::fake([
+        'vendus.pt/*' => Http::response(['number' => random_int(999, 10000)], 200),
+    ]);
+
+    $invoice = InvoicingIntegration::create();
+    $invoice->addItem(new InvoicingItem('reference-1'));
+
+    $response = $invoice->invoice();
+
+    expect($response)->toBeInstanceOf(InvoiceData::class);
+    expect($response->sequenceNumber())->toBeGreaterThanOrEqual(999);
 });
 
 it('fails to invoice when client has name but no vat', function () {
