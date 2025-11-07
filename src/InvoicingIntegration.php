@@ -36,7 +36,7 @@ class InvoicingIntegration
         return $this;
     }
 
-    public function client(): InvoicingClient
+    public function client(): ?InvoicingClient
     {
         return $this->client;
     }
@@ -103,10 +103,14 @@ class InvoicingIntegration
         $this->ensureClientHasNeededDetails();
 
         $resolve = app($this->provider)
-            ->client($this->client)
             ->items($this->items)
-            ->type($this->type)
-            ->send();
+            ->type($this->type);
+
+        if ($this->client()) {
+            $resolve->client($this->client());
+        }
+
+        $resolve->send();
 
         return $resolve->invoiceData();
     }
