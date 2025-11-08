@@ -73,7 +73,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
--   [:csarcrr](https://github.com/:csarcrr)
+-   [csarcrr](https://github.com/csarcrr)
 -   [All Contributors](../../contributors)
 
 ## License
