@@ -5,42 +5,12 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
-## <!--delete-->
-
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
-
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
-
----
-
-<!--/delete-->
-
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
-
 ## Installation
 
 You can install the package via composer:
 
 ```bash
 composer require csarcrr/invoicing-integration
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="invoicing-integration-migrations"
-php artisan migrate
 ```
 
 You can publish the config file with:
@@ -52,21 +22,35 @@ php artisan vendor:publish --tag="invoicing-integration-config"
 This is the contents of the published config file:
 
 ```php
+<?php
+
 return [
+    'provider' => env('INVOICING_INTEGRATION_PROVIDER', null),
+    'providers' => [
+        'vendus' => [
+            'key' => env('VENDUS_API_KEY', null),
+            'mode' => env('VENDUS_MODE', null),
+        ],
+    ],
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="invoicing-integration-views"
 ```
 
 ## Usage
 
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+<?php
+
+$integration = InvoicingIntegration::create();
+
+$integration->addItem((new InvoicingItem(reference: '31054308', quantity: 1)));
+$integration->addItem((new InvoicingItem(reference: '09818943', quantity: 5)));
+
+// Optionally you can set a client
+$integration->setClient(new InvoicingClient(vat: '245824820'));
+
+$invoice = $integration->invoice();
+
+$invoice->sequenceNumber(); // FT 01P2025/001
 ```
 
 ## Testing
@@ -89,7 +73,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
--   [:author_name](https://github.com/:author_username)
+-   [:csarcrr](https://github.com/:csarcrr)
 -   [All Contributors](../../contributors)
 
 ## License
