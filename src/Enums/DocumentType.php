@@ -8,7 +8,8 @@ enum DocumentType: string
 {
     use EnumOptions;
 
-    case Fatura = 'FT';
-    case FaturaRecibo = 'FR';
-    case FaturaSimples = 'FS';
+    case Invoice = 'FT';
+    case InvoiceReceipt = 'FR';
+    case InvoiceSimple = 'FS';
+    case Receipt = 'RG';
 }

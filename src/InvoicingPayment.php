@@ -7,7 +7,17 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 class InvoicingPayment
 {
     public function __construct(
-        public DocumentPaymentMethod $method,
-        public int $amount
+        protected DocumentPaymentMethod $method,
+        protected int $amount
     ) {}
+
+    public function amount(): int
+    {
+        return $this->amount;
+    }
+
+    public function method(): DocumentPaymentMethod
+    {
+        return $this->method;
+    }
 }

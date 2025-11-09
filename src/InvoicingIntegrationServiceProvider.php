@@ -2,7 +2,6 @@
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Commands\InvoicingIntegrationCommand;
 use CsarCrr\InvoicingIntegration\Providers\Vendus;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -23,12 +22,21 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
+            $this->guardAgainstMissingPaymentDetails($config['providers'][$config['provider']]['config']['payments']);
 
             return new Vendus(
                 apiKey: $config['providers'][$config['provider']]['key'],
                 mode: $config['providers'][$config['provider']]['mode'],
+                options: collect($config['providers'][$config['provider']]['config']),
             );
         });
+    }
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('invoicing-integration')
+            ->hasConfigFile('invoicing-integration');
     }
 
     protected function guardAgainstInvalidConfig(array $config): void
@@ -51,18 +59,14 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function configurePackage(Package $package): void
+    protected function guardAgainstMissingPaymentDetails(array $payments): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('invoicing-integration')
-            ->hasConfigFile()
-            ->hasViews()
-            // ->hasMigration('create_migration_table_name_table')
-            ->hasCommand(InvoicingIntegrationCommand::class);
+        foreach ($payments as $key => $value) {
+            if (!is_null($value)) {
+                return;
+            }
+        }
+
+        throw new \Exception('The provider configuration is missing payment method details.');
     }
 }
