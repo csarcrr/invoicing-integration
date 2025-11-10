@@ -96,7 +96,7 @@ it('does not set items when issuing a RG', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Receipt)
-        ->relatedDocument(199999);
+        ->relatedDocuments(collect([199999]));
 
     $resolve->buildPayload();
 
@@ -110,12 +110,30 @@ it('has a valid related documents payload', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Receipt)
-        ->relatedDocument(199999);
+        ->relatedDocuments(collect([199999, 299999]));
 
     $resolve->buildPayload();
 
-    expect($resolve->payload()->get('invoices'))->toBeArray();
-    expect($resolve->payload()->get('invoices')['document_number'])->toBe(199999);
+    expect($resolve->payload()->get('document_number'))
+        ->toBeInstanceOf(Collection::class);
+    expect($resolve->payload()->get('document_number')->first())->toBe(199999);
+    expect($resolve->payload()->get('document_number')->last())->toBe(299999);
+});
+
+it('casts related document IDs to integers', function () {
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]))
+        ->type(DocumentType::Receipt)
+        ->relatedDocuments(collect(['199999']));
+
+    $resolve->buildPayload();
+
+    expect($resolve->payload()->get('document_number'))
+        ->toBeInstanceOf(Collection::class);
+    expect($resolve->payload()->get('document_number')->first())->toBe(199999);
 });
 
 it('clears empty data entries', function () {
@@ -129,7 +147,7 @@ it('clears empty data entries', function () {
     $resolve->buildPayload();
 
     expect($resolve->payload()->get('payments'))->toBeNull();
-    expect($resolve->payload()->get('invoices'))->toBeNull();
+    expect($resolve->payload()->get('document_number'))->toBeNull();
     expect($resolve->payload()->get('register_id'))->toBeNull();
 });
 

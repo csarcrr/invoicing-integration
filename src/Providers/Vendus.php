@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Http;
 
 class Vendus
 {
-    protected ?int $relatedDocument = null;
     protected ?InvoicingClient $client = null;
     protected DocumentType $type = DocumentType::Invoice;
     protected InvoiceData $invoiceData;
     protected Collection $items;
     protected Collection $payments;
+    protected Collection $relatedDocuments;
 
     protected Collection $data;
 
@@ -38,6 +38,7 @@ class Vendus
 
         $this->payments = collect();
         $this->items = collect();
+        $this->relatedDocuments = collect();
     }
 
     public function send(): self
@@ -69,9 +70,9 @@ class Vendus
         return $this;
     }
 
-    public function relatedDocument(int $relatedDocument): self
+    public function relatedDocuments(Collection $relatedDocuments): self
     {
-        $this->relatedDocument = $relatedDocument;
+        $this->relatedDocuments = $relatedDocuments;
 
         return $this;
     }
@@ -94,7 +95,7 @@ class Vendus
         $this->ensureClientFormat();
         $this->ensureItemsFormat();
         $this->ensurePaymentsFormat();
-        $this->ensurerelatedDocumentFormat();
+        $this->ensureRelatedDocumentsFormat();
 
         $this->ensureNoEmptyItemsArray();
     }
@@ -210,21 +211,22 @@ class Vendus
         );
     }
 
-    protected function ensurerelatedDocumentFormat(): void
+    protected function ensureRelatedDocumentsFormat(): void
     {
         if ($this->type !== DocumentType::Receipt) {
             return;
         }
 
         throw_if(
-            !$this->relatedDocument,
+            $this->relatedDocuments->isEmpty(),
             InvoiceItemIsNotValidException::class,
             'The receipt must have at least one related document.'
         );
 
-        $this->data->put('invoices', [
-            'document_number' => $this->relatedDocument
-        ]);
+        $this->relatedDocuments = $this->relatedDocuments
+            ->map(fn($id) => (int) $id);
+
+        $this->data->put('document_number', $this->relatedDocuments);
     }
 
     protected function ensureNoEmptyItemsArray()

@@ -14,17 +14,18 @@ class InvoicingIntegration
 {
     protected ?InvoicingClient $client = null;
     protected ?DocumentType $type = null;
-    protected ?int $relatedDocument = null;
     protected Carbon $date;
     protected Carbon $dateDue;
     protected Collection $payments;
     protected Collection $items;
+    protected Collection $relatedDocuments;
 
     public function __construct(
         protected string $provider
     ) {
         $this->items = collect();
         $this->payments = collect();
+        $this->relatedDocuments = collect();
         $this->date = Carbon::now();
         $this->type = DocumentType::Invoice;
     }
@@ -49,9 +50,9 @@ class InvoicingIntegration
         return $this->items;
     }
 
-    public function relatedDocument(): ?int
+    public function relatedDocuments(): Collection
     {
-        return $this->relatedDocument;
+        return $this->relatedDocuments;
     }
 
     public function type(): DocumentType
@@ -111,9 +112,9 @@ class InvoicingIntegration
         return $this;
     }
 
-    public function setRelatedDocument(int $relatedDocument): self
+    public function setRelatedDocuments(Collection $relatedDocuments): self
     {
-        $this->relatedDocument = $relatedDocument;
+        $this->relatedDocuments = $relatedDocuments;
 
         return $this;
     }
@@ -126,14 +127,11 @@ class InvoicingIntegration
 
         $resolve = app($this->provider)
             ->items($this->items())
-            ->type($this->type());
+            ->type($this->type())
+            ->relatedDocuments($this->relatedDocuments());
 
         if ($this->client()) {
             $resolve->client($this->client());
-        }
-
-        if ($this->relatedDocument()) {
-            $resolve->relatedDocument($this->relatedDocument());
         }
 
         $resolve->send();
