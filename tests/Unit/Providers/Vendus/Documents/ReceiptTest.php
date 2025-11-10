@@ -75,3 +75,5 @@ it('makes sure that invoices document numbers are string', function () {
     expect($resolve->payload()->get('invoices')->first()->get('document_number'))
         ->toBe('FT 1000');
 });
+
+it('makes sure it fails when no payments are set', function () {})->todo('RG must have at least one payment set.');
