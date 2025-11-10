@@ -224,7 +224,7 @@ class Vendus
         );
 
         $this->relatedDocuments = $this->relatedDocuments
-            ->map(fn($id) => (int) $id);
+            ->map(fn($id) => ['document_number' => (int) $id]);
 
         $this->data->put('invoices', $this->relatedDocuments);
     }

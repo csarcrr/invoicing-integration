@@ -116,8 +116,8 @@ it('has a valid related documents payload', function () {
 
     expect($resolve->payload()->get('invoices'))
         ->toBeInstanceOf(Collection::class);
-    expect($resolve->payload()->get('invoices')->first())->toBe(199999);
-    expect($resolve->payload()->get('invoices')->last())->toBe(299999);
+    expect($resolve->payload()->get('invoices')->first())->toBe(['document_number' => 199999]);
+    expect($resolve->payload()->get('invoices')->last())->toBe(['document_number' => 299999]);
 });
 
 it('casts related document IDs to integers', function () {
@@ -133,7 +133,7 @@ it('casts related document IDs to integers', function () {
 
     expect($resolve->payload()->get('invoices'))
         ->toBeInstanceOf(Collection::class);
-    expect($resolve->payload()->get('invoices')->first())->toBe(199999);
+    expect($resolve->payload()->get('invoices')->first())->toBe(['document_number' => 199999]);
 });
 
 it('clears empty data entries', function () {
