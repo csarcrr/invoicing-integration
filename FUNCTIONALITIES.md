@@ -8,13 +8,11 @@
 -   [x] Can assign document types
 -   [] can assign % discount
 -   [] can assign amount discount
--   [] can assign payment(s)
--   [] can emit a receipt for a normal invoice
+-   [x] can assign payment(s)
 
 ## Payments
 
--   [] can assign payment id (when it applies)
--   [] can assign amount
+-   [x] can assign amount
 
 ## Items
 
