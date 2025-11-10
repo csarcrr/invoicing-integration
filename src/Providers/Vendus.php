@@ -175,6 +175,8 @@ class Vendus
             return;
         }
 
+        $this->guardAgainstMissingPaymentConfig();
+
         foreach ($this->payments as $payment) {
             $data = [
                 'amount' => (float) ($payment->amount() / 100),
@@ -210,5 +212,16 @@ class Vendus
             ->map(fn($id) => (int) $id);
 
         $this->data->put('invoices', $this->relatedDocuments);
+    }
+
+    private function guardAgainstMissingPaymentConfig(): void
+    {
+        foreach ($this->options->get('payments') as $key => $value) {
+            if (!is_null($value)) {
+                return;
+            }
+        }
+
+        throw new \Exception('The provider configuration is missing payment method details.');
     }
 }

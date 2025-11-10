@@ -150,7 +150,15 @@ it('fails when no payment id is configured', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Invoice)
-        ->payments(new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB));
+        ->payments(
+            new InvoicingPayment(
+                amount: 500,
+                method: DocumentPaymentMethod::MB
+            )
+        );
 
     $resolve->buildPayload();
-})->throws(Exception::class, 'The provider configuration is missing payment method details.');
+})->throws(
+    Exception::class,
+    'The provider configuration is missing payment method details.'
+);

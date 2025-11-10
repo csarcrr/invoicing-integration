@@ -22,7 +22,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
-            $this->guardAgainstMissingPaymentDetails($config['providers'][$config['provider']]['config']['payments']);
 
             return new Vendus(
                 apiKey: $config['providers'][$config['provider']]['key'],
@@ -57,16 +56,5 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
                 throw new \InvalidArgumentException("The provider configuration is missing the required key: {$key}.");
             }
         }
-    }
-
-    protected function guardAgainstMissingPaymentDetails(array $payments): void
-    {
-        foreach ($payments as $key => $value) {
-            if (!is_null($value)) {
-                return;
-            }
-        }
-
-        throw new \Exception('The provider configuration is missing payment method details.');
     }
 }
