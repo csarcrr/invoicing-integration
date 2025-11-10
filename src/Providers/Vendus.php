@@ -226,7 +226,7 @@ class Vendus
         $this->relatedDocuments = $this->relatedDocuments
             ->map(fn($id) => (int) $id);
 
-        $this->data->put('document_number', $this->relatedDocuments);
+        $this->data->put('invoices', $this->relatedDocuments);
     }
 
     protected function ensureNoEmptyItemsArray()

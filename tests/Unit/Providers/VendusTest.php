@@ -114,10 +114,10 @@ it('has a valid related documents payload', function () {
 
     $resolve->buildPayload();
 
-    expect($resolve->payload()->get('document_number'))
+    expect($resolve->payload()->get('invoices'))
         ->toBeInstanceOf(Collection::class);
-    expect($resolve->payload()->get('document_number')->first())->toBe(199999);
-    expect($resolve->payload()->get('document_number')->last())->toBe(299999);
+    expect($resolve->payload()->get('invoices')->first())->toBe(199999);
+    expect($resolve->payload()->get('invoices')->last())->toBe(299999);
 });
 
 it('casts related document IDs to integers', function () {
@@ -131,9 +131,9 @@ it('casts related document IDs to integers', function () {
 
     $resolve->buildPayload();
 
-    expect($resolve->payload()->get('document_number'))
+    expect($resolve->payload()->get('invoices'))
         ->toBeInstanceOf(Collection::class);
-    expect($resolve->payload()->get('document_number')->first())->toBe(199999);
+    expect($resolve->payload()->get('invoices')->first())->toBe(199999);
 });
 
 it('clears empty data entries', function () {
@@ -147,7 +147,7 @@ it('clears empty data entries', function () {
     $resolve->buildPayload();
 
     expect($resolve->payload()->get('payments'))->toBeNull();
-    expect($resolve->payload()->get('document_number'))->toBeNull();
+    expect($resolve->payload()->get('invoices'))->toBeNull();
     expect($resolve->payload()->get('register_id'))->toBeNull();
 });
 
