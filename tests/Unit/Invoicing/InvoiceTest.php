@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
-use CsarCrr\InvoicingIntegration\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\Invoice;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use Illuminate\Support\Facades\Http;
 
@@ -29,6 +29,6 @@ it('can invoice successfully with minimum data', function () {
 
     $response = $invoice->invoice();
 
-    expect($response)->toBeInstanceOf(InvoiceData::class);
+    expect($response)->toBeInstanceOf(Invoice::class);
     expect($response->sequenceNumber())->toBeGreaterThanOrEqual(999);
 });

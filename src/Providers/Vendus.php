@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\Invoice;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use CsarCrr\InvoicingIntegration\InvoicingPayment;
@@ -16,7 +18,7 @@ class Vendus
 {
     protected ?InvoicingClient $client = null;
     protected DocumentType $type = DocumentType::Invoice;
-    protected InvoiceData $invoiceData;
+    protected Invoice $invoice;
     protected Collection $items;
     protected Collection $payments;
     protected Collection $relatedDocuments;
@@ -44,7 +46,7 @@ class Vendus
     public function send(): self
     {
         $this->buildPayload();
-        $this->generateInvoiceData($this->request());
+        $this->generateInvoice($this->request());
 
         return $this;
     }
@@ -77,9 +79,9 @@ class Vendus
         return $this;
     }
 
-    public function invoiceData()
+    public function invoice()
     {
-        return $this->invoiceData;
+        return $this->invoice;
     }
 
     public function type(DocumentType $type): self
@@ -105,13 +107,11 @@ class Vendus
         return $this->data;
     }
 
-    protected function generateInvoiceData(array $data): void
+    protected function generateInvoice(array $data): void
     {
-        $invoice = new InvoiceData;
+        $invoice = new Invoice();
 
-        $invoice->setSequenceNumber($data['number'] ?? null);
-
-        $this->invoiceData = $invoice;
+        $this->invoice = $invoice;
     }
 
     protected function request()
