@@ -223,10 +223,9 @@ class Vendus
             'The receipt must have at least one related document.'
         );
 
-        $this->relatedDocuments = $this->relatedDocuments
-            ->map(fn($id) => ['document_number' => (int) $id]);
-
-        $this->data->put('invoices', $this->relatedDocuments);
+        $this->relatedDocuments->each(function (string $id) {
+            $this->data->get('invoices')->push(collect(['document_number' => (string) $id]));
+        });
     }
 
     protected function ensureNoEmptyItemsArray()
