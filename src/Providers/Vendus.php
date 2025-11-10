@@ -96,6 +96,8 @@ class Vendus
         $this->ensureItemsFormat();
         $this->ensurePaymentsFormat();
         $this->ensureRelatedDocumentsFormat();
+
+        $this->ensureNoEmptyItemsArray();
     }
 
     public function payload(): Collection
@@ -212,6 +214,17 @@ class Vendus
             ->map(fn($id) => (int) $id);
 
         $this->data->put('invoices', $this->relatedDocuments);
+    }
+
+    protected function ensureNoEmptyItemsArray()
+    {
+        $this->data = $this->payload()->filter(function (mixed $value) {
+            if ($value instanceof Collection) {
+                return $value->isNotEmpty();
+            }
+
+            return !is_null($value);
+        });
     }
 
     private function guardAgainstMissingPaymentConfig(): void

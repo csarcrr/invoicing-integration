@@ -91,7 +91,7 @@ it('does not set items when issuing a RG', function () {
 
     $resolve->buildPayload();
 
-    expect($resolve->payload()->get('items')->isEmpty())->toBeTrue();
+    expect($resolve->payload()->get('items'))->toBeNull();
 });
 
 it('has a valid related documents payload', function () {
@@ -123,6 +123,21 @@ it('transforms incorrectly formatted related documents to integers', function ()
 
     expect($resolve->payload()->get('invoices'))->toBeInstanceOf(Collection::class);
     expect($resolve->payload()->get('invoices')->first())->toBe(199999);
+});
+
+it('clears empty data entries', function () {
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]))
+        ->type(DocumentType::Invoice);
+
+    $resolve->buildPayload();
+
+    expect($resolve->payload()->get('payments'))->toBeNull();
+    expect($resolve->payload()->get('invoices'))->toBeNull();
+    expect($resolve->payload()->get('register_id'))->toBeNull();
 });
 
 it('fails when item format is not valid', function () {
