@@ -4,6 +4,7 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\InvoiceData;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
@@ -21,7 +22,6 @@ class Vendus
     protected Collection $relatedDocuments;
 
     protected Collection $data;
-    protected ?string $sequenceNumber = null;
 
     public function __construct(
         protected string $apiKey,
@@ -109,7 +109,7 @@ class Vendus
     {
         $invoice = new InvoiceData;
 
-        $invoice->setSequenceNumber($data['number']);
+        $invoice->setSequenceNumber($data['number'] ?? null);
 
         $this->invoiceData = $invoice;
     }
@@ -123,7 +123,20 @@ class Vendus
             $this->payload()->toArray()
         );
 
+        if (!in_array($request->status(), [200, 201, 300, 301])) {
+            $this->throwErrors($request->json());
+        }
+
         return $request->json();
+    }
+
+    protected function throwErrors(array $errors)
+    {
+        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
+            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+        })->toArray();
+
+        throw_if(!empty($messages), RequestFailedException::class, implode('; ', $messages));
     }
 
     protected function setDocumentType()
