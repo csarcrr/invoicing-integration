@@ -115,9 +115,9 @@ class InvoicingIntegration
         return $this;
     }
 
-    public function setRelatedDocuments(Collection $relatedDocuments): self
+    public function addRelatedDocument(string $relatedDocument): self
     {
-        $this->relatedDocuments = $relatedDocuments;
+        $this->relatedDocuments->push($relatedDocument);
 
         return $this;
     }

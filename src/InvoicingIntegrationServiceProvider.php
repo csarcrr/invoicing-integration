@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Providers\Vendus;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use CsarCrr\InvoicingIntegration\Providers\Vendus;
 
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
@@ -20,7 +20,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             return new InvoicingIntegration($config['provider']);
         });
 
-        $this->app->singleton('vendus', function () {
+        $this->app->bind('vendus', function () {
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);

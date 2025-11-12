@@ -20,9 +20,8 @@ beforeEach(function () {
 it('can assign related documents to a receipt', function () {
     $invoice = InvoicingIntegration::create();
     $invoice->setType(DocumentType::Receipt);
-    $invoice->setRelatedDocuments(collect([1234, 5678]));
+    $invoice->addRelatedDocument('FT 1000');
 
     expect($invoice->relatedDocuments()->count())->toBe(2);
-    expect($invoice->relatedDocuments()->first())->toBe(1234);
-    expect($invoice->relatedDocuments()->last())->toBe(5678);
+    expect($invoice->relatedDocuments()->first())->toBe('FT 1000');
 });
