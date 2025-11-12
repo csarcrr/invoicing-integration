@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Data\Invoice;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use CsarCrr\InvoicingIntegration\InvoicingPayment;
@@ -111,6 +112,10 @@ class Vendus
     {
         $invoice = new Invoice();
 
+        if ($data['number'] ?? false) {
+            $invoice->setSequence($data['number']);
+        }
+
         $this->invoice = $invoice;
     }
 
@@ -186,6 +191,11 @@ class Vendus
 
     protected function ensurePaymentsFormat(): void
     {
+        throw_if(
+            $this->type === DocumentType::Receipt && $this->payments->isEmpty(),
+            MissingPaymentWhenIssuingReceiptException::class,
+        );
+
         if ($this->payments->isEmpty()) {
             return;
         }

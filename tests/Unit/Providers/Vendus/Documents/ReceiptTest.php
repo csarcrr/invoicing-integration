@@ -2,6 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use Illuminate\Support\Collection;
 
@@ -76,4 +77,14 @@ it('makes sure that invoices document numbers are string', function () {
         ->toBe('FT 1000');
 });
 
-it('makes sure it fails when no payments are set', function () {})->todo('RG must have at least one payment set.');
+it('makes sure it fails when no payments are set', function () {
+    $item = new InvoicingItem(reference: 'reference-1');
+    $item->setPrice(500);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]))
+        ->type(DocumentType::Receipt)
+        ->relatedDocuments(collect(['FT 10000']));
+
+    $resolve->buildPayload();
+})->throws(MissingPaymentWhenIssuingReceiptException::class)->only();
