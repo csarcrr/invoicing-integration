@@ -21,7 +21,7 @@ beforeEach(function () {
 
 it('can invoice successfully with minimum data', function () {
     Http::fake([
-        'vendus.pt/*' => Http::response(['number' => random_int(999, 10000)], 200),
+        'vendus.pt/*' => Http::response(['number' => 'FT 10000'], 200),
     ]);
 
     $invoice = InvoicingIntegration::create();
@@ -30,5 +30,5 @@ it('can invoice successfully with minimum data', function () {
     $response = $invoice->invoice();
 
     expect($response)->toBeInstanceOf(Invoice::class);
-    expect($response->sequenceNumber())->toBeGreaterThanOrEqual(999);
+    expect($response->sequence())->toBe('FT 10000');
 });
