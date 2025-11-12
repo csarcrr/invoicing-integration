@@ -2,8 +2,8 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
-use CsarCrr\InvoicingIntegration\InvoicingPayment;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Collection;
 
 beforeEach(function () {
@@ -20,10 +20,10 @@ beforeEach(function () {
 });
 
 it('has a valid payment payload', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB);
+    $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
@@ -47,10 +47,10 @@ it('fails when no payment id is configured', function () {
         DocumentPaymentMethod::MONEY_TRANSFER->value => null,
     ]);
 
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB);
+    $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))

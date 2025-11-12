@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -19,7 +19,7 @@ beforeEach(function () {
 
 it('assigns one simple item to the invoice', function () {
     $invoice = Invoice::create();
-    $invoice->addItem(new InvoicingItem('reference-1'));
+    $invoice->addItem(new InvoiceItem('reference-1'));
 
     expect($invoice->items()->count())->toBe(1);
     expect($invoice->items()->first()->reference)->toBe('reference-1');
@@ -27,8 +27,8 @@ it('assigns one simple item to the invoice', function () {
 
 it('assigns multiple items to the invoice', function () {
     $invoice = Invoice::create();
-    $invoice->addItem(new InvoicingItem(reference: 'reference-1'));
-    $invoice->addItem(new InvoicingItem(reference: 'reference-2'));
+    $invoice->addItem(new InvoiceItem(reference: 'reference-1'));
+    $invoice->addItem(new InvoiceItem(reference: 'reference-2'));
 
     expect($invoice->items()->count())->toBe(2);
     expect($invoice->items()->first()->reference)->toBe('reference-1');
@@ -36,12 +36,12 @@ it('assigns multiple items to the invoice', function () {
 });
 
 it('can assign a custom price to an item', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
     $invoice = Invoice::create();
     $invoice->addItem($item);
 
-    expect($invoice->items()->first())->toBeInstanceOf(InvoicingItem::class);
+    expect($invoice->items()->first())->toBeInstanceOf(InvoiceItem::class);
     expect($invoice->items()->first()->price())->toBe(500);
 });

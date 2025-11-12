@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-class InvoicingClient
+class InvoiceClient
 {
     public function __construct(
         public ?string $vat = null,

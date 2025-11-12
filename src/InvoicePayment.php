@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 
-class InvoicingPayment
+class InvoicePayment
 {
     public function __construct(
         protected DocumentPaymentMethod $method,

@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\InvoicingPayment;
+use CsarCrr\InvoicingIntegration\InvoicePayment;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -19,10 +19,10 @@ beforeEach(function () {
 
 it('assigns a payment', function () {
     $invoice = Invoice::create();
-    $invoice->addPayment(new InvoicingPayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
+    $invoice->addPayment(new InvoicePayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
 
     expect($invoice->payments()->count())->toBe(1);
-    expect($invoice->payments()->first())->toBeInstanceOf(InvoicingPayment::class);
+    expect($invoice->payments()->first())->toBeInstanceOf(InvoicePayment::class);
     expect($invoice->payments()->first()->method())->toBe(DocumentPaymentMethod::CREDIT_CARD);
     expect($invoice->payments()->first()->amount())->toBe(500);
 });

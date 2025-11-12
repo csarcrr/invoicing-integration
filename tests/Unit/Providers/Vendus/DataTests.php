@@ -3,8 +3,8 @@
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\InvoicingClient;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -21,7 +21,7 @@ beforeEach(function () {
 });
 
 it('clears empty data entries', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
     $resolve = app(config('invoicing-integration.provider'))
@@ -45,13 +45,13 @@ it('throw error exception with API messages when request fails', function () {
         ], 400),
     ]);
 
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Invoice)
-        ->client(new InvoicingClient(vat: 'invalid-vat'));
+        ->client(new InvoiceClient(vat: 'invalid-vat'));
 
     $resolve->buildPayload();
 

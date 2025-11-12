@@ -2,8 +2,8 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\InvoicingClient;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -19,10 +19,10 @@ beforeEach(function () {
 });
 
 it('has a valid client payload', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
-    $client = new InvoicingClient(vat: '123456789', name: 'Client Name');
+    $client = new InvoiceClient(vat: '123456789', name: 'Client Name');
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))

@@ -1,9 +1,9 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
 
 it('can assign description', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
     $item->setDescription('Test Description');
 
@@ -11,7 +11,7 @@ it('can assign description', function () {
 });
 
 it('description is null by default', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
     expect($item->description())->toBeNull();

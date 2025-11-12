@@ -4,8 +4,8 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
-use CsarCrr\InvoicingIntegration\InvoicingPayment;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -27,7 +27,7 @@ it('can invoice successfully with minimum data', function () {
     ]);
 
     $invoice = Invoice::create();
-    $invoice->addItem(new InvoicingItem('reference-1'));
+    $invoice->addItem(new InvoiceItem('reference-1'));
 
     $response = $invoice->invoice();
 
@@ -41,7 +41,7 @@ it('can invoice and emit a receipt for that invoice', function () {
         'vendus.pt/*' => Http::response(['number' => 'RG 10000'], 200),
     ]);
 
-    $item = new InvoicingItem('reference-1');
+    $item = new InvoiceItem('reference-1');
     $item->setPrice(500);
 
     $invoice = Invoice::create();
@@ -52,7 +52,7 @@ it('can invoice and emit a receipt for that invoice', function () {
 
     $receipt = Invoice::create();
     $receipt->setType(DocumentType::Receipt);
-    $receipt->addPayment(new InvoicingPayment(DocumentPaymentMethod::MONEY, 500));
+    $receipt->addPayment(new InvoicePayment(DocumentPaymentMethod::MONEY, 500));
     $receipt->addRelatedDocument($details->sequence());
 
     $details = $receipt->invoice();

@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\InvoicingClient;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class Vendus
 {
-    protected ?InvoicingClient $client = null;
+    protected ?InvoiceClient $client = null;
 
     protected DocumentType $type = DocumentType::Invoice;
 
@@ -56,7 +56,7 @@ class Vendus
         return $this;
     }
 
-    public function client(InvoicingClient $client): self
+    public function client(InvoiceClient $client): self
     {
         $this->client = $client;
 
@@ -126,7 +126,7 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
         ])->post(
             'https://www.vendus.pt/ws/v1.1/documents/',
             $this->payload()->toArray()
@@ -142,7 +142,7 @@ class Vendus
     protected function throwErrors(array $errors)
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
@@ -219,9 +219,9 @@ class Vendus
     protected function ensureItemIsValid($item): void
     {
         throw_if(
-            ! ($item instanceof InvoicingItem),
+            ! ($item instanceof InvoiceItem),
             InvoiceItemIsNotValidException::class,
-            'The item is not a valid InvoicingItem instance.'
+            'The item is not a valid InvoiceItem instance.'
         );
     }
 

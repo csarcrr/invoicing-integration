@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoiceItem;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -18,7 +18,7 @@ beforeEach(function () {
 });
 
 it('has a valid type', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
+    $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
     $resolve = app(config('invoicing-integration.provider'))

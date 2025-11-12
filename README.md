@@ -53,11 +53,11 @@ return [
 
 $integration = Invoice::create();
 
-$integration->addItem((new InvoicingItem(reference: '31054308', quantity: 1)));
-$integration->addItem(new InvoicingItem(reference: '09818943', quantity: 5));
+$integration->addItem((new InvoiceItem(reference: '31054308', quantity: 1)));
+$integration->addItem(new InvoiceItem(reference: '09818943', quantity: 5));
 
 // Optionally you can set a client
-$integration->setClient(new InvoicingClient(vat: '245824820'));
+$integration->setClient(new InvoiceClient(vat: '245824820'));
 
 $invoice = $integration->invoice();
 

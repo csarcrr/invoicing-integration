@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 
-class InvoicingItem
+class InvoiceItem
 {
     protected ?int $price = null;
 
