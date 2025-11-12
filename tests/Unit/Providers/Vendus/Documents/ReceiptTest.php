@@ -4,6 +4,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\InvoicingPayment;
 use Illuminate\Support\Collection;
 
 beforeEach(function () {
@@ -23,10 +24,13 @@ it('does not set items when issuing a RG', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);
 
+    $payment = new InvoicingPayment(DocumentPaymentMethod::MONEY, 500);
+
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 10000']));
+        ->relatedDocuments(collect(['FT 10000']))
+        ->payments(collect([$payment]));
 
     $resolve->buildPayload();
 
@@ -37,10 +41,13 @@ it('has a valid related documents payload', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);
 
+    $payment = new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB);
+
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 10000', 'FT 20000']));
+        ->relatedDocuments(collect(['FT 10000', 'FT 20000']))
+        ->payments(collect([$payment]));
 
     $resolve->buildPayload();
 
@@ -61,10 +68,13 @@ it('makes sure that invoices document numbers are string', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);
 
+    $payment = new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB);
+
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 1000']));
+        ->relatedDocuments(collect(['FT 1000']))
+        ->payments(collect([$payment]));
 
     $resolve->buildPayload();
 

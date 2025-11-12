@@ -66,9 +66,9 @@ class Vendus
         return $this;
     }
 
-    public function payments(InvoicingPayment $payment): self
+    public function payments(Collection $payments): self
     {
-        $this->payments->push($payment);
+        $this->payments = $payments;
 
         return $this;
     }

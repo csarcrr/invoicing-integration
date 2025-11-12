@@ -24,15 +24,12 @@ it('has a valid payment payload', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);
 
+    $payment = new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB);
+
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Invoice)
-        ->payments(
-            new InvoicingPayment(
-                amount: 500,
-                method: DocumentPaymentMethod::MB
-            )
-        );
+        ->payments(collect([$payment]));
 
     $resolve->buildPayload();
 
@@ -54,15 +51,12 @@ it('fails when no payment id is configured', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);
 
+    $payment = new InvoicingPayment(amount: 500, method: DocumentPaymentMethod::MB);
+
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]))
         ->type(DocumentType::Invoice)
-        ->payments(
-            new InvoicingPayment(
-                amount: 500,
-                method: DocumentPaymentMethod::MB
-            )
-        );
+        ->payments(collect([$payment]));
 
     $resolve->buildPayload();
 })->throws(
