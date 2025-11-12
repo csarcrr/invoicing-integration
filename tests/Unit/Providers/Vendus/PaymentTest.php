@@ -19,7 +19,6 @@ beforeEach(function () {
     ]);
 });
 
-
 it('has a valid payment payload', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);

@@ -35,7 +35,6 @@ it('clears empty data entries', function () {
     expect($resolve->payload()->get('register_id'))->toBeNull();
 });
 
-
 it('throw error exception with API messages when request fails', function () {
     Http::fake([
         'https://www.vendus.pt/ws/v1.1/documents/' => Http::response([

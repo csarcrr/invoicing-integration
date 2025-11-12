@@ -3,7 +3,6 @@
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 
-
 it('can assign an item type', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);

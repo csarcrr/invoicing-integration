@@ -16,11 +16,17 @@ use Illuminate\Support\Collection;
 class InvoicingIntegration
 {
     protected ?InvoicingClient $client = null;
+
     protected ?DocumentType $type = null;
+
     protected Carbon $date;
+
     protected Carbon $dateDue;
+
     protected Collection $payments;
+
     protected Collection $items;
+
     protected Collection $relatedDocuments;
 
     public function __construct(

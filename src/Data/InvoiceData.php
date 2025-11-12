@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Data;
 class InvoiceData
 {
     protected int $id;
+
     protected string $sequence;
 
     public function sequence()
@@ -17,6 +18,7 @@ class InvoiceData
     public function setSequence(string $sequence): self
     {
         $this->sequence = $sequence;
+
         return $this;
     }
 
@@ -28,6 +30,7 @@ class InvoiceData
     public function setId(int $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 }

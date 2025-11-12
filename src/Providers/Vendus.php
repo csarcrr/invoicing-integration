@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Providers;
 
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
-use CsarCrr\InvoicingIntegration\InvoicingPayment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class Vendus
 {
     protected ?InvoicingClient $client = null;
+
     protected DocumentType $type = DocumentType::Invoice;
+
     protected InvoiceData $invoice;
+
     protected Collection $items;
+
     protected Collection $payments;
+
     protected Collection $relatedDocuments;
 
     protected Collection $data;
@@ -110,7 +114,7 @@ class Vendus
 
     protected function generateInvoice(array $data): void
     {
-        $invoice = new InvoiceData();
+        $invoice = new InvoiceData;
 
         if ($data['number'] ?? false) {
             $invoice->setSequence($data['number']);
@@ -122,13 +126,13 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post(
             'https://www.vendus.pt/ws/v1.1/documents/',
             $this->payload()->toArray()
         );
 
-        if (!in_array($request->status(), [200, 201, 300, 301])) {
+        if (! in_array($request->status(), [200, 201, 300, 301])) {
             $this->throwErrors($request->json());
         }
 
@@ -138,10 +142,10 @@ class Vendus
     protected function throwErrors(array $errors)
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
-        throw_if(!empty($messages), RequestFailedException::class, implode('; ', $messages));
+        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
     }
 
     protected function setDocumentType()
@@ -245,14 +249,14 @@ class Vendus
                 return $value->isNotEmpty();
             }
 
-            return !is_null($value);
+            return ! is_null($value);
         });
     }
 
     private function guardAgainstMissingPaymentConfig(): void
     {
         foreach ($this->options->get('payments') as $key => $value) {
-            if (!is_null($value)) {
+            if (! is_null($value)) {
                 return;
             }
         }

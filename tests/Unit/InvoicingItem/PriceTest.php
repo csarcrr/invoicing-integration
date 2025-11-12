@@ -1,6 +1,5 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 
 it('can assign price', function () {
