@@ -1,7 +1,6 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\InvoicingPayment;
 
 return [
     'provider' => env('INVOICING_INTEGRATION_PROVIDER', null),
