@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Data\Invoice;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
@@ -122,7 +122,7 @@ class InvoicingIntegration
         return $this;
     }
 
-    public function invoice(): Invoice
+    public function invoice(): InvoiceData
     {
         $this->ensureHasItems();
         $this->ensureTypeIsSet();

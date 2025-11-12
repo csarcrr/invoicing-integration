@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -19,7 +19,7 @@ beforeEach(function () {
 
 it('can assign all different invoice types', function ($type) {
     $type = DocumentType::from($type);
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->setType($type);
 
     expect($invoice->type())->toBe($type);

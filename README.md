@@ -40,7 +40,7 @@ return [
 ```php
 <?php
 
-$integration = InvoicingIntegration::create();
+$integration = Invoice::create();
 
 $integration->addItem((new InvoicingItem(reference: '31054308', quantity: 1)));
 $integration->addItem(new InvoicingItem(reference: '09818943', quantity: 5));

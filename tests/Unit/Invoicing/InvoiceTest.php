@@ -1,8 +1,8 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
-use CsarCrr\InvoicingIntegration\Data\Invoice;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use CsarCrr\InvoicingIntegration\InvoicingPayment;
@@ -26,12 +26,12 @@ it('can invoice successfully with minimum data', function () {
         'vendus.pt/*' => Http::response(['number' => 'FT 10000'], 200),
     ]);
 
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->addItem(new InvoicingItem('reference-1'));
 
     $response = $invoice->invoice();
 
-    expect($response)->toBeInstanceOf(Invoice::class);
+    expect($response)->toBeInstanceOf(InvoiceData::class);
     expect($response->sequence())->toBe('FT 10000');
 });
 
@@ -44,19 +44,19 @@ it('can invoice and emit a receipt for that invoice', function () {
     $item = new InvoicingItem('reference-1');
     $item->setPrice(500);
 
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->setType(DocumentType::Invoice);
     $invoice->addItem($item);
 
     $details = $invoice->invoice();
 
-    $receipt = InvoicingIntegration::create();
+    $receipt = Invoice::create();
     $receipt->setType(DocumentType::Receipt);
     $receipt->addPayment(new InvoicingPayment(DocumentPaymentMethod::MONEY, 500));
     $receipt->addRelatedDocument($details->sequence());
 
     $details = $receipt->invoice();
 
-    expect($details)->toBeInstanceOf(Invoice::class);
+    expect($details)->toBeInstanceOf(InvoiceData::class);
     expect($details->sequence())->toBe('RG 10000');
 });

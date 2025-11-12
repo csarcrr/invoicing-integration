@@ -7,7 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Data\Invoice;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
@@ -19,7 +19,7 @@ class Vendus
 {
     protected ?InvoicingClient $client = null;
     protected DocumentType $type = DocumentType::Invoice;
-    protected Invoice $invoice;
+    protected InvoiceData $invoice;
     protected Collection $items;
     protected Collection $payments;
     protected Collection $relatedDocuments;
@@ -110,7 +110,7 @@ class Vendus
 
     protected function generateInvoice(array $data): void
     {
-        $invoice = new Invoice();
+        $invoice = new InvoiceData();
 
         if ($data['number'] ?? false) {
             $invoice->setSequence($data['number']);

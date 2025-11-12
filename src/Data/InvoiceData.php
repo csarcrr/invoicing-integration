@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Data;
 
-class Invoice
+class InvoiceData
 {
     protected int $id;
     protected string $sequence;

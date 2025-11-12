@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \CsarCrr\InvoicingIntegration\InvoicingIntegration
  */
-class InvoicingIntegration extends Facade
+class Invoice extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'invoicing-integration';
+        return 'invoice';
     }
 }

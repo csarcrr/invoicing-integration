@@ -1,7 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\InvoicingPayment;
 
 beforeEach(function () {
@@ -18,7 +18,7 @@ beforeEach(function () {
 });
 
 it('assigns a payment', function () {
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->addPayment(new InvoicingPayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
 
     expect($invoice->payments()->count())->toBe(1);

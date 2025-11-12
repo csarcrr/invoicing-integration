@@ -1,7 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 
 beforeEach(function () {
@@ -18,7 +18,7 @@ beforeEach(function () {
 });
 
 it('assigns one simple item to the invoice', function () {
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->addItem(new InvoicingItem('reference-1'));
 
     expect($invoice->items()->count())->toBe(1);
@@ -26,7 +26,7 @@ it('assigns one simple item to the invoice', function () {
 });
 
 it('assigns multiple items to the invoice', function () {
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->addItem(new InvoicingItem(reference: 'reference-1'));
     $invoice->addItem(new InvoicingItem(reference: 'reference-2'));
 
@@ -39,7 +39,7 @@ it('can assign a custom price to an item', function () {
     $item = new InvoicingItem(reference: 'reference-1');
     $item->setPrice(500);
 
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->addItem($item);
 
     expect($invoice->items()->first())->toBeInstanceOf(InvoicingItem::class);

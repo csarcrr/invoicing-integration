@@ -12,7 +12,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
     public function bootingPackage(): void
     {
-        $this->app->bind('invoicing-integration', function () {
+        $this->app->bind('invoice', function () {
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidConfig($config);

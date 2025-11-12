@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Facades\InvoicingIntegration;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 beforeEach(function () {
     config()->set('invoicing-integration.provider', 'vendus');
@@ -18,10 +18,10 @@ beforeEach(function () {
 });
 
 it('can assign related documents to a receipt', function () {
-    $invoice = InvoicingIntegration::create();
+    $invoice = Invoice::create();
     $invoice->setType(DocumentType::Receipt);
     $invoice->addRelatedDocument('FT 1000');
 
-    expect($invoice->relatedDocuments()->count())->toBe(2);
+    expect($invoice->relatedDocuments()->count())->toBe(1);
     expect($invoice->relatedDocuments()->first())->toBe('FT 1000');
 });
