@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Commands\InvoicingIntegrationCommand;
 use CsarCrr\InvoicingIntegration\Providers\Vendus;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -11,7 +12,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
     public function bootingPackage(): void
     {
-        $this->app->bind('invoicing-integration', function () {
+        $this->app->bind('invoice', function () {
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidConfig($config);
@@ -19,7 +20,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             return new InvoicingIntegration($config['provider']);
         });
 
-        $this->app->singleton('vendus', function () {
+        $this->app->bind('vendus', function () {
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
@@ -27,8 +28,16 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             return new Vendus(
                 apiKey: $config['providers'][$config['provider']]['key'],
                 mode: $config['providers'][$config['provider']]['mode'],
+                options: collect($config['providers'][$config['provider']]['config']),
             );
         });
+    }
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('invoicing-integration')
+            ->hasConfigFile('invoicing-integration');
     }
 
     protected function guardAgainstInvalidConfig(array $config): void
@@ -49,20 +58,5 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
                 throw new \InvalidArgumentException("The provider configuration is missing the required key: {$key}.");
             }
         }
-    }
-
-    public function configurePackage(Package $package): void
-    {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('invoicing-integration')
-            ->hasConfigFile()
-            ->hasViews()
-            // ->hasMigration('create_migration_table_name_table')
-            ->hasCommand(InvoicingIntegrationCommand::class);
     }
 }

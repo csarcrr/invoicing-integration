@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration\Providers;
 
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
-use CsarCrr\InvoicingIntegration\InvoiceData;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\InvoicingClient;
 use CsarCrr\InvoicingIntegration\InvoicingItem;
 use Illuminate\Support\Collection;
@@ -14,33 +18,40 @@ class Vendus
 {
     protected ?InvoicingClient $client = null;
 
+    protected DocumentType $type = DocumentType::Invoice;
+
+    protected InvoiceData $invoice;
+
     protected Collection $items;
 
-    protected ?string $sequenceNumber = null;
+    protected Collection $payments;
 
-    protected InvoiceData $invoiceData;
-
-    protected DocumentType $type = DocumentType::Fatura;
+    protected Collection $relatedDocuments;
 
     protected Collection $data;
 
     public function __construct(
         protected string $apiKey,
-        protected string $mode
+        protected string $mode,
+        protected Collection $options
     ) {
         $this->data = collect([
             'register_id' => null,
             'type' => null,
+            'items' => collect(),
+            'payments' => collect(),
+            'invoices' => collect(),
         ]);
+
+        $this->payments = collect();
+        $this->items = collect();
+        $this->relatedDocuments = collect();
     }
 
     public function send(): self
     {
         $this->buildPayload();
-
-        $request = $this->request();
-
-        $this->generateInvoiceData($request);
+        $this->generateInvoice($this->request());
 
         return $this;
     }
@@ -59,9 +70,23 @@ class Vendus
         return $this;
     }
 
-    public function invoiceData()
+    public function payments(Collection $payments): self
     {
-        return $this->invoiceData;
+        $this->payments = $payments;
+
+        return $this;
+    }
+
+    public function relatedDocuments(Collection $relatedDocuments): self
+    {
+        $this->relatedDocuments = $relatedDocuments;
+
+        return $this;
+    }
+
+    public function invoice()
+    {
+        return $this->invoice;
     }
 
     public function type(DocumentType $type): self
@@ -76,6 +101,10 @@ class Vendus
         $this->setDocumentType();
         $this->ensureClientFormat();
         $this->ensureItemsFormat();
+        $this->ensurePaymentsFormat();
+        $this->ensureRelatedDocumentsFormat();
+
+        $this->ensureNoEmptyItemsArray();
     }
 
     public function payload(): Collection
@@ -83,22 +112,40 @@ class Vendus
         return $this->data;
     }
 
-    protected function generateInvoiceData(array $data): void
+    protected function generateInvoice(array $data): void
     {
         $invoice = new InvoiceData;
 
-        $invoice->setSequenceNumber($data['number']);
+        if ($data['number'] ?? false) {
+            $invoice->setSequence($data['number']);
+        }
 
-        $this->invoiceData = $invoice;
+        $this->invoice = $invoice;
     }
 
     protected function request()
     {
         $request = Http::withHeaders([
             'Authorization' => 'Bearer '.$this->apiKey,
-        ])->post('https://www.vendus.pt/ws/v1.1/documents/', $this->payload()->toArray());
+        ])->post(
+            'https://www.vendus.pt/ws/v1.1/documents/',
+            $this->payload()->toArray()
+        );
+
+        if (! in_array($request->status(), [200, 201, 300, 301])) {
+            $this->throwErrors($request->json());
+        }
 
         return $request->json();
+    }
+
+    protected function throwErrors(array $errors)
+    {
+        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
+        })->toArray();
+
+        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
     }
 
     protected function setDocumentType()
@@ -120,6 +167,16 @@ class Vendus
 
     protected function ensureItemsFormat(): void
     {
+        if ($this->type === DocumentType::Receipt) {
+            return;
+        }
+
+        throw_if(
+            $this->items->isEmpty(),
+            InvoiceItemIsNotValidException::class,
+            'The invoice must have at least one item.'
+        );
+
         foreach ($this->items as $item) {
             $this->ensureItemIsValid($item);
 
@@ -132,12 +189,78 @@ class Vendus
                 $data['gross_price'] = (float) ($item->price() / 100);
             }
 
-            $this->data->put('items', $this->data->get('items', collect())->push($data));
+            $this->data->get('items')->push($data);
+        }
+    }
+
+    protected function ensurePaymentsFormat(): void
+    {
+        throw_if(
+            $this->type === DocumentType::Receipt && $this->payments->isEmpty(),
+            MissingPaymentWhenIssuingReceiptException::class,
+        );
+
+        if ($this->payments->isEmpty()) {
+            return;
+        }
+
+        $this->guardAgainstMissingPaymentConfig();
+
+        foreach ($this->payments as $payment) {
+            $data = [
+                'amount' => (float) ($payment->amount() / 100),
+                'id' => $this->options->get('payments')[$payment->method()->value],
+            ];
+
+            $this->data->get('payments')->push($data);
         }
     }
 
     protected function ensureItemIsValid($item): void
     {
-        throw_if(! ($item instanceof InvoicingItem), InvoiceItemIsNotValidException::class, 'The item is not a valid InvoicingItem instance.');
+        throw_if(
+            ! ($item instanceof InvoicingItem),
+            InvoiceItemIsNotValidException::class,
+            'The item is not a valid InvoicingItem instance.'
+        );
+    }
+
+    protected function ensureRelatedDocumentsFormat(): void
+    {
+        if ($this->type !== DocumentType::Receipt) {
+            return;
+        }
+
+        throw_if(
+            $this->relatedDocuments->isEmpty(),
+            InvoiceItemIsNotValidException::class,
+            'The receipt must have at least one related document.'
+        );
+
+        $this->relatedDocuments->each(function (string $id) {
+            $this->data->get('invoices')->push(collect(['document_number' => (string) $id]));
+        });
+    }
+
+    protected function ensureNoEmptyItemsArray()
+    {
+        $this->data = $this->payload()->filter(function (mixed $value) {
+            if ($value instanceof Collection) {
+                return $value->isNotEmpty();
+            }
+
+            return ! is_null($value);
+        });
+    }
+
+    private function guardAgainstMissingPaymentConfig(): void
+    {
+        foreach ($this->options->get('payments') as $key => $value) {
+            if (! is_null($value)) {
+                return;
+            }
+        }
+
+        throw new \Exception('The provider configuration is missing payment method details.');
     }
 }

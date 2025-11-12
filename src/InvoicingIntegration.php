@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration;
 
 use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
@@ -14,21 +17,26 @@ class InvoicingIntegration
 {
     protected ?InvoicingClient $client = null;
 
-    protected Collection $items;
-
     protected ?DocumentType $type = null;
 
     protected Carbon $date;
 
+    protected Carbon $dateDue;
+
     protected Collection $payments;
+
+    protected Collection $items;
+
+    protected Collection $relatedDocuments;
 
     public function __construct(
         protected string $provider
     ) {
         $this->items = collect();
         $this->payments = collect();
+        $this->relatedDocuments = collect();
         $this->date = Carbon::now();
-        $this->type = DocumentType::Fatura;
+        $this->type = DocumentType::Invoice;
     }
 
     public function create()
@@ -51,6 +59,11 @@ class InvoicingIntegration
         return $this->items;
     }
 
+    public function relatedDocuments(): Collection
+    {
+        return $this->relatedDocuments;
+    }
+
     public function type(): DocumentType
     {
         return $this->type;
@@ -59,6 +72,11 @@ class InvoicingIntegration
     public function date(): Carbon
     {
         return $this->date;
+    }
+
+    public function dateDue(): Carbon
+    {
+        return $this->dateDue;
     }
 
     public function setClient(InvoicingClient $client): self
@@ -96,23 +114,47 @@ class InvoicingIntegration
         return $this;
     }
 
+    public function setDateDue(Carbon $dateDue): self
+    {
+        $this->dateDue = $dateDue;
+
+        return $this;
+    }
+
+    public function addRelatedDocument(string $relatedDocument): self
+    {
+        $this->relatedDocuments->push($relatedDocument);
+
+        return $this;
+    }
+
     public function invoice(): InvoiceData
     {
         $this->ensureHasItems();
         $this->ensureTypeIsSet();
         $this->ensureClientHasNeededDetails();
 
-        $resolve = app($this->provider)
-            ->items($this->items)
-            ->type($this->type);
+        $resolve = app($this->provider)->type($this->type());
+
+        if ($this->items()->isNotEmpty()) {
+            $resolve->items($this->items());
+        }
 
         if ($this->client()) {
             $resolve->client($this->client());
         }
 
+        if ($this->payments()->isNotEmpty()) {
+            $resolve->payments($this->payments());
+        }
+
+        if ($this->relatedDocuments()->isNotEmpty()) {
+            $resolve->relatedDocuments($this->relatedDocuments());
+        }
+
         $resolve->send();
 
-        return $resolve->invoiceData();
+        return $resolve->invoice();
     }
 
     protected function ensureTypeIsSet(): void
@@ -122,6 +164,10 @@ class InvoicingIntegration
 
     protected function ensureHasItems(): void
     {
+        if ($this->type() === DocumentType::Receipt) {
+            return;
+        }
+
         throw_if($this->items->isEmpty(), InvoiceRequiresItemsException::class);
     }
 
