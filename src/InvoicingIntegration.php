@@ -128,13 +128,22 @@ class InvoicingIntegration
         $this->ensureTypeIsSet();
         $this->ensureClientHasNeededDetails();
 
-        $resolve = app($this->provider)
-            ->items($this->items())
-            ->type($this->type())
-            ->relatedDocuments($this->relatedDocuments());
+        $resolve = app($this->provider)->type($this->type());
+
+        if ($this->items()->isNotEmpty()) {
+            $resolve->items($this->items());
+        }
 
         if ($this->client()) {
             $resolve->client($this->client());
+        }
+
+        if ($this->payments()->isNotEmpty()) {
+            $resolve->payments($this->payments());
+        }
+
+        if ($this->relatedDocuments()->isNotEmpty()) {
+            $resolve->relatedDocuments($this->relatedDocuments());
         }
 
         $resolve->send();
