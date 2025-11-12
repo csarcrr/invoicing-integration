@@ -87,4 +87,4 @@ it('makes sure it fails when no payments are set', function () {
         ->relatedDocuments(collect(['FT 10000']));
 
     $resolve->buildPayload();
-})->throws(MissingPaymentWhenIssuingReceiptException::class)->only();
+})->throws(MissingPaymentWhenIssuingReceiptException::class);
