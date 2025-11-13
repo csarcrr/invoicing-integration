@@ -9,7 +9,7 @@ it('assigns one simple item to the invoice', function () {
     $invoice->addItem(new InvoiceItem('reference-1'));
 
     expect($invoice->items()->count())->toBe(1);
-    expect($invoice->items()->first()->reference)->toBe('reference-1');
+    expect($invoice->items()->first()->reference())->toBe('reference-1');
 });
 
 it('assigns multiple items to the invoice', function () {
@@ -18,8 +18,8 @@ it('assigns multiple items to the invoice', function () {
     $invoice->addItem(new InvoiceItem(reference: 'reference-2'));
 
     expect($invoice->items()->count())->toBe(2);
-    expect($invoice->items()->first()->reference)->toBe('reference-1');
-    expect($invoice->items()->last()->reference)->toBe('reference-2');
+    expect($invoice->items()->first()->reference())->toBe('reference-1');
+    expect($invoice->items()->last()->reference())->toBe('reference-2');
 });
 
 it('can assign a custom price to an item', function () {

@@ -9,4 +9,6 @@ it('can assign price', function () {
     expect($item->price())->toBe(500);
 });
 
-it('can assign a custom tax rate', function () {})->todo();
+it('can assign a percentage discount', function () {})->todo();
+
+it('can assign a fixed discount', function () {})->todo();

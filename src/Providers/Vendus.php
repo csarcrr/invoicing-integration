@@ -181,8 +181,8 @@ class Vendus
             $this->ensureItemIsValid($item);
 
             $data = [
-                'reference' => $item->reference,
-                'qty' => $item->quantity,
+                'reference' => $item->reference(),
+                'qty' => $item->quantity(),
             ];
 
             if ($item->price()) {

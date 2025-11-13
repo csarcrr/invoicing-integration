@@ -9,19 +9,27 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 class InvoiceItem
 {
     protected ?int $price = null;
-
     protected ?string $description = null;
-
     protected DocumentItemType $type;
 
     /**
      * @param  string  $reference  - avoids duplicate products in some providers
      */
     public function __construct(
-        public string $reference,
-        public int $quantity = 1,
+        protected int|string $reference,
+        protected int $quantity = 1,
     ) {
         $this->type = DocumentItemType::Product;
+    }
+
+    public function reference(): int|string
+    {
+        return $this->reference;
+    }
+
+    public function quantity(): int
+    {
+        return $this->quantity;
     }
 
     public function description(): ?string
