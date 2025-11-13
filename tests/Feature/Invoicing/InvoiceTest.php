@@ -8,23 +8,8 @@ use CsarCrr\InvoicingIntegration\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Facades\Http;
 
-beforeEach(function () {
-    config()->set('invoicing-integration.provider', 'vendus');
-    config()->set('invoicing-integration.providers.vendus.key', '1234');
-    config()->set('invoicing-integration.providers.vendus.mode', 'test');
-    config()->set('invoicing-integration.providers.vendus.config.payments', [
-        DocumentPaymentMethod::MB->value => 19999,
-        DocumentPaymentMethod::CREDIT_CARD->value => 29999,
-        DocumentPaymentMethod::CURRENT_ACCOUNT->value => 39999,
-        DocumentPaymentMethod::MONEY->value => 49999,
-        DocumentPaymentMethod::MONEY_TRANSFER->value => 59999,
-    ]);
-});
-
-it('can invoice successfully with minimum data', function () {
-    Http::fake([
-        'vendus.pt/*' => Http::response(['number' => 'FT 10000'], 200),
-    ]);
+test('can invoice successfully with minimum data', function (string $integration, array $type) {
+    Http::fake(buildFakeHttpResponses($integration, $type));
 
     $invoice = Invoice::create();
     $invoice->addItem(new InvoiceItem('reference-1'));
@@ -33,9 +18,11 @@ it('can invoice successfully with minimum data', function () {
 
     expect($response)->toBeInstanceOf(InvoiceData::class);
     expect($response->sequence())->toBe('FT 10000');
-});
+})->with([
+    ['vendus', ['new_document']]
+])->note('this needs improvement due to being a feature for a provider');
 
-it('can invoice and emit a receipt for that invoice', function () {
+test('can invoice and emit a receipt for that invoice', function () {
     Http::fake([
         'vendus.pt/*' => Http::response(['number' => 'FT 10000'], 200),
         'vendus.pt/*' => Http::response(['number' => 'RG 10000'], 200),
@@ -59,4 +46,4 @@ it('can invoice and emit a receipt for that invoice', function () {
 
     expect($details)->toBeInstanceOf(InvoiceData::class);
     expect($details->sequence())->toBe('RG 10000');
-});
+})->note('this needs improvement due to being a feature for a provider');

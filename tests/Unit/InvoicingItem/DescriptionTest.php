@@ -10,7 +10,7 @@ it('can assign description', function () {
     expect($item->description())->toBe('Test Description');
 });
 
-it('description is null by default', function () {
+it('has description null by default', function () {
     $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
