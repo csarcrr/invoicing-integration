@@ -36,8 +36,7 @@ You can read more about AT CUD <a href="https://www.vendus.pt/ajuda/comunicacao-
 
 Payments are a tricky thing to be dealt with. Because we need to assign a method, usually poiting to a specific ID, that the system provides.
 
-> Note!
-> This current approach requires "static" ids to be configured, but the goal is to allow you to call the API and retrieve those ids yourself, so you can manage them however you intend to.
+> Note - This current approach requires "static" ids to be configured, but the goal is to allow you to call the API and retrieve those ids yourself, so you can manage them however you intend to.
 
 You can find more about the Payment Methods <a href="https://www.vendus.pt/ajuda/adicionar-metodos-pagamento/" target="_blank">here</a>.
 
