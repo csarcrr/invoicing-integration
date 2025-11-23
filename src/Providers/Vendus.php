@@ -10,7 +10,8 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
-use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -145,7 +146,9 @@ class Vendus
             return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
         })->toArray();
 
-        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
+        throw_if(!empty($messages), RequestFailedException::class, implode('; ', $messages));
+
+        throw new Exception('The integration API request failed for an unknown reason.');
     }
 
     protected function setDocumentType()

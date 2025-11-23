@@ -5,7 +5,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
-use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 it('assigns a client to an invoice', function () {
     $invoice = Invoice::create();

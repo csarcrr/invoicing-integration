@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 it('assigns one simple item to the invoice', function () {
     $invoice = Invoice::create();

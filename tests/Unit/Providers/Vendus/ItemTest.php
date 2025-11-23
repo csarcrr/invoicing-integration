@@ -13,7 +13,3 @@ it('fails when item format is not valid', function () {
 
     $resolve->buildPayload();
 })->throws(InvoiceItemIsNotValidException::class);
-
-it('is able to send the item type', function () {})->todo();
-
-it('is able to send a custom tax rate', function () {})->todo();

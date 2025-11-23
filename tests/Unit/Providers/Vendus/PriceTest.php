@@ -2,9 +2,9 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
-it('has a valid price payload', function () {
+it('has a valid final price payload', function () {
     $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 

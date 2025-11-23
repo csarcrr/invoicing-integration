@@ -11,22 +11,21 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceTypeIsNotSetException;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use Illuminate\Support\Collection;
 
 class InvoicingIntegration
 {
     protected ?InvoiceClient $client = null;
-
     protected ?DocumentType $type = null;
+    protected ?InvoiceTransportDetails $transport = null;
 
     protected Carbon $date;
-
     protected Carbon $dateDue;
 
     protected Collection $payments;
-
     protected Collection $items;
-
     protected Collection $relatedDocuments;
 
     public function __construct(
@@ -77,6 +76,19 @@ class InvoicingIntegration
     public function dateDue(): Carbon
     {
         return $this->dateDue;
+    }
+
+    public function transport(): ?InvoiceTransportDetails
+    {
+        return $this->transport;
+    }
+
+
+
+    public function setTransport(?InvoiceTransportDetails $transport): self
+    {
+        $this->transport = $transport;
+        return $this;
     }
 
     public function setClient(InvoiceClient $client): self

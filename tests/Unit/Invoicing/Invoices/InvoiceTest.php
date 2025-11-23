@@ -5,7 +5,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
-use CsarCrr\InvoicingIntegration\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Facades\Http;
 
@@ -45,8 +45,16 @@ it('can add multiple items', function () {
     expect($invoice->items())->toContain($item3);
 });
 
-it('can set a due date on the invoice', function () {})->todo();
+it('can set a due date on the invoice', function () {
+    $dueDate = now()->addDays(30);
+
+    $invoice = Invoice::create();
+    $invoice->setDateDue($dueDate);
+
+    expect($invoice->dateDue())->toEqual($dueDate);
+});
+
 it('can set a related document', function () {})->todo();
-it('can receive PDF data output', function () {})->todo();
-it('can receive ESCPOS data output', function () {})->todo();
-it('can receive AT CUD QR CODE data', function () {})->todo();
+// it('can receive PDF data output', function () {})->todo();
+// it('can receive ESCPOS data output', function () {})->todo();
+// it('can receive AT CUD QR CODE data', function () {})->todo();

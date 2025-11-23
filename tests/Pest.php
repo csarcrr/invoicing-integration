@@ -30,14 +30,21 @@ uses(TestCase::class)->beforeEach(function () {
     ]);
 })->group('Feature Tests')->in('Feature');
 
-function buildFakeHttpResponses(string $integration, array $type): array
+function buildFakeHttpResponses(array $integration, array $type): array
 {
     $responses = [];
+    [$integration, $status] = $integration;
 
-    foreach ($type as $t) {
+    foreach ($type as $type => $customData) {
+
+        if (is_int($type)) {
+            $type = $customData;
+            $customData = [];
+        }
+
         switch ($integration) {
             case 'vendus':
-                $responses = array_merge($responses, vendus($t));
+                $responses = array_merge($responses, vendus($type, $status, $customData));
                 break;
         }
     }
@@ -45,11 +52,11 @@ function buildFakeHttpResponses(string $integration, array $type): array
     return $responses;
 }
 
-function vendus(string $name): array
+function vendus(string $name, $status = 200, array $customData = []): array
 {
     $array = [
         'new_document' => [
-            'https://www.vendus.pt/ws/*/documents/' => Http::response(['number' => 'FT 10000'], 200)
+            'https://www.vendus.pt/ws/*/documents/' => Http::response(array_merge(['number' => 'FT 10000'], $customData), $status)
         ]
     ];
 
