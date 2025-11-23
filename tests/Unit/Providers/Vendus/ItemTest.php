@@ -40,4 +40,4 @@ it('has a type', function () {
     $resolve->buildPayload();
 
     expect($resolve->payload()->get('items')->first()['type_id'])->toBe('S');
-})->only();
+});
