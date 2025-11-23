@@ -61,7 +61,7 @@
 | Description            | ✅        | ✅     |
 | Price                  | ✅        | ✅     |
 | Tax                    | ✅        | ✅     |
-| Tax exempt with reason | ✅        | ❌     |
+| Tax exempt with reason | ✅        | ✅     |
 | Type                   | ✅        | ✅     |
 | Percentage Discount    | ✅        | ✅     |
 | Amount Discount        | ✅        | ✅     |

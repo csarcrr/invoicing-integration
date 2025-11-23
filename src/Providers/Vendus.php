@@ -280,6 +280,14 @@ class Vendus
             $data['tax_id'] = $item->tax()->vendus();
         }
 
+        if ($item->taxExemption()) {
+            $data['tax_exemption'] = $item->taxExemption()->value;
+
+            if ($item->taxExemptionLaw()) {
+                $data['tax_exemption_law'] = $item->taxExemptionLaw();
+            }
+        }
+
         return $data;
     }
 

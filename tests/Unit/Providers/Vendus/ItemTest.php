@@ -4,6 +4,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
@@ -80,4 +81,39 @@ it('has the correct tax applied', function () {
     $resolve->buildPayload();
 
     expect($resolve->payload()->get('items')->first()['tax_id'])->toBe('RED');
+});
+
+it('has applies correctly the tax exemption without law', function () {
+    $item = new InvoiceItem();
+    $item->setReference('reference-1');
+    $item->setTax(DocumentItemTax::EXEMPT);
+    $item->setTaxExemption(TaxExemptionReason::M01);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]));
+
+    $resolve->buildPayload();
+
+    $data = $resolve->payload()->get('items')->first();
+
+    expect($data['tax_exemption'])->toBe(TaxExemptionReason::M01->value);
+    expect(!array_key_exists('tax_exemption_law', $data))->toBe(true);
+});
+
+it('has applies correctly the tax exemption with law', function () {
+    $item = new InvoiceItem();
+    $item->setReference('reference-1');
+    $item->setTax(DocumentItemTax::EXEMPT);
+    $item->setTaxExemption(TaxExemptionReason::M01);
+    $item->setTaxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]));
+
+    $resolve->buildPayload();
+
+    $data = $resolve->payload()->get('items')->first();
+
+    expect($data['tax_exemption'])->toBe(TaxExemptionReason::M01->value);
+    expect($data['tax_exemption_law'])->toBe('Artigo 16.º, n.º 6, alínea a) do CIVA');
 });

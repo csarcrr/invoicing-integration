@@ -61,24 +61,38 @@ class InvoiceItem
         return $this->tax;
     }
 
-    public function taxExemption(?TaxExemptionReason $taxExemptionReason = null): TaxExemptionReason|self
+    public function taxExemption(): ?TaxExemptionReason
+    {
+        return $this->taxExemptionReason;
+    }
+
+    public function setTaxExemption(?TaxExemptionReason $taxExemptionReason = null): self
     {
         throw_if(
             $this->tax() !== DocumentItemTax::EXEMPT,
             ExemptionCanOnlyBeUsedWithExemptTaxException::class
         );
 
-        return $this->taxExemptionReason ?? $this->taxExemptionReason = $taxExemptionReason;
+        $this->taxExemptionReason = $taxExemptionReason;
+
+        return $this;
     }
 
-    public function taxExemptionLaw(?string $taxExemptionLaw = null): string|self
+    public function taxExemptionLaw(): ?string
+    {
+        return $this->taxExemptionLaw;
+    }
+
+    public function setTaxExemptionLaw(string $taxExemptionLaw): self
     {
         throw_if(
             !$this->taxExemptionReason,
             ExemptionLawCanOnlyBeUsedWithExemptionException::class
         );
 
-        return $this->taxExemptionLaw ?? $this->taxExemptionLaw = $taxExemptionLaw;
+        $this->taxExemptionLaw = $taxExemptionLaw;
+
+        return $this;
     }
 
     public function price(): ?int

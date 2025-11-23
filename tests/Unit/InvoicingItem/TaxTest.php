@@ -16,8 +16,8 @@ it('can assign a different tax rate', function () {
 it('can assign a tax exemption and a respective law', function () {
     $item = new InvoiceItem('reference-1');
     $item->setTax(DocumentItemTax::EXEMPT);
-    $item->taxExemption(TaxExemptionReason::M01);
-    $item->taxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
+    $item->setTaxExemption(TaxExemptionReason::M01);
+    $item->setTaxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
 
     expect($item->tax())->toBe(DocumentItemTax::EXEMPT);
     expect($item->taxExemption())->toBe(TaxExemptionReason::M01);
@@ -29,11 +29,11 @@ it('can assign a tax exemption and a respective law', function () {
 it('throws error when assigning exemption to non-exempt defined product', function () {
     $item = new InvoiceItem('reference-1');
     $item->setTax(DocumentItemTax::REDUCED);
-    $item->taxExemption(TaxExemptionReason::M01);
+    $item->setTaxExemption(TaxExemptionReason::M01);
 })->throws(ExemptionCanOnlyBeUsedWithExemptTaxException::class);
 
 it('throws error when assigning exemption law to non-exempt defined product', function () {
     $item = new InvoiceItem('reference-1');
     $item->setTax(DocumentItemTax::REDUCED);
-    $item->taxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
+    $item->setTaxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
 })->throws(ExemptionLawCanOnlyBeUsedWithExemptionException::class);
