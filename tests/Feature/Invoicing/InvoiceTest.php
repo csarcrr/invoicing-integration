@@ -49,3 +49,5 @@ test(
 )->with([
     [['vendus', 200], ['new_document', 'new_document' => ['number' => 'RG 10000']]]
 ]);
+
+test('can handle integration errors', function () {})->todo();

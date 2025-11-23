@@ -8,9 +8,11 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -18,17 +20,12 @@ use Illuminate\Support\Facades\Http;
 class Vendus
 {
     protected ?InvoiceClient $client = null;
-
     protected DocumentType $type = DocumentType::Invoice;
-
     protected InvoiceData $invoice;
-
+    protected ?InvoiceTransportDetails $transportDetails = null;
     protected Collection $items;
-
     protected Collection $payments;
-
     protected Collection $relatedDocuments;
-
     protected Collection $data;
 
     public function __construct(
@@ -42,6 +39,7 @@ class Vendus
             'items' => collect(),
             'payments' => collect(),
             'invoices' => collect(),
+            'movement_of_goods' => collect(),
         ]);
 
         $this->payments = collect();
@@ -97,6 +95,13 @@ class Vendus
         return $this;
     }
 
+    public function transportDetails(InvoiceTransportDetails $transportDetails): self
+    {
+        $this->transportDetails = $transportDetails;
+
+        return $this;
+    }
+
     public function buildPayload(): void
     {
         $this->setDocumentType();
@@ -104,6 +109,7 @@ class Vendus
         $this->ensureItemsFormat();
         $this->ensurePaymentsFormat();
         $this->ensureRelatedDocumentsFormat();
+        $this->ensureTransportDetailsFormat();
 
         $this->ensureNoEmptyItemsArray();
     }
@@ -241,6 +247,48 @@ class Vendus
         $this->relatedDocuments->each(function (string $id) {
             $this->data->get('invoices')->push(collect(['document_number' => (string) $id]));
         });
+    }
+
+    protected function ensureTransportDetailsFormat(): void
+    {
+        if (!$this->transportDetails) {
+            return;
+        }
+
+        if (!in_array($this->type, [DocumentType::Invoice, DocumentType::Transport])) {
+            return;
+        }
+
+        throw_if(
+            is_null($this->transportDetails->origin()->date()),
+            NeedsDateToSetLoadPointException::class
+        );
+
+        $this->data->get('movement_of_goods')->put('loadpoint', [
+            'date' => $this->transportDetails->origin()->date(),
+            'time' => $this->transportDetails->origin()->time(),
+            'address' => $this->transportDetails->origin()->address(),
+            'postalcode' => $this->transportDetails->origin()->postalCode(),
+            'city' => $this->transportDetails->origin()->city(),
+            'country' => $this->transportDetails->origin()->country(),
+        ]);
+
+        $this->data->get('movement_of_goods')->put('landpoint', [
+            'date' => $this->transportDetails->destination()->date(),
+            'time' => $this->transportDetails->destination()->time(),
+            'address' => $this->transportDetails->destination()->address(),
+            'postalcode' => $this->transportDetails->destination()->postalCode(),
+            'city' => $this->transportDetails->destination()->city(),
+            'country' => $this->transportDetails->destination()->country(),
+        ]);
+
+        if ($this->transportDetails->vehicleLicensePlate()) {
+            $this->data->get('movement_of_goods')
+                ->put(
+                    'vehicle_id',
+                    $this->transportDetails->vehicleLicensePlate()
+                );
+        }
     }
 
     protected function ensureNoEmptyItemsArray()

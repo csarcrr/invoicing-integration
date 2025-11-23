@@ -75,8 +75,10 @@
 
 ## Transport
 
-|                                              | Invoicing | Vendus |
-| -------------------------------------------- | --------- | ------ |
-| Origin (address, postal_code, city, country) | ✅        | ❌     |
-| Origin (address, postal_code, city, country) | ✅        | ❌     |
-| Global Invoice Transport                     | ❌        | ❌     |
+|                                                   | Invoicing | Vendus |
+| ------------------------------------------------- | --------- | ------ |
+| Origin (address, postal_code, city, country)      | ✅        | ✅     |
+| Destination (address, postal_code, city, country) | ✅        | ✅     |
+| Global Invoice Transport                          | ❌        | ❌     |
+| Choose integration store for stock movement       | ❌        | ❌     |
+| Set Vehicle License Plate                         | ❌        | ❌     |
