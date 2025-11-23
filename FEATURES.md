@@ -64,8 +64,8 @@
 | Different Tax Rates    | ✅        | ❌     |
 | Tax exempt with reason | ✅        | ❌     |
 | Type                   | ✅        | ✅     |
-| Percentage Discount    | ✅        | ❌     |
-| Amount Discount        | ✅        | ❌     |
+| Percentage Discount    | ✅        | ✅     |
+| Amount Discount        | ✅        | ✅     |
 
 ## Payment
 

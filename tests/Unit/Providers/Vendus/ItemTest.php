@@ -41,3 +41,29 @@ it('has a type', function () {
 
     expect($resolve->payload()->get('items')->first()['type_id'])->toBe('S');
 });
+
+it('has a percentage discount', function () {
+    $item = new InvoiceItem();
+    $item->setReference('reference-1');
+    $item->setPercentageDiscount(10);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]));
+
+    $resolve->buildPayload();
+
+    expect($resolve->payload()->get('items')->first()['discount_percentage'])->toBe(10);
+});
+
+it('has an amount discount', function () {
+    $item = new InvoiceItem();
+    $item->setReference('reference-1');
+    $item->setAmountDiscount(500);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]));
+
+    $resolve->buildPayload();
+
+    expect($resolve->payload()->get('items')->first()['discount_amount'])->toBe(5.0);
+});

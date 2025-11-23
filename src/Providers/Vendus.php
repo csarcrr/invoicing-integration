@@ -268,6 +268,14 @@ class Vendus
             $data['type_id'] = $item->type()->vendus();
         }
 
+        if ($item->percentageDiscount()) {
+            $data['discount_percentage'] = $item->percentageDiscount();
+        }
+
+        if ($item->amountDiscount()) {
+            $data['discount_amount'] = (float) $item->amountDiscount() / 100;
+        }
+
         return $data;
     }
 
