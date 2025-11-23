@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
@@ -66,4 +67,17 @@ it('has an amount discount', function () {
     $resolve->buildPayload();
 
     expect($resolve->payload()->get('items')->first()['discount_amount'])->toBe(5.0);
+});
+
+it('has the correct tax applied', function () {
+    $item = new InvoiceItem();
+    $item->setReference('reference-1');
+    $item->setTax(DocumentItemTax::REDUCED);
+
+    $resolve = app(config('invoicing-integration.provider'))
+        ->items(collect([$item]));
+
+    $resolve->buildPayload();
+
+    expect($resolve->payload()->get('items')->first()['tax_id'])->toBe('RED');
 });

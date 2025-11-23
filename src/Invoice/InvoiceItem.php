@@ -19,7 +19,7 @@ class InvoiceItem
     protected ?string $description = null;
     protected DocumentItemType $type;
 
-    protected DocumentItemTax $tax;
+    protected ?DocumentItemTax $tax = null;
     protected ?TaxExemptionReason $taxExemptionReason = null;
     protected ?string $taxExemptionLaw = null;
 
@@ -49,9 +49,16 @@ class InvoiceItem
         return $this->description;
     }
 
-    public function tax(?DocumentItemTax $tax = null): DocumentItemTax|self
+    public function setTax(?DocumentItemTax $tax = null): self
     {
-        return $this->tax ?? $this->tax = $tax;
+        $this->tax = $tax;
+
+        return $this;
+    }
+
+    public function tax(): ?DocumentItemTax
+    {
+        return $this->tax;
     }
 
     public function taxExemption(?TaxExemptionReason $taxExemptionReason = null): TaxExemptionReason|self

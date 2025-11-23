@@ -8,14 +8,14 @@ use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 it('can assign a different tax rate', function () {
     $item = new InvoiceItem('reference-1');
-    $item->tax(DocumentItemTax::REDUCED);
+    $item->setTax(DocumentItemTax::REDUCED);
 
     expect($item->tax())->toBe(DocumentItemTax::REDUCED);
 });
 
 it('can assign a tax exemption and a respective law', function () {
     $item = new InvoiceItem('reference-1');
-    $item->tax(DocumentItemTax::EXEMPT);
+    $item->setTax(DocumentItemTax::EXEMPT);
     $item->taxExemption(TaxExemptionReason::M01);
     $item->taxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
 
@@ -28,12 +28,12 @@ it('can assign a tax exemption and a respective law', function () {
 
 it('throws error when assigning exemption to non-exempt defined product', function () {
     $item = new InvoiceItem('reference-1');
-    $item->tax(DocumentItemTax::REDUCED);
+    $item->setTax(DocumentItemTax::REDUCED);
     $item->taxExemption(TaxExemptionReason::M01);
 })->throws(ExemptionCanOnlyBeUsedWithExemptTaxException::class);
 
 it('throws error when assigning exemption law to non-exempt defined product', function () {
     $item = new InvoiceItem('reference-1');
-    $item->tax(DocumentItemTax::REDUCED);
+    $item->setTax(DocumentItemTax::REDUCED);
     $item->taxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
 })->throws(ExemptionLawCanOnlyBeUsedWithExemptionException::class);

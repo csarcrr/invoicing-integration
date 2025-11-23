@@ -276,6 +276,10 @@ class Vendus
             $data['discount_amount'] = (float) $item->amountDiscount() / 100;
         }
 
+        if ($item->tax()) {
+            $data['tax_id'] = $item->tax()->vendus();
+        }
+
         return $data;
     }
 

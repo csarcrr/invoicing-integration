@@ -60,8 +60,7 @@
 | Item ID                | ❌        | ❌     |
 | Description            | ✅        | ✅     |
 | Price                  | ✅        | ✅     |
-| Tax                    | ✅        | ❌     |
-| Different Tax Rates    | ✅        | ❌     |
+| Tax                    | ✅        | ✅     |
 | Tax exempt with reason | ✅        | ❌     |
 | Type                   | ✅        | ✅     |
 | Percentage Discount    | ✅        | ✅     |
