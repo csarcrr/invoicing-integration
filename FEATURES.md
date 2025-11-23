@@ -58,12 +58,12 @@
 | ---------------------- | --------- | ------ |
 | Reference              | ✅        | ✅     |
 | Item ID                | ❌        | ❌     |
-| Description            | ✅        | ❌     |
+| Description            | ✅        | ✅     |
 | Price                  | ✅        | ✅     |
 | Tax                    | ✅        | ❌     |
 | Different Tax Rates    | ✅        | ❌     |
 | Tax exempt with reason | ✅        | ❌     |
-| Type                   | ✅        | ❌     |
+| Type                   | ✅        | ✅     |
 | Percentage Discount    | ✅        | ❌     |
 | Amount Discount        | ✅        | ❌     |
 

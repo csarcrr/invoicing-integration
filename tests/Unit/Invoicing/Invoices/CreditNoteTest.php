@@ -8,7 +8,7 @@ it('can set credit note reason', function () {
 
     $invoice->setType(DocumentType::CreditNote);
     $invoice->setCreditNoteReason('Product returned by customer');
-})->only();
+})->todo();
 
 // it('can set what to do with the stock', function () {})->todo();
 

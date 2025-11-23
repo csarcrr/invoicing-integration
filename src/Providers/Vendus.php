@@ -188,9 +188,7 @@ class Vendus
                 'qty' => $item->quantity(),
             ];
 
-            if ($item->price()) {
-                $data['gross_price'] = (float) ($item->price() / 100);
-            }
+            $data = $this->buildConditionalItemData($item, $data);
 
             $this->data->get('items')->push($data);
         }
@@ -254,6 +252,23 @@ class Vendus
 
             return ! is_null($value);
         });
+    }
+
+    private function buildConditionalItemData(InvoiceItem $item, array $data): array
+    {
+        if ($item->price()) {
+            $data['gross_price'] = (float) ($item->price() / 100);
+        }
+
+        if ($item->description()) {
+            $data['description'] = $item->description();
+        }
+
+        if ($item->type()) {
+            $data['type_id'] = $item->type()->vendus();
+        }
+
+        return $data;
     }
 
     private function guardAgainstMissingPaymentConfig(): void
