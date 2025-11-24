@@ -9,13 +9,24 @@ on:
       - "phpstan.neon.dist"
       - ".github/workflows/phpstan.yml"
 
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "**.php"
+      - "phpstan.neon.dist"
+      - ".github/workflows/phpstan.yml"
+
 jobs:
   phpstan:
     name: phpstan
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -28,3 +39,23 @@ jobs:
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan --error-format=github
+
+      - name: Run auto-fixer (optional — replace with your fixer)
+        run: |
+          # --- Replace the following line with your actual fixer command, e.g.:
+          # vendor/bin/php-cs-fixer fix
+          # or: composer fix
+          echo "No fixer configured. Replace this step with your fixer command." 
+
+      - name: Create pull request with fixes (only if there are changes)
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "ci: apply automatic fixes from PHPStan workflow"
+          title: "chore: automatic fixes from PHPStan workflow"
+          body: |
+            This PR was created automatically by the PHPStan workflow.
+            It contains automatic fixes (formatting / minor code fixes). Please review and merge.
+          base: main
+          branch: ci/phpstan-autofix-${{ github.run_id }}
+          labels: "autofix, phpstan"

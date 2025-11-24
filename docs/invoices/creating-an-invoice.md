@@ -15,13 +15,16 @@ An invoice is a document that records the sale of goods or services, including c
 	$integration = Invoice::create(); // or your configured provider
 	```
 
-2. **Set the Client**
+
+2. **Set the Client (Optional for Final Consumer)**
 	```php
 	use CsarCrr\InvoicingIntegration\InvoiceClient;
 
-	$client = new InvoiceClient(vat: 'PT123456789', name: 'John Doe');
+	// For regular clients:
+	$client = new InvoiceClient(vat: '123456789', name: 'John Doe');
 	$integration->setClient($client);
 	```
+	> **Final Consumer:** If you are invoicing to a final consumer, simply do not set any client information (do not call `setClient`). The invoice will be issued without client details.
 
 3. **Add Items**
 	```php
@@ -56,8 +59,13 @@ use CsarCrr\InvoicingIntegration\InvoicePayment;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 
 $integration = Invoice::create();
+
+// For regular clients:
 $client = new InvoiceClient(vat: '123456789', name: 'John Doe');
 $integration->setClient($client);
+
+// For final consumer, do NOT set any client:
+// (do not call setClient)
 
 $item = new InvoiceItem(reference: 'SKU-001', quantity: 2);
 $item->setPrice(1000);
@@ -72,8 +80,9 @@ $invoiceData = $integration->invoice();
 
 ---
 
-**Note:**
-- The invoice requires at least one client, one item, and one payment.
-- Make sure your provider supports invoice documents and the required fields.
 
-For more details, see the [API Reference](../README.md) and [Providers Configuration](../providers/cegid-vendus/configuration.md).
+**Note:**
+- For regular invoices, you must set at least one client, one item, and one payment.
+- For final consumer invoices, do not set any client information.
+
+For more details, see the [API Reference](../api-reference.md) and [Providers Configuration](../providers/cegid-vendus/configuration.md).
