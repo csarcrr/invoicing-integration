@@ -1,22 +1,29 @@
-# How to get started
+# Getting Started
 
-In your Laravel project run
+This guide will help you install and configure the Invoicing Integration package in your Laravel project.
+
+## 1. Install the Package
+
+Run the following command in your Laravel project:
 
 ```bash
 composer require csarcrr/invoicing-integration
 ```
 
-After the following to publish the config
+## 2. Publish the Configuration
+
+Publish the configuration file with:
 
 ```bash
 php artisan vendor:publish --tag="invoicing-integration-config"
 ```
 
-The config will currently look like this
+## 3. Configure the Provider
+
+The default configuration will look like this:
 
 ```php
 <?php
-
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 
 return [
@@ -39,4 +46,8 @@ return [
 ];
 ```
 
-Since we currently only support Cegid Vendus, you should check out the <a href="/providers/Cegid Vendus/configuration/">Cegid Vendus Config</a> section to learn more about these configurations.
+> **Note:** Currently, only Cegid Vendus is supported. For more details on provider configuration, see [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md).
+
+---
+
+Next: [Creating an Invoice](invoices/creating-an-invoice.md)

@@ -16,7 +16,7 @@ class InvoiceItem
     protected ?int $percentageDiscount = null;
     protected ?int $amountDiscount = null;
 
-    protected ?string $description = null;
+    protected ?string $note = null;
     protected DocumentItemType $type;
 
     protected ?DocumentItemTax $tax = null;
@@ -44,9 +44,9 @@ class InvoiceItem
         return $this->quantity;
     }
 
-    public function description(): ?string
+    public function note(): ?string
     {
-        return $this->description;
+        return $this->note;
     }
 
     public function setTax(?DocumentItemTax $tax = null): self
@@ -142,9 +142,9 @@ class InvoiceItem
         $this->price = $price;
     }
 
-    public function setDescription(string $description): void
+    public function setNote(string $note): void
     {
-        $this->description = $description;
+        $this->note = $note;
     }
 
     public function setType(DocumentItemType $type): self

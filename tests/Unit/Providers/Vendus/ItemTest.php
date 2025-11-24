@@ -21,14 +21,14 @@ it('fails when item format is not valid', function () {
 it('has a description', function () {
     $item = new InvoiceItem();
     $item->setReference('reference-1');
-    $item->setDescription('Test Item Description');
+    $item->setNote('Test Item note');
 
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
     $resolve->buildPayload();
 
-    expect($resolve->payload()->get('items')->first()['description'])->toBe('Test Item Description');
+    expect($resolve->payload()->get('items')->first()['text'])->toBe('Test Item note');
 });
 
 it('has a type', function () {

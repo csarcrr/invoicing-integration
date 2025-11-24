@@ -308,8 +308,8 @@ class Vendus
             $data['gross_price'] = (float) ($item->price() / 100);
         }
 
-        if ($item->description()) {
-            $data['description'] = $item->description();
+        if ($item->note()) {
+            $data['text'] = $item->note();
         }
 
         if ($item->type()) {
