@@ -29,13 +29,6 @@ jobs:
 
       - name: Run Laravel Pint (fixer)
         uses: aglipanci/laravel-pint-action@v2.6.0
-        with:
-          # podes ajustar conforme precisares, ex:
-          # preset: laravel
-          # pintVersion: 1.8.0
-          # onlyDirty: true
-          # configPath: "pint.json"
-          #
 
       - name: Show changed files
         run: |
