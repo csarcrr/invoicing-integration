@@ -17,11 +17,14 @@ on:
       - "phpstan.neon.dist"
       - ".github/workflows/phpstan.yml"
 
+permissions:
+  contents: write
+
 jobs:
   phpstan:
     name: phpstan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -34,28 +37,77 @@ jobs:
           php-version: "8.4"
           coverage: none
 
+      - name: Show PHP info (debug)
+        run: |
+          php -v
+          php -m | sort
+
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan --error-format=github
+      - name: Ensure PHPStan tmpDir exists
+        run: |
+          mkdir -p build/phpstan
+          chmod -R 0777 build/phpstan || true
+
+      - name: Run PHPStan (single attempt; retry with debug on failure)
+        run: |
+          set -o pipefail
+          echo "Running phpstan (normal run)..."
+          ./vendor/bin/phpstan analyse --no-progress --error-format=github --memory-limit=2G || {
+            echo "PHPStan failed — retrying with debug output..."
+            ./vendor/bin/phpstan analyse --debug --no-progress --memory-limit=2G || true
+            exit 1
+          }
 
       - name: Run auto-fixer (optional — replace with your fixer)
         run: |
           # --- Replace the following line with your actual fixer command, e.g.:
           # vendor/bin/php-cs-fixer fix
           # or: composer fix
-          echo "No fixer configured. Replace this step with your fixer command." 
+          echo "No fixer configured. Replace this step with your fixer command."
 
-      - name: Create pull request with fixes (only if there are changes)
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "ci: apply automatic fixes from PHPStan workflow"
-          title: "chore: automatic fixes from PHPStan workflow"
-          body: |
-            This PR was created automatically by the PHPStan workflow.
-            It contains automatic fixes (formatting / minor code fixes). Please review and merge.
-          base: main
-          branch: ci/phpstan-autofix-${{ github.run_id }}
-          labels: "autofix, phpstan"
+      - name: Show changed files
+        run: |
+          echo "=== git status ==="
+          git status --porcelain || true
+          echo "=== git diff (names) ==="
+          git --no-pager diff --name-only || true
+
+      - name: Detect changes
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "found changes"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "no changes"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create branch, commit and push fixes
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          BRANCH: ci/phpstan-autofix-${{ github.run_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "ci: apply automatic fixes from PHPStan workflow" || echo "nothing to commit"
+          git push --set-upstream origin "$BRANCH"
+
+      - name: Create Pull Request (if changes) using gh
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="ci/phpstan-autofix-${{ github.run_id }}"
+          gh auth status || true
+          gh pr create \
+            --title "chore: automatic fixes from PHPStan workflow" \
+            --body "This PR was created automatically by the PHPStan workflow. It contains automatic fixes (formatting / minor code fixes). Please review and merge." \
+            --base main \
+            --head "$BRANCH" \
+            --label "autofix" \
+            --label "phpstan"
