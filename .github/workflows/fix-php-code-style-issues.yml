@@ -6,6 +6,12 @@ on:
       - main
     paths:
       - "**.php"
+  # também corre em pushes a branches (exceto main) para permitir autofix a partir de branches
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "**.php"
 
 permissions:
   contents: write
@@ -13,18 +19,34 @@ permissions:
 jobs:
   php-code-styling:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
-          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref }}
 
-      - name: Fix PHP code style issues
-        uses: aglipanci/laravel-pint-action@2.6
+      - name: Run Laravel Pint (fixer)
+        uses: aglipanci/laravel-pint-action@v2.6
+        # se quiseres ajustar flags do pint, podes adicionar `with:` e `args:` aqui
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v6
+      # Optional: show git status to debug (remover se não quiseres)
+      - name: Show changed files
+        run: |
+          git status --porcelain
+          git --no-pager diff --name-only
+
+      - name: Create pull request with fixes (only if there are changes)
+        uses: peter-evans/create-pull-request@v4
         with:
-          commit_message: Fix styling
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "ci: apply PHP Pint automatic fixes"
+          title: "chore: automatic fixes (PHP Pint)"
+          body: |
+            This PR was created automatically by the workflow and contains code style fixes applied by Laravel Pint.
+            Please review and merge if OK.
+          base: main
+          branch: ci/pint-autofix-${{ github.run_id }}
+          labels: "autofix, pint"
