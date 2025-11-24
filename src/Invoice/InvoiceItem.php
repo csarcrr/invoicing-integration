@@ -20,7 +20,7 @@ class InvoiceItem
 
     protected ?string $note = null;
 
-    protected DocumentItemType $type;
+    protected ?DocumentItemType $type = null;
 
     protected ?DocumentItemTax $tax = null;
 
@@ -105,7 +105,7 @@ class InvoiceItem
         return $this->price;
     }
 
-    public function type(): DocumentItemType
+    public function type(): ?DocumentItemType
     {
         return $this->type;
     }
