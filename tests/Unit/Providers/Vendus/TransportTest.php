@@ -101,11 +101,9 @@ it('formats transport vehicle license plate correctly', function () {
 
     $resolve->buildPayload();
 
-    dd($resolve->payload());
-
     expect($resolve->payload()->get('movement_of_goods')['vehicle_id'])
         ->toEqual('ABC-1234');
-})->only();
+});
 
 it('fails when no date is set for load point', function () {
     $item = new InvoiceItem(reference: 'reference-1');

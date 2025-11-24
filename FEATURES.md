@@ -81,4 +81,4 @@
 | Destination (address, postal_code, city, country) | ✅        | ✅     |
 | Global Invoice Transport                          | ❌        | ❌     |
 | Choose integration store for stock movement       | ❌        | ❌     |
-| Set Vehicle License Plate                         | ❌        | ❌     |
+| Set Vehicle License Plate                         | ✅        | ✅     |
