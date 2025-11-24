@@ -15,7 +15,7 @@ it('can set origin details', function () {
     $invoice = Invoice::create();
     $invoice->setType(DocumentType::Transport);
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now()->addWeek());
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St, Springfield');
@@ -34,7 +34,7 @@ it('can set destination details', function () {
     $invoice = Invoice::create();
     $invoice->setType(DocumentType::Transport);
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
     $transport->destination()->date(now()->addWeek());
     $transport->destination()->time(now());
     $transport->destination()->address('123 Main St, Springfield');
@@ -53,7 +53,7 @@ it('can set a vehicle license plate', function () {
     $invoice = Invoice::create();
     $invoice->setType(DocumentType::Transport);
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
     $transport->vehicleLicensePlate('ABC-1234');
 
     $invoice->setTransport($transport);

@@ -2,8 +2,8 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 use Illuminate\Support\Facades\Http;
 
 it('clears empty data entries', function () {

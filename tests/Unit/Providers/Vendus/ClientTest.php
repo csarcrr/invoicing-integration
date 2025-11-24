@@ -1,9 +1,8 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 
 it('has a valid client payload', function () {
     $item = new InvoiceItem(reference: 'reference-1');

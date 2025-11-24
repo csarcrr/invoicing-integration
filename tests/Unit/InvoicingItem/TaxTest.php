@@ -2,8 +2,8 @@
 
 use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
-use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 it('can assign a different tax rate', function () {
