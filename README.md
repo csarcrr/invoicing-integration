@@ -5,6 +5,10 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
+## Current Features
+
+For a full list of features and capabilities, please see [FEATURES.md](FEATURES.md).
+
 ## Installation
 
 You can install the package via composer:
@@ -53,11 +57,11 @@ return [
 
 $integration = Invoice::create();
 
-$integration->addItem((new InvoicingItem(reference: '31054308', quantity: 1)));
-$integration->addItem(new InvoicingItem(reference: '09818943', quantity: 5));
+$integration->addItem((new InvoiceItem(reference: '31054308', quantity: 1)));
+$integration->addItem(new InvoiceItem(reference: '09818943', quantity: 5));
 
 // Optionally you can set a client
-$integration->setClient(new InvoicingClient(vat: '245824820'));
+$integration->setClient(new InvoiceClient(vat: '245824820'));
 
 $invoice = $integration->invoice();
 

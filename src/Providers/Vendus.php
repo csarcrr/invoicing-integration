@@ -8,19 +8,24 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\InvoicingClient;
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class Vendus
 {
-    protected ?InvoicingClient $client = null;
+    protected ?InvoiceClient $client = null;
 
     protected DocumentType $type = DocumentType::Invoice;
 
     protected InvoiceData $invoice;
+
+    protected ?InvoiceTransportDetails $transportDetails = null;
 
     protected Collection $items;
 
@@ -41,6 +46,7 @@ class Vendus
             'items' => collect(),
             'payments' => collect(),
             'invoices' => collect(),
+            'movement_of_goods' => collect(),
         ]);
 
         $this->payments = collect();
@@ -56,7 +62,7 @@ class Vendus
         return $this;
     }
 
-    public function client(InvoicingClient $client): self
+    public function client(InvoiceClient $client): self
     {
         $this->client = $client;
 
@@ -96,6 +102,13 @@ class Vendus
         return $this;
     }
 
+    public function transportDetails(InvoiceTransportDetails $transportDetails): self
+    {
+        $this->transportDetails = $transportDetails;
+
+        return $this;
+    }
+
     public function buildPayload(): void
     {
         $this->setDocumentType();
@@ -103,6 +116,7 @@ class Vendus
         $this->ensureItemsFormat();
         $this->ensurePaymentsFormat();
         $this->ensureRelatedDocumentsFormat();
+        $this->ensureTransportDetailsFormat();
 
         $this->ensureNoEmptyItemsArray();
     }
@@ -146,6 +160,8 @@ class Vendus
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
+
+        throw new Exception('The integration API request failed for an unknown reason.');
     }
 
     protected function setDocumentType()
@@ -181,13 +197,11 @@ class Vendus
             $this->ensureItemIsValid($item);
 
             $data = [
-                'reference' => $item->reference,
-                'qty' => $item->quantity,
+                'reference' => $item->reference(),
+                'qty' => $item->quantity(),
             ];
 
-            if ($item->price()) {
-                $data['gross_price'] = (float) ($item->price() / 100);
-            }
+            $data = $this->buildConditionalItemData($item, $data);
 
             $this->data->get('items')->push($data);
         }
@@ -219,9 +233,9 @@ class Vendus
     protected function ensureItemIsValid($item): void
     {
         throw_if(
-            ! ($item instanceof InvoicingItem),
+            ! ($item instanceof InvoiceItem),
             InvoiceItemIsNotValidException::class,
-            'The item is not a valid InvoicingItem instance.'
+            'The item is not a valid InvoiceItem instance.'
         );
     }
 
@@ -242,6 +256,48 @@ class Vendus
         });
     }
 
+    protected function ensureTransportDetailsFormat(): void
+    {
+        if (! $this->transportDetails) {
+            return;
+        }
+
+        if (! in_array($this->type, [DocumentType::Invoice, DocumentType::Transport])) {
+            return;
+        }
+
+        throw_if(
+            is_null($this->transportDetails->origin()->date()),
+            NeedsDateToSetLoadPointException::class
+        );
+
+        $this->data->get('movement_of_goods')->put('loadpoint', [
+            'date' => $this->transportDetails->origin()->date(),
+            'time' => $this->transportDetails->origin()->time(),
+            'address' => $this->transportDetails->origin()->address(),
+            'postalcode' => $this->transportDetails->origin()->postalCode(),
+            'city' => $this->transportDetails->origin()->city(),
+            'country' => $this->transportDetails->origin()->country(),
+        ]);
+
+        $this->data->get('movement_of_goods')->put('landpoint', [
+            'date' => $this->transportDetails->destination()->date(),
+            'time' => $this->transportDetails->destination()->time(),
+            'address' => $this->transportDetails->destination()->address(),
+            'postalcode' => $this->transportDetails->destination()->postalCode(),
+            'city' => $this->transportDetails->destination()->city(),
+            'country' => $this->transportDetails->destination()->country(),
+        ]);
+
+        if ($this->transportDetails->vehicleLicensePlate()) {
+            $this->data->get('movement_of_goods')
+                ->put(
+                    'vehicle_id',
+                    $this->transportDetails->vehicleLicensePlate()
+                );
+        }
+    }
+
     protected function ensureNoEmptyItemsArray()
     {
         $this->data = $this->payload()->filter(function (mixed $value) {
@@ -251,6 +307,43 @@ class Vendus
 
             return ! is_null($value);
         });
+    }
+
+    private function buildConditionalItemData(InvoiceItem $item, array $data): array
+    {
+        if ($item->price()) {
+            $data['gross_price'] = (float) ($item->price() / 100);
+        }
+
+        if ($item->note()) {
+            $data['text'] = $item->note();
+        }
+
+        if ($item->type()) {
+            $data['type_id'] = $item->type()->vendus();
+        }
+
+        if ($item->percentageDiscount()) {
+            $data['discount_percentage'] = $item->percentageDiscount();
+        }
+
+        if ($item->amountDiscount()) {
+            $data['discount_amount'] = (float) $item->amountDiscount() / 100;
+        }
+
+        if ($item->tax()) {
+            $data['tax_id'] = $item->tax()->vendus();
+        }
+
+        if ($item->taxExemption()) {
+            $data['tax_exemption'] = $item->taxExemption()->value;
+
+            if ($item->taxExemptionLaw()) {
+                $data['tax_exemption_law'] = $item->taxExemptionLaw();
+            }
+        }
+
+        return $data;
     }
 
     private function guardAgainstMissingPaymentConfig(): void

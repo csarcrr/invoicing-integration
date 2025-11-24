@@ -14,4 +14,6 @@ enum DocumentType: string
     case InvoiceReceipt = 'FR';
     case InvoiceSimple = 'FS';
     case Receipt = 'RG';
+    case Transport = 'GT';
+    case CreditNote = 'NC';
 }

@@ -1,10 +1,16 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\InvoicingItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 it('can assign reference', function () {
-    $item = new InvoicingItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $item = new InvoiceItem(reference: 'reference-1');
 
-    expect($item->reference)->toBe('reference-1');
+    expect($item->reference())->toBe('reference-1');
+});
+
+it('can assign reference with setter', function () {
+    $item = new InvoiceItem;
+    $item->setReference('reference-1');
+
+    expect($item->reference())->toBe('reference-1');
 });

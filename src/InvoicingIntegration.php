@@ -11,13 +11,17 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceTypeIsNotSetException;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use Illuminate\Support\Collection;
 
 class InvoicingIntegration
 {
-    protected ?InvoicingClient $client = null;
+    protected ?InvoiceClient $client = null;
 
     protected ?DocumentType $type = null;
+
+    protected ?InvoiceTransportDetails $transport = null;
 
     protected Carbon $date;
 
@@ -44,7 +48,7 @@ class InvoicingIntegration
         return $this;
     }
 
-    public function client(): ?InvoicingClient
+    public function client(): ?InvoiceClient
     {
         return $this->client;
     }
@@ -79,21 +83,33 @@ class InvoicingIntegration
         return $this->dateDue;
     }
 
-    public function setClient(InvoicingClient $client): self
+    public function transport(): ?InvoiceTransportDetails
+    {
+        return $this->transport;
+    }
+
+    public function setTransport(?InvoiceTransportDetails $transport): self
+    {
+        $this->transport = $transport;
+
+        return $this;
+    }
+
+    public function setClient(InvoiceClient $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function addItem(InvoicingItem $item): self
+    public function addItem(InvoiceItem $item): self
     {
         $this->items->push($item);
 
         return $this;
     }
 
-    public function addPayment(InvoicingPayment $payment): self
+    public function addPayment(InvoicePayment $payment): self
     {
         $this->payments->push($payment);
 
