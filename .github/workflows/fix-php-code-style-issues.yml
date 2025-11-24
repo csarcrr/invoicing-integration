@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "**.php"
-  # também corre em pushes a branches (exceto main) para permitir autofix a partir de branches
   push:
     branches-ignore:
       - main
@@ -30,23 +29,55 @@ jobs:
 
       - name: Run Laravel Pint (fixer)
         uses: aglipanci/laravel-pint-action@v2.6
-        # se quiseres ajustar flags do pint, podes adicionar `with:` e `args:` aqui
 
-      # Optional: show git status to debug (remover se não quiseres)
       - name: Show changed files
         run: |
-          git status --porcelain
-          git --no-pager diff --name-only
+          echo "=== git status ==="
+          git status --porcelain || true
+          echo "=== git diff (names) ==="
+          git --no-pager diff --name-only || true
 
-      - name: Create pull request with fixes (only if there are changes)
-        uses: peter-evans/create-pull-request@v4
+      - name: Detect changes
+        id: changes
+        run: |
+          # Se houver alterações não comitadas, seta output changed=true
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "found changes"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "no changes"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Só cria branch, commit e push se houver mudanças
+      - name: Create branch, commit and push fixes
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          BRANCH: ci/pint-autofix-${{ github.run_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # cria branch a partir do estado corrente e commita as mudanças
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "ci: apply PHP Pint automatic fixes" || echo "nothing to commit"
+          git push --set-upstream origin "$BRANCH"
+
+      - name: Install GitHub CLI
+        if: steps.changes.outputs.changed == 'true'
+        uses: cli/gh-action@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "ci: apply PHP Pint automatic fixes"
-          title: "chore: automatic fixes (PHP Pint)"
-          body: |
-            This PR was created automatically by the workflow and contains code style fixes applied by Laravel Pint.
-            Please review and merge if OK.
-          base: main
-          branch: ci/pint-autofix-${{ github.run_id }}
-          labels: "autofix, pint"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pull Request (if changes)
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          BRANCH="ci/pint-autofix-${{ github.run_id }}"
+          gh auth status
+          gh pr create \
+            --title "chore: automatic fixes (PHP Pint)" \
+            --body "This PR was created automatically by the workflow and contains code style fixes applied by Laravel Pint. Please review and merge if OK." \
+            --base main \
+            --head "$BRANCH" \
+            --label "autofix" \
+            --label "pint"
