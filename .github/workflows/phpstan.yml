@@ -47,7 +47,6 @@ jobs:
 
       - name: Ensure PHPStan tmpDir exists
         run: |
-          # Ajusta este caminho se o teu phpstan.neon.dist usar outro tmpDir
           mkdir -p build/phpstan
           chmod -R 0777 build/phpstan || true
 
@@ -98,17 +97,13 @@ jobs:
           git commit -m "ci: apply automatic fixes from PHPStan workflow" || echo "nothing to commit"
           git push --set-upstream origin "$BRANCH"
 
-      - name: Install GitHub CLI
+      - name: Create Pull Request (if changes) using gh
         if: steps.changes.outputs.changed == 'true'
-        uses: cli/gh-action@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Pull Request (if changes)
-        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="ci/phpstan-autofix-${{ github.run_id }}"
-          gh auth status
+          gh auth status || true
           gh pr create \
             --title "chore: automatic fixes from PHPStan workflow" \
             --body "This PR was created automatically by the PHPStan workflow. It contains automatic fixes (formatting / minor code fixes). Please review and merge." \
