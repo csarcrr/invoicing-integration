@@ -1,7 +1,6 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
@@ -19,7 +18,7 @@ it('fails when item format is not valid', function () {
 })->throws(InvoiceItemIsNotValidException::class);
 
 it('has a description', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setNote('Test Item note');
 
@@ -32,7 +31,7 @@ it('has a description', function () {
 });
 
 it('has a type', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setType(DocumentItemType::Service);
 
@@ -45,7 +44,7 @@ it('has a type', function () {
 });
 
 it('has a percentage discount', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setPercentageDiscount(10);
 
@@ -58,7 +57,7 @@ it('has a percentage discount', function () {
 });
 
 it('has an amount discount', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setAmountDiscount(500);
 
@@ -71,7 +70,7 @@ it('has an amount discount', function () {
 });
 
 it('has the correct tax applied', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setTax(DocumentItemTax::REDUCED);
 
@@ -84,7 +83,7 @@ it('has the correct tax applied', function () {
 });
 
 it('has applies correctly the tax exemption without law', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setTax(DocumentItemTax::EXEMPT);
     $item->setTaxExemption(TaxExemptionReason::M01);
@@ -97,11 +96,11 @@ it('has applies correctly the tax exemption without law', function () {
     $data = $resolve->payload()->get('items')->first();
 
     expect($data['tax_exemption'])->toBe(TaxExemptionReason::M01->value);
-    expect(!array_key_exists('tax_exemption_law', $data))->toBe(true);
+    expect(! array_key_exists('tax_exemption_law', $data))->toBe(true);
 });
 
 it('has applies correctly the tax exemption with law', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setTax(DocumentItemTax::EXEMPT);
     $item->setTaxExemption(TaxExemptionReason::M01);

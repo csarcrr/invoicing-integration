@@ -4,23 +4,28 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Invoice;
 
-use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
+use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
-use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 
 class InvoiceItem
 {
     protected ?int $price = null;
+
     protected ?int $percentageDiscount = null;
+
     protected ?int $amountDiscount = null;
 
     protected ?string $note = null;
+
     protected DocumentItemType $type;
 
     protected ?DocumentItemTax $tax = null;
+
     protected ?TaxExemptionReason $taxExemptionReason = null;
+
     protected ?string $taxExemptionLaw = null;
 
     /**
@@ -86,7 +91,7 @@ class InvoiceItem
     public function setTaxExemptionLaw(string $taxExemptionLaw): self
     {
         throw_if(
-            !$this->taxExemptionReason,
+            ! $this->taxExemptionReason,
             ExemptionLawCanOnlyBeUsedWithExemptionException::class
         );
 
@@ -118,12 +123,14 @@ class InvoiceItem
     public function setAmountDiscount(int $amountDiscount): self
     {
         $this->amountDiscount = $amountDiscount;
+
         return $this;
     }
 
     public function setPercentageDiscount(int $percentageDiscount): self
     {
         $this->percentageDiscount = $percentageDiscount;
+
         return $this;
     }
 

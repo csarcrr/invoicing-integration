@@ -9,7 +9,9 @@ use Carbon\Carbon;
 class InvoiceTransportDetails
 {
     protected ?string $type = null;
+
     protected ?string $vehicleLicensePlate = null;
+
     protected array $data = [
         'origin' => [
             'date' => null,
@@ -26,12 +28,13 @@ class InvoiceTransportDetails
             'city' => null,
             'postalCode' => null,
             'country' => null,
-        ]
+        ],
     ];
 
     public function origin(): self
     {
         $this->type = 'origin';
+
         return $this;
     }
 
@@ -44,7 +47,7 @@ class InvoiceTransportDetails
 
     public function vehicleLicensePlate(?string $vehicleLicensePlate = null): ?string
     {
-        if (!$vehicleLicensePlate) {
+        if (! $vehicleLicensePlate) {
             return $this->vehicleLicensePlate;
         }
 
@@ -53,7 +56,7 @@ class InvoiceTransportDetails
 
     public function address(?string $address = null): ?string
     {
-        if (!$address) {
+        if (! $address) {
             return $this->data[$this->type]['address'];
         }
 
@@ -62,7 +65,7 @@ class InvoiceTransportDetails
 
     public function city(?string $city = null): ?string
     {
-        if (!$city) {
+        if (! $city) {
             return $this->data[$this->type]['city'];
         }
 
@@ -71,7 +74,7 @@ class InvoiceTransportDetails
 
     public function postalCode(?string $postalCode = null): ?string
     {
-        if (!$postalCode) {
+        if (! $postalCode) {
             return $this->data[$this->type]['postalCode'];
         }
 
@@ -80,7 +83,7 @@ class InvoiceTransportDetails
 
     public function country(?string $country = null): ?string
     {
-        if (!$country) {
+        if (! $country) {
             return $this->data[$this->type]['country'];
         }
 
@@ -89,7 +92,7 @@ class InvoiceTransportDetails
 
     public function date(?Carbon $date = null): ?Carbon
     {
-        if (!$date) {
+        if (! $date) {
             return $this->data[$this->type]['date'];
         }
 
@@ -98,7 +101,7 @@ class InvoiceTransportDetails
 
     public function time(?Carbon $time = null): ?Carbon
     {
-        if (!$time) {
+        if (! $time) {
             return $this->data[$this->type]['time'];
         }
 

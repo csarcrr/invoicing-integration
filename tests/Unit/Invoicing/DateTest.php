@@ -1,7 +1,6 @@
 <?php
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 it('automatically defines a date when no date is provided', function () {

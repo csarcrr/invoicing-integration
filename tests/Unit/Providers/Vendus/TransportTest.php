@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 it('formats transport load point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St');
@@ -36,9 +36,9 @@ it('formats transport load point data correctly', function () {
 it('formats transport land point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St');
@@ -74,9 +74,9 @@ it('formats transport land point data correctly', function () {
 it('formats transport vehicle license plate correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
 
     $transport->vehicleLicensePlate('ABC-1234');
 
@@ -108,9 +108,9 @@ it('formats transport vehicle license plate correctly', function () {
 it('fails when no date is set for load point', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
 
-    $transport = new InvoiceTransportDetails();
+    $transport = new InvoiceTransportDetails;
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St');
     $transport->origin()->city('Cityville');

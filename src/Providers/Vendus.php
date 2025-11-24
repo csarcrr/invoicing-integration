@@ -10,9 +10,9 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -20,12 +20,19 @@ use Illuminate\Support\Facades\Http;
 class Vendus
 {
     protected ?InvoiceClient $client = null;
+
     protected DocumentType $type = DocumentType::Invoice;
+
     protected InvoiceData $invoice;
+
     protected ?InvoiceTransportDetails $transportDetails = null;
+
     protected Collection $items;
+
     protected Collection $payments;
+
     protected Collection $relatedDocuments;
+
     protected Collection $data;
 
     public function __construct(
@@ -133,7 +140,7 @@ class Vendus
     protected function request()
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post(
             'https://www.vendus.pt/ws/v1.1/documents/',
             $this->payload()->toArray()
@@ -149,10 +156,10 @@ class Vendus
     protected function throwErrors(array $errors)
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
-        throw_if(!empty($messages), RequestFailedException::class, implode('; ', $messages));
+        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
 
         throw new Exception('The integration API request failed for an unknown reason.');
     }
@@ -251,11 +258,11 @@ class Vendus
 
     protected function ensureTransportDetailsFormat(): void
     {
-        if (!$this->transportDetails) {
+        if (! $this->transportDetails) {
             return;
         }
 
-        if (!in_array($this->type, [DocumentType::Invoice, DocumentType::Transport])) {
+        if (! in_array($this->type, [DocumentType::Invoice, DocumentType::Transport])) {
             return;
         }
 

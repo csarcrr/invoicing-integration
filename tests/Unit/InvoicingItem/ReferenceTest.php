@@ -9,7 +9,7 @@ it('can assign reference', function () {
 });
 
 it('can assign reference with setter', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
 
     expect($item->reference())->toBe('reference-1');

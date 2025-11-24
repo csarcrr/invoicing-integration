@@ -1,13 +1,8 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\Data\InvoiceData;
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-use CsarCrr\InvoicingIntegration\InvoicePayment;
-use Illuminate\Support\Facades\Http;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 
 it('can set a client', function () {
     $client = new InvoiceClient(999999999, 'Client Name');
@@ -17,7 +12,6 @@ it('can set a client', function () {
 
     expect($invoice->client())->toBeInstanceOf(InvoiceClient::class);
 });
-
 
 it('can set an item', function () {
     $item = new InvoiceItem('reference-1');

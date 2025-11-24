@@ -10,7 +10,7 @@ it('can assign quantity', function () {
 });
 
 it('can assign quantity with setter', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setQuantity(5);
 
@@ -18,7 +18,7 @@ it('can assign quantity with setter', function () {
 });
 
 it('defaults quantity to 1', function () {
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setPrice(500);
 

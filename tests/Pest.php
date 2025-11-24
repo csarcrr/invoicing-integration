@@ -56,8 +56,8 @@ function vendus(string $name, $status = 200, array $customData = []): array
 {
     $array = [
         'new_document' => [
-            'https://www.vendus.pt/ws/*/documents/' => Http::response(array_merge(['number' => 'FT 10000'], $customData), $status)
-        ]
+            'https://www.vendus.pt/ws/*/documents/' => Http::response(array_merge(['number' => 'FT 10000'], $customData), $status),
+        ],
     ];
 
     return $array[$name];

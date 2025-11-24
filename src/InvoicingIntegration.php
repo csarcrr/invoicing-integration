@@ -18,14 +18,19 @@ use Illuminate\Support\Collection;
 class InvoicingIntegration
 {
     protected ?InvoiceClient $client = null;
+
     protected ?DocumentType $type = null;
+
     protected ?InvoiceTransportDetails $transport = null;
 
     protected Carbon $date;
+
     protected Carbon $dateDue;
 
     protected Collection $payments;
+
     protected Collection $items;
+
     protected Collection $relatedDocuments;
 
     public function __construct(
@@ -83,11 +88,10 @@ class InvoicingIntegration
         return $this->transport;
     }
 
-
-
     public function setTransport(?InvoiceTransportDetails $transport): self
     {
         $this->transport = $transport;
+
         return $this;
     }
 
