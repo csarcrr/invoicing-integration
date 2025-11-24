@@ -2,9 +2,10 @@
 
 ## Main Classes
 
+
 ### InvoicingIntegration
 
--   `setClient(InvoiceClient $client): self` — Set the client for the invoice.
+-   `setClient(InvoiceClient $client): self` — Set the client for the invoice. **Optional for final consumer invoices:** do not call this method if invoicing to a final consumer.
 -   `addItem(InvoiceItem $item): self` — Add an item to the invoice.
 -   `addPayment(InvoicePayment $payment): self` — Add a payment to the invoice.
 -   `setType(DocumentType $type): self` — Set the document type.
@@ -14,10 +15,16 @@
 -   `setTransport(InvoiceTransportDetails $transport): self` — Set transport details.
 -   `invoice(): InvoiceData` — Generate and send the invoice.
 
+> **Note:** For final consumer invoices, do not set any client information (do not call `setClient`).
+
+
 ### InvoiceClient
 
 -   `vat` — Client VAT number.
 -   `name` — Client name.
+
+> **Note:** Only required for non-final-consumer invoices.
+
 
 ### InvoiceItem
 
@@ -31,10 +38,15 @@
 -   `setAmountDiscount(int $amount): self` — Set amount discount.
 -   `setPercentageDiscount(int $percent): self` — Set percentage discount.
 
+> **Note:** At least one item is required for every invoice.
+
+
 ### InvoicePayment
 
 -   `method` — Payment method (see `DocumentPaymentMethod`).
 -   `amount` — Payment amount (in cents).
+
+> **Note:** At least one payment is required for every invoice.
 
 ---
 
