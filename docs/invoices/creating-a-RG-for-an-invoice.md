@@ -17,7 +17,7 @@ An RG (Recibo) is a receipt document that acknowledges payment for a previously 
     ```php
     use CsarCrr\InvoicingIntegration\InvoicingIntegration;
 
-    $integration = Invoice::create(); // or your configured provider
+    $integration = Invoice::create();
     ```
 
 3. **Set the Document Type to RG**

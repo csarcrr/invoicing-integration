@@ -20,7 +20,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             return new InvoicingIntegration($config['provider']);
         });
 
-        $this->app->bind('vendus', function () {
+        $this->app->bind('cegid_vendus', function () {
             $config = config('invoicing-integration');
 
             $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);

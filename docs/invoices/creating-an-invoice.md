@@ -12,7 +12,7 @@ An invoice is a document that records the sale of goods or services, including c
 	```php
 	use CsarCrr\InvoicingIntegration\InvoicingIntegration;
 
-	$integration = Invoice::create(); // or your configured provider
+	$integration = Invoice::create();
 	```
 
 

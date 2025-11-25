@@ -1,11 +1,15 @@
 # Features
 
-### ✅ - Implemented / ❌ - Not Implemented / ⛔ - Not applicable
+This page documents the supported features and their implementation status for each provider.
 
-## Invoices Types
+### Legend
+- ✅ — Implemented
+- ❌ — Not Implemented
+- ⛔ — Not applicable
 
-### FT
+## Invoice Types
 
+### FT (Fatura)
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ✅        | ✅     |
@@ -14,8 +18,7 @@
 | Set Transport        | ✅        | ❌     |
 | Set related Document | ✅        | ✅     |
 
-### RG
-
+### RG (Recibo)
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ✅        | ✅     |
@@ -25,7 +28,6 @@
 | Set related Document | ✅        | ✅     |
 
 ### FS
-
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ❌        | ❌     |
@@ -36,7 +38,6 @@
 | Set related Document | ❌        | ❌     |
 
 ### NC
-
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ❌        | ❌     |
@@ -46,39 +47,17 @@
 | Set related Document | ❌        | ❌     |
 
 ## Client
-
 |      | Invoicing | Vendus |
 | ---- | --------- | ------ |
 | Name | ✅        | ✅     |
 | VAT  | ✅        | ✅     |
 
 ## Item
-
 |                        | Invoicing | Vendus |
 | ---------------------- | --------- | ------ |
 | Reference              | ✅        | ✅     |
 | Item ID                | ❌        | ❌     |
-| Description            | ✅        | ✅     |
-| Price                  | ✅        | ✅     |
-| Tax                    | ✅        | ✅     |
-| Tax exempt with reason | ✅        | ✅     |
-| Type                   | ✅        | ✅     |
-| Percentage Discount    | ✅        | ✅     |
-| Amount Discount        | ✅        | ✅     |
 
-## Payment
+---
 
-|                              | Invoicing | Vendus |
-| ---------------------------- | --------- | ------ |
-| Amount                       | ✅        | ✅     |
-| Method (with integration ID) | ✅        | ✅     |
-
-## Transport
-
-|                                                   | Invoicing | Vendus |
-| ------------------------------------------------- | --------- | ------ |
-| Origin (address, postal_code, city, country)      | ✅        | ✅     |
-| Destination (address, postal_code, city, country) | ✅        | ✅     |
-| Global Invoice Transport                          | ❌        | ❌     |
-| Choose integration store for stock movement       | ❌        | ❌     |
-| Set Vehicle License Plate                         | ✅        | ✅     |
+For more details on each feature, see the relevant documentation sections or the source code.

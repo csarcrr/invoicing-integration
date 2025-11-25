@@ -5,10 +5,10 @@ use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use Illuminate\Support\Facades\Http;
 
 uses(TestCase::class)->beforeEach(function () {
-    config()->set('invoicing-integration.provider', 'vendus');
-    config()->set('invoicing-integration.providers.vendus.key', '1234');
-    config()->set('invoicing-integration.providers.vendus.mode', 'test');
-    config()->set('invoicing-integration.providers.vendus.config.payments', [
+    config()->set('invoicing-integration.provider', 'cegid_vendus');
+    config()->set('invoicing-integration.providers.cegid_vendus.key', '1234');
+    config()->set('invoicing-integration.providers.cegid_vendus.mode', 'test');
+    config()->set('invoicing-integration.providers.cegid_vendus.config.payments', [
         DocumentPaymentMethod::MB->value => 19999,
         DocumentPaymentMethod::CREDIT_CARD->value => 29999,
         DocumentPaymentMethod::CURRENT_ACCOUNT->value => 39999,
@@ -18,10 +18,10 @@ uses(TestCase::class)->beforeEach(function () {
 })->group('Unit Tests')->in('Unit');
 
 uses(TestCase::class)->beforeEach(function () {
-    config()->set('invoicing-integration.provider', 'vendus');
-    config()->set('invoicing-integration.providers.vendus.key', '1234');
-    config()->set('invoicing-integration.providers.vendus.mode', 'test');
-    config()->set('invoicing-integration.providers.vendus.config.payments', [
+    config()->set('invoicing-integration.provider', 'cegid_vendus');
+    config()->set('invoicing-integration.providers.cegid_vendus.key', '1234');
+    config()->set('invoicing-integration.providers.cegid_vendus.mode', 'test');
+    config()->set('invoicing-integration.providers.cegid_vendus.config.payments', [
         DocumentPaymentMethod::MB->value => 19999,
         DocumentPaymentMethod::CREDIT_CARD->value => 29999,
         DocumentPaymentMethod::CURRENT_ACCOUNT->value => 39999,
@@ -43,7 +43,7 @@ function buildFakeHttpResponses(array $integration, array $type): array
         }
 
         switch ($integration) {
-            case 'vendus':
+            case 'cegid_vendus':
                 $responses = array_merge($responses, vendus($type, $status, $customData));
                 break;
         }

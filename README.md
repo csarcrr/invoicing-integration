@@ -7,7 +7,11 @@
 
 ## Current Features
 
-For a full list of features and capabilities, please see [FEATURES.md](FEATURES.md).
+For a full list of features and capabilities, please see [FEATURES.md](docs/features.md).
+
+## Usage
+
+For more in-depth usage details and examples, please visit the [official documentation](https://invoicing-integration.csarcorreia.workers.dev/).
 
 ## Installation
 
@@ -33,7 +37,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 return [
     'provider' => env('INVOICING_INTEGRATION_PROVIDER', null),
     'providers' => [
-        'vendus' => [
+        'cegid_vendus' => [
             'key' => env('VENDUS_API_KEY', null),
             'mode' => env('VENDUS_MODE', null),
             'config' => [
@@ -48,24 +52,6 @@ return [
         ],
     ],
 ];
-```
-
-## Usage
-
-```php
-<?php
-
-$integration = Invoice::create();
-
-$integration->addItem((new InvoiceItem(reference: '31054308', quantity: 1)));
-$integration->addItem(new InvoiceItem(reference: '09818943', quantity: 5));
-
-// Optionally you can set a client
-$integration->setClient(new InvoiceClient(vat: '245824820'));
-
-$invoice = $integration->invoice();
-
-$invoice->sequenceNumber(); // FT 01P2025/001
 ```
 
 ## Testing

@@ -19,7 +19,7 @@ test('can invoice successfully with minimum data', function (array $integration,
     expect($response)->toBeInstanceOf(InvoiceData::class);
     expect($response->sequence())->toBe('FT 10000');
 })->with([
-    [['vendus', 200], ['new_document']],
+    [['cegid_vendus', 200], ['new_document']],
 ]);
 
 test(
@@ -47,7 +47,7 @@ test(
         expect($details->sequence())->toBe('RG 10000');
     }
 )->with([
-    [['vendus', 200], ['new_document', 'new_document' => ['number' => 'RG 10000']]],
+    [['cegid_vendus', 200], ['new_document', 'new_document' => ['number' => 'RG 10000']]],
 ]);
 
 test('can handle integration errors', function () {})->todo();
