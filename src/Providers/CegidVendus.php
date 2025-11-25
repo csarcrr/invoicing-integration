@@ -7,34 +7,16 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class Vendus
+class CegidVendus extends Base
 {
-    protected ?InvoiceClient $client = null;
-
-    protected DocumentType $type = DocumentType::Invoice;
-
-    protected InvoiceData $invoice;
-
-    protected ?InvoiceTransportDetails $transportDetails = null;
-
-    protected Collection $items;
-
-    protected Collection $payments;
-
-    protected Collection $relatedDocuments;
-
-    protected Collection $data;
-
     public function __construct(
         protected string $apiKey,
         protected string $mode,
@@ -54,64 +36,16 @@ class Vendus
         $this->relatedDocuments = collect();
     }
 
-    public function send(): self
+    public function create(): self
     {
-        $this->buildPayload();
-        $this->generateInvoice($this->request());
+        $this->createPayloadStructure();
 
         return $this;
     }
 
-    public function client(InvoiceClient $client): self
+    protected function createPayloadStructure(): void
     {
-        $this->client = $client;
-
-        return $this;
-    }
-
-    public function items(Collection $items): self
-    {
-        $this->items = $items;
-
-        return $this;
-    }
-
-    public function payments(Collection $payments): self
-    {
-        $this->payments = $payments;
-
-        return $this;
-    }
-
-    public function relatedDocuments(Collection $relatedDocuments): self
-    {
-        $this->relatedDocuments = $relatedDocuments;
-
-        return $this;
-    }
-
-    public function invoice()
-    {
-        return $this->invoice;
-    }
-
-    public function type(DocumentType $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function transportDetails(InvoiceTransportDetails $transportDetails): self
-    {
-        $this->transportDetails = $transportDetails;
-
-        return $this;
-    }
-
-    public function buildPayload(): void
-    {
-        $this->setDocumentType();
+        $this->ensureDocumentType();
         $this->ensureClientFormat();
         $this->ensureItemsFormat();
         $this->ensurePaymentsFormat();
@@ -121,50 +55,7 @@ class Vendus
         $this->ensureNoEmptyItemsArray();
     }
 
-    public function payload(): Collection
-    {
-        return $this->data;
-    }
-
-    protected function generateInvoice(array $data): void
-    {
-        $invoice = new InvoiceData;
-
-        if ($data['number'] ?? false) {
-            $invoice->setSequence($data['number']);
-        }
-
-        $this->invoice = $invoice;
-    }
-
-    protected function request()
-    {
-        $request = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
-        ])->post(
-            'https://www.vendus.pt/ws/v1.1/documents/',
-            $this->payload()->toArray()
-        );
-
-        if (! in_array($request->status(), [200, 201, 300, 301])) {
-            $this->throwErrors($request->json());
-        }
-
-        return $request->json();
-    }
-
-    protected function throwErrors(array $errors)
-    {
-        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
-        })->toArray();
-
-        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
-
-        throw new Exception('The integration API request failed for an unknown reason.');
-    }
-
-    protected function setDocumentType()
+    protected function ensureDocumentType()
     {
         $this->data->put('type', $this->type->value);
     }
@@ -307,6 +198,44 @@ class Vendus
 
             return ! is_null($value);
         });
+    }
+
+    protected function generateInvoice(array $data): void
+    {
+        $invoice = new InvoiceData;
+
+        if ($data['number'] ?? false) {
+            $invoice->setSequence($data['number']);
+        }
+
+        $this->invoice = $invoice;
+    }
+
+    protected function request(): array
+    {
+        $request = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->apiKey,
+        ])->post(
+            'https://www.vendus.pt/ws/v1.1/documents/',
+            $this->payload()->toArray()
+        );
+
+        if (! in_array($request->status(), [200, 201, 300, 301])) {
+            $this->throwErrors($request->json());
+        }
+
+        return $request->json();
+    }
+
+    protected function throwErrors(array $errors): void
+    {
+        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
+            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+        })->toArray();
+
+        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
+
+        throw new Exception('The integration API request failed for an unknown reason.');
     }
 
     private function buildConditionalItemData(InvoiceItem $item, array $data): array

@@ -168,7 +168,7 @@ class InvoicingIntegration
             $resolve->relatedDocuments($this->relatedDocuments());
         }
 
-        $resolve->send();
+        $resolve->create();
 
         return $resolve->invoice();
     }

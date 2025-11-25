@@ -15,7 +15,7 @@ it('has a valid client payload', function () {
         ->client($client)
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('client')['fiscal_id'])->toBe('123456789');
     expect($resolve->payload()->get('client')['name'])->toBe('Client Name');

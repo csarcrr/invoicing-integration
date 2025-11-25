@@ -27,13 +27,21 @@ This page documents the supported features and their implementation status for e
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ✅        | ✅     |
 
+### FR
+|                      | Invoicing | Vendus |
+| -------------------- | --------- | ------ |
+| Set Client           | ❌        | ❌     |
+| Set Item             | ❌        | ❌     |
+| Set Payment          | ❌        | ❌     |
+| Set Transport        | ⛔        | ⛔     |
+| Set related Document | ❌        | ❌     |
+
 ### FS
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ❌        | ❌     |
 | Set Item             | ❌        | ❌     |
 | Set Payment          | ❌        | ❌     |
-| Set Transport        | ❌        | ❌     |
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ❌        | ❌     |
 
@@ -43,7 +51,7 @@ This page documents the supported features and their implementation status for e
 | Set Client           | ❌        | ❌     |
 | Set Item             | ❌        | ❌     |
 | Set Payment          | ❌        | ❌     |
-| Set Transport        | ❌        | ❌     |
+| Set Transport        | ⛔        | ⛔     |
 | Set related Document | ❌        | ❌     |
 
 ## Client

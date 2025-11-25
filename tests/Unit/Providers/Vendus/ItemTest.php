@@ -14,7 +14,7 @@ it('fails when item format is not valid', function () {
         ->items(collect([$item]))
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 })->throws(InvoiceItemIsNotValidException::class);
 
 it('has a description', function () {
@@ -25,7 +25,7 @@ it('has a description', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items')->first()['text'])->toBe('Test Item note');
 });
@@ -38,7 +38,7 @@ it('has a type', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items')->first()['type_id'])->toBe('S');
 });
@@ -51,7 +51,7 @@ it('has a percentage discount', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items')->first()['discount_percentage'])->toBe(10);
 });
@@ -64,7 +64,7 @@ it('has an amount discount', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items')->first()['discount_amount'])->toBe(5.0);
 });
@@ -77,7 +77,7 @@ it('has the correct tax applied', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items')->first()['tax_id'])->toBe('RED');
 });
@@ -91,7 +91,7 @@ it('has applies correctly the tax exemption without law', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     $data = $resolve->payload()->get('items')->first();
 
@@ -109,7 +109,7 @@ it('has applies correctly the tax exemption with law', function () {
     $resolve = app(config('invoicing-integration.provider'))
         ->items(collect([$item]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     $data = $resolve->payload()->get('items')->first();
 

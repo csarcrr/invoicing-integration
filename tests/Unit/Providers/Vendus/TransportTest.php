@@ -1,7 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 
@@ -21,7 +21,7 @@ it('formats transport load point data correctly', function () {
         ->transportDetails($transport)
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('movement_of_goods')['loadpoint'])
         ->toEqual([
@@ -58,7 +58,7 @@ it('formats transport land point data correctly', function () {
         ->transportDetails($transport)
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('movement_of_goods')['landpoint'])
         ->toEqual([
@@ -99,7 +99,7 @@ it('formats transport vehicle license plate correctly', function () {
         ->transportDetails($transport)
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('movement_of_goods')['vehicle_id'])
         ->toEqual('ABC-1234');
@@ -129,5 +129,5 @@ it('fails when no date is set for load point', function () {
         ->transportDetails($transport)
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 })->throws(NeedsDateToSetLoadPointException::class);

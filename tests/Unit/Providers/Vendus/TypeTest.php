@@ -11,7 +11,7 @@ it('has a valid type', function () {
         ->items(collect([$item]))
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('type'))->toBe('FT');
 });

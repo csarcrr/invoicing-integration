@@ -11,7 +11,7 @@ it('has a valid final price payload', function () {
         ->items(collect([$item]))
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items')->first()['gross_price'])
         ->toBe(5.0);

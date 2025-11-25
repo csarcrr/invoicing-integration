@@ -2,7 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Collection;
@@ -19,7 +19,7 @@ it('does not set items when issuing a RG', function () {
         ->relatedDocuments(collect(['FT 10000']))
         ->payments(collect([$payment]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('items'))->toBeNull();
 });
@@ -36,7 +36,7 @@ it('has a valid related documents payload', function () {
         ->relatedDocuments(collect(['FT 10000', 'FT 20000']))
         ->payments(collect([$payment]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect(
         $resolve->payload()->get('invoices')
@@ -63,7 +63,7 @@ it('makes sure that invoices document numbers are string', function () {
         ->relatedDocuments(collect(['FT 1000']))
         ->payments(collect([$payment]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('invoices'))
         ->toBeInstanceOf(Collection::class);
@@ -83,5 +83,5 @@ it('makes sure it fails when no payments are set', function () {
         ->type(DocumentType::Receipt)
         ->relatedDocuments(collect(['FT 10000']));
 
-    $resolve->buildPayload();
+    $resolve->create();
 })->throws(MissingPaymentWhenIssuingReceiptException::class);

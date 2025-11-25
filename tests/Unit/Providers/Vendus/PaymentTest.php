@@ -17,7 +17,7 @@ it('has a valid payment payload', function () {
         ->type(DocumentType::Invoice)
         ->payments(collect([$payment]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('payments'))
         ->toBeInstanceOf(Collection::class);
@@ -44,7 +44,7 @@ it('fails when no payment id is configured', function () {
         ->type(DocumentType::Invoice)
         ->payments(collect([$payment]));
 
-    $resolve->buildPayload();
+    $resolve->create();
 })->throws(
     Exception::class,
     'The provider configuration is missing payment method details.'

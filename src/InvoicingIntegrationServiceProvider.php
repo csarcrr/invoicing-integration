@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Providers\Vendus;
+use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -25,7 +25,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
             $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
 
-            return new Vendus(
+            return new CegidVendus(
                 apiKey: $config['providers'][$config['provider']]['key'],
                 mode: $config['providers'][$config['provider']]['mode'],
                 options: collect($config['providers'][$config['provider']]['config']),

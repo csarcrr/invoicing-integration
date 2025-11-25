@@ -1,7 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +14,7 @@ it('clears empty data entries', function () {
         ->items(collect([$item]))
         ->type(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve->create();
 
     expect($resolve->payload()->get('payments'))->toBeNull();
     expect($resolve->payload()->get('invoices'))->toBeNull();
@@ -39,9 +39,9 @@ it('throw error exception with API messages when request fails', function () {
         ->type(DocumentType::Invoice)
         ->client(new InvoiceClient(vat: 'invalid-vat'));
 
-    $resolve->buildPayload();
+    $resolve->create();
 
-    $resolve->send();
+    $resolve->create();
 })->throws(
     RequestFailedException::class,
     'A001 - Example failed message.'
