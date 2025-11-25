@@ -28,7 +28,7 @@ jobs:
           ref: ${{ github.head_ref || github.ref }}
 
       - name: Run Laravel Pint (fixer)
-        uses: aglipanci/laravel-pint-action@v2.6.0
+        uses: aglipanci/laravel-pint-action@latest
 
       - name: Show changed files
         run: |
