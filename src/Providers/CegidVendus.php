@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Http;
 
 class CegidVendus extends Base
 {
+
+    protected array $invoiceTypesThatRequirePayments = [
+        DocumentType::Receipt,
+        DocumentType::InvoiceReceipt,
+        DocumentType::InvoiceSimple,
+    ];
     public function __construct(
         protected string $apiKey,
         protected string $mode,
@@ -104,7 +110,7 @@ class CegidVendus extends Base
         throw_if(
             in_array(
                 $this->type,
-                [DocumentType::Receipt, DocumentType::InvoiceReceipt]
+                $this->invoiceTypesThatRequirePayments
             ) && $this->payments->isEmpty(),
             MissingPaymentWhenIssuingReceiptException::class,
         );

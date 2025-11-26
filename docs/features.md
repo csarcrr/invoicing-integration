@@ -45,11 +45,11 @@ This page documents the supported features and their implementation status for e
 
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
-| Set Client           | ❌        | ❌     |
-| Set Item             | ❌        | ❌     |
-| Set Payment          | ❌        | ❌     |
+| Set Client           | ✅        | ✅     |
+| Set Item             | ✅        | ✅     |
+| Set Payment          | ✅        | ✅     |
 | Set Transport        | ⛔        | ⛔     |
-| Set related Document | ❌        | ❌     |
+| Set related Document | ✅        | ✅     |
 
 ### NC
 
