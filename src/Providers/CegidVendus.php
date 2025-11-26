@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
@@ -101,7 +102,10 @@ class CegidVendus extends Base
     protected function ensurePaymentsFormat(): void
     {
         throw_if(
-            $this->type === DocumentType::Receipt && $this->payments->isEmpty(),
+            in_array(
+                $this->type,
+                [DocumentType::Receipt, DocumentType::InvoiceReceipt]
+            ) && $this->payments->isEmpty(),
             MissingPaymentWhenIssuingReceiptException::class,
         );
 
@@ -153,9 +157,10 @@ class CegidVendus extends Base
             return;
         }
 
-        if (! in_array($this->type, [DocumentType::Invoice, DocumentType::Transport])) {
-            return;
-        }
+        throw_if(
+            ! in_array($this->type, [DocumentType::Invoice, DocumentType::Transport]),
+            InvoiceTypeDoesNotSupportTransportException::class
+        );
 
         throw_if(
             is_null($this->transportDetails->origin()->date()),

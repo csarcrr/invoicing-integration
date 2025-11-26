@@ -37,8 +37,6 @@ it('formats transport land point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
     $transport = new InvoiceTransportDetails;
-
-    $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St');
