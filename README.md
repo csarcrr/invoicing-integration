@@ -5,6 +5,11 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
+## About
+
+Invoicing Integration is an agregator of several invoicing softwares in Portugal. We aim to help you use these softwares
+without the assle of learning every nuance of their API.
+
 ## Current Features
 
 For a full list of features and capabilities, please see [FEATURES.md](docs/features.md).
@@ -27,31 +32,22 @@ You can publish the config file with:
 php artisan vendor:publish --tag="invoicing-integration-config"
 ```
 
-This is the contents of the published config file:
+Example
 
 ```php
 <?php
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
+use CsarCrr\InvoicingIntegration\InvoicingIntegration;
+use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
-return [
-    'provider' => env('INVOICING_INTEGRATION_PROVIDER', null),
-    'providers' => [
-        'cegid_vendus' => [
-            'key' => env('VENDUS_API_KEY', null),
-            'mode' => env('VENDUS_MODE', null),
-            'config' => [
-                'payments' => [
-                    DocumentPaymentMethod::MB->value => env('VENDUS_PAYMENT_MB_ID', null),
-                    DocumentPaymentMethod::CREDIT_CARD->value => env('VENDUS_PAYMENT_CREDIT_CARD_ID', null),
-                    DocumentPaymentMethod::CURRENT_ACCOUNT->value => env('VENDUS_PAYMENT_CURRENT_ACCOUNT_ID', null),
-                    DocumentPaymentMethod::MONEY->value => env('VENDUS_PAYMENT_MONEY_ID', null),
-                    DocumentPaymentMethod::MONEY_TRANSFER->value => env('VENDUS_PAYMENT_MONEY_TRANSFER_ID', null),
-                ]
-            ]
-        ],
-    ],
-];
+$integration = Invoice::create();
+
+$item = new InvoiceItem(reference: 'SKU-001', quantity: 2);
+$item->setPrice(1000);
+$item->setDescription('Product Description');
+$integration->addItem($item);
+
+$invoiceData = $integration->invoice();
 ```
 
 ## Testing

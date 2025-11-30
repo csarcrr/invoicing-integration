@@ -67,8 +67,8 @@ $integration->setClient($client);
 // For final consumer, do NOT set any client:
 // (do not call setClient)
 
-$item = new InvoiceItem(reference: 'SKU-001', quantity: 2);
-$item->setPrice(1000);
+$item = new InvoiceItem(reference: 'SKU-001', quantity: 2); // reference from the software product
+$item->setPrice(1000); // price in cents
 $item->setDescription('Product Description');
 $integration->addItem($item);
 

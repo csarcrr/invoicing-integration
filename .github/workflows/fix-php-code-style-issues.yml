@@ -72,5 +72,4 @@ jobs:
             --body "This PR was created automatically by the workflow and contains code style fixes applied by Laravel Pint. Please review and merge if OK." \
             --base main \
             --head "$BRANCH" \
-            --label "autofix" \
-            --label "pint"
+            --label "autofix"
