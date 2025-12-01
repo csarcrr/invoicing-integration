@@ -1,10 +1,8 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 

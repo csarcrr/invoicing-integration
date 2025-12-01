@@ -6,7 +6,6 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentType as EnumsDocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
-use Dom\DocumentType;
 
 it('assigns due date properly', function () {
     $item = new InvoiceItem(reference: 'reference-1');

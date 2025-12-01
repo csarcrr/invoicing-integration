@@ -19,12 +19,12 @@ use Illuminate\Support\Facades\Http;
 
 class CegidVendus extends Base
 {
-
     protected array $invoiceTypesThatRequirePayments = [
         DocumentType::Receipt,
         DocumentType::InvoiceReceipt,
         DocumentType::InvoiceSimple,
     ];
+
     public function __construct(
         protected string $apiKey,
         protected string $mode,
@@ -203,7 +203,8 @@ class CegidVendus extends Base
         }
     }
 
-    protected function ensureDueDate() : void {
+    protected function ensureDueDate(): void
+    {
         if (! $this->invoicing->dueDate()) {
             return;
         }
@@ -242,7 +243,7 @@ class CegidVendus extends Base
     protected function request(): array
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post(
             'https://www.vendus.pt/ws/v1.1/documents/',
             $this->payload()->toArray()
@@ -258,7 +259,7 @@ class CegidVendus extends Base
     protected function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));

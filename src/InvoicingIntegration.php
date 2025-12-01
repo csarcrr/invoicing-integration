@@ -180,7 +180,8 @@ class InvoicingIntegration
         return $resolve->invoice();
     }
 
-    public function get (): self {
+    public function get(): self
+    {
         return $this;
     }
 
