@@ -40,8 +40,6 @@ it('throw error exception with API messages when request fails', function () {
         ->client(new InvoiceClient(vat: 'invalid-vat'));
 
     $resolve->create();
-
-    $resolve->create();
 })->throws(
     RequestFailedException::class,
     'A001 - Example failed message.'

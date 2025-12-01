@@ -58,6 +58,7 @@ class CegidVendus extends Base
         $this->ensurePaymentsFormat();
         $this->ensureRelatedDocumentsFormat();
         $this->ensureTransportDetailsFormat();
+        $this->ensureDueDate();
 
         $this->ensureNoEmptyItemsArray();
     }
@@ -198,6 +199,20 @@ class CegidVendus extends Base
                     $this->transportDetails->vehicleLicensePlate()
                 );
         }
+    }
+
+    protected function ensureDueDate() : void {
+        if (! $this->dueDate) {
+            return;
+        }
+
+        throw_if(
+            $this->type !== DocumentType::Invoice,
+            Exception::class,
+            'Due date can only be set for Invoice document types.'
+        );
+
+        $this->data->put('date_due', $this->dueDate->toDateString());
     }
 
     protected function ensureNoEmptyItemsArray()

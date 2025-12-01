@@ -17,7 +17,7 @@ This page documents the supported features and their implementation status for e
 | Set Client           | ✅        | ✅     |
 | Set Item             | ✅        | ✅     |
 | Set Payment          | ✅        | ✅     |
-| Set Due Date         | ❌        | ❌     |
+| Set Due Date         | ✅        | ✅     |
 | Set Transport        | ✅        | ❌     |
 | Set related Document | ✅        | ✅     |
 
@@ -28,6 +28,7 @@ This page documents the supported features and their implementation status for e
 | Set Client           | ✅        | ✅     |
 | Set Item             | ⛔        | ⛔     |
 | Set Payment          | ✅        | ✅     |
+| Set Due Date         | ⛔        | ⛔     |
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ✅        | ✅     |
 
@@ -38,6 +39,7 @@ This page documents the supported features and their implementation status for e
 | Set Client           | ✅        | ✅     |
 | Set Item             | ✅        | ✅     |
 | Set Payment          | ✅        | ✅     |
+| Set Due Date         | ⛔        | ⛔     |
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ✅        | ✅     |
 
@@ -48,6 +50,7 @@ This page documents the supported features and their implementation status for e
 | Set Client           | ✅        | ✅     |
 | Set Item             | ✅        | ✅     |
 | Set Payment          | ✅        | ✅     |
+| Set Due Date         | ⛔        | ⛔     |
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ✅        | ✅     |
 
@@ -58,22 +61,53 @@ This page documents the supported features and their implementation status for e
 | Set Client           | ❌        | ❌     |
 | Set Item             | ❌        | ❌     |
 | Set Payment          | ❌        | ❌     |
+| Set Due Date         | ⛔        | ⛔     |
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ❌        | ❌     |
 
 ## Client
 
-|      | Invoicing | Vendus |
-| ---- | --------- | ------ |
-| Name | ✅        | ✅     |
-| VAT  | ✅        | ✅     |
+|             | Invoicing | Vendus |
+| ----------- | --------- | ------ |
+| Name        | ✅        | ✅     |
+| VAT         | ✅        | ✅     |
+| Adress      | ❌        | ❌     |
+| Postal Code | ❌        | ❌     |
+| Country     | ❌        | ❌     |
 
 ## Item
 
-|           | Invoicing | Vendus |
-| --------- | --------- | ------ |
-| Reference | ✅        | ✅     |
-| Item ID   | ❌        | ❌     |
+|                        | Invoicing | Vendus |
+| ---------------------- | --------- | ------ |
+| Reference              | ✅        | ✅     |
+| Item ID                | ❌        | ❌     |
+| Description            | ✅        | ✅     |
+| Price                  | ✅        | ✅     |
+| Tax                    | ✅        | ✅     |
+| Tax exempt with reason | ✅        | ✅     |
+| Type                   | ✅        | ✅     |
+| Percentage Discount    | ✅        | ✅     |
+| Amount Discount        | ✅        | ✅     |
+
+
+## Payment
+
+|                              | Invoicing | Vendus |
+| ---------------------------- | --------- | ------ |
+| Amount                       | ✅        | ✅     |
+| Method (with integration ID) | ✅        | ✅     |
+
+
+## Transport
+
+|                                                   | Invoicing | Vendus |
+| ------------------------------------------------- | --------- | ------ |
+| Origin (address, postal_code, city, country)      | ✅        | ✅     |
+| Destination (address, postal_code, city, country) | ✅        | ✅     |
+| Global Invoice Transport                          | ❌        | ❌     |
+| Choose integration store for stock movement       | ❌        | ❌     |
+| Set Vehicle License Plate                         | ✅        | ✅     |
+
 
 ---
 

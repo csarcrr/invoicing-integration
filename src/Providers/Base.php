@@ -1,6 +1,7 @@
 <?php 
 namespace CsarCrr\InvoicingIntegration\Providers;
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
@@ -18,6 +19,7 @@ abstract class Base {
     protected Collection $data;
 
     protected DocumentType $type = DocumentType::Invoice;
+    protected ?Carbon $dueDate = null;
 
     public function payload(): Collection
     {
@@ -69,6 +71,13 @@ abstract class Base {
     public function transportDetails(InvoiceTransportDetails $transportDetails): self
     {
         $this->transportDetails = $transportDetails;
+
+        return $this;
+    }
+
+    public function dueDate(Carbon $dueDate): self
+    {
+        $this->dueDate = $dueDate;
 
         return $this;
     }

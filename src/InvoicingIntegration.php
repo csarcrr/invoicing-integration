@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\DueDate\DueDateCannotBeInPastException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
@@ -25,7 +26,7 @@ class InvoicingIntegration
 
     protected Carbon $date;
 
-    protected Carbon $dateDue;
+    protected Carbon $dueDate;
 
     protected Collection $payments;
 
@@ -78,9 +79,9 @@ class InvoicingIntegration
         return $this->date;
     }
 
-    public function dateDue(): Carbon
+    public function dueDate(): Carbon
     {
-        return $this->dateDue;
+        return $this->dueDate;
     }
 
     public function transport(): ?InvoiceTransportDetails
@@ -130,9 +131,13 @@ class InvoicingIntegration
         return $this;
     }
 
-    public function setDateDue(Carbon $dateDue): self
+    public function setDueDate(Carbon $dueDate): self
     {
-        $this->dateDue = $dateDue;
+        throw_if(
+            $dueDate->toDateString() < Carbon::now()->toDateString(), DueDateCannotBeInPastException::class
+        );
+
+        $this->dueDate = $dueDate;
 
         return $this;
     }
