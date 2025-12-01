@@ -8,5 +8,5 @@ use Exception;
 
 class InvoiceTypeDoesNotSupportTransportException extends Exception
 {
-protected $message = 'The invoice type does not support transport details.';
+    protected $message = 'The invoice type does not support transport details.';
 }

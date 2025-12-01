@@ -5,7 +5,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\DueDate\DueDateCannotBeInPas
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 it('can set a due date', function () {
-    $invoice = Invoice::create();;
+    $invoice = Invoice::create();
 
     $dueDate = Carbon::now();
 
@@ -15,7 +15,7 @@ it('can set a due date', function () {
 });
 
 it('fails when date is past', function () {
-    $invoice = Invoice::create();;
+    $invoice = Invoice::create();
 
     $dueDate = Carbon::now()->subDay();
 
