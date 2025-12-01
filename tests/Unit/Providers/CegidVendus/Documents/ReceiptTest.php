@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Collection;
@@ -13,11 +14,15 @@ it('does not set items when issuing a RG', function () {
 
     $payment = new InvoicePayment(DocumentPaymentMethod::MONEY, 500);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 10000']))
-        ->payments(collect([$payment]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
+    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->addRelatedDocument('FT 10000');
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -30,11 +35,16 @@ it('has a valid related documents payload', function () {
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 10000', 'FT 20000']))
-        ->payments(collect([$payment]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
+    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->addRelatedDocument('FT 10000');
+    $invoicing->addRelatedDocument('FT 20000');
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -57,11 +67,15 @@ it('makes sure that invoices document numbers are string', function () {
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 1000']))
-        ->payments(collect([$payment]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
+    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->addRelatedDocument('FT 1000');
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -78,10 +92,14 @@ it('makes sure it fails when no payments are set', function () {
     $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Receipt)
-        ->relatedDocuments(collect(['FT 10000']));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->addRelatedDocument('FT 10000');
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 })->throws(MissingPaymentWhenIssuingReceiptException::class);

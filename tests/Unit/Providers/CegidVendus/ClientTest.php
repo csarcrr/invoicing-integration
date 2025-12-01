@@ -1,6 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 
@@ -10,10 +11,14 @@ it('has a valid client payload', function () {
 
     $client = new InvoiceClient(vat: '123456789', name: 'Client Name');
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->client($client)
-        ->type(DocumentType::Invoice);
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setClient($client);
+    $invoicing->setType(DocumentType::Invoice);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 

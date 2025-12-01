@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
 
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
@@ -20,17 +21,23 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             return new InvoicingIntegration($config['provider']);
         });
 
-        $this->app->bind('cegid_vendus', function () {
-            $config = config('invoicing-integration');
+        $this->app->bind(
+            'cegid_vendus',
+            function (Application $app, array $parameters) {
+                $invoicing = $parameters['invoicing'] ?? throw new \InvalidArgumentException('Invoicing instance is required to instantiate the CegidVendus provider.');
 
-            $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
+                $config = config('invoicing-integration');
 
-            return new CegidVendus(
-                apiKey: $config['providers'][$config['provider']]['key'],
-                mode: $config['providers'][$config['provider']]['mode'],
-                options: collect($config['providers'][$config['provider']]['config']),
-            );
-        });
+                $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
+
+                return new CegidVendus(
+                    apiKey: $config['providers'][$config['provider']]['key'],
+                    mode: $config['providers'][$config['provider']]['mode'],
+                    options: collect($config['providers'][$config['provider']]['config']),
+                    invoicing: $invoicing,
+                );
+            }
+        );
     }
 
     public function configurePackage(Package $package): void

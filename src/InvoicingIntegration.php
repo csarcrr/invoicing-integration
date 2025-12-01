@@ -26,7 +26,7 @@ class InvoicingIntegration
 
     protected Carbon $date;
 
-    protected Carbon $dueDate;
+    protected ?Carbon $dueDate = null;
 
     protected Collection $payments;
 
@@ -79,7 +79,7 @@ class InvoicingIntegration
         return $this->date;
     }
 
-    public function dueDate(): Carbon
+    public function dueDate(): ?Carbon
     {
         return $this->dueDate;
     }
@@ -155,27 +155,33 @@ class InvoicingIntegration
         $this->ensureTypeIsSet();
         $this->ensureClientHasNeededDetails();
 
-        $resolve = app($this->provider)->type($this->type());
+        $resolve = app($this->provider, [
+            'invoicing' => $this,
+        ]);
 
-        if ($this->items()->isNotEmpty()) {
-            $resolve->items($this->items());
-        }
+        // if ($this->items()->isNotEmpty()) {
+        //     $resolve->items($this->items());
+        // }
 
-        if ($this->client()) {
-            $resolve->client($this->client());
-        }
+        // if ($this->client()) {
+        //     $resolve->client($this->client());
+        // }
 
-        if ($this->payments()->isNotEmpty()) {
-            $resolve->payments($this->payments());
-        }
+        // if ($this->payments()->isNotEmpty()) {
+        //     $resolve->payments($this->payments());
+        // }
 
-        if ($this->relatedDocuments()->isNotEmpty()) {
-            $resolve->relatedDocuments($this->relatedDocuments());
-        }
+        // if ($this->relatedDocuments()->isNotEmpty()) {
+        //     $resolve->relatedDocuments($this->relatedDocuments());
+        // }
 
         $resolve->create();
 
         return $resolve->invoice();
+    }
+
+    public function get (): self {
+        return $this;
     }
 
     protected function ensureTypeIsSet(): void

@@ -12,6 +12,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPayment
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoicingIntegration;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -27,7 +28,8 @@ class CegidVendus extends Base
     public function __construct(
         protected string $apiKey,
         protected string $mode,
-        protected Collection $options
+        protected Collection $options,
+        protected InvoicingIntegration $invoicing,
     ) {
         $this->data = collect([
             'register_id' => null,
@@ -65,34 +67,34 @@ class CegidVendus extends Base
 
     protected function ensureDocumentType()
     {
-        $this->data->put('type', $this->type->value);
+        $this->data->put('type', $this->invoicing->type()->value);
     }
 
     protected function ensureClientFormat(): void
     {
-        if (! $this->client) {
+        if (! $this->invoicing->client()) {
             return;
         }
 
         $this->data->put('client', [
-            'name' => $this->client->name,
-            'fiscal_id' => $this->client->vat,
+            'name' => $this->invoicing->client()->name,
+            'fiscal_id' => $this->invoicing->client()->vat,
         ]);
     }
 
     protected function ensureItemsFormat(): void
     {
-        if ($this->type === DocumentType::Receipt) {
+        if ($this->invoicing->type() === DocumentType::Receipt) {
             return;
         }
 
         throw_if(
-            $this->items->isEmpty(),
+            $this->invoicing->items()->isEmpty(),
             InvoiceItemIsNotValidException::class,
             'The invoice must have at least one item.'
         );
 
-        foreach ($this->items as $item) {
+        foreach ($this->invoicing->items() as $item) {
             $this->ensureItemIsValid($item);
 
             $data = [
@@ -110,19 +112,19 @@ class CegidVendus extends Base
     {
         throw_if(
             in_array(
-                $this->type,
+                $this->invoicing->type(),
                 $this->invoiceTypesThatRequirePayments
-            ) && $this->payments->isEmpty(),
+            ) && $this->invoicing->payments()->isEmpty(),
             MissingPaymentWhenIssuingReceiptException::class,
         );
 
-        if ($this->payments->isEmpty()) {
+        if ($this->invoicing->payments()->isEmpty()) {
             return;
         }
 
         $this->guardAgainstMissingPaymentConfig();
 
-        foreach ($this->payments as $payment) {
+        foreach ($this->invoicing->payments() as $payment) {
             $data = [
                 'amount' => (float) ($payment->amount() / 100),
                 'id' => $this->options->get('payments')[$payment->method()->value],
@@ -143,76 +145,76 @@ class CegidVendus extends Base
 
     protected function ensureRelatedDocumentsFormat(): void
     {
-        if ($this->type !== DocumentType::Receipt) {
+        if ($this->invoicing->type() !== DocumentType::Receipt) {
             return;
         }
 
         throw_if(
-            $this->relatedDocuments->isEmpty(),
+            $this->invoicing->relatedDocuments()->isEmpty(),
             InvoiceItemIsNotValidException::class,
             'The receipt must have at least one related document.'
         );
 
-        $this->relatedDocuments->each(function (string $id) {
+        $this->invoicing->relatedDocuments()->each(function (string $id) {
             $this->data->get('invoices')->push(collect(['document_number' => (string) $id]));
         });
     }
 
     protected function ensureTransportDetailsFormat(): void
     {
-        if (! $this->transportDetails) {
+        if (! $this->invoicing->transport()) {
             return;
         }
 
         throw_if(
-            ! in_array($this->type, [DocumentType::Invoice, DocumentType::Transport]),
+            ! in_array($this->invoicing->type(), [DocumentType::Invoice, DocumentType::Transport]),
             InvoiceTypeDoesNotSupportTransportException::class
         );
 
         throw_if(
-            is_null($this->transportDetails->origin()->date()),
+            is_null($this->invoicing->transport()->origin()->date()),
             NeedsDateToSetLoadPointException::class
         );
 
         $this->data->get('movement_of_goods')->put('loadpoint', [
-            'date' => $this->transportDetails->origin()->date(),
-            'time' => $this->transportDetails->origin()->time(),
-            'address' => $this->transportDetails->origin()->address(),
-            'postalcode' => $this->transportDetails->origin()->postalCode(),
-            'city' => $this->transportDetails->origin()->city(),
-            'country' => $this->transportDetails->origin()->country(),
+            'date' => $this->invoicing->transport()->origin()->date(),
+            'time' => $this->invoicing->transport()->origin()->time(),
+            'address' => $this->invoicing->transport()->origin()->address(),
+            'postalcode' => $this->invoicing->transport()->origin()->postalCode(),
+            'city' => $this->invoicing->transport()->origin()->city(),
+            'country' => $this->invoicing->transport()->origin()->country(),
         ]);
 
         $this->data->get('movement_of_goods')->put('landpoint', [
-            'date' => $this->transportDetails->destination()->date(),
-            'time' => $this->transportDetails->destination()->time(),
-            'address' => $this->transportDetails->destination()->address(),
-            'postalcode' => $this->transportDetails->destination()->postalCode(),
-            'city' => $this->transportDetails->destination()->city(),
-            'country' => $this->transportDetails->destination()->country(),
+            'date' => $this->invoicing->transport()->destination()->date(),
+            'time' => $this->invoicing->transport()->destination()->time(),
+            'address' => $this->invoicing->transport()->destination()->address(),
+            'postalcode' => $this->invoicing->transport()->destination()->postalCode(),
+            'city' => $this->invoicing->transport()->destination()->city(),
+            'country' => $this->invoicing->transport()->destination()->country(),
         ]);
 
-        if ($this->transportDetails->vehicleLicensePlate()) {
+        if ($this->invoicing->transport()->vehicleLicensePlate()) {
             $this->data->get('movement_of_goods')
                 ->put(
                     'vehicle_id',
-                    $this->transportDetails->vehicleLicensePlate()
+                    $this->invoicing->transport()->vehicleLicensePlate()
                 );
         }
     }
 
     protected function ensureDueDate() : void {
-        if (! $this->dueDate) {
+        if (! $this->invoicing->dueDate()) {
             return;
         }
 
         throw_if(
-            $this->type !== DocumentType::Invoice,
+            $this->invoicing->type() !== DocumentType::Invoice,
             Exception::class,
             'Due date can only be set for Invoice document types.'
         );
 
-        $this->data->put('date_due', $this->dueDate->toDateString());
+        $this->data->put('date_due', $this->invoicing->dueDate()->toDateString());
     }
 
     protected function ensureNoEmptyItemsArray()

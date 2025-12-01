@@ -5,25 +5,20 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-
-it('fails when item format is not valid', function () {
-    $item = new stdClass;
-
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Invoice);
-
-    $resolve->create();
-})->throws(InvoiceItemIsNotValidException::class);
 
 it('has a description', function () {
     $item = new InvoiceItem;
     $item->setReference('reference-1');
     $item->setNote('Test Item note');
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -35,8 +30,12 @@ it('has a type', function () {
     $item->setReference('reference-1');
     $item->setType(DocumentItemType::Service);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -48,8 +47,12 @@ it('has a percentage discount', function () {
     $item->setReference('reference-1');
     $item->setPercentageDiscount(10);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -61,8 +64,12 @@ it('has an amount discount', function () {
     $item->setReference('reference-1');
     $item->setAmountDiscount(500);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -74,8 +81,12 @@ it('has the correct tax applied', function () {
     $item->setReference('reference-1');
     $item->setTax(DocumentItemTax::REDUCED);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -88,8 +99,12 @@ it('has applies correctly the tax exemption without law', function () {
     $item->setTax(DocumentItemTax::EXEMPT);
     $item->setTaxExemption(TaxExemptionReason::M01);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -106,8 +121,12 @@ it('has applies correctly the tax exemption with law', function () {
     $item->setTaxExemption(TaxExemptionReason::M01);
     $item->setTaxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 

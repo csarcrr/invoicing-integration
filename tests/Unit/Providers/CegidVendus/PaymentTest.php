@@ -2,6 +2,7 @@
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Collection;
@@ -12,10 +13,13 @@ it('has a valid payment payload', function () {
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Invoice)
-        ->payments(collect([$payment]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 
@@ -38,11 +42,15 @@ it('fails when no payment id is configured', function () {
     $item->setPrice(500);
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
+    
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
+    
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Invoice)
-        ->payments(collect([$payment]));
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
 
     $resolve->create();
 })->throws(

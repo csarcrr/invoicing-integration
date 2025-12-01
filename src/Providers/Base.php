@@ -26,60 +26,11 @@ abstract class Base {
         return $this->data;
     }
 
-    public function client(InvoiceClient $client): self
-    {
-        $this->client = $client;
-
-        return $this;
-    }
-
-    public function items(Collection $items): self
-    {
-        $this->items = $items;
-
-        return $this;
-    }
-
-    public function payments(Collection $payments): self
-    {
-        $this->payments = $payments;
-
-        return $this;
-    }
-
-    public function relatedDocuments(Collection $relatedDocuments): self
-    {
-        $this->relatedDocuments = $relatedDocuments;
-
-        return $this;
-    }
-
     public function invoice()
     {
         $this->generateInvoice($this->request());
 
         return $this->invoice;
-    }
-
-    public function type(DocumentType $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function transportDetails(InvoiceTransportDetails $transportDetails): self
-    {
-        $this->transportDetails = $transportDetails;
-
-        return $this;
-    }
-
-    public function dueDate(Carbon $dueDate): self
-    {
-        $this->dueDate = $dueDate;
-
-        return $this;
     }
 
     abstract protected function generateInvoice(array $data): void;
