@@ -48,28 +48,30 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create branch, commit and push fixes
+      - name: Create branch, commit and push fixes (using PAT)
         if: steps.changes.outputs.changed == 'true'
         env:
           BRANCH: ci/pint-autofix-${{ github.run_id }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add -A
           git commit -m "ci: apply PHP Pint automatic fixes" || echo "nothing to commit"
-          git push --set-upstream origin "$BRANCH"
+          # Push using PAT to ensure permissions even for forks/limited GITHUB_TOKEN contexts
+          git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" --set-upstream origin "$BRANCH"
 
-      - name: Create Pull Request (if changes) using gh
+      - name: Create Pull Request (if changes) using gh (with PAT)
         if: steps.changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           BRANCH="ci/pint-autofix-${{ github.run_id }}"
+          # Authenticate gh with the PAT provided via GH_TOKEN
           gh auth status || true
           gh pr create \
             --title "chore: automatic fixes (PHP Pint)" \
             --body "This PR was created automatically by the workflow and contains code style fixes applied by Laravel Pint. Please review and merge if OK." \
             --base main \
-            --head "$BRANCH" \
-            --label "autofix"
+            --head "$BRANCH"
