@@ -30,7 +30,7 @@ it('has a valid full client payload', function () {
     $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('123456789');
     $client->setName('Client Name');
     $client->setAddress('Rua das Flores 123');

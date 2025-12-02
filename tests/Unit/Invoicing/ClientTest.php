@@ -14,7 +14,7 @@ it('assigns a client to an invoice', function () {
 });
 
 it('sets all client properties', function () {
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('123456789');
     $client->setName('Joao Alberto');
     $client->setAddress('Rua das Flores 123');

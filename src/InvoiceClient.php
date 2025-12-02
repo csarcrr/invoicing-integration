@@ -7,13 +7,19 @@ namespace CsarCrr\InvoicingIntegration;
 class InvoiceClient
 {
     protected ?string $address = null;
+
     protected ?string $city = null;
+
     protected ?string $postalCode = null;
+
     protected ?string $country = null;
+
     protected ?string $email = null;
+
     protected ?string $phone = null;
 
     public ?string $vat = null;
+
     public ?string $name = null;
 
     public function __construct(?string $vat = null, ?string $name = null)
