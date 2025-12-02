@@ -58,7 +58,7 @@ This page documents the supported features and their implementation status for e
 
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
-| Set Client           | ❌        | ❌     |
+| Set Client           | ✅        | ✅     |
 | Set Item             | ❌        | ❌     |
 | Set Payment          | ❌        | ❌     |
 | Set Due Date         | ⛔        | ⛔     |
@@ -71,9 +71,12 @@ This page documents the supported features and their implementation status for e
 | ----------- | --------- | ------ |
 | Name        | ✅        | ✅     |
 | VAT         | ✅        | ✅     |
-| Adress      | ❌        | ❌     |
-| Postal Code | ❌        | ❌     |
-| Country     | ❌        | ❌     |
+| Adress      | ✅        | ✅     |
+| City        | ✅        | ✅     |
+| Postal Code | ✅        | ✅     |
+| Country     | ✅        | ✅     |
+| E-mail      | ✅        | ✅     |
+| Phone       | ✅        | ✅     |
 
 ## Item
 
@@ -89,14 +92,12 @@ This page documents the supported features and their implementation status for e
 | Percentage Discount    | ✅        | ✅     |
 | Amount Discount        | ✅        | ✅     |
 
-
 ## Payment
 
 |                              | Invoicing | Vendus |
 | ---------------------------- | --------- | ------ |
 | Amount                       | ✅        | ✅     |
 | Method (with integration ID) | ✅        | ✅     |
-
 
 ## Transport
 
@@ -107,7 +108,6 @@ This page documents the supported features and their implementation status for e
 | Global Invoice Transport                          | ❌        | ❌     |
 | Choose integration store for stock movement       | ❌        | ❌     |
 | Set Vehicle License Plate                         | ✅        | ✅     |
-
 
 ---
 

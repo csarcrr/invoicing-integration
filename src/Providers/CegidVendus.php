@@ -76,10 +76,36 @@ class CegidVendus extends Base
             return;
         }
 
-        $this->data->put('client', [
+        $data = [
             'name' => $this->invoicing->client()->name,
             'fiscal_id' => $this->invoicing->client()->vat,
-        ]);
+        ];
+
+        if($this->invoicing->client()->address()) {
+            $data['address'] = $this->invoicing->client()->address();
+        }
+
+        if($this->invoicing->client()->city()) {
+            $data['city'] = $this->invoicing->client()->city();
+        }
+
+        if($this->invoicing->client()->postalCode()) {
+            $data['postalcode'] = $this->invoicing->client()->postalCode();
+        }
+
+        if($this->invoicing->client()->country()) {
+            $data['country'] = $this->invoicing->client()->country();
+        }
+
+        if($this->invoicing->client()->email()) {
+            $data['email'] = $this->invoicing->client()->email();
+        }
+
+        if($this->invoicing->client()->phone()) {
+            $data['phone'] = $this->invoicing->client()->phone();
+        }
+
+        $this->data->put('client', $data);
     }
 
     protected function ensureItemsFormat(): void
