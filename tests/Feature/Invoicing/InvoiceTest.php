@@ -17,7 +17,7 @@ test('can invoice successfully with minimum data', function (array $integration,
     $response = $invoice->invoice();
 
     expect($response)->toBeInstanceOf(InvoiceData::class);
-    expect($response->sequence())->toBe('FT 10000');
+    expect($response->sequence())->toBe('FT 01P2025/1');
 })->with([
     [['cegid_vendus', 200], ['new_document']],
 ]);
