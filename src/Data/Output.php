@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CsarCrr\InvoicingIntegration\Data;
+
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+class Output
+{
+    public function __construct(
+        protected OutputFormat $format,
+        protected string $content,
+        protected ?string $fileName = null
+    ) {
+        $this->format = $format;
+        $this->setFileName($fileName);
+    }
+
+    public function save(): string
+    {
+        return match ($this->format) {
+            OutputFormat::PDF_BASE64 => $this->base64EncodedPdf(),
+            default => throw new \Exception('Unsupported output format for saving.'),
+        };
+    }
+
+    public function format(): OutputFormat
+    {
+        return $this->format;
+    }
+
+    public function setFormat(OutputFormat $format): void
+    {
+        $this->format = $format;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
+        return $this;
+    }
+
+    public function content(): string
+    {
+        return $this->content;
+    }
+
+    public function fileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    protected function setFileName(?string $fileName): self
+    {
+        $fileName = Str::replace('/', '_', $fileName);
+        $this->fileName = Str::of(Str::lower($fileName))->slug('_') . '.pdf';
+
+        return $this;
+    }
+
+    protected function base64EncodedPdf(): string
+    {
+        $decoded = base64_decode($this->content);
+        $path = storage_path($this->fileName());
+        Storage::disk('local')->put($path, $decoded);
+
+        return $path;
+    }
+}

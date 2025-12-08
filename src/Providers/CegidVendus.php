@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\Output;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
@@ -38,6 +40,7 @@ class CegidVendus extends Base
             'payments' => collect(),
             'invoices' => collect(),
             'movement_of_goods' => collect(),
+            'output' => 'pdf'
         ]);
 
         $this->payments = collect();
@@ -260,6 +263,20 @@ class CegidVendus extends Base
 
         if ($data['number'] ?? false) {
             $invoice->setSequence($data['number']);
+        }
+
+        if($data['id'] ?? false) {
+            $invoice->setId((int) $data['id']);
+        }
+
+        if($data['output'] ?? false) {
+            $invoice->setOutput(
+                new Output(
+                    format: OutputFormat::PDF_BASE64,
+                    content: $data['output'],
+                    fileName: $data['number']
+                )
+            );
         }
 
         $this->invoice = $invoice;

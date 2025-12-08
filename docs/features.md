@@ -65,6 +65,12 @@ This page documents the supported features and their implementation status for e
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ❌        | ❌     |
 
+## All Invoices
+
+|                      | Invoicing | Vendus |
+| -------------------- | --------- | ------ |
+| Obtain PDF           | ❌        | ❌     |
+
 ## Client
 
 |             | Invoicing | Vendus |
