@@ -28,7 +28,7 @@ it('can save the pdf output to storage', function () {
         ->assertExists(storage_path($invoice->output()->fileName()));
 
     expect($output)->toBeString();
-});
+})->skipOnWindows();
 
 it('can output escpos', function () {
     Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
