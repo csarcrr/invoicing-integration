@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 
 it('fails when transport is set', function () {
-    $payment = new InvoicePayment();
+    $payment = new InvoicePayment;
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
 
@@ -38,7 +38,7 @@ it('fails when transport is set', function () {
     $invoicing->addPayment($payment);
     $invoicing->setTransport($transport);
     $invoicing->setType(DocumentType::InvoiceSimple);
-    
+
     $resolve = app(config('invoicing-integration.provider'), [
         'invoicing' => $invoicing,
     ]);
@@ -47,7 +47,7 @@ it('fails when transport is set', function () {
 })->throws(InvoiceTypeDoesNotSupportTransportException::class);
 
 it('fails when no items are set ', function () {
-    $payment = new InvoicePayment();
+    $payment = new InvoicePayment;
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
 

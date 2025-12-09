@@ -7,7 +7,9 @@ namespace CsarCrr\InvoicingIntegration\Data;
 class InvoiceData
 {
     protected int $id;
+
     protected string $sequence;
+
     protected Output $output;
 
     public function output(): Output
@@ -18,6 +20,7 @@ class InvoiceData
     public function setOutput(Output $output): self
     {
         $this->output = $output;
+
         return $this;
     }
 

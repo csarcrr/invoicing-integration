@@ -167,13 +167,15 @@ class InvoicingIntegration
         return $resolve->invoice();
     }
 
-    public function get (): self {
+    public function get(): self
+    {
         return $this;
     }
 
     public function asEscPos(): self
     {
         $this->outputFormat = OutputFormat::ESCPOS;
+
         return $this;
     }
 
@@ -212,6 +214,4 @@ class InvoicingIntegration
             InvoiceRequiresVatWhenClientHasName::class
         );
     }
-
-
 }

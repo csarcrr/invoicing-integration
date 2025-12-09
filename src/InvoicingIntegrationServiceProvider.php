@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
+use Illuminate\Contracts\Foundation\Application;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Illuminate\Contracts\Foundation\Application;
 
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {

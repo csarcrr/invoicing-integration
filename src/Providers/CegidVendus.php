@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\Output;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
@@ -21,12 +20,12 @@ use Illuminate\Support\Facades\Http;
 
 class CegidVendus extends Base
 {
-
     protected array $invoiceTypesThatRequirePayments = [
         DocumentType::Receipt,
         DocumentType::InvoiceReceipt,
         DocumentType::InvoiceSimple,
     ];
+
     public function __construct(
         protected string $apiKey,
         protected string $mode,
@@ -40,7 +39,7 @@ class CegidVendus extends Base
             'payments' => collect(),
             'invoices' => collect(),
             'movement_of_goods' => collect(),
-            'output' => 'pdf'
+            'output' => 'pdf',
         ]);
 
         $this->payments = collect();
@@ -84,27 +83,27 @@ class CegidVendus extends Base
             'fiscal_id' => $this->invoicing->client()->vat,
         ];
 
-        if($this->invoicing->client()->address()) {
+        if ($this->invoicing->client()->address()) {
             $data['address'] = $this->invoicing->client()->address();
         }
 
-        if($this->invoicing->client()->city()) {
+        if ($this->invoicing->client()->city()) {
             $data['city'] = $this->invoicing->client()->city();
         }
 
-        if($this->invoicing->client()->postalCode()) {
+        if ($this->invoicing->client()->postalCode()) {
             $data['postalcode'] = $this->invoicing->client()->postalCode();
         }
 
-        if($this->invoicing->client()->country()) {
+        if ($this->invoicing->client()->country()) {
             $data['country'] = $this->invoicing->client()->country();
         }
 
-        if($this->invoicing->client()->email()) {
+        if ($this->invoicing->client()->email()) {
             $data['email'] = $this->invoicing->client()->email();
         }
 
-        if($this->invoicing->client()->phone()) {
+        if ($this->invoicing->client()->phone()) {
             $data['phone'] = $this->invoicing->client()->phone();
         }
 
@@ -232,7 +231,8 @@ class CegidVendus extends Base
         }
     }
 
-    protected function ensureDueDate() : void {
+    protected function ensureDueDate(): void
+    {
         if (! $this->invoicing->dueDate()) {
             return;
         }
@@ -265,11 +265,11 @@ class CegidVendus extends Base
             $invoice->setSequence($data['number']);
         }
 
-        if($data['id'] ?? false) {
+        if ($data['id'] ?? false) {
             $invoice->setId((int) $data['id']);
         }
 
-        if($data['output'] ?? false) {
+        if ($data['output'] ?? false) {
             $invoice->setOutput(
                 new Output(
                     format: $this->invoicing->outputFormat(),
@@ -285,7 +285,7 @@ class CegidVendus extends Base
     protected function request(): array
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
         ])->post(
             'https://www.vendus.pt/ws/v1.1/documents/',
             $this->payload()->toArray()
@@ -301,7 +301,7 @@ class CegidVendus extends Base
     protected function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));

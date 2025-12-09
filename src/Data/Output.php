@@ -24,11 +24,11 @@ class Output
         return match ($this->format) {
             OutputFormat::PDF_BASE64 => $this->base64EncodedPdf(),
             OutputFormat::ESCPOS => $this->base64EncodedEscPos(),
-            default => throw new \Exception('Unsupported output format for saving.'),
         };
     }
 
-    public function get(): string {
+    public function get(): string
+    {
         return $this->save();
     }
 
@@ -45,6 +45,7 @@ class Output
     public function setContent(string $content): self
     {
         $this->content = $content;
+
         return $this;
     }
 
@@ -61,7 +62,7 @@ class Output
     protected function setFileName(?string $fileName): self
     {
         $fileName = Str::replace('/', '_', $fileName);
-        $this->fileName = Str::of(Str::lower($fileName))->slug('_') . '.pdf';
+        $this->fileName = Str::of(Str::lower($fileName))->slug('_').'.pdf';
 
         return $this;
     }
@@ -75,7 +76,7 @@ class Output
         return $path;
     }
 
-    protected function base64EncodedEscPos (): string
+    protected function base64EncodedEscPos(): string
     {
         return base64_decode($this->content);
     }

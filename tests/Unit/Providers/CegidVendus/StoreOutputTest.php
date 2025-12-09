@@ -2,14 +2,14 @@
 
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 it('can save the pdf output to storage', function () {
     Storage::fake('local');
     Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
 
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setPrice(100);
     $item->setReference('reference-1');
 
@@ -33,7 +33,7 @@ it('can save the pdf output to storage', function () {
 it('can output escpos', function () {
     Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
 
-    $item = new InvoiceItem();
+    $item = new InvoiceItem;
     $item->setPrice(100);
     $item->setReference('reference-1');
 
