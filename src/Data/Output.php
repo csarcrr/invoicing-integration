@@ -23,6 +23,7 @@ class Output
     {
         return match ($this->format) {
             OutputFormat::PDF_BASE64 => $this->base64EncodedPdf(),
+            OutputFormat::ESCPOS => $this->base64EncodedEscPos(),
             default => throw new \Exception('Unsupported output format for saving.'),
         };
     }
@@ -68,5 +69,10 @@ class Output
         Storage::disk('local')->put($path, $decoded);
 
         return $path;
+    }
+
+    protected function base64EncodedEscPos (): string
+    {
+        return base64_decode($this->content);
     }
 }

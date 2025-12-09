@@ -272,7 +272,7 @@ class CegidVendus extends Base
         if($data['output'] ?? false) {
             $invoice->setOutput(
                 new Output(
-                    format: OutputFormat::PDF_BASE64,
+                    format: $this->invoicing->outputFormat(),
                     content: $data['output'],
                     fileName: $data['number']
                 )

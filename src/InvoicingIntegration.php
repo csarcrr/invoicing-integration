@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\DueDate\DueDateCannotBeInPastException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
@@ -33,6 +34,8 @@ class InvoicingIntegration
     protected Collection $items;
 
     protected Collection $relatedDocuments;
+
+    protected OutputFormat $outputFormat = OutputFormat::PDF_BASE64;
 
     public function __construct(
         protected string $provider
@@ -159,22 +162,6 @@ class InvoicingIntegration
             'invoicing' => $this,
         ]);
 
-        // if ($this->items()->isNotEmpty()) {
-        //     $resolve->items($this->items());
-        // }
-
-        // if ($this->client()) {
-        //     $resolve->client($this->client());
-        // }
-
-        // if ($this->payments()->isNotEmpty()) {
-        //     $resolve->payments($this->payments());
-        // }
-
-        // if ($this->relatedDocuments()->isNotEmpty()) {
-        //     $resolve->relatedDocuments($this->relatedDocuments());
-        // }
-
         $resolve->create();
 
         return $resolve->invoice();
@@ -182,6 +169,17 @@ class InvoicingIntegration
 
     public function get (): self {
         return $this;
+    }
+
+    public function asEscPos(): self
+    {
+        $this->outputFormat = OutputFormat::ESCPOS;
+        return $this;
+    }
+
+    public function outputFormat(): OutputFormat
+    {
+        return $this->outputFormat;
     }
 
     protected function ensureTypeIsSet(): void
@@ -214,4 +212,6 @@ class InvoicingIntegration
             InvoiceRequiresVatWhenClientHasName::class
         );
     }
+
+
 }

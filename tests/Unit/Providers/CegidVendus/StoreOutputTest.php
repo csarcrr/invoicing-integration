@@ -22,10 +22,30 @@ it('can save the pdf output to storage', function () {
 
     $invoice = $resolve->create()->invoice();
 
-    $invoice->output()->save();
+    $output = $invoice->output()->save();
 
     Storage::disk('local')
-        ->assertExists(
-            storage_path($invoice->output()->fileName())
-        );
+        ->assertExists(storage_path($invoice->output()->fileName()));
+        
+    expect($output)->toBeString();
+});
+
+it('can output escpos', function () {
+    Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
+
+    $item = new InvoiceItem();
+    $item->setPrice(100);
+    $item->setReference('reference-1');
+
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->asEscPos();
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $invoice = $resolve->create()->invoice();
+
+    expect($invoice->output()->save())->toBeString();
 });

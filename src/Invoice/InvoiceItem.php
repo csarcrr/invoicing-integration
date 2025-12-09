@@ -160,4 +160,5 @@ class InvoiceItem
 
         return $this;
     }
+
 }
