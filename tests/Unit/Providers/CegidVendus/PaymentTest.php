@@ -1,7 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Collection;
@@ -12,12 +12,15 @@ it('has a valid payment payload', function () {
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Invoice)
-        ->payments(collect([$payment]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
 
-    $resolve->buildPayload();
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
 
     expect($resolve->payload()->get('payments'))
         ->toBeInstanceOf(Collection::class);
@@ -26,7 +29,7 @@ it('has a valid payment payload', function () {
 });
 
 it('fails when no payment id is configured', function () {
-    config()->set('invoicing-integration.providers.vendus.config.payments', [
+    config()->set('invoicing-integration.providers.cegid_vendus.config.payments', [
         DocumentPaymentMethod::MB->value => null,
         DocumentPaymentMethod::CREDIT_CARD->value => null,
         DocumentPaymentMethod::CURRENT_ACCOUNT->value => null,
@@ -39,12 +42,15 @@ it('fails when no payment id is configured', function () {
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->type(DocumentType::Invoice)
-        ->payments(collect([$payment]));
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->addPayment($payment);
 
-    $resolve->buildPayload();
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
 })->throws(
     Exception::class,
     'The provider configuration is missing payment method details.'

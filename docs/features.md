@@ -1,26 +1,45 @@
 # Features
 
-### ✅ - Implemented / ❌ - Not Implemented / ⛔ - Not applicable
+This page documents the supported features and their implementation status for each provider.
 
-## Invoices Types
+### Legend
 
-### FT
+-   ✅ — Implemented
+-   ❌ — Not Implemented
+-   ⛔ — Not applicable
+
+## Invoice Types
+
+### FT (Fatura)
 
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ✅        | ✅     |
 | Set Item             | ✅        | ✅     |
 | Set Payment          | ✅        | ✅     |
+| Set Due Date         | ✅        | ✅     |
 | Set Transport        | ✅        | ❌     |
 | Set related Document | ✅        | ✅     |
 
-### RG
+### RG (Recibo)
 
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
 | Set Client           | ✅        | ✅     |
 | Set Item             | ⛔        | ⛔     |
 | Set Payment          | ✅        | ✅     |
+| Set Due Date         | ⛔        | ⛔     |
+| Set Transport        | ⛔        | ⛔     |
+| Set related Document | ✅        | ✅     |
+
+### FR
+
+|                      | Invoicing | Vendus |
+| -------------------- | --------- | ------ |
+| Set Client           | ✅        | ✅     |
+| Set Item             | ✅        | ✅     |
+| Set Payment          | ✅        | ✅     |
+| Set Due Date         | ⛔        | ⛔     |
 | Set Transport        | ⛔        | ⛔     |
 | Set related Document | ✅        | ✅     |
 
@@ -28,29 +47,43 @@
 
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
-| Set Client           | ❌        | ❌     |
-| Set Item             | ❌        | ❌     |
-| Set Payment          | ❌        | ❌     |
-| Set Transport        | ❌        | ❌     |
+| Set Client           | ✅        | ✅     |
+| Set Item             | ✅        | ✅     |
+| Set Payment          | ✅        | ✅     |
+| Set Due Date         | ⛔        | ⛔     |
 | Set Transport        | ⛔        | ⛔     |
-| Set related Document | ❌        | ❌     |
+| Set related Document | ✅        | ✅     |
 
 ### NC
 
 |                      | Invoicing | Vendus |
 | -------------------- | --------- | ------ |
-| Set Client           | ❌        | ❌     |
+| Set Client           | ✅        | ✅     |
 | Set Item             | ❌        | ❌     |
 | Set Payment          | ❌        | ❌     |
-| Set Transport        | ❌        | ❌     |
+| Set Due Date         | ⛔        | ⛔     |
+| Set Transport        | ⛔        | ⛔     |
 | Set related Document | ❌        | ❌     |
+
+## All Invoices
+
+|               | Invoicing | Vendus |
+| ------------- | --------- | ------ |
+| Save as PDF   | ✅        | ✅     |
+| Obtain ESCPOS | ✅        | ✅     |
 
 ## Client
 
-|      | Invoicing | Vendus |
-| ---- | --------- | ------ |
-| Name | ✅        | ✅     |
-| VAT  | ✅        | ✅     |
+|             | Invoicing | Vendus |
+| ----------- | --------- | ------ |
+| Name        | ✅        | ✅     |
+| VAT         | ✅        | ✅     |
+| Adress      | ✅        | ✅     |
+| City        | ✅        | ✅     |
+| Postal Code | ✅        | ✅     |
+| Country     | ✅        | ✅     |
+| E-mail      | ✅        | ✅     |
+| Phone       | ✅        | ✅     |
 
 ## Item
 
@@ -82,3 +115,7 @@
 | Global Invoice Transport                          | ❌        | ❌     |
 | Choose integration store for stock movement       | ❌        | ❌     |
 | Set Vehicle License Plate                         | ✅        | ✅     |
+
+---
+
+For more details on each feature, see the relevant documentation sections or the source code.

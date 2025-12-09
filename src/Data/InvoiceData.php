@@ -10,6 +10,20 @@ class InvoiceData
 
     protected string $sequence;
 
+    protected Output $output;
+
+    public function output(): Output
+    {
+        return $this->output;
+    }
+
+    public function setOutput(Output $output): self
+    {
+        $this->output = $output;
+
+        return $this;
+    }
+
     public function sequence()
     {
         return $this->sequence;

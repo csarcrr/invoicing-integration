@@ -9,17 +9,31 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 class InvoicePayment
 {
     public function __construct(
-        protected DocumentPaymentMethod $method,
-        protected int $amount
+        protected ?DocumentPaymentMethod $method = null,
+        protected ?int $amount = null
     ) {}
 
-    public function amount(): int
+    public function amount(): ?int
     {
         return $this->amount;
     }
 
-    public function method(): DocumentPaymentMethod
+    public function method(): ?DocumentPaymentMethod
     {
         return $this->method;
+    }
+
+    public function setAmount(int $amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function setMethod(DocumentPaymentMethod $method): self
+    {
+        $this->method = $method;
+
+        return $this;
     }
 }

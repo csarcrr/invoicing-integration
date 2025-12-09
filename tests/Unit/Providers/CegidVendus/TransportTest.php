@@ -1,7 +1,8 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 
@@ -16,12 +17,16 @@ it('formats transport load point data correctly', function () {
     $transport->origin()->postalCode('12345');
     $transport->origin()->country('Countryland');
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->transportDetails($transport)
-        ->type(DocumentType::Invoice);
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setTransport($transport);
+    $invoicing->setType(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
 
     expect($resolve->payload()->get('movement_of_goods')['loadpoint'])
         ->toEqual([
@@ -35,8 +40,6 @@ it('formats transport load point data correctly', function () {
 });
 it('formats transport land point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
-
-    $transport = new InvoiceTransportDetails;
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
@@ -53,12 +56,16 @@ it('formats transport land point data correctly', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('Countryland');
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->transportDetails($transport)
-        ->type(DocumentType::Invoice);
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setTransport($transport);
+    $invoicing->setType(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
 
     expect($resolve->payload()->get('movement_of_goods')['landpoint'])
         ->toEqual([
@@ -94,12 +101,16 @@ it('formats transport vehicle license plate correctly', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('Countryland');
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->transportDetails($transport)
-        ->type(DocumentType::Invoice);
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setTransport($transport);
+    $invoicing->setType(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
 
     expect($resolve->payload()->get('movement_of_goods')['vehicle_id'])
         ->toEqual('ABC-1234');
@@ -124,10 +135,14 @@ it('fails when no date is set for load point', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('Countryland');
 
-    $resolve = app(config('invoicing-integration.provider'))
-        ->items(collect([$item]))
-        ->transportDetails($transport)
-        ->type(DocumentType::Invoice);
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setTransport($transport);
+    $invoicing->setType(DocumentType::Invoice);
 
-    $resolve->buildPayload();
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
 })->throws(NeedsDateToSetLoadPointException::class);

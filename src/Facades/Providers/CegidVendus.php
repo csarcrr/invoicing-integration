@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \CsarCrr\InvoicingIntegration\InvoicingIntegration
  */
-class Vendus extends Facade
+class CegidVendus extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'vendus';
+        return 'cegid_vendus';
     }
 }
