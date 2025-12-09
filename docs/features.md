@@ -67,9 +67,10 @@ This page documents the supported features and their implementation status for e
 
 ## All Invoices
 
-|                      | Invoicing | Vendus |
-| -------------------- | --------- | ------ |
-| Obtain PDF           | ❌        | ❌     |
+|               | Invoicing | Vendus |
+| ------------- | --------- | ------ |
+| Save as PDF   | ✅        | ✅     |
+| Obtain ESCPOS | ✅        | ✅     |
 
 ## Client
 

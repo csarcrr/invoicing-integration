@@ -59,7 +59,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 
 $integration = Invoice::create();
 $integration->setType(DocumentType::Receipt);
-$integration->addRelatedDocument('INV-2025-001');
+$integration->addRelatedDocument('FT 01P2025/1');
 $integration->addPayment(new InvoicePayment(DocumentPaymentMethod::MONEY, 10000));
 $integration->invoice();
 ```
