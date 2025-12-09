@@ -26,7 +26,7 @@ it('can save the pdf output to storage', function () {
 
     Storage::disk('local')
         ->assertExists(storage_path($invoice->output()->fileName()));
-        
+
     expect($output)->toBeString();
 });
 
@@ -47,5 +47,5 @@ it('can output escpos', function () {
 
     $invoice = $resolve->create()->invoice();
 
-    expect($invoice->output()->save())->toBeString();
+    expect($invoice->output()->get())->toBeString();
 });

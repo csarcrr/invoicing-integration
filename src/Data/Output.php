@@ -28,6 +28,10 @@ class Output
         };
     }
 
+    public function get(): string {
+        return $this->save();
+    }
+
     public function format(): OutputFormat
     {
         return $this->format;
