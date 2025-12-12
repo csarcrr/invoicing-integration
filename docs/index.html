@@ -14,38 +14,10 @@
             window.$docsify = {
                 name: "Invoicing Integration",
                 repo: "https://github.com/csarcrr/invoicing-integration",
-                loadSidebar: '/_sidebar.md',
+                loadSidebar: '_sidebar.md',
+                basePath: '/invoicing-integration/#/',
                 subMaxLevel: 3,
                 search: "auto", // default
-
-                search: [
-                    "/", // => /README.md
-                    "/gettin-started", // => /guide.md
-                    "/invoices/creating-an-invoice", // => /get-started.md
-                ],
-
-                // complete configuration parameters
-                search: {
-                    maxAge: 86400000, // Expiration time, the default one day
-                    paths: [], // or 'auto'
-                    placeholder: "Type to search",
-
-                    // Localization
-                    placeholder: {
-                        "/zh-cn/": "搜索",
-                        "/": "Type to search",
-                    },
-
-                    noData: "No Results!",
-
-                    depth: 2,
-
-                    hideOtherSidebarContent: false, // whether or not to hide other sidebar content
-
-                    // You can provide a regexp to match prefixes. In this case,
-                    // the matching substring will be used to identify the index
-                    pathNamespaces: /^(\/(zh-cn|ru-ru))?(\/(v1|v2))?/,
-                },
             };
         </script>
         <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
