@@ -109,5 +109,4 @@ jobs:
             --body "This PR was created automatically by the PHPStan workflow. It contains automatic fixes (formatting / minor code fixes). Please review and merge." \
             --base main \
             --head "$BRANCH" \
-            --label "autofix" \
-            --label "phpstan"
+            --label "autofix"

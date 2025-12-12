@@ -28,7 +28,7 @@ jobs:
           ref: ${{ github.head_ref || github.ref }}
 
       - name: Run Laravel Pint (fixer)
-        uses: aglipanci/laravel-pint-action@v2.6.0
+        uses: aglipanci/laravel-pint-action@latest
 
       - name: Show changed files
         run: |
@@ -48,29 +48,54 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create branch, commit and push fixes
+      - name: Create branch, commit and push fixes (using PAT, safe push)
         if: steps.changes.outputs.changed == 'true'
         env:
           BRANCH: ci/pint-autofix-${{ github.run_id }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
+
+          # Create or checkout local branch
+          if git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
+            echo "Local branch $BRANCH already exists, checking it out"
+            git checkout "$BRANCH"
+          else
+            git checkout -b "$BRANCH"
+          fi
+
+          # Commit changes if any
           git add -A
           git commit -m "ci: apply PHP Pint automatic fixes" || echo "nothing to commit"
-          git push --set-upstream origin "$BRANCH"
 
-      - name: Create Pull Request (if changes) using gh
+          # Remote URL using PAT for authentication
+          REMOTE_URL="https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}"
+
+          # Fetch remote branch state (if any)
+          git fetch origin "$BRANCH" || true
+
+          # Try normal push; fallback to force-with-lease if non-fast-forward
+          if git push "$REMOTE_URL" --set-upstream origin "$BRANCH"; then
+            echo "Pushed branch $BRANCH successfully (normal push)."
+          else
+            echo "Normal push failed — attempting force-with-lease..."
+            git push --force-with-lease "$REMOTE_URL" "$BRANCH"
+            echo "Pushed branch $BRANCH with --force-with-lease."
+          fi
+
+      - name: Create Pull Request (if changes) using gh (with PAT)
         if: steps.changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           BRANCH="ci/pint-autofix-${{ github.run_id }}"
+          # show auth status (best-effort)
           gh auth status || true
+          # create PR (will fail if one already exists from same head->base; that's OK)
           gh pr create \
             --title "chore: automatic fixes (PHP Pint)" \
             --body "This PR was created automatically by the workflow and contains code style fixes applied by Laravel Pint. Please review and merge if OK." \
             --base main \
-            --head "$BRANCH" \
-            --label "autofix" \
-            --label "pint"
+            --head "$BRANCH" || echo "gh pr create returned non-zero (a PR might already exist)."

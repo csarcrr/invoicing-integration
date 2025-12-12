@@ -13,6 +13,7 @@
 -   `setDateDue(Carbon $dateDue): self` — Set the due date.
 -   `addRelatedDocument(string $relatedDocument): self` — Add a related document.
 -   `setTransport(InvoiceTransportDetails $transport): self` — Set transport details.
+-   `asEscPos(): self` — Sets the output format type to ESCPOS.
 -   `invoice(): InvoiceData` — Generate and send the invoice.
 
 > **Note:** For final consumer invoices, do not set any client information (do not call `setClient`).

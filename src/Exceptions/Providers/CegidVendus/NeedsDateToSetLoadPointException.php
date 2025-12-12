@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus;
+namespace CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus;
 
 use Exception;
 

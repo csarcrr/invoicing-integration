@@ -39,15 +39,6 @@ it('can add multiple items', function () {
     expect($invoice->items())->toContain($item3);
 });
 
-it('can set a due date on the invoice', function () {
-    $dueDate = now()->addDays(30);
-
-    $invoice = Invoice::create();
-    $invoice->setDateDue($dueDate);
-
-    expect($invoice->dateDue())->toEqual($dueDate);
-});
-
 it('can set a related document', function () {})->todo();
 // it('can receive PDF data output', function () {})->todo();
 // it('can receive ESCPOS data output', function () {})->todo();

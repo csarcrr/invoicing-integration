@@ -5,9 +5,11 @@ Welcome to the documentation for the Invoicing Integration package. This documen
 ## Table of Contents
 
 -   [Getting Started](getting-started.md)
--   [Features](../FEATURES.md)
+-   [Features](features.md)
 -   [Functionalities](../FUNCTIONALITIES.md)
--   [Creating an Invoice](invoices/creating-an-invoice.md)
+-   Invoices
+	-   [Creating an Invoice](invoices/creating-an-invoice.md)
+	-   [Creating a Receipt for an Invoice](invoices/creating-a-RG-for-an-invoice.md)
 -   [Providers](providers/cegid-vendus/configuration.md)
 
 ## Overview
@@ -18,7 +20,7 @@ This package helps you integrate with invoicing systems, allowing you to:
 -   Assign clients, items, and payments
 -   Configure provider-specific settings (e.g., Cegid Vendus)
 
-For a full list of features, see [FEATURES.md](../FEATURES.md).
+For a full list of features, see [FEATURES.md](features.md).
 
 ## Usage
 
