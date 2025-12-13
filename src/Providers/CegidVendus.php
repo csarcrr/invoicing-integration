@@ -194,7 +194,7 @@ class CegidVendus extends Base
             return;
         }
 
-        if(!$this->invoicing->client()){
+        if (! $this->invoicing->client()) {
             throw new Exception('Client information is required when transport details are provided.');
         }
 
@@ -218,14 +218,14 @@ class CegidVendus extends Base
         ]);
 
         $landpointData = [
-            
+
             'address' => $this->invoicing->transport()->destination()->address(),
             'postalcode' => $this->invoicing->transport()->destination()->postalCode(),
             'city' => $this->invoicing->transport()->destination()->city(),
             'country' => $this->invoicing->transport()->destination()->country(),
         ];
 
-        if($this->invoicing->transport()->destination()->date()) {
+        if ($this->invoicing->transport()->destination()->date()) {
             $landpointData['date'] = $this->invoicing->transport()->destination()->date()->toDateString();
             $landpointData['time'] = $this->invoicing->transport()->destination()->time()->format('H:i');
         }
