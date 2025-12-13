@@ -16,7 +16,7 @@ it('fails when transport is set', function () {
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
