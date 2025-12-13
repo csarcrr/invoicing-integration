@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Invoice;
 
 use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
+use League\ISO3166\ISO3166;
 
 class InvoiceTransportDetails
 {
@@ -87,13 +89,19 @@ class InvoiceTransportDetails
             return $this->data[$this->type]['country'];
         }
 
-        return $this->data[$this->type]['country'] = $country;
+        try {
+            $data = (new ISO3166())->alpha2(strtolower($country));
+        }catch (\Exception $e) {
+            throw new InvalidCountryException();
+        }
+
+        return $this->data[$this->type]['country'] = $data['alpha2'];
     }
 
     public function date(?Carbon $date = null): ?Carbon
     {
         if (! $date) {
-            return $this->data[$this->type]['date'];
+            return $this->data[$this->type]['date'] ?? null;
         }
 
         return $this->data[$this->type]['date'] = $date;
@@ -102,7 +110,7 @@ class InvoiceTransportDetails
     public function time(?Carbon $time = null): ?Carbon
     {
         if (! $time) {
-            return $this->data[$this->type]['time'];
+            return $this->data[$this->type]['time'] ?? null;
         }
 
         return $this->data[$this->type]['time'] = $time;
