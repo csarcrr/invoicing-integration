@@ -11,7 +11,7 @@ $integration = Invoice::create();
 // ...
 $invoice = $integration->invoice();
 
-$invoice->output()->save(); // saves to storage/ft_01p2025_1.pdf and outputs the path
+$invoice->output()->save(); // saves to storage/private/output/ft_01p2025_1.pdf and outputs the path
 ```
 
 The `save()` method stores the file in `storage_path` and returns the full file path for easy retrieval.
