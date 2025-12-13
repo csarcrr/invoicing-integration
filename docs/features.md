@@ -8,113 +8,143 @@ This page documents the supported features and their implementation status for e
 -   ❌ — Not Implemented
 -   ⛔ — Not applicable
 
-## Invoice Types
+# Invoicing
 
-### FT (Fatura)
+Features that apply when issuing an Invoicing.
 
-|                      | Invoicing | Vendus |
-| -------------------- | --------- | ------ |
-| Set Client           | ✅        | ✅     |
-| Set Item             | ✅        | ✅     |
-| Set Payment          | ✅        | ✅     |
-| Set Due Date         | ✅        | ✅     |
-| Set Transport        | ✅        | ❌     |
-| Set related Document | ✅        | ✅     |
+## Invoicing
 
-### RG (Recibo)
+<div class="matrix-wrapper">
 
-|                      | Invoicing | Vendus |
-| -------------------- | --------- | ------ |
-| Set Client           | ✅        | ✅     |
-| Set Item             | ⛔        | ⛔     |
-| Set Payment          | ✅        | ✅     |
-| Set Due Date         | ⛔        | ⛔     |
-| Set Transport        | ⛔        | ⛔     |
-| Set related Document | ✅        | ✅     |
+<table class="matrix">
+  <thead>
+    <tr>
+      <th rowspan="2">Feature</th>
+      <th colspan="2">FT</th>
+      <th colspan="2">FR</th>
+      <th colspan="2">RG</th>
+      <th colspan="2">FS</th>
+      <th colspan="2">NC</th>
+    </tr>
+    <tr>
+      <th>Invoicing</th><th>Cegid Vendus</th>
+      <th>Invoicing</th><th>Cegid Vendus</th>
+      <th>Invoicing</th><th>Cegid Vendus</th>
+      <th>Invoicing</th><th>Cegid Vendus</th>
+      <th>Invoicing</th><th>Cegid Vendus</th>
+    </tr>
+  </thead>
 
-### FR
+  <tbody>
+    <tr>
+      <td>Client</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+    </tr>
+    <tr>
+      <td>Item</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>⛔</td><td>⛔</td>
+      <td>✅</td><td>✅</td>
+      <td>❌</td><td>❌</td>
+    </tr>
+    <tr>
+      <td>Payment</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>❌</td><td>❌</td>
+    </tr>
+    <tr>
+      <td>Due Date</td>
+      <td>✅</td><td>✅</td>
+      <td>⛔</td><td>⛔</td>
+      <td>⛔</td><td>⛔</td>
+      <td>⛔</td><td>⛔</td>
+      <td>⛔</td><td>⛔</td>
+    </tr>
+    <tr>
+      <td>Transport</td>
+      <td>✅</td><td>❌</td>
+      <td>⛔</td><td>⛔</td>
+      <td>⛔</td><td>⛔</td>
+      <td>⛔</td><td>⛔</td>
+      <td>⛔</td><td>⛔</td>
+    </tr>
+    <tr>
+      <td>Related Document</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>✅</td><td>✅</td>
+      <td>❌</td><td>❌</td>
+    </tr>
+  </tbody>
+</table>
 
-|                      | Invoicing | Vendus |
-| -------------------- | --------- | ------ |
-| Set Client           | ✅        | ✅     |
-| Set Item             | ✅        | ✅     |
-| Set Payment          | ✅        | ✅     |
-| Set Due Date         | ⛔        | ⛔     |
-| Set Transport        | ⛔        | ⛔     |
-| Set related Document | ✅        | ✅     |
+</div>
 
-### FS
+### Common to all invoicing types
 
-|                      | Invoicing | Vendus |
-| -------------------- | --------- | ------ |
-| Set Client           | ✅        | ✅     |
-| Set Item             | ✅        | ✅     |
-| Set Payment          | ✅        | ✅     |
-| Set Due Date         | ⛔        | ⛔     |
-| Set Transport        | ⛔        | ⛔     |
-| Set related Document | ✅        | ✅     |
+Features that are "shared" between multiple Invoicing types.
 
-### NC
+#### Outputing
 
-|                      | Invoicing | Vendus |
-| -------------------- | --------- | ------ |
-| Set Client           | ✅        | ✅     |
-| Set Item             | ❌        | ❌     |
-| Set Payment          | ❌        | ❌     |
-| Set Due Date         | ⛔        | ⛔     |
-| Set Transport        | ⛔        | ⛔     |
-| Set related Document | ❌        | ❌     |
+|               | Invoicing | Cegid Vendus |
+| ------------- | --------- | ------------ |
+| Save as PDF   | ✅        | ✅           |
+| Obtain ESCPOS | ✅        | ✅           |
 
-## All Invoices
+#### Client
 
-|               | Invoicing | Vendus |
-| ------------- | --------- | ------ |
-| Save as PDF   | ✅        | ✅     |
-| Obtain ESCPOS | ✅        | ✅     |
+|             | Invoicing | Cegid Vendus |
+| ----------- | --------- | ------------ |
+| Name        | ✅        | ✅           |
+| VAT         | ✅        | ✅           |
+| Adress      | ✅        | ✅           |
+| City        | ✅        | ✅           |
+| Postal Code | ✅        | ✅           |
+| Country     | ✅        | ✅           |
+| E-mail      | ✅        | ✅           |
+| Phone       | ✅        | ✅           |
 
-## Client
+#### Item
 
-|             | Invoicing | Vendus |
-| ----------- | --------- | ------ |
-| Name        | ✅        | ✅     |
-| VAT         | ✅        | ✅     |
-| Adress      | ✅        | ✅     |
-| City        | ✅        | ✅     |
-| Postal Code | ✅        | ✅     |
-| Country     | ✅        | ✅     |
-| E-mail      | ✅        | ✅     |
-| Phone       | ✅        | ✅     |
+|                        | Invoicing | Cegid Vendus |
+| ---------------------- | --------- | ------------ |
+| Reference              | ✅        | ✅           |
+| Item ID                | ❌        | ❌           |
+| Description            | ✅        | ✅           |
+| Price                  | ✅        | ✅           |
+| Tax                    | ✅        | ✅           |
+| Tax exempt with reason | ✅        | ✅           |
+| Type                   | ✅        | ✅           |
+| Percentage Discount    | ✅        | ✅           |
+| Amount Discount        | ✅        | ✅           |
 
-## Item
+#### Payment
 
-|                        | Invoicing | Vendus |
-| ---------------------- | --------- | ------ |
-| Reference              | ✅        | ✅     |
-| Item ID                | ❌        | ❌     |
-| Description            | ✅        | ✅     |
-| Price                  | ✅        | ✅     |
-| Tax                    | ✅        | ✅     |
-| Tax exempt with reason | ✅        | ✅     |
-| Type                   | ✅        | ✅     |
-| Percentage Discount    | ✅        | ✅     |
-| Amount Discount        | ✅        | ✅     |
+|                              | Invoicing | Cegid Vendus |
+| ---------------------------- | --------- | ------------ |
+| Amount                       | ✅        | ✅           |
+| Method (with integration ID) | ✅        | ✅           |
 
-## Payment
+#### Transport
 
-|                              | Invoicing | Vendus |
-| ---------------------------- | --------- | ------ |
-| Amount                       | ✅        | ✅     |
-| Method (with integration ID) | ✅        | ✅     |
+Only applies to certain types of documents - See "Transport" compatibility in each type.
 
-## Transport
-
-|                                                   | Invoicing | Vendus |
-| ------------------------------------------------- | --------- | ------ |
-| Origin (address, postal_code, city, country)      | ✅        | ✅     |
-| Destination (address, postal_code, city, country) | ✅        | ✅     |
-| Global Invoice Transport                          | ❌        | ❌     |
-| Choose integration store for stock movement       | ❌        | ❌     |
-| Set Vehicle License Plate                         | ✅        | ✅     |
+|                                                   | Invoicing | Cegid Vendus |
+| ------------------------------------------------- | --------- | ------------ |
+| Origin (address, postal_code, city, country)      | ✅        | ✅           |
+| Destination (address, postal_code, city, country) | ✅        | ✅           |
+| Global Invoicing Transport                        | ❌        | ❌           |
+| Choose integration store for stock movement       | ❌        | ❌           |
+| Vehicle License Plate                             | ✅        | ✅           |
 
 ---
 
