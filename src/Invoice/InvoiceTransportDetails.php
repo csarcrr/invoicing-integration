@@ -101,7 +101,7 @@ class InvoiceTransportDetails
     public function date(?Carbon $date = null): ?Carbon
     {
         if (! $date) {
-            return $this->data[$this->type]['date'];
+            return $this->data[$this->type]['date'] ?? null;
         }
 
         return $this->data[$this->type]['date'] = $date;
@@ -110,7 +110,7 @@ class InvoiceTransportDetails
     public function time(?Carbon $time = null): ?Carbon
     {
         if (! $time) {
-            return $this->data[$this->type]['time'];
+            return $this->data[$this->type]['time'] ?? null;
         }
 
         return $this->data[$this->type]['time'] = $time;

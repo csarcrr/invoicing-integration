@@ -209,22 +209,28 @@ class CegidVendus extends Base
         );
 
         $this->data->get('movement_of_goods')->put('loadpoint', [
-            'date' => $this->invoicing->transport()->origin()->date()?->toDateString(),
-            'time' => $this->invoicing->transport()->origin()->time()?->format('H:i'),
+            'date' => $this->invoicing->transport()->origin()->date()->toDateString(),
+            'time' => $this->invoicing->transport()->origin()->time()->format('H:i'),
             'address' => $this->invoicing->transport()->origin()->address(),
             'postalcode' => $this->invoicing->transport()->origin()->postalCode(),
             'city' => $this->invoicing->transport()->origin()->city(),
             'country' => $this->invoicing->transport()->origin()->country(),
         ]);
 
-        $this->data->get('movement_of_goods')->put('landpoint', [
-            'date' => $this->invoicing->transport()->destination()->date()?->toDateString(),
-            'time' => $this->invoicing->transport()->destination()->time()?->format('H:i'),
+        $landpointData = [
+            
             'address' => $this->invoicing->transport()->destination()->address(),
             'postalcode' => $this->invoicing->transport()->destination()->postalCode(),
             'city' => $this->invoicing->transport()->destination()->city(),
             'country' => $this->invoicing->transport()->destination()->country(),
-        ]);
+        ];
+
+        if($this->invoicing->transport()->destination()->date()) {
+            $landpointData['date'] = $this->invoicing->transport()->destination()->date()->toDateString();
+            $landpointData['time'] = $this->invoicing->transport()->destination()->time()->format('H:i');
+        }
+
+        $this->data->get('movement_of_goods')->put('landpoint', $landpointData);
 
         if ($this->invoicing->transport()->vehicleLicensePlate()) {
             $this->data->get('movement_of_goods')
