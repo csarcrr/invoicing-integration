@@ -194,7 +194,7 @@ class CegidVendus extends Base
             return;
         }
 
-        if(!$this->invoicing->client()){
+        if (! $this->invoicing->client()) {
             throw new Exception('Client information is required when transport details are provided.');
         }
 
