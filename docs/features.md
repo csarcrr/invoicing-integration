@@ -12,7 +12,14 @@ This page documents the supported features and their implementation status for e
 
 Features that apply when issuing an Invoicing.
 
-## Invoicing
+|                      | Invoicing | Vendus |
+| -------------------- | --------- | ------ |
+| Set Client           | ✅        | ✅     |
+| Set Item             | ✅        | ✅     |
+| Set Payment          | ✅        | ✅     |
+| Set Due Date         | ✅        | ✅     |
+| Set Transport        | ✅        | ✅     |
+| Set related Document | ✅        | ✅     |
 
 <div class="matrix-wrapper">
 

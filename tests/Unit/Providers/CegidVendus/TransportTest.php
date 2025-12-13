@@ -30,14 +30,15 @@ it('formats transport load point data correctly', function () {
 
     expect($resolve->payload()->get('movement_of_goods')['loadpoint'])
         ->toEqual([
-            'date' => $transport->origin()->date(),
-            'time' => $transport->origin()->time(),
+            'date' => $transport->origin()->date()->format('Y-m-d'),
+            'time' => $transport->origin()->time()->format('H:i'),
             'address' => $transport->origin()->address(),
             'postalcode' => $transport->origin()->postalCode(),
             'city' => $transport->origin()->city(),
             'country' => $transport->origin()->country(),
         ]);
 });
+
 it('formats transport land point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
@@ -69,8 +70,8 @@ it('formats transport land point data correctly', function () {
 
     expect($resolve->payload()->get('movement_of_goods')['landpoint'])
         ->toEqual([
-            'date' => $transport->destination()->date(),
-            'time' => $transport->destination()->time(),
+            'date' => $transport->destination()->date()->format('Y-m-d'),
+            'time' => $transport->destination()->time()->format('H:i'),
             'address' => $transport->destination()->address(),
             'postalcode' => $transport->destination()->postalCode(),
             'city' => $transport->destination()->city(),
@@ -80,8 +81,6 @@ it('formats transport land point data correctly', function () {
 
 it('formats transport vehicle license plate correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
-
-    $transport = new InvoiceTransportDetails;
 
     $transport = new InvoiceTransportDetails;
 
@@ -120,8 +119,6 @@ it('fails when no date is set for load point', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
     $transport = new InvoiceTransportDetails;
-
-    $transport = new InvoiceTransportDetails;
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St');
     $transport->origin()->city('Cityville');
@@ -146,3 +143,33 @@ it('fails when no date is set for load point', function () {
 
     $resolve->create();
 })->throws(NeedsDateToSetLoadPointException::class);
+
+it('fails when setting an invalid country', function () {
+    $item = new InvoiceItem(reference: 'reference-1');
+
+    $transport = new InvoiceTransportDetails;
+    $transport->origin()->date(now());
+    $transport->origin()->time(now());
+    $transport->origin()->address('123 Main St');
+    $transport->origin()->city('Cityville');
+    $transport->origin()->postalCode('12345');
+    $transport->origin()->country('BAD COUNTRY');
+
+    $transport->destination()->date(now()->addDay());
+    $transport->destination()->time(now()->addDay());
+    $transport->destination()->address('123 Main St');
+    $transport->destination()->city('Cityville');
+    $transport->destination()->postalCode('12345');
+    $transport->destination()->country('BAD COUNTRY');
+
+    $invoicing = Invoice::create();
+    $invoicing->addItem($item);
+    $invoicing->setTransport($transport);
+    $invoicing->setType(DocumentType::Invoice);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
+})->only();
