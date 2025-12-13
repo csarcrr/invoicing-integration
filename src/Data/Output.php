@@ -70,7 +70,7 @@ class Output
     protected function base64EncodedPdf(): string
     {
         $decoded = base64_decode($this->content);
-        $path = storage_path($this->fileName());
+        $path = "outputs/{$this->fileName()}";
         Storage::disk('local')->put($path, $decoded);
 
         return $path;
