@@ -8,12 +8,21 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPayment
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 
 it('fails when transport is set', function () {
     $payment = new InvoicePayment;
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
+
+    $client = new InvoiceClient();
+    $client->setVat('1234567890');
+    $client->setName('Client Name');
+    $client->setCountry('PT');
+    $client->setAddress('Client Address');
+    $client->setCity('Client City');
+    $client->setPostalCode('4410-100');
 
     $item = new InvoiceItem(reference: 'reference-1');
     $item->setPrice(500);
@@ -24,20 +33,21 @@ it('fails when transport is set', function () {
     $transport->origin()->address('123 Main St');
     $transport->origin()->city('Cityville');
     $transport->origin()->postalCode('12345');
-    $transport->origin()->country('Countryland');
+    $transport->origin()->country('PT');
 
     $transport->destination()->date(now()->addDay());
     $transport->destination()->time(now()->addDay());
     $transport->destination()->address('123 Main St');
     $transport->destination()->city('Cityville');
     $transport->destination()->postalCode('12345');
-    $transport->destination()->country('Countryland');
+    $transport->destination()->country('PT');
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
     $invoicing->addPayment($payment);
     $invoicing->setTransport($transport);
     $invoicing->setType(DocumentType::InvoiceSimple);
+    $invoicing->setClient($client);
 
     $resolve = app(config('invoicing-integration.provider'), [
         'invoicing' => $invoicing,

@@ -21,7 +21,7 @@ it('can set origin details', function () {
     $transport->origin()->address('123 Main St, Springfield');
     $transport->origin()->city('Springfield');
     $transport->origin()->postalCode('12345');
-    $transport->origin()->country('USA');
+    $transport->origin()->country('PT');
 
     $invoice->setTransport($transport);
 
@@ -40,7 +40,7 @@ it('can set destination details', function () {
     $transport->destination()->address('123 Main St, Springfield');
     $transport->destination()->city('Springfield');
     $transport->destination()->postalCode('12345');
-    $transport->destination()->country('USA');
+    $transport->destination()->country('PT');
 
     $invoice->setTransport($transport);
 

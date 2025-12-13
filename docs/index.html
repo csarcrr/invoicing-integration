@@ -15,8 +15,8 @@
                 name: "Invoicing Integration",
                 repo: "https://github.com/csarcrr/invoicing-integration",
                 loadSidebar: '_sidebar.md',
-                basePath: '/invoicing-integration/#/',
-                subMaxLevel: 3,
+                basePath: location.hostname === "localhost" ? "/" : "/invoicing-integration/#/",
+                subMaxLevel: 4,
                 search: "auto", // default
             };
         </script>
