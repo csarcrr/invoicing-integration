@@ -1,21 +1,10 @@
 # Outputting Invoice Documents
 
+Retrieve and store generated invoice documents (PDFs or ESC/POS data) after creating an invoice. By default, output is a PDF file.
 
-The output feature allows you to retrieve and store the generated invoice documents, such as PDFs or ESC/POS print data, after an invoice is created. This is useful for saving, displaying, or printing the invoice output in your application.
+## Save PDF to Storage
 
-**By default, the output is a PDF file.**
-
-The `output()` method provides access to the output handler for the invoice. If you do not specify a different format (such as by calling `asEscPos()`), the output will be a PDF document.
-
-The `save()` method saves the output to the local disk, specifically in the `storage_path`, and returns the full file path to the saved file. This makes it easy to store and retrieve invoice documents from your application.
-
-The examples below show how to use the output feature with the current API and variable names.
-
-## Saving PDF Output to Storage
-
-
-After creating an invoice, you can access its output and save it to your storage disk. For example:
-
+Save the invoice PDF to your local storage and get the file path:
 
 ```php
 $integration = Invoice::create();
@@ -25,28 +14,22 @@ $invoice = $integration->invoice();
 $invoice->output()->save(); // saves to storage/ft_01p2025_1.pdf and outputs the path
 ```
 
+The `save()` method stores the file in `storage_path` and returns the full file path for easy retrieval.
 
-- `output()` returns an output handler for the invoice (e.g., PDF or ESC/POS data).
-- `save()` saves the output file to the local disk in the `storage_path` and returns the full file path.
-- You can use Laravel's `Storage` facade to check or manipulate the saved file.
+## Get ESC/POS Print Data
 
-## Outputting ESC/POS Data
-
-
-You can also generate ESC/POS output for printing receipts:
-
+Generate ESC/POS data for thermal printers (when supported by the provider):
 
 ```php
 $integration = Invoice::create();
 // ...
-$invoice = $integration->asEscPos()->invoice();
+$integration->asEscPos();
+$invoice = $integration->invoice();
 
-$invoice->output()->get(); // outputs esc pos payload
+$invoice->output()->get();
 ```
 
-
-- Calling `asEscPos()` on the integration instance configures the output for ESC/POS format.
-- The `output()->save()` method will return the ESC/POS data as a string.
+Returns ESC/POS data as a string, or `null` if not supported. Check [provider support](/features?id=outputing ':target=_blank') for availability.
 
 ## Summary
 

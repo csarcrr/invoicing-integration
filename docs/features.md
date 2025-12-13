@@ -37,7 +37,7 @@ Features that apply when issuing an Invoicing.
 
   <tbody>
     <tr>
-      <td>Client</td>
+      <td><a href="/#/features?id=client">Client</a></td>
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
@@ -45,7 +45,7 @@ Features that apply when issuing an Invoicing.
       <td>✅</td><td>✅</td>
     </tr>
     <tr>
-      <td>Item</td>
+      <td><a href="/#/features?id=item">Item</a></td>
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
       <td>⛔</td><td>⛔</td>
@@ -53,7 +53,7 @@ Features that apply when issuing an Invoicing.
       <td>❌</td><td>❌</td>
     </tr>
     <tr>
-      <td>Payment</td>
+      <td><a href="/#/features?id=payment">Payment</a></td>
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
@@ -69,7 +69,7 @@ Features that apply when issuing an Invoicing.
       <td>⛔</td><td>⛔</td>
     </tr>
     <tr>
-      <td>Transport</td>
+      <td><a href="/#/features?id=transport">Transport</a></td>
       <td>✅</td><td>❌</td>
       <td>⛔</td><td>⛔</td>
       <td>⛔</td><td>⛔</td>

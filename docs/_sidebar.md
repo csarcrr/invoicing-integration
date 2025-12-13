@@ -5,7 +5,9 @@
 -   Invoices
     -   [Creating an Invoice](invoices/creating-an-invoice.md)
     -   [Creating a Receipt for an Invoice](invoices/creating-a-RG-for-an-invoice.md)
-    -   [Outputting the Invoice](invoices/outputting-invoice.md)
+    -   Invoice Data
+        -   [Using Invoice Data](invoices/using-invoice-data.md)
+        -   [Outputting Invoice](invoices/outputting-invoice.md)
 -   [API Reference](api-reference.md)
 
 -   Providers
