@@ -22,10 +22,12 @@ it('can save the pdf output to storage', function () {
 
     $invoice = $resolve->create()->invoice();
 
-    $output = $invoice->output()->save();
+    $path = "invoices/{$invoice->output()->fileName()}";
+
+    $output = $invoice->output()->save($path);
 
     Storage::disk('local')
-        ->assertExists(storage_path($invoice->output()->fileName()));
+        ->assertExists($path);
 
     expect($output)->toBeString();
 })->skipOnWindows();

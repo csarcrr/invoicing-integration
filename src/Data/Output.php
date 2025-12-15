@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
 
 class Output
 {
+    protected ?string $path = null;
+
     public function __construct(
         protected OutputFormat $format,
         protected string $content,
@@ -19,8 +21,10 @@ class Output
         $this->setFileName($fileName);
     }
 
-    public function save(): string
+    public function save(?string $path = null): string
     {
+        $this->path = $path ?? "invoices/{$this->fileName()}";
+
         return match ($this->format) {
             OutputFormat::PDF_BASE64 => $this->base64EncodedPdf(),
             OutputFormat::ESCPOS => $this->base64EncodedEscPos(),
@@ -62,6 +66,7 @@ class Output
     protected function setFileName(?string $fileName): self
     {
         $fileName = Str::replace('/', '_', $fileName);
+
         $this->fileName = Str::of(Str::lower($fileName))->slug('_').'.pdf';
 
         return $this;
@@ -70,10 +75,10 @@ class Output
     protected function base64EncodedPdf(): string
     {
         $decoded = base64_decode($this->content);
-        $path = "outputs/{$this->fileName()}";
-        Storage::disk('local')->put($path, $decoded);
 
-        return $path;
+        Storage::disk('local')->put($this->path, $decoded);
+
+        return $this->path;
     }
 
     protected function base64EncodedEscPos(): string
