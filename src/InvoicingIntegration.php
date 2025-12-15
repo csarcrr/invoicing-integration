@@ -12,6 +12,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\DueDate\DueDateCannotBeInPas
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonCannotBeSetException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceTypeIsNotSetException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
@@ -36,6 +37,8 @@ class InvoicingIntegration
     protected Collection $relatedDocuments;
 
     protected OutputFormat $outputFormat = OutputFormat::PDF_BASE64;
+
+    protected ?string $creditNoteReason = null;
 
     public function __construct(
         protected string $provider
@@ -82,6 +85,11 @@ class InvoicingIntegration
         return $this->date;
     }
 
+    public function creditNoteReason(): ?string
+    {
+        return $this->creditNoteReason;
+    }
+
     public function dueDate(): ?Carbon
     {
         return $this->dueDate;
@@ -102,6 +110,18 @@ class InvoicingIntegration
     public function setClient(InvoiceClient $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function setCreditNoteReason(string $reason): self
+    {
+        throw_if(
+            $this->type !== DocumentType::CreditNote,
+            CreditNoteReasonCannotBeSetException::class
+        );
+
+        $this->creditNoteReason = $reason;
 
         return $this;
     }
