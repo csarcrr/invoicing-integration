@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\InvoiceClient;
 it('formats transport load point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
@@ -53,7 +53,7 @@ it('formats transport load point data correctly', function () {
 it('formats transport land point data correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
@@ -102,7 +102,7 @@ it('formats transport land point data correctly', function () {
 it('formats transport vehicle license plate correctly', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
@@ -146,7 +146,7 @@ it('formats transport vehicle license plate correctly', function () {
 it('fails when no date is set for load point', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
@@ -184,7 +184,7 @@ it('fails when no date is set for load point', function () {
 it('fails when setting an invalid country on origin', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
@@ -216,7 +216,7 @@ it('fails when setting an invalid country on origin', function () {
 it('fails when setting an invalid country on destination', function () {
     $item = new InvoiceItem(reference: 'reference-1');
 
-    $client = new InvoiceClient();
+    $client = new InvoiceClient;
     $client->setVat('1234567890');
     $client->setName('Client Name');
     $client->setCountry('PT');
