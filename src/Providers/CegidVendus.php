@@ -63,6 +63,7 @@ class CegidVendus extends Base
         $this->ensureRelatedDocumentsFormat();
         $this->ensureTransportDetailsFormat();
         $this->ensureDueDate();
+        $this->ensureCreditNoteDetails();
 
         $this->ensureNoEmptyItemsArray();
     }
@@ -173,19 +174,9 @@ class CegidVendus extends Base
 
     protected function ensureRelatedDocumentsFormat(): void
     {
-        if ($this->invoicing->type() !== DocumentType::Receipt) {
-            return;
-        }
 
-        throw_if(
-            $this->invoicing->relatedDocuments()->isEmpty(),
-            InvoiceItemIsNotValidException::class,
-            'The receipt must have at least one related document.'
-        );
-
-        $this->invoicing->relatedDocuments()->each(function (string $id) {
-            $this->data->get('invoices')->push(collect(['document_number' => (string) $id]));
-        });
+        $this->handleRelatedDocumentsForReceipts();
+        $this->handleRelatedDocumentsForOtherTypes();
     }
 
     protected function ensureTransportDetailsFormat(): void
@@ -254,6 +245,17 @@ class CegidVendus extends Base
         );
 
         $this->data->put('date_due', $this->invoicing->dueDate()->toDateString());
+    }
+
+    protected function ensureCreditNoteDetails(): void
+    {
+        if ($this->invoicing->type() !== DocumentType::CreditNote) {
+            return;
+        }
+
+        if ($this->invoicing->creditNoteReason()) {
+            $this->data->put('notes', $this->invoicing->creditNoteReason());
+        }
     }
 
     protected function ensureNoEmptyItemsArray()
@@ -365,5 +367,31 @@ class CegidVendus extends Base
         }
 
         throw new \Exception('The provider configuration is missing payment method details.');
+    }
+
+    protected function handleRelatedDocumentsForReceipts(): void
+    {
+        if ($this->invoicing->type() !== DocumentType::Receipt) {
+            return;
+        }
+
+        throw_if(
+            $this->invoicing->relatedDocuments()->isEmpty(),
+            InvoiceItemIsNotValidException::class,
+            'The receipt must have at least one related document.'
+        );
+
+        $this->invoicing->relatedDocuments()->each(function (string $id) {
+            $this->data->get('invoices')->push(collect(['document_number' => (string) $id]));
+        });
+    }
+
+    protected function handleRelatedDocumentsForOtherTypes(): void
+    {
+        if ($this->invoicing->type() === DocumentType::Receipt) {
+            return;
+        }
+
+        $this->data->put('related_document_id', $this->invoicing->relatedDocuments()[0]);
     }
 }
