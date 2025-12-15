@@ -90,9 +90,9 @@ class InvoiceTransportDetails
         }
 
         try {
-            $data = (new ISO3166())->alpha2(strtolower($country));
-        }catch (\Exception $e) {
-            throw new InvalidCountryException();
+            $data = (new ISO3166)->alpha2(strtolower($country));
+        } catch (\Exception $e) {
+            throw new InvalidCountryException;
         }
 
         return $this->data[$this->type]['country'] = $data['alpha2'];
