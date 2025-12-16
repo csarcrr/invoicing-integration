@@ -48,7 +48,7 @@ Features that apply when issuing an Invoicing.
       <td>✅</td><td>✅</td>
       <td>⛔</td><td>⛔</td>
       <td>✅</td><td>✅</td>
-      <td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=payment">Payment</a></td>
@@ -56,7 +56,7 @@ Features that apply when issuing an Invoicing.
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
       <td>✅</td><td>✅</td>
-      <td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td>
     </tr>
     <tr>
       <td>Due Date</td>
@@ -113,17 +113,18 @@ Features that are "shared" between multiple Invoicing types.
 
 #### Item
 
-|                        | Invoicing | Cegid Vendus |
-| ---------------------- | --------- | ------------ |
-| Reference              | ✅        | ✅           |
-| Item ID                | ❌        | ❌           |
-| Description            | ✅        | ✅           |
-| Price                  | ✅        | ✅           |
-| Tax                    | ✅        | ✅           |
-| Tax exempt with reason | ✅        | ✅           |
-| Type                   | ✅        | ✅           |
-| Percentage Discount    | ✅        | ✅           |
-| Amount Discount        | ✅        | ✅           |
+|                                 | Invoicing | Cegid Vendus |
+| ------------------------------- | --------- | ------------ |
+| Reference                       | ✅        | ✅           |
+| Item ID                         | ❌        | ❌           |
+| Description                     | ✅        | ✅           |
+| Price                           | ✅        | ✅           |
+| Tax                             | ✅        | ✅           |
+| Tax exempt with reason          | ✅        | ✅           |
+| Type                            | ✅        | ✅           |
+| Percentage Discount             | ✅        | ✅           |
+| Amount Discount                 | ✅        | ✅           |
+| Related Document (Credit Notes) | ✅        | ✅           |
 
 #### Payment
 
