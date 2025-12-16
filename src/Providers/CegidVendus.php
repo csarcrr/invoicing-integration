@@ -24,6 +24,7 @@ class CegidVendus extends Base
         DocumentType::Receipt,
         DocumentType::InvoiceReceipt,
         DocumentType::InvoiceSimple,
+        DocumentType::CreditNote,
     ];
 
     public function __construct(
