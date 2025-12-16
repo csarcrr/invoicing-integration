@@ -362,7 +362,7 @@ class CegidVendus extends Base
                 'Credit Note items must have a related document set.'
             );
 
-            $data['related_document'] = [
+            $data['reference_document'] = [
                 'document_number' => $item->relatedDocument()->get('document_id'),
                 'document_row' => $item->relatedDocument()->get('row'),
             ];

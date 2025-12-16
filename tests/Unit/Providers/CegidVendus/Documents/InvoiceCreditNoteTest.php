@@ -25,8 +25,8 @@ it('has a valid payload', function () {
     $item = $resolve->payload()->get('items')->first();
 
     expect($resolve->payload()->get('notes'))->toBe('Product returned by customer');
-    expect($item['related_document']['document_number'])->toBe('FT 01P2025/1');
-    expect($item['related_document']['document_row'])->toBe(1);
+    expect($item['reference_document']['document_number'])->toBe('FT 01P2025/1');
+    expect($item['reference_document']['document_row'])->toBe(1);
 });
 
 it('fails when no related document was set in every item', function () {
