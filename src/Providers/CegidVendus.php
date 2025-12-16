@@ -297,7 +297,7 @@ class CegidVendus extends Base
     protected function request(): array
     {
         $request = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
         ])->post(
             'https://www.vendus.pt/ws/v1.1/documents/',
             $this->payload()->toArray()
@@ -313,7 +313,7 @@ class CegidVendus extends Base
     protected function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
@@ -355,6 +355,19 @@ class CegidVendus extends Base
             }
         }
 
+        if($this->invoicing->type() === DocumentType::CreditNote) {
+            throw_if(
+                $item->relatedDocument()->isEmpty(),
+                InvoiceItemIsNotValidException::class,
+                'Credit Note items must have a related document set.'
+            );
+
+            $data['related_document'] = [
+                'document_number' => $item->relatedDocument()->get('document_id'),
+                'document_row' => $item->relatedDocument()->get('row'),
+            ];
+        }
+
         return $data;
     }
 
@@ -388,8 +401,16 @@ class CegidVendus extends Base
 
     protected function handleRelatedDocumentsForOtherTypes(): void
     {
-        if ($this->invoicing->type() === DocumentType::Receipt) {
+        if (in_array($this->invoicing->type(), [DocumentType::CreditNote, DocumentType::Receipt])) {
             return;
+        }
+
+        if ($this->invoicing->relatedDocuments()->isEmpty()) {
+            return;
+        }
+
+        if(!is_int($this->invoicing->relatedDocuments()[0])) {
+            return ;
         }
 
         $this->data->put('related_document_id', $this->invoicing->relatedDocuments()[0]);
