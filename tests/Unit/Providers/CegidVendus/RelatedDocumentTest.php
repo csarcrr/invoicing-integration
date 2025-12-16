@@ -11,7 +11,7 @@ it('can set a related document when FT or similar', function () {
     $item->setPrice(500);
 
     $invoicing = Invoice::create();
-    $invoicing->addRelatedDocument('FT 01P2025/1');
+    $invoicing->addRelatedDocument(9999999);
     $invoicing->addItem($item);
 
     $resolve = app(config('invoicing-integration.provider'), [
@@ -20,7 +20,25 @@ it('can set a related document when FT or similar', function () {
 
     $resolve->create();
 
-    expect($resolve->payload()->get('related_document_id'))->toBe('FT 01P2025/1');
+    expect($resolve->payload()->get('related_document_id'))->toBeInt();
+    expect($resolve->payload()->get('related_document_id'))->toBe(9999999);
+});
+
+it('does not can set a related document when not a number in FT or similar', function () {
+    $item = new InvoiceItem(reference: 'reference-1');
+    $item->setPrice(500);
+
+    $invoicing = Invoice::create();
+    $invoicing->addRelatedDocument('abc');
+    $invoicing->addItem($item);
+
+    $resolve = app(config('invoicing-integration.provider'), [
+        'invoicing' => $invoicing,
+    ]);
+
+    $resolve->create();
+
+    expect($resolve->payload()->get('related_document_id'))->toBeNull();
 });
 
 it('can set a related document when RG', function () {
