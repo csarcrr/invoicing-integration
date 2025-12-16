@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
+use Illuminate\Support\Collection;
 
 class InvoiceItem
 {
@@ -28,6 +29,8 @@ class InvoiceItem
 
     protected ?string $taxExemptionLaw = null;
 
+    protected Collection $relatedDocument;
+
     /**
      * @param  string  $reference  - avoids duplicate products in some providers
      */
@@ -37,6 +40,7 @@ class InvoiceItem
     ) {
         $this->type = DocumentItemType::Product;
         $this->quantity = $quantity ?? 1;
+        $this->relatedDocument = collect();
     }
 
     public function reference(): int|string
@@ -120,6 +124,11 @@ class InvoiceItem
         return $this->percentageDiscount;
     }
 
+    public function relatedDocument(): ?Collection
+    {
+        return $this->relatedDocument;
+    }
+
     public function setAmountDiscount(int $amountDiscount): self
     {
         $this->amountDiscount = $amountDiscount;
@@ -159,5 +168,13 @@ class InvoiceItem
         $this->type = $type;
 
         return $this;
+    }
+
+    public function setRelatedDocument(string $documentNumber, int $lineNumber): void
+    {
+        $this->relatedDocument = collect([
+            'document_id' => $documentNumber,
+            'row' => $lineNumber,
+        ]);
     }
 }
