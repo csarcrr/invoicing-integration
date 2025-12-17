@@ -1,5 +1,6 @@
 <?php
 
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
@@ -12,9 +13,10 @@ beforeEach(function () {
     $this->client = new InvoiceClient;
 });
 
-it('can save the pdf output to storage', function () {
+it('can save the pdf output to storage', function (Provider $provider) {
     Storage::fake('local');
-    Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
+
+    Http::fake(mockResponse($provider, 'success'));
 
     $this->item->setPrice(100);
     $this->item->setReference('reference-1');
@@ -25,20 +27,20 @@ it('can save the pdf output to storage', function () {
         'invoicing' => $this->invoice,
     ]);
 
-    $invoice = $resolve->create()->invoice();
+    $data = $resolve->create()->invoice();
 
-    $path = "invoices/{$invoice->output()->fileName()}";
+    $path = "invoices/{$data->output()->fileName()}";
 
-    $output = $invoice->output()->save($path);
+    $output = $data->output()->save($path);
 
     Storage::disk('local')
         ->assertExists($path);
 
     expect($output)->toBeString();
-})->skipOnWindows();
+})->with([Provider::CegidVendus])->skipOnWindows();
 
-it('can output escpos', function () {
-    Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
+it('can output escpos', function (Provider $provider) {
+    Http::fake(mockResponse($provider, 'success'));
 
     $this->item->setPrice(100);
     $this->item->setReference('reference-1');
@@ -53,4 +55,4 @@ it('can output escpos', function () {
     $invoice = $resolve->create()->invoice();
 
     expect($invoice->output()->get())->toBeString();
-});
+})->with([Provider::CegidVendus]);

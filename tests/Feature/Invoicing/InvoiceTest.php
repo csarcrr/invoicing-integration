@@ -16,26 +16,6 @@ beforeEach(function () {
     $this->invoice = Invoice::create();
 });
 
-function mockResponse(
-    $provider, 
-    $type, 
-    $status = 200, 
-    $headers = [], 
-    $payloadOverrides = []
-    )
-{
-
-    $path = FIXTURES_PATH."/Providers/{$provider->value}/{$type}.json";
-
-    $jsonFixture = File::json($path);
-
-    if (!empty($payloadOverrides)) {
-        $jsonFixture = array_merge($jsonFixture, $payloadOverrides);
-    }
-
-    return Http::response($jsonFixture, $status, $headers);
-}
-
 // function mockTurnstileResponse(): void
 // {
 //     $path = base_path('tests/Fixtures/Providers/CegidVendus/fail.json');
@@ -47,8 +27,8 @@ function mockResponse(
 //     ]);
 // }
 
-test('can invoice successfully with minimum data', function (array $integration, array $type) {
-    Http::fake(buildFakeHttpResponses($integration, $type));
+test('can invoice successfully with minimum data', function (Provider $provider) {
+    Http::fake(mockResponse($provider, 'success'));
 
     $this->invoice->addItem(new InvoiceItem('reference-1'));
 
@@ -57,13 +37,18 @@ test('can invoice successfully with minimum data', function (array $integration,
     expect($response)->toBeInstanceOf(InvoiceData::class);
     expect($response->sequence())->toBe('FT 01P2025/1');
 })->with([
-    [['cegid_vendus', 200], ['new_document']],
+    Provider::CegidVendus
 ]);
 
 test(
     'can invoice and emit a receipt for that invoice',
-    function (array $integration, array $type) {
-        Http::fake(buildFakeHttpResponses($integration, $type));
+    function (Provider $provider) {
+        Http::fake([
+            $provider->documents() => mockResponse($provider, 'success'),
+            $provider->documents() => mockResponse($provider, 'success', 200, [
+                $provider->field('document_id') => 'RG 01P2025/1',
+            ])
+        ]);
 
         $item = new InvoiceItem('reference-1');
         $item->setPrice(500);
@@ -81,13 +66,13 @@ test(
         $details = $receipt->invoice();
 
         expect($details)->toBeInstanceOf(InvoiceData::class);
-        expect($details->sequence())->toBe('RG 10000');
+        expect($details->sequence())->toBe('RG 01P2025/1');
     }
 )->with([
-    [['cegid_vendus', 200], ['new_document', 'new_document' => ['number' => 'RG 10000']]],
+    Provider::CegidVendus
 ]);
 
-test(' handle integration errors', function (Provider $provider) {
+test('handle integration errors', function (Provider $provider) {
     Http::fake([
         $provider->documents() => mockResponse($provider, 'fail', 400)
     ]);
