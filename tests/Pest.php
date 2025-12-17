@@ -4,7 +4,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use Illuminate\Support\Facades\Http;
 
-define('FIXTURES_PATH', __DIR__ . '/Fixtures/');
+define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
 uses(TestCase::class)->beforeEach(function () {
     config()->set('invoicing-integration.provider', 'cegid_vendus');
@@ -40,11 +40,11 @@ function mockResponse(
     $headers = [],
 ) {
 
-    $path = FIXTURES_PATH . "/Providers/{$provider->value}/documents/{$type}.json";
+    $path = FIXTURES_PATH."/Providers/{$provider->value}/documents/{$type}.json";
 
     $jsonFixture = File::json($path);
 
-    if (!empty($payloadOverrides)) {
+    if (! empty($payloadOverrides)) {
         $jsonFixture = array_merge($jsonFixture, $payloadOverrides);
     }
 

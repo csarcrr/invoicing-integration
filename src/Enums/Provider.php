@@ -15,7 +15,7 @@ enum Provider: string
         };
     }
 
-    public function field(string $field) : string
+    public function field(string $field): string
     {
         return match ($this) {
             self::CegidVendus => match ($field) {
@@ -23,6 +23,5 @@ enum Provider: string
                 default => $field,
             },
         };
-    }   
+    }
 }
-
