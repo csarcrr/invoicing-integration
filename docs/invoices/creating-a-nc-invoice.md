@@ -26,4 +26,5 @@ $integration->invoice();
 
 ```
 
-The ``line_number`` is the line position in the original invoice.
+The ``lineNumber`` is the row position in the original invoice. So if the item on the invoice was issued in the 3rd row, the ``lineNumber`` should be ``3``. This might not be a requirement for all integrations, but in order to maintain abstraction we will require it always.
+
