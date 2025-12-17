@@ -11,25 +11,23 @@ use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
-
 beforeEach(function () {
     $this->invoice = Invoice::create();
 });
 
 function mockResponse(
-    $provider, 
-    $type, 
-    $status = 200, 
-    $headers = [], 
+    $provider,
+    $type,
+    $status = 200,
+    $headers = [],
     $payloadOverrides = []
-    )
-{
+) {
 
     $path = FIXTURES_PATH."/Providers/{$provider->value}/{$type}.json";
 
     $jsonFixture = File::json($path);
 
-    if (!empty($payloadOverrides)) {
+    if (! empty($payloadOverrides)) {
         $jsonFixture = array_merge($jsonFixture, $payloadOverrides);
     }
 
@@ -89,11 +87,11 @@ test(
 
 test(' handle integration errors', function (Provider $provider) {
     Http::fake([
-        $provider->documents() => mockResponse($provider, 'fail', 400)
+        $provider->documents() => mockResponse($provider, 'fail', 400),
     ]);
-    
+
     $this->invoice->addItem(new InvoiceItem('reference-1'));
     $this->invoice->invoice();
 })->with([
-    Provider::CegidVendus
+    Provider::CegidVendus,
 ])->throws(RequestFailedException::class);
