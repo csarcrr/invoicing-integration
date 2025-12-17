@@ -8,13 +8,16 @@ use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Facades\Http;
 
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+});
+
 test('can invoice successfully with minimum data', function (array $integration, array $type) {
     Http::fake(buildFakeHttpResponses($integration, $type));
 
-    $invoice = Invoice::create();
-    $invoice->addItem(new InvoiceItem('reference-1'));
+    $this->invoice->addItem(new InvoiceItem('reference-1'));
 
-    $response = $invoice->invoice();
+    $response = $this->invoice->invoice();
 
     expect($response)->toBeInstanceOf(InvoiceData::class);
     expect($response->sequence())->toBe('FT 01P2025/1');
@@ -30,11 +33,10 @@ test(
         $item = new InvoiceItem('reference-1');
         $item->setPrice(500);
 
-        $invoice = Invoice::create();
-        $invoice->setType(DocumentType::Invoice);
-        $invoice->addItem($item);
+        $this->invoice->setType(DocumentType::Invoice);
+        $this->invoice->addItem($item);
 
-        $details = $invoice->invoice();
+        $details = $this->invoice->invoice();
 
         $receipt = Invoice::create();
         $receipt->setType(DocumentType::Receipt);

@@ -3,21 +3,27 @@
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Collection;
 
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
+
 it('has a valid payment payload', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->addPayment($payment);
+    $this->invoice->addItem($this->item);
+    $this->invoice->addPayment($payment);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -37,17 +43,16 @@ it('fails when no payment id is configured', function () {
         DocumentPaymentMethod::MONEY_TRANSFER->value => null,
     ]);
 
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
     $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->addPayment($payment);
+    $this->invoice->addItem($this->item);
+    $this->invoice->addPayment($payment);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();

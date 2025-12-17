@@ -8,16 +8,21 @@ use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 
-it('formats transport load point data correctly', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+it('formats transport load point data correctly', function () {
+    $this->item->setReference('reference-1');
+
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
@@ -27,14 +32,13 @@ it('formats transport load point data correctly', function () {
     $transport->origin()->postalCode('12345');
     $transport->origin()->country('PT');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
-    $invoicing->setClient($client);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setClient($this->client);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -51,15 +55,14 @@ it('formats transport load point data correctly', function () {
 });
 
 it('formats transport land point data correctly', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+    $this->item->setReference('reference-1');
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
@@ -76,14 +79,13 @@ it('formats transport land point data correctly', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('PT');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
-    $invoicing->setClient($client);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setClient($this->client);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -100,15 +102,14 @@ it('formats transport land point data correctly', function () {
 });
 
 it('formats transport vehicle license plate correctly', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+    $this->item->setReference('reference-1');
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
     $transport = new InvoiceTransportDetails;
 
@@ -127,14 +128,13 @@ it('formats transport vehicle license plate correctly', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('PT');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
-    $invoicing->setClient($client);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setClient($this->client);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -144,15 +144,14 @@ it('formats transport vehicle license plate correctly', function () {
 });
 
 it('fails when no date is set for load point', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+    $this->item->setReference('reference-1');
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->time(now());
@@ -168,29 +167,27 @@ it('fails when no date is set for load point', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('PT');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
-    $invoicing->setClient($client);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setClient($this->client);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
 })->throws(NeedsDateToSetLoadPointException::class);
 
 it('fails when setting an invalid country on origin', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+    $this->item->setReference('reference-1');
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
@@ -214,15 +211,14 @@ it('fails when setting an invalid country on origin', function () {
 })->throws(InvalidCountryException::class);
 
 it('fails when setting an invalid country on destination', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+    $this->item->setReference('reference-1');
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
     $transport = new InvoiceTransportDetails;
 
@@ -233,21 +229,20 @@ it('fails when setting an invalid country on destination', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('BAD COUNTRY');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
-    $invoicing->setClient($client);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setClient($this->client);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
 })->throws(InvalidCountryException::class);
 
 it('fails when no client is set and transport details are provided', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
+    $this->item->setReference('reference-1');
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
@@ -264,13 +259,12 @@ it('fails when no client is set and transport details are provided', function ()
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('PT');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::Invoice);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();

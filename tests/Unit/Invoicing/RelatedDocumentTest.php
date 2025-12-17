@@ -3,11 +3,13 @@
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+});
+
 it('can set a related document', function () {
-    $invoice = Invoice::create();
+    $this->invoice->setType(DocumentType::CreditNote);
+    $this->invoice->addRelatedDocument('FT 01P2025/1');
 
-    $invoice->setType(DocumentType::CreditNote);
-    $invoice->addRelatedDocument('FT 01P2025/1');
-
-    expect($invoice->relatedDocuments())->toContain('FT 01P2025/1');
+    expect($this->invoice->relatedDocuments())->toContain('FT 01P2025/1');
 });

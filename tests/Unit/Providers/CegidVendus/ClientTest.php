@@ -5,19 +5,25 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
+
 it('has a valid simple client payload', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
-    $client = new InvoiceClient(vat: '123456789', name: 'Client Name');
+    $this->client->setVat('123456789');
+    $this->client->setName('Client Name');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setClient($client);
-    $invoicing->setType(DocumentType::Invoice);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setClient($this->client);
+    $this->invoice->setType(DocumentType::Invoice);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -27,26 +33,24 @@ it('has a valid simple client payload', function () {
 });
 
 it('has a valid full client payload', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
-    $client = new InvoiceClient;
-    $client->setVat('123456789');
-    $client->setName('Client Name');
-    $client->setAddress('Rua das Flores 123');
-    $client->setCity('Porto');
-    $client->setPostalCode('0000-000');
-    $client->setCountry('PT');
-    $client->setEmail('email@mail.com');
-    $client->setPhone('123456789');
+    $this->client->setVat('123456789');
+    $this->client->setName('Client Name');
+    $this->client->setAddress('Rua das Flores 123');
+    $this->client->setCity('Porto');
+    $this->client->setPostalCode('0000-000');
+    $this->client->setCountry('PT');
+    $this->client->setEmail('email@mail.com');
+    $this->client->setPhone('123456789');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setClient($client);
-    $invoicing->setType(DocumentType::Invoice);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setClient($this->client);
+    $this->invoice->setType(DocumentType::Invoice);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();

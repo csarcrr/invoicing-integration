@@ -2,17 +2,21 @@
 
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
-it('can assign note', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
-    $item->setNote('Test note');
+beforeEach(function () {
+    $this->item = new InvoiceItem();
+});
 
-    expect($item->note())->toBe('Test note');
+it('can assign note', function () {
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
+    $this->item->setNote('Test note');
+
+    expect($this->item->note())->toBe('Test note');
 });
 
 it('has note null by default', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
-    expect($item->note())->toBeNull();
+    expect($this->item->note())->toBeNull();
 });

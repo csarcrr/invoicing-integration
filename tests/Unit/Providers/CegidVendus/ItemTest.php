@@ -5,17 +5,22 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
 
 it('has a description', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setNote('Test Item note');
+    $this->item->setReference('reference-1');
+    $this->item->setNote('Test Item note');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -24,15 +29,13 @@ it('has a description', function () {
 });
 
 it('has a type', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setType(DocumentItemType::Service);
+    $this->item->setReference('reference-1');
+    $this->item->setType(DocumentItemType::Service);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -41,15 +44,13 @@ it('has a type', function () {
 });
 
 it('has a percentage discount', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setPercentageDiscount(10);
+    $this->item->setReference('reference-1');
+    $this->item->setPercentageDiscount(10);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -58,15 +59,13 @@ it('has a percentage discount', function () {
 });
 
 it('has an amount discount', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setAmountDiscount(500);
+    $this->item->setReference('reference-1');
+    $this->item->setAmountDiscount(500);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -75,15 +74,13 @@ it('has an amount discount', function () {
 });
 
 it('has the correct tax applied', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setTax(DocumentItemTax::REDUCED);
+    $this->item->setReference('reference-1');
+    $this->item->setTax(DocumentItemTax::REDUCED);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -92,16 +89,14 @@ it('has the correct tax applied', function () {
 });
 
 it('has applies correctly the tax exemption without law', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setTax(DocumentItemTax::EXEMPT);
-    $item->setTaxExemption(TaxExemptionReason::M01);
+    $this->item->setReference('reference-1');
+    $this->item->setTax(DocumentItemTax::EXEMPT);
+    $this->item->setTaxExemption(TaxExemptionReason::M01);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -113,17 +108,15 @@ it('has applies correctly the tax exemption without law', function () {
 });
 
 it('has applies correctly the tax exemption with law', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setTax(DocumentItemTax::EXEMPT);
-    $item->setTaxExemption(TaxExemptionReason::M01);
-    $item->setTaxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
+    $this->item->setReference('reference-1');
+    $this->item->setTax(DocumentItemTax::EXEMPT);
+    $this->item->setTaxExemption(TaxExemptionReason::M01);
+    $this->item->setTaxExemptionLaw(TaxExemptionReason::M01->laws()[0]);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();

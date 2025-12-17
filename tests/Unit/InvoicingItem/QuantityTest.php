@@ -2,25 +2,28 @@
 
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
-it('can assign quantity', function () {
-    $item = new InvoiceItem(reference: 'reference-1', quantity: 3);
-    $item->setPrice(500);
+beforeEach(function () {
+    $this->item = new InvoiceItem();
+});
 
-    expect($item->quantity())->toBe(3);
+it('can assign quantity', function () {
+    $this->item->setReference('reference-1');
+    $this->item->setQuantity(3);
+    $this->item->setPrice(500);
+
+    expect($this->item->quantity())->toBe(3);
 });
 
 it('can assign quantity with setter', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setQuantity(5);
+    $this->item->setReference('reference-1');
+    $this->item->setQuantity(5);
 
-    expect($item->quantity())->toBe(5);
+    expect($this->item->quantity())->toBe(5);
 });
 
 it('defaults quantity to 1', function () {
-    $item = new InvoiceItem;
-    $item->setReference('reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
-    expect($item->quantity())->toBe(1);
+    expect($this->item->quantity())->toBe(1);
 });

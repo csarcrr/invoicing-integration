@@ -4,18 +4,24 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 
-it('can set a related document when FT or similar', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
 
-    $invoicing = Invoice::create();
-    $invoicing->addRelatedDocument(9999999);
-    $invoicing->addItem($item);
+it('can set a related document when FT or similar', function () {
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
+
+    $this->invoice->addRelatedDocument(9999999);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -25,15 +31,14 @@ it('can set a related document when FT or similar', function () {
 });
 
 it('does not can set a related document when not a number in FT or similar', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
-    $invoicing = Invoice::create();
-    $invoicing->addRelatedDocument('abc');
-    $invoicing->addItem($item);
+    $this->invoice->addRelatedDocument('abc');
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -42,21 +47,20 @@ it('does not can set a related document when not a number in FT or similar', fun
 });
 
 it('can set a related document when RG', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
     $payment = new InvoicePayment;
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
 
-    $invoicing = Invoice::create();
-    $invoicing->addRelatedDocument('FT 01P2025/1');
-    $invoicing->addItem($item);
-    $invoicing->setType(DocumentType::Receipt);
-    $invoicing->addPayment($payment);
+    $this->invoice->addRelatedDocument('FT 01P2025/1');
+    $this->invoice->addItem($this->item);
+    $this->invoice->setType(DocumentType::Receipt);
+    $this->invoice->addPayment($payment);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();

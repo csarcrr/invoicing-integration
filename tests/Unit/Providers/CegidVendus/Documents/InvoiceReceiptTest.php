@@ -11,21 +11,26 @@ use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
 
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
+
 it('fails when transport is set', function () {
     $payment = new InvoicePayment;
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
 
-    $client = new InvoiceClient;
-    $client->setVat('1234567890');
-    $client->setName('Client Name');
-    $client->setCountry('PT');
-    $client->setAddress('Client Address');
-    $client->setCity('Client City');
-    $client->setPostalCode('4410-100');
+    $this->client->setVat('1234567890');
+    $this->client->setName('Client Name');
+    $this->client->setCountry('PT');
+    $this->client->setAddress('Client Address');
+    $this->client->setCity('Client City');
+    $this->client->setPostalCode('4410-100');
 
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
     $transport = new InvoiceTransportDetails;
     $transport->origin()->date(now());
@@ -42,15 +47,14 @@ it('fails when transport is set', function () {
     $transport->destination()->postalCode('12345');
     $transport->destination()->country('PT');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->addPayment($payment);
-    $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::InvoiceReceipt);
-    $invoicing->setClient($client);
+    $this->invoice->addItem($this->item);
+    $this->invoice->addPayment($payment);
+    $this->invoice->setTransport($transport);
+    $this->invoice->setType(DocumentType::InvoiceReceipt);
+    $this->invoice->setClient($this->client);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
@@ -61,27 +65,25 @@ it('fails when no items are set ', function () {
     $payment->setAmount(500);
     $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
 
-    $invoicing = Invoice::create();
-    $invoicing->addPayment($payment);
-    $invoicing->setType(DocumentType::InvoiceReceipt);
+    $this->invoice->addPayment($payment);
+    $this->invoice->setType(DocumentType::InvoiceReceipt);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();
 })->throws(InvoiceItemIsNotValidException::class);
 
 it('fails when no payments are set', function () {
-    $item = new InvoiceItem(reference: 'reference-1');
-    $item->setPrice(500);
+    $this->item->setReference('reference-1');
+    $this->item->setPrice(500);
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->setType(DocumentType::InvoiceReceipt);
+    $this->invoice->addItem($this->item);
+    $this->invoice->setType(DocumentType::InvoiceReceipt);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $resolve->create();

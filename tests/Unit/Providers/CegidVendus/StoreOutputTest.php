@@ -2,22 +2,27 @@
 
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+
+beforeEach(function () {
+    $this->invoice = Invoice::create();
+    $this->item = new InvoiceItem();
+    $this->client = new InvoiceClient();
+});
 
 it('can save the pdf output to storage', function () {
     Storage::fake('local');
     Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
 
-    $item = new InvoiceItem;
-    $item->setPrice(100);
-    $item->setReference('reference-1');
+    $this->item->setPrice(100);
+    $this->item->setReference('reference-1');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
+    $this->invoice->addItem($this->item);
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $invoice = $resolve->create()->invoice();
@@ -35,16 +40,14 @@ it('can save the pdf output to storage', function () {
 it('can output escpos', function () {
     Http::fake(buildFakeHttpResponses(['cegid_vendus', 200], ['new_document']));
 
-    $item = new InvoiceItem;
-    $item->setPrice(100);
-    $item->setReference('reference-1');
+    $this->item->setPrice(100);
+    $this->item->setReference('reference-1');
 
-    $invoicing = Invoice::create();
-    $invoicing->addItem($item);
-    $invoicing->asEscPos();
+    $this->invoice->addItem($this->item);
+    $this->invoice->asEscPos();
 
     $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $invoicing,
+        'invoicing' => $this->invoice,
     ]);
 
     $invoice = $resolve->create()->invoice();
