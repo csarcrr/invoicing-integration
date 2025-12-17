@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedE
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
