@@ -3,14 +3,49 @@
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoicePayment;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
 });
+
+function mockResponse(
+    $provider, 
+    $type, 
+    $status = 200, 
+    $headers = [], 
+    $payloadOverrides = []
+    )
+{
+
+    $path = FIXTURES_PATH."/Providers/{$provider->value}/{$type}.json";
+
+    $jsonFixture = File::json($path);
+
+    if (!empty($payloadOverrides)) {
+        $jsonFixture = array_merge($jsonFixture, $payloadOverrides);
+    }
+
+    return Http::response($jsonFixture, $status, $headers);
+}
+
+// function mockTurnstileResponse(): void
+// {
+//     $path = base_path('tests/Fixtures/Providers/CegidVendus/fail.json');
+
+//     $jsonFixture = File::json($path);
+
+//     Http::fake([
+//         'https://example.com' => Http::response($jsonFixture),
+//     ]);
+// }
 
 test('can invoice successfully with minimum data', function (array $integration, array $type) {
     Http::fake(buildFakeHttpResponses($integration, $type));
@@ -52,4 +87,13 @@ test(
     [['cegid_vendus', 200], ['new_document', 'new_document' => ['number' => 'RG 10000']]],
 ]);
 
-test('can handle integration errors', function () {})->todo();
+test(' handle integration errors', function (Provider $provider) {
+    Http::fake([
+        $provider->documents() => mockResponse($provider, 'fail', 400)
+    ]);
+    
+    $this->invoice->addItem(new InvoiceItem('reference-1'));
+    $this->invoice->invoice();
+})->with([
+    Provider::CegidVendus
+])->throws(RequestFailedException::class);

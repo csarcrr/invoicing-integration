@@ -32,5 +32,3 @@ it('can assign a custom price to an item', function () {
     expect($this->invoice->items()->first())->toBeInstanceOf(InvoiceItem::class);
     expect($this->invoice->items()->first()->price())->toBe(500);
 });
-
-it('can assign a lot number to be used', function () {})->todo();

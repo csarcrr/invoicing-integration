@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\Output;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
@@ -300,7 +301,7 @@ class CegidVendus extends Base
         $request = Http::withHeaders([
             'Authorization' => 'Bearer '.$this->apiKey,
         ])->post(
-            'https://www.vendus.pt/ws/v1.1/documents/',
+            Provider::CegidVendus->documents(),
             $this->payload()->toArray()
         );
 

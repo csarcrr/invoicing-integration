@@ -4,6 +4,8 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use Illuminate\Support\Facades\Http;
 
+define('FIXTURES_PATH', __DIR__ . '/Fixtures/');
+
 uses(TestCase::class)->beforeEach(function () {
     config()->set('invoicing-integration.provider', 'cegid_vendus');
     config()->set('invoicing-integration.providers.cegid_vendus.key', '1234');

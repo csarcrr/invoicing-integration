@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeU
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 beforeEach(function () {
-    $this->item = new InvoiceItem();
+    $this->item = new InvoiceItem;
 });
 
 it('can assign a different tax rate', function () {

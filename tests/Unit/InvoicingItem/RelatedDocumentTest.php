@@ -3,7 +3,7 @@
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 beforeEach(function () {
-    $this->item = new InvoiceItem();
+    $this->item = new InvoiceItem;
 });
 
 it('can assign a related document', function () {

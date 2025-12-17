@@ -9,8 +9,8 @@ use CsarCrr\InvoicingIntegration\InvoicePayment;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem();
-    $this->client = new InvoiceClient();
+    $this->item = new InvoiceItem;
+    $this->client = new InvoiceClient;
 });
 
 it('can set a related document when FT or similar', function () {

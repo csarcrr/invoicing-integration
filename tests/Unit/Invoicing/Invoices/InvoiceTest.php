@@ -39,8 +39,3 @@ it('can add multiple items', function () {
     expect($this->invoice->items())->toContain($item2);
     expect($this->invoice->items())->toContain($item3);
 });
-
-it('can set a related document', function () {})->todo();
-// it('can receive PDF data output', function () {})->todo();
-// it('can receive ESCPOS data output', function () {})->todo();
-// it('can receive AT CUD QR CODE data', function () {})->todo();

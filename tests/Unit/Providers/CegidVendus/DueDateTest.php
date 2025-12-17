@@ -10,8 +10,8 @@ use CsarCrr\InvoicingIntegration\InvoicePayment;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem();
-    $this->client = new InvoiceClient();
+    $this->item = new InvoiceItem;
+    $this->client = new InvoiceClient;
 });
 
 it('assigns due date properly', function () {

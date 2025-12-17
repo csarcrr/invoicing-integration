@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 
-beforeEach(function (){ 
+beforeEach(function () {
     $this->client = new InvoiceClient;
     $this->invoice = Invoice::create();
 });

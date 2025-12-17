@@ -9,8 +9,8 @@ use Illuminate\Support\Collection;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem();
-    $this->client = new InvoiceClient();
+    $this->item = new InvoiceItem;
+    $this->client = new InvoiceClient;
 });
 
 it('has a valid payment payload', function () {
