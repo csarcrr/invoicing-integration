@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\InvoicePayment;
 
 it('assigns a payment', function () {
     $payment = new InvoicePayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500);
-    
+
     $invoice = Invoice::create();
     $invoice->addPayment($payment);
 

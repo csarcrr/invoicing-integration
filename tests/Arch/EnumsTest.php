@@ -7,5 +7,5 @@ arch('enums')
     ->toBeEnums()
     ->toExtendNothing()
     ->toUse([
-        'CsarCrr\InvoicingIntegration\Traits\EnumOptions'
+        'CsarCrr\InvoicingIntegration\Traits\EnumOptions',
     ]);
