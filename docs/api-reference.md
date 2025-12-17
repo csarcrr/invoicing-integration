@@ -11,7 +11,7 @@
 -   `addItem(InvoiceItem $item): self` — Add an item to the invoice.
 -   `addPayment(InvoicePayment $payment): self` — Add a payment to the invoice.
 -   `setType(DocumentType $type): self` — Set the document type.
--   `setDate(Carbon $date): self` — Set the invoice date.
+-   `setDate(Carbon $date): self` — Set the invoice date (Default: ``date('Y-m-d')``).
 -   `setDueDate(Carbon $dateDue): self` — Set the due date (cannot be in the past).
 -   `addRelatedDocument(string $relatedDocument): self` — Add a related document.
 -   `setTransport(?InvoiceTransportDetails $transport): self` — Set transport details.

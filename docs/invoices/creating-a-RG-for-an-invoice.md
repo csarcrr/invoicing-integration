@@ -29,6 +29,19 @@ $integration->addPayment(new InvoicePayment(DocumentPaymentMethod::MONEY, 10000)
 $integration->invoice();
 ```
 
+You can also have multiple types of payments assigned. Just make sure that the amounts sum, are the total, or the original issued invoice will not be "marked" as paid in most providers.
+
+```php
+// ...
+
+$integration = Invoice::create();
+
+$integration->addPayment(new InvoicePayment(DocumentPaymentMethod::MONEY, 5000)); 
+$integration->addPayment(new InvoicePayment(DocumentPaymentMethod::MB, 5000)); 
+
+$integration->invoice();
+```
+
 ---
 
 **Tips:**
