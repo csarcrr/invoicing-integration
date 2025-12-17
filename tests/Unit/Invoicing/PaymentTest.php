@@ -13,3 +13,14 @@ it('assigns a payment', function () {
     expect($invoice->payments()->first()->method())->toBe(DocumentPaymentMethod::CREDIT_CARD);
     expect($invoice->payments()->first()->amount())->toBe(500);
 });
+
+it('accumulates payments of same type', function () {
+    $invoice = Invoice::create();
+
+    $invoice->addPayment(new InvoicePayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
+    $invoice->addPayment(new InvoicePayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
+    $invoice->addPayment(new InvoicePayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500));
+
+    expect($invoice->payments()->count())->toBe(3);
+    expect($invoice->payments()->sum(fn (InvoicePayment $payment) => $payment->amount()))->toBe(1500);
+});
