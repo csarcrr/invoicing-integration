@@ -11,7 +11,6 @@ use CsarCrr\InvoicingIntegration\InvoicePayment;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
-
 beforeEach(function () {
     $this->invoice = Invoice::create();
 });
@@ -37,7 +36,7 @@ test('can invoice successfully with minimum data', function (Provider $provider)
     expect($response)->toBeInstanceOf(InvoiceData::class);
     expect($response->sequence())->toBe('FT 01P2025/1');
 })->with([
-    Provider::CegidVendus
+    Provider::CegidVendus,
 ]);
 
 test(
@@ -47,7 +46,7 @@ test(
             $provider->documents() => mockResponse($provider, 'success'),
             $provider->documents() => mockResponse($provider, 'success', 200, [
                 $provider->field('document_id') => 'RG 01P2025/1',
-            ])
+            ]),
         ]);
 
         $item = new InvoiceItem('reference-1');
@@ -69,16 +68,16 @@ test(
         expect($details->sequence())->toBe('RG 01P2025/1');
     }
 )->with([
-    Provider::CegidVendus
+    Provider::CegidVendus,
 ]);
 
 test('handle integration errors', function (Provider $provider) {
     Http::fake([
-        $provider->documents() => mockResponse($provider, 'fail', 400)
+        $provider->documents() => mockResponse($provider, 'fail', 400),
     ]);
-    
+
     $this->invoice->addItem(new InvoiceItem('reference-1'));
     $this->invoice->invoice();
 })->with([
-    Provider::CegidVendus
+    Provider::CegidVendus,
 ])->throws(RequestFailedException::class);
