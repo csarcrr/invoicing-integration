@@ -12,8 +12,8 @@ use Illuminate\Support\Collection;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem();
-    $this->client = new InvoiceClient();
+    $this->item = new InvoiceItem;
+    $this->client = new InvoiceClient;
 });
 
 it('has a valid payload', function () {
@@ -52,7 +52,7 @@ it('fails when no related document was set in every item', function () {
     $this->item->setReference('reference-1');
     $this->item->setPrice(500);
 
-    $item2 = new InvoiceItem();
+    $item2 = new InvoiceItem;
     $item2->setReference('reference-2');
     $item2->setPrice(300);
     $item2->setRelatedDocument('FT 01P2025/1', 1);

@@ -10,7 +10,7 @@ beforeEach(function () {
 
 it('assigns a payment', function () {
     $payment = new InvoicePayment(DocumentPaymentMethod::CREDIT_CARD, amount: 500);
-    
+
     $this->invoice->addPayment($payment);
 
     expect($this->invoice->payments()->count())->toBe(1);

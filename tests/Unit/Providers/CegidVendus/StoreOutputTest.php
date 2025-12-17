@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem();
-    $this->client = new InvoiceClient();
+    $this->item = new InvoiceItem;
+    $this->client = new InvoiceClient;
 });
 
 it('can save the pdf output to storage', function () {

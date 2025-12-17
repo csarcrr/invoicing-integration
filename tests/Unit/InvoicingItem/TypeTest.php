@@ -4,7 +4,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 
 beforeEach(function () {
-    $this->item = new InvoiceItem();
+    $this->item = new InvoiceItem;
 });
 
 it('can assign an item type', function () {

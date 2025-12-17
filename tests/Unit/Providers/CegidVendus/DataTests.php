@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem();
-    $this->client = new InvoiceClient();
+    $this->item = new InvoiceItem;
+    $this->client = new InvoiceClient;
 });
 
 it('clears empty data entries', function () {
@@ -19,7 +19,7 @@ it('clears empty data entries', function () {
 
     $this->invoice->addItem($this->item);
     $this->invoice->setType(DocumentType::Invoice);
-    
+
     $resolve = app(config('invoicing-integration.provider'), [
         'invoicing' => $this->invoice,
     ]);
@@ -43,13 +43,13 @@ it('throw error exception with API messages when request fails', function () {
 
     $this->item->setReference('reference-1');
     $this->item->setPrice(500);
-    
+
     $this->client->setVat('invalid-vat');
-    
+
     $this->invoice->addItem($this->item);
     $this->invoice->setType(DocumentType::Invoice);
     $this->invoice->setClient($this->client);
-    
+
     $resolve = app(config('invoicing-integration.provider'), [
         'invoicing' => $this->invoice,
     ]);
