@@ -9,13 +9,25 @@
 Invoicing Integration is an agregator of several invoicing softwares in Portugal. We aim to help you use these softwares
 without the assle of learning every nuance of their API.
 
+## ⚠️ Important Legal Disclaimer
+
+**This package is a tool for facilitating the usage of invoicing provider APIs and is not intended to serve as a safeguard or provide legal guidance.**
+
+It is the **responsibility of the end user** to:
+- Understand and comply with all applicable laws and regulations regarding invoicing in their jurisdiction
+- Understand how each provider works and their specific requirements
+- Ensure proper invoicing practices according to their legal obligations
+- Validate that their usage complies with tax laws, accounting standards, and other relevant regulations
+
+This package aims to simplify API integration but does not provide opinions on how you should be issuing invoices. Always consult with legal and accounting professionals when implementing invoicing solutions.
+
 ## Current Features
 
 For a full list of features and capabilities, please see [FEATURES.md](docs/features.md).
 
 ## Usage
 
-For more in-depth usage details and examples, please visit the [official documentation](https://invoicing-integration.csarcorreia.workers.dev/).
+For more in-depth usage details and examples, please visit the [official documentation](https://csarcrr.github.io/invoicing-integration/#/).
 
 ## Installation
 
