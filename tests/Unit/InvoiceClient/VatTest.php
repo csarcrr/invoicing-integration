@@ -1,0 +1,14 @@
+<?php
+
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+
+beforeEach(function () {
+    $this->client = new InvoiceClient;
+    $this->invoice = Invoice::create();
+});
+
+it('sets and gets client vat', function () {
+    $this->client->setVat('123456789');
+    expect($this->client->vat())->toBe('123456789');
+});

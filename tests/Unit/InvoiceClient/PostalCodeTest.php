@@ -1,0 +1,14 @@
+<?php
+
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceClient;
+
+beforeEach(function () {
+    $this->client = new InvoiceClient;
+    $this->invoice = Invoice::create();
+});
+
+it('sets and gets client postal code', function () {
+    $this->client->setPostalCode('0000-000');
+    expect($this->client->postalCode())->toBe('0000-000');
+});

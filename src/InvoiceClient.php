@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
+use Illuminate\Support\Facades\Validator;
+
 class InvoiceClient
 {
     protected ?string $address = null;
@@ -100,6 +102,13 @@ class InvoiceClient
 
     public function setEmail(?string $email): void
     {
+
+        Validator::make(['email' => $email], [
+
+            'email' => 'required|email',
+
+        ])->validate();
+
         $this->email = $email;
     }
 
