@@ -6,14 +6,11 @@ beforeEach(function () {
     $this->client = new InvoiceClient;
 });
 
-it('sets irs retention option to true', function () {
-    $this->client->setIrsRetention(true);
+it('sets irs retention option', function (bool $value) {
+    $this->client->setIrsRetention($value);
 
-    expect($this->client->irsRetention())->toBeTrue();
-});
-
-it('sets irs retention option to false', function () {
-    $this->client->setIrsRetention(false);
-
-    expect($this->client->irsRetention())->toBeFalse();
-});
+    expect($this->client->irsRetention())->toBe($value);
+})->with([
+    [true],
+    [false],
+]);
