@@ -20,6 +20,8 @@ class InvoiceClient
 
     protected ?string $phone = null;
 
+    protected ?bool $irsRetention = null;
+
     public ?string $vat = null;
 
     public ?string $name = null;
@@ -70,6 +72,11 @@ class InvoiceClient
         return $this->phone;
     }
 
+    public function irsRetention(): ?bool
+    {
+        return $this->irsRetention;
+    }
+
     public function setAddress(?string $address): void
     {
         $this->address = $address;
@@ -115,5 +122,10 @@ class InvoiceClient
     public function setPhone(?string $phone): void
     {
         $this->phone = $phone;
+    }
+
+    public function setIrsRetention(bool $irsRetention): void
+    {
+        $this->irsRetention = $irsRetention;
     }
 }
