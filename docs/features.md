@@ -100,16 +100,17 @@ Features that are "shared" between multiple Invoicing types.
 
 #### Client
 
-|             | Invoicing | Cegid Vendus |
-| ----------- | --------- | ------------ |
-| Name        | ✅        | ✅           |
-| VAT         | ✅        | ✅           |
-| Adress      | ✅        | ✅           |
-| City        | ✅        | ✅           |
-| Postal Code | ✅        | ✅           |
-| Country     | ✅        | ✅           |
-| E-mail      | ✅        | ✅           |
-| Phone       | ✅        | ✅           |
+|               | Invoicing | Cegid Vendus |
+| ------------- | --------- | ------------ |
+| Name          | ✅        | ✅           |
+| VAT           | ✅        | ✅           |
+| Adress        | ✅        | ✅           |
+| City          | ✅        | ✅           |
+| Postal Code   | ✅        | ✅           |
+| Country       | ✅        | ✅           |
+| E-mail        | ✅        | ✅           |
+| Phone         | ✅        | ✅           |
+| IRS Retention | ✅        | ✅           |
 
 #### Item
 
