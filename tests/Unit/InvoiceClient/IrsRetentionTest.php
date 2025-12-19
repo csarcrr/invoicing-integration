@@ -1,7 +1,5 @@
 <?php
 
-
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
 
 beforeEach(function () {
