@@ -13,12 +13,13 @@ beforeEach(function () {
     $this->invoice = Invoice::create();
     $this->item = new InvoiceItem;
     $this->client = new InvoiceClient;
+    $this->provider = Provider::from(config('invoicing-integration.provider'));
 });
 
-it('can save the pdf output to storage', function (Provider $provider) {
+it('can save the pdf output to storage', function () {
     Storage::fake('local');
 
-    Http::fake(mockResponse($provider, 'success'));
+    Http::fake(mockResponse($this->provider, 'success'));
 
     $this->item->setPrice(100);
     $this->item->setReference('reference-1');
@@ -41,8 +42,8 @@ it('can save the pdf output to storage', function (Provider $provider) {
     expect($output)->toBeString();
 })->with([Provider::CegidVendus])->skipOnWindows();
 
-it('can output escpos', function (Provider $provider) {
-    Http::fake(mockResponse($provider, 'success'));
+it('can output escpos', function () {
+    Http::fake(mockResponse($this->provider, 'success'));
 
     $this->item->setPrice(100);
     $this->item->setReference('reference-1');
