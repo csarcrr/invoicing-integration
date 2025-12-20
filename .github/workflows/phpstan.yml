@@ -9,14 +9,6 @@ on:
       - "phpstan.neon.dist"
       - ".github/workflows/phpstan.yml"
 
-  push:
-    branches-ignore:
-      - main
-    paths:
-      - "**.php"
-      - "phpstan.neon.dist"
-      - ".github/workflows/phpstan.yml"
-
 permissions:
   contents: write
 

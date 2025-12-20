@@ -6,11 +6,6 @@ on:
       - main
     paths:
       - "**.php"
-  push:
-    branches-ignore:
-      - main
-    paths:
-      - "**.php"
 
 permissions:
   contents: write
