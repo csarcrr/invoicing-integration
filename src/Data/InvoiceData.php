@@ -14,6 +14,10 @@ class InvoiceData
 
     protected ?string $atcudHash = null;
 
+    protected int $total;
+
+    protected int $totalNet;
+
     public function atcudHash(): ?string
     {
         return $this->atcudHash;
@@ -58,6 +62,30 @@ class InvoiceData
     public function setId(int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function total(): int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(int $total): self
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    public function totalNet(): int
+    {
+        return $this->totalNet;
+    }
+
+    public function setTotalNet(int $totalNet): self
+    {
+        $this->totalNet = $totalNet;
 
         return $this;
     }

@@ -9,11 +9,10 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\DueDate\DueDateCannotBeInPastException;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonCannotBeSetException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceTypeIsNotSetException;
+use CsarCrr\InvoicingIntegration\Exceptions\NoProviderProvidedException;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
 use Illuminate\Support\Collection;
@@ -41,7 +40,7 @@ class InvoicingIntegration
     protected ?string $creditNoteReason = null;
 
     public function __construct(
-        protected string $provider
+        protected ?string $provider = null
     ) {
         $this->items = collect();
         $this->payments = collect();
@@ -174,6 +173,7 @@ class InvoicingIntegration
 
     public function invoice(): InvoiceData
     {
+        throw_if(! $this->provider, NoProviderProvidedException::class);
         $this->ensureHasItems();
         $this->ensureTypeIsSet();
         $this->ensureClientHasNeededDetails();
@@ -223,15 +223,5 @@ class InvoicingIntegration
         if (! $this->client) {
             return;
         }
-
-        throw_if(
-            ! is_null($this->client->vat) && empty($this->client->vat),
-            InvoiceRequiresClientVatException::class
-        );
-
-        throw_if(
-            $this->client->name && ! $this->client->vat,
-            InvoiceRequiresVatWhenClientHasName::class
-        );
     }
 }

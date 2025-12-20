@@ -9,6 +9,8 @@ use CsarCrr\InvoicingIntegration\Data\Output;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
+use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
@@ -80,6 +82,18 @@ class CegidVendus extends Base
         if (! $this->invoicing->client()) {
             return;
         }
+
+        throw_if(
+            ! is_null($this->invoicing->client()->vat) &&
+            empty($this->invoicing->client()->vat),
+            InvoiceRequiresClientVatException::class
+        );
+
+        throw_if(
+            $this->invoicing->client()->name &&
+            ! $this->invoicing->client()->vat,
+            InvoiceRequiresVatWhenClientHasName::class
+        );
 
         $data = [
             'name' => $this->invoicing->client()->name,
@@ -300,6 +314,14 @@ class CegidVendus extends Base
                     fileName: $data['number']
                 )
             );
+        }
+
+        if ($data['amount_gross'] ?? false) {
+            $invoice->setTotal((int) ($data['amount_gross'] * 100));
+        }
+
+        if ($data['amount_net'] ?? false) {
+            $invoice->setTotalNet((int) ($data['amount_net'] * 100));
         }
 
         $this->invoice = $invoice;

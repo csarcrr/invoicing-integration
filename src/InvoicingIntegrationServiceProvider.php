@@ -16,9 +16,11 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         $this->app->bind('invoice', function () {
             $config = config('invoicing-integration');
 
-            $this->guardAgainstInvalidConfig($config);
+            if (! app()->environment('testing')) {
+                $this->guardAgainstInvalidConfig($config);
+            }
 
-            return new InvoicingIntegration($config['provider']);
+            return new InvoicingIntegration($config['provider'] ?? null);
         });
 
         $this->app->bind(

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
-uses(TestCase::class)->beforeEach(function () {
+pest()->beforeEach(function () {
     config()->set('invoicing-integration.provider', 'cegid_vendus');
     config()->set('invoicing-integration.providers.cegid_vendus.key', '1234');
     config()->set('invoicing-integration.providers.cegid_vendus.mode', 'test');
@@ -20,20 +20,9 @@ uses(TestCase::class)->beforeEach(function () {
         DocumentPaymentMethod::MONEY->value => 49999,
         DocumentPaymentMethod::MONEY_TRANSFER->value => 59999,
     ]);
-})->group('Unit Tests')->in('Unit');
+})->in('Unit/Providers/CegidVendus/', 'Feature');
 
-uses(TestCase::class)->beforeEach(function () {
-    config()->set('invoicing-integration.provider', 'cegid_vendus');
-    config()->set('invoicing-integration.providers.cegid_vendus.key', '1234');
-    config()->set('invoicing-integration.providers.cegid_vendus.mode', 'test');
-    config()->set('invoicing-integration.providers.cegid_vendus.config.payments', [
-        DocumentPaymentMethod::MB->value => 19999,
-        DocumentPaymentMethod::CREDIT_CARD->value => 29999,
-        DocumentPaymentMethod::CURRENT_ACCOUNT->value => 39999,
-        DocumentPaymentMethod::MONEY->value => 49999,
-        DocumentPaymentMethod::MONEY_TRANSFER->value => 59999,
-    ]);
-})->group('Feature Tests')->in('Feature');
+uses(TestCase::class)->in('Unit', 'Feature');
 
 function mockResponse(
     $provider,

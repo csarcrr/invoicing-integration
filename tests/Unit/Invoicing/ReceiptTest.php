@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
