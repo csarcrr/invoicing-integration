@@ -13,6 +13,6 @@ class CegidVendus extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'cegid_vendus';
+        return 'CegidVendus';
     }
 }

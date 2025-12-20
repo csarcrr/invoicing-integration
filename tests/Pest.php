@@ -10,17 +10,17 @@ use Illuminate\Support\Facades\Http;
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
 pest()->beforeEach(function () {
-    config()->set('invoicing-integration.provider', 'cegid_vendus');
-    config()->set('invoicing-integration.providers.cegid_vendus.key', '1234');
-    config()->set('invoicing-integration.providers.cegid_vendus.mode', 'test');
-    config()->set('invoicing-integration.providers.cegid_vendus.config.payments', [
+    config()->set('invoicing-integration.provider', 'CegidVendus');
+    config()->set('invoicing-integration.providers.CegidVendus.key', '1234');
+    config()->set('invoicing-integration.providers.CegidVendus.mode', 'test');
+    config()->set('invoicing-integration.providers.CegidVendus.config.payments', [
         DocumentPaymentMethod::MB->value => 19999,
         DocumentPaymentMethod::CREDIT_CARD->value => 29999,
         DocumentPaymentMethod::CURRENT_ACCOUNT->value => 39999,
         DocumentPaymentMethod::MONEY->value => 49999,
         DocumentPaymentMethod::MONEY_TRANSFER->value => 59999,
     ]);
-})->in('Unit/Providers/CegidVendus/', 'Feature');
+})->in('Unit/Providers/CegidVendus/', 'Feature/Providers/CegidVendus/');
 
 uses(TestCase::class)->in('Unit', 'Feature');
 

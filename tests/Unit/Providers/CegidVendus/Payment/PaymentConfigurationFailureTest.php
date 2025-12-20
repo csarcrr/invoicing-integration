@@ -15,7 +15,7 @@ beforeEach(function () {
 });
 
 it('fails when no payment id is configured', function () {
-    config()->set('invoicing-integration.providers.cegid_vendus.config.payments', [
+    config()->set('invoicing-integration.providers.CegidVendus.config.payments', [
         DocumentPaymentMethod::MB->value => null,
         DocumentPaymentMethod::CREDIT_CARD->value => null,
         DocumentPaymentMethod::CURRENT_ACCOUNT->value => null,

@@ -5,7 +5,7 @@ use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 return [
     'provider' => env('INVOICING_INTEGRATION_PROVIDER', null),
     'providers' => [
-        'cegid_vendus' => [
+        'CegidVendus' => [
             'key' => env('CEGID_VENDUS_API_KEY', null),
             'mode' => env('CEGID_VENDUS_MODE', null),
             'config' => [

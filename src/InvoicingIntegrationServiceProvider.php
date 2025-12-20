@@ -24,7 +24,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         });
 
         $this->app->bind(
-            'cegid_vendus',
+            'CegidVendus',
             function (Application $app, array $parameters) {
                 $invoicing = $parameters['invoicing'] ?? throw new \InvalidArgumentException('Invoicing instance is required to instantiate the CegidVendus provider.');
 
