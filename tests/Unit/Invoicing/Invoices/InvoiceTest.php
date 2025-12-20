@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
@@ -9,7 +11,7 @@ beforeEach(function () {
 });
 
 it('can set a client', function () {
-    $client = new InvoiceClient(999999999, 'Client Name');
+    $client = new InvoiceClient('999999999', 'Client Name');
 
     $this->invoice->setClient($client);
 

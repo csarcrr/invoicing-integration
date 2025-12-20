@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 use CsarCrr\InvoicingIntegration\InvoiceClient;
@@ -12,7 +14,7 @@ beforeEach(function () {
 
 it('can set the irs retention', function (bool $irsRetention, string $expectedValue) {
     $this->item->setReference('reference-1');
-    
+
     $this->client->setVat('123456789');
     $this->client->setName('Name');
     $this->client->setIrsRetention($irsRetention);
@@ -33,7 +35,6 @@ it('can set the irs retention', function (bool $irsRetention, string $expectedVa
     [false, 'no'],
 ]);
 
-
 it('does not have irs retention when not set', function () {
     $this->item->setReference('reference-1');
 
@@ -50,5 +51,5 @@ it('does not have irs retention when not set', function () {
     $resolve->create();
 
     $client = $resolve->payload()->get('client');
-    expect(!isset($client['irs_retention']))->toBeTrue();
+    expect(! isset($client['irs_retention']))->toBeTrue();
 });

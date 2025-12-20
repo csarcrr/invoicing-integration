@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
 use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
 

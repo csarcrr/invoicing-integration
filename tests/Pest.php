@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use Illuminate\Support\Facades\File;
@@ -41,7 +43,7 @@ function mockResponse(
     $headers = [],
 ) {
 
-    $path = FIXTURES_PATH."/Providers/{$provider->value}/documents/{$type}.json";
+    $path = FIXTURES_PATH."/Providers/{$provider->value}/Documents/{$type}.json";
 
     $jsonFixture = File::json($path);
 

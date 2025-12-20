@@ -12,6 +12,20 @@ class InvoiceData
 
     protected Output $output;
 
+    protected ?string $atcudHash = null;
+
+    public function atcudHash(): ?string
+    {
+        return $this->atcudHash;
+    }
+
+    public function setAtcudHash(?string $atcudHash): self
+    {
+        $this->atcudHash = $atcudHash;
+
+        return $this;
+    }
+
     public function output(): Output
     {
         return $this->output;

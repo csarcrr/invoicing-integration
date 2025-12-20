@@ -110,7 +110,7 @@ class CegidVendus extends Base
             $data['phone'] = $this->invoicing->client()->phone();
         }
 
-        if(!is_null($this->invoicing->client()->irsRetention())) {
+        if (! is_null($this->invoicing->client()->irsRetention())) {
             $retention = $this->invoicing->client()->irsRetention();
             $data['irs_retention'] = $retention ? 'yes' : 'no';
         }
@@ -286,6 +286,10 @@ class CegidVendus extends Base
 
         if ($data['id'] ?? false) {
             $invoice->setId((int) $data['id']);
+        }
+
+        if ($data['atcud'] ?? false) {
+            $invoice->setAtcudHash($data['atcud']);
         }
 
         if ($data['output'] ?? false) {
