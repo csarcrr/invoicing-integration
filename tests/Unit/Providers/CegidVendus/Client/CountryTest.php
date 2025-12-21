@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
+use CsarCrr\InvoicingIntegration\Providers\Provider;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem;
-    $this->client = new InvoiceClient;
+    $this->item = new Item;
+    $this->client = new Client;
 });
 
 it('sets and validates client country correctly', function () {
@@ -23,11 +24,7 @@ it('sets and validates client country correctly', function () {
     $this->invoice->addItem($this->item);
     $this->invoice->setClient($this->client);
 
-    $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $this->invoice,
-    ]);
-
-    $resolve->create();
+    $resolve = Provider::resolve()->invoice()->create($this->invoice);
 
     expect($resolve->payload()->get('client')['country'])->toBe('PT');
 });

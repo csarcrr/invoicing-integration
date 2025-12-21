@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentItemType;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 beforeEach(function () {
-    $this->item = new InvoiceItem;
+    $this->item = new Item;
 });
 
 it('can assign an item type', function () {

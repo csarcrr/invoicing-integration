@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 
 beforeEach(function () {
-    $this->client = new InvoiceClient;
+    $this->client = new Client;
     $this->invoice = Invoice::create();
 });
 

@@ -7,11 +7,11 @@ This guide explains how to create a NC (Nota de Crédito) invoice in the invoici
 Below is a complete example for creating a NC (Credit Note) for an invoice:
 
 ```php
-$item = new InvoiceItem(reference: 'reference-1');
+$item = new Item(reference: 'reference-1');
 $item->setPrice(500);
 $item->setRelatedDocument(documentNumber: 'FT 01P2025/1', lineNumber: 1);
 
-$payment = new InvoicePayment;
+$payment = new Payment;
 $payment->setAmount(500);
 $payment->setMethod(DocumentPaymentMethod::MB);
 

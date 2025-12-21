@@ -49,11 +49,11 @@ Example
 <?php
 
 use CsarCrr\InvoicingIntegration\InvoicingIntegration;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 $integration = Invoice::create();
 
-$item = new InvoiceItem(reference: 'SKU-001', quantity: 2);
+$item = new Item(reference: 'SKU-001', quantity: 2);
 $item->setPrice(1000);
 $item->setDescription('Product Description');
 $integration->addItem($item);

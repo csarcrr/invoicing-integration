@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
-use Illuminate\Contracts\Foundation\Application;
+use CsarCrr\InvoicingIntegration\Actions\Invoice\Invoice;
+use CsarCrr\InvoicingIntegration\Providers\Provider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -13,33 +13,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
     public function bootingPackage(): void
     {
-        $this->app->bind('invoice', function () {
-            $config = config('invoicing-integration');
-
-            if (! app()->environment('testing')) {
-                $this->guardAgainstInvalidConfig($config);
-            }
-
-            return new InvoicingIntegration($config['provider'] ?? null);
-        });
-
-        $this->app->bind(
-            'CegidVendus',
-            function (Application $app, array $parameters) {
-                $invoicing = $parameters['invoicing'] ?? throw new \InvalidArgumentException('Invoicing instance is required to instantiate the CegidVendus provider.');
-
-                $config = config('invoicing-integration');
-
-                $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
-
-                return new CegidVendus(
-                    apiKey: $config['providers'][$config['provider']]['key'],
-                    mode: $config['providers'][$config['provider']]['mode'],
-                    options: collect($config['providers'][$config['provider']]['config']),
-                    invoicing: $invoicing,
-                );
-            }
-        );
+        $this->setupInvoiceBindings();
     }
 
     public function configurePackage(Package $package): void
@@ -47,6 +21,13 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         $package
             ->name('invoicing-integration')
             ->hasConfigFile('invoicing-integration');
+    }
+
+    protected function setupInvoiceBindings(): void
+    {
+        $this->app->bind('invoice', function () {
+            return new Invoice();
+        });
     }
 
     protected function guardAgainstInvalidConfig(array $config): void

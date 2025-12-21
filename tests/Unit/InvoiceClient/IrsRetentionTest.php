@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\InvoiceClient;
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 
 beforeEach(function () {
-    $this->client = new InvoiceClient;
+    $this->client = new Client;
 });
 
 it('sets irs retention option', function (bool $value) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceTransportDetails;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
@@ -19,7 +19,7 @@ it('can set transport type', function () {
 it('can set origin details', function () {
     $this->invoice->setType(DocumentType::Transport);
 
-    $transport = new InvoiceTransportDetails;
+    $transport = new TransportDetails;
     $transport->origin()->date(now()->addWeek());
     $transport->origin()->time(now());
     $transport->origin()->address('123 Main St, Springfield');
@@ -29,7 +29,7 @@ it('can set origin details', function () {
 
     $this->invoice->setTransport($transport);
 
-    expect($this->invoice->transport())->toBeInstanceOf(InvoiceTransportDetails::class);
+    expect($this->invoice->transport())->toBeInstanceOf(TransportDetails::class);
     expect($this->invoice->transport()->origin()->address())->toBe('123 Main St, Springfield');
     expect($this->invoice->transport()->origin()->date())->toBeInstanceOf(\Carbon\Carbon::class);
 });
@@ -37,7 +37,7 @@ it('can set origin details', function () {
 it('can set destination details', function () {
     $this->invoice->setType(DocumentType::Transport);
 
-    $transport = new InvoiceTransportDetails;
+    $transport = new TransportDetails;
     $transport->destination()->date(now()->addWeek());
     $transport->destination()->time(now());
     $transport->destination()->address('123 Main St, Springfield');
@@ -47,7 +47,7 @@ it('can set destination details', function () {
 
     $this->invoice->setTransport($transport);
 
-    expect($this->invoice->transport())->toBeInstanceOf(InvoiceTransportDetails::class);
+    expect($this->invoice->transport())->toBeInstanceOf(TransportDetails::class);
     expect($this->invoice->transport()->destination()->address())->toBe('123 Main St, Springfield');
     expect($this->invoice->transport()->destination()->date())->toBeInstanceOf(\Carbon\Carbon::class);
 });
@@ -55,11 +55,11 @@ it('can set destination details', function () {
 it('can set a vehicle license plate', function () {
     $this->invoice->setType(DocumentType::Transport);
 
-    $transport = new InvoiceTransportDetails;
+    $transport = new TransportDetails;
     $transport->vehicleLicensePlate('ABC-1234');
 
     $this->invoice->setTransport($transport);
 
-    expect($this->invoice->transport())->toBeInstanceOf(InvoiceTransportDetails::class);
+    expect($this->invoice->transport())->toBeInstanceOf(TransportDetails::class);
     expect($this->invoice->transport()->vehicleLicensePlate())->toBe('ABC-1234');
 });

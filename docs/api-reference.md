@@ -7,33 +7,33 @@
 
 -   `__construct(string $provider)` — Create a new invoicing integration instance with the specified provider.
 -   `create(): self` — Initialize the integration (returns self for method chaining).
--   `setClient(InvoiceClient $client): self` — Set the client for the invoice. **Optional for final consumer invoices:** do not call this method if invoicing to a final consumer.
--   `addItem(InvoiceItem $item): self` — Add an item to the invoice.
--   `addPayment(InvoicePayment $payment): self` — Add a payment to the invoice.
+-   `setClient(Client $client): self` — Set the client for the invoice. **Optional for final consumer invoices:** do not call this method if invoicing to a final consumer.
+-   `addItem(Item $item): self` — Add an item to the invoice.
+-   `addPayment(Payment $payment): self` — Add a payment to the invoice.
 -   `setType(DocumentType $type): self` — Set the document type.
 -   `setDate(Carbon $date): self` — Set the invoice date (Default: ``date('Y-m-d')``).
 -   `setDueDate(Carbon $dateDue): self` — Set the due date (cannot be in the past).
 -   `addRelatedDocument(string $relatedDocument): self` — Add a related document.
--   `setTransport(?InvoiceTransportDetails $transport): self` — Set transport details.
+-   `setTransport(?TransportDetails $transport): self` — Set transport details.
 -   `asEscPos(): self` — Sets the output format type to ESCPOS.
 -   `invoice(): InvoiceData` — Generate and send the invoice.
 -   `get(): self` — Returns the current instance.
 
 **Getter Methods:**
--   `client(): ?InvoiceClient` — Get the current client.
+-   `client(): ?Client` — Get the current client.
 -   `payments(): Collection` — Get all payments.
 -   `items(): Collection` — Get all items.
 -   `relatedDocuments(): Collection` — Get all related documents.
 -   `type(): DocumentType` — Get the document type.
 -   `date(): Carbon` — Get the invoice date.
 -   `dueDate(): ?Carbon` — Get the due date.
--   `transport(): ?InvoiceTransportDetails` — Get transport details.
+-   `transport(): ?TransportDetails` — Get transport details.
 -   `outputFormat(): OutputFormat` — Get the current output format.
 
 > **Note:** For final consumer invoices, do not set any client information (do not call `setClient`).
 
 
-### InvoiceClient
+### Client
 
 **Constructor:**
 -   `__construct(?string $vat = null, ?string $name = null)` — Create a new client with optional VAT and name.
@@ -65,7 +65,7 @@
 > **Note:** Only required for non-final-consumer invoices.
 
 
-### InvoiceItem
+### Item
 
 **Constructor:**
 -   `__construct(null|int|string $reference = null, ?int $quantity = null)` — Create a new item with optional reference and quantity (defaults to 1).
@@ -97,7 +97,7 @@
 > **Note:** At least one item is required for every invoice (except receipts).
 
 
-### InvoicePayment
+### Payment
 
 **Constructor:**
 -   `__construct(?DocumentPaymentMethod $method = null, ?int $amount = null)` — Create a new payment with optional method and amount.
@@ -113,7 +113,7 @@
 > **Note:** At least one payment is required for every invoice.
 
 
-### InvoiceTransportDetails
+### TransportDetails
 
 **Methods:**
 -   `origin(): self` — Set the context to origin for subsequent operations.

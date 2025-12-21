@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\DocumentType;
-use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\ProviderConfig;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-use CsarCrr\InvoicingIntegration\InvoicePayment;
+use CsarCrr\InvoicingIntegration\ValueObjects\Invoice as ValueObjectsInvoice;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
-    $this->provider = Provider::from(config('invoicing-integration.provider'));
+    $this->provider = ProviderConfig::from(config('invoicing-integration.provider'));
     $this->invoice = Invoice::create();
 });
 
 test('can invoice successfully with minimum data', function () {
     Http::fake(mockResponse($this->provider, 'success'));
 
-    $this->invoice->addItem(new InvoiceItem('reference-1'));
+    $this->invoice->addItem(new Item('reference-1'));
 
-    $response = $this->invoice->invoice();
+    $response = $this->invoice->data();
 
-    expect($response)->toBeInstanceOf(InvoiceData::class);
+    expect($response)->toBeInstanceOf(ValueObjectsInvoice::class);
     expect($response->sequence())->toBe('FT 01P2025/1');
 });
 
@@ -38,22 +38,22 @@ test(
             ]),
         ]);
 
-        $item = new InvoiceItem('reference-1');
+        $item = new Item('reference-1');
         $item->setPrice(500);
 
         $this->invoice->setType(DocumentType::Invoice);
         $this->invoice->addItem($item);
 
-        $details = $this->invoice->invoice();
+        $details = $this->invoice->data();
 
         $receipt = Invoice::create();
         $receipt->setType(DocumentType::Receipt);
-        $receipt->addPayment(new InvoicePayment(DocumentPaymentMethod::MONEY, 500));
+        $receipt->addPayment(new Payment(DocumentPaymentMethod::MONEY, 500));
         $receipt->addRelatedDocument($details->sequence());
 
-        $details = $receipt->invoice();
+        $details = $receipt->data();
 
-        expect($details)->toBeInstanceOf(InvoiceData::class);
+        expect($details)->toBeInstanceOf(ValueObjectsInvoice::class);
         expect($details->sequence())->toBe('RG 01P2025/1');
     }
 );
@@ -63,6 +63,6 @@ test('handle integration errors', function () {
         $this->provider->documents() => mockResponse($this->provider, 'fail', 400),
     ]);
 
-    $this->invoice->addItem(new InvoiceItem('reference-1'));
-    $this->invoice->invoice();
+    $this->invoice->addItem(new Item('reference-1'));
+    $this->invoice->data();
 })->throws(RequestFailedException::class);

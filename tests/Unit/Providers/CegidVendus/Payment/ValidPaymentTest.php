@@ -4,31 +4,28 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\Invoice\InvoiceItem;
-use CsarCrr\InvoicingIntegration\InvoiceClient;
-use CsarCrr\InvoicingIntegration\InvoicePayment;
+use CsarCrr\InvoicingIntegration\Providers\Provider;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Illuminate\Support\Collection;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();
-    $this->item = new InvoiceItem;
-    $this->client = new InvoiceClient;
+    $this->item = new Item;
+    $this->client = new Client;
 });
 
 it('has a valid payment payload', function () {
     $this->item->setReference('reference-1');
     $this->item->setPrice(500);
 
-    $payment = new InvoicePayment(amount: 500, method: DocumentPaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: DocumentPaymentMethod::MB);
 
     $this->invoice->addItem($this->item);
     $this->invoice->addPayment($payment);
 
-    $resolve = app(config('invoicing-integration.provider'), [
-        'invoicing' => $this->invoice,
-    ]);
-
-    $resolve->create();
+    $resolve = Provider::resolve()->invoice()->create($this->invoice);
 
     expect($resolve->payload()->get('payments'))
         ->toBeInstanceOf(Collection::class);
