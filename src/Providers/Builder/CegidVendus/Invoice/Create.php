@@ -66,6 +66,7 @@ final class Create extends Invoice implements HasHandler
         $this->ensureTransportDetailsFormat();
         $this->ensureDueDate();
         $this->ensureCreditNoteDetails();
+        $this->ensureOutputFormat();
 
         $this->ensureNoEmptyItemsArray();
     }
@@ -73,6 +74,14 @@ final class Create extends Invoice implements HasHandler
     protected function ensureInvoiceType()
     {
         $this->payload->put('type', $this->invoicing->type()->value);
+    }
+
+    protected function ensureOutputFormat (): void {
+        if( !$this->invoicing->outputFormat() ) {
+            return;
+        }
+
+        $this->payload->put('output', $this->invoicing->outputFormat()->value);
     }
 
     protected function ensureClientFormat(): void

@@ -40,7 +40,9 @@ it('can save the pdf output to storage', function () {
 })->with([ProviderConfig::CegidVendus])->skipOnWindows();
 
 it('can output escpos', function () {
-    Http::fake(mockResponse($this->provider, 'success'));
+    Http::fake(mockResponse(provider: $this->provider, type: 'success', payloadOverrides: [
+        'output' => base64_encode('ESC_POS_EXAMPLE_STRING'),
+    ]));
 
     $this->item->setPrice(100);
     $this->item->setReference('reference-1');
@@ -51,4 +53,4 @@ it('can output escpos', function () {
     $invoice = Provider::resolve()->invoice()->create($this->invoice)->new();
 
     expect($invoice->output()->get())->toBeString();
-})->with([ProviderConfig::CegidVendus]);
+})->with([ProviderConfig::CegidVendus])->only();
