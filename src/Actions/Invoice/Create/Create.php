@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Actions\Invoice\Create;
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Actions\Invoice\Base;
+use CsarCrr\InvoicingIntegration\Contracts\Executable;
 use CsarCrr\InvoicingIntegration\Contracts\HasData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
@@ -20,7 +20,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Illuminate\Support\Collection;
 
-final class Create extends Base
+final class Create implements Executable
 {
     protected ?Client $client = null;
 
