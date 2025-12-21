@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
@@ -21,7 +21,7 @@ it('clears empty data entries', function () {
     $this->item->setPrice(500);
 
     $this->invoice->addItem($this->item);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
 
@@ -46,7 +46,7 @@ it('throw error exception with API messages when request fails', function () {
     $this->client->setVat('invalid-vat');
 
     $this->invoice->addItem($this->item);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
     $this->invoice->setClient($this->client);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 beforeEach(function () {
@@ -10,7 +10,7 @@ beforeEach(function () {
 });
 
 it('can set a related document', function () {
-    $this->invoice->setType(DocumentType::CreditNote);
+    $this->invoice->setType(InvoiceType::CreditNote);
     $this->invoice->addRelatedDocument('FT 01P2025/1');
 
     expect($this->invoice->relatedDocuments())->toContain('FT 01P2025/1');

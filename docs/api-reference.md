@@ -10,7 +10,7 @@
 -   `setClient(Client $client): self` — Set the client for the invoice. **Optional for final consumer invoices:** do not call this method if invoicing to a final consumer.
 -   `addItem(Item $item): self` — Add an item to the invoice.
 -   `addPayment(Payment $payment): self` — Add a payment to the invoice.
--   `setType(DocumentType $type): self` — Set the document type.
+-   `setType(InvoiceType $type): self` — Set the document type.
 -   `setDate(Carbon $date): self` — Set the invoice date (Default: ``date('Y-m-d')``).
 -   `setDueDate(Carbon $dateDue): self` — Set the due date (cannot be in the past).
 -   `addRelatedDocument(string $relatedDocument): self` — Add a related document.
@@ -24,7 +24,7 @@
 -   `payments(): Collection` — Get all payments.
 -   `items(): Collection` — Get all items.
 -   `relatedDocuments(): Collection` — Get all related documents.
--   `type(): DocumentType` — Get the document type.
+-   `type(): InvoiceType` — Get the document type.
 -   `date(): Carbon` — Get the invoice date.
 -   `dueDate(): ?Carbon` — Get the due date.
 -   `transport(): ?TransportDetails` — Get transport details.
@@ -75,7 +75,7 @@
 -   `quantity(): int` — Get the quantity.
 -   `price(): ?int` — Get the price (in cents).
 -   `note(): ?string` — Get the note/description.
--   `type(): ?DocumentItemType` — Get the item type.
+-   `type(): ?InvoiceItemType` — Get the item type.
 -   `tax(): ?DocumentItemTax` — Get the tax type.
 -   `taxExemption(): ?TaxExemptionReason` — Get the tax exemption reason.
 -   `taxExemptionLaw(): ?string` — Get the tax exemption law.
@@ -87,7 +87,7 @@
 -   `setQuantity(int $quantity): void` — Set the quantity.
 -   `setPrice(int $price): void` — Set price (in cents).
 -   `setNote(string $note): void` — Set item description/note.
--   `setType(DocumentItemType $type): self` — Set the item type.
+-   `setType(InvoiceItemType $type): self` — Set the item type.
 -   `setTax(?DocumentItemTax $tax = null): self` — Set tax type.
 -   `setTaxExemption(?TaxExemptionReason $reason = null): self` — Set tax exemption reason (only for exempt tax).
 -   `setTaxExemptionLaw(string $law): self` — Set exemption law (requires exemption reason).
@@ -100,14 +100,14 @@
 ### Payment
 
 **Constructor:**
--   `__construct(?DocumentPaymentMethod $method = null, ?int $amount = null)` — Create a new payment with optional method and amount.
+-   `__construct(?InvoicePaymentMethod $method = null, ?int $amount = null)` — Create a new payment with optional method and amount.
 
 **Getter Methods:**
--   `method(): ?DocumentPaymentMethod` — Get the payment method.
+-   `method(): ?InvoicePaymentMethod` — Get the payment method.
 -   `amount(): ?int` — Get the payment amount (in cents).
 
 **Setter Methods:**
--   `setMethod(DocumentPaymentMethod $method): self` — Set the payment method.
+-   `setMethod(InvoicePaymentMethod $method): self` — Set the payment method.
 -   `setAmount(int $amount): self` — Set the payment amount (in cents).
 
 > **Note:** At least one payment is required for every invoice.
@@ -139,25 +139,25 @@ The return type from the `invoice()` method containing the generated invoice inf
 ## Enums
 
 
-### DocumentType
+### InvoiceType
 
 Available document types:
--   `DocumentType::Invoice` — Regular invoice (FT)
--   `DocumentType::InvoiceReceipt` — Invoice receipt (FR)
--   `DocumentType::InvoiceSimple` — Simplified invoice (FS)
--   `DocumentType::Receipt` — Receipt (RG)
--   `DocumentType::Transport` — Transport document (GT)
--   `DocumentType::CreditNote` — Credit note (NC)
+-   `InvoiceType::Invoice` — Regular invoice (FT)
+-   `InvoiceType::InvoiceReceipt` — Invoice receipt (FR)
+-   `InvoiceType::InvoiceSimple` — Simplified invoice (FS)
+-   `InvoiceType::Receipt` — Receipt (RG)
+-   `InvoiceType::Transport` — Transport document (GT)
+-   `InvoiceType::CreditNote` — Credit note (NC)
 
 
-### DocumentPaymentMethod
+### InvoicePaymentMethod
 
 Available payment methods:
--   `DocumentPaymentMethod::MONEY` — Cash payment
--   `DocumentPaymentMethod::MB` — ATM/Debit card
--   `DocumentPaymentMethod::CREDIT_CARD` — Credit card
--   `DocumentPaymentMethod::MONEY_TRANSFER` — Bank transfer
--   `DocumentPaymentMethod::CURRENT_ACCOUNT` — Current account
+-   `InvoicePaymentMethod::MONEY` — Cash payment
+-   `InvoicePaymentMethod::MB` — ATM/Debit card
+-   `InvoicePaymentMethod::CREDIT_CARD` — Credit card
+-   `InvoicePaymentMethod::MONEY_TRANSFER` — Bank transfer
+-   `InvoicePaymentMethod::CURRENT_ACCOUNT` — Current account
 
 
 ### DocumentItemTax

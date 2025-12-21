@@ -7,7 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Actions\Invoice\Create;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Actions\Invoice\Base;
 use CsarCrr\InvoicingIntegration\Contracts\HasData;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\DueDate\DueDateCannotBeInPastException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresItemsException;
@@ -24,7 +24,7 @@ final class Create extends Base
 {
     protected ?Client $client = null;
 
-    protected ?DocumentType $type = null;
+    protected ?InvoiceType $type = null;
 
     protected ?TransportDetails $transport = null;
 
@@ -49,7 +49,7 @@ final class Create extends Base
         $this->payments = collect();
         $this->relatedDocuments = collect();
         $this->date = Carbon::now();
-        $this->type = DocumentType::Invoice;
+        $this->type = InvoiceType::Invoice;
     }
 
     public function execute(): HasData
@@ -81,7 +81,7 @@ final class Create extends Base
         return $this->relatedDocuments;
     }
 
-    public function type(): DocumentType
+    public function type(): InvoiceType
     {
         return $this->type;
     }
@@ -123,7 +123,7 @@ final class Create extends Base
     public function setCreditNoteReason(string $reason): self
     {
         throw_if(
-            $this->type !== DocumentType::CreditNote,
+            $this->type !== InvoiceType::CreditNote,
             CreditNoteReasonCannotBeSetException::class
         );
 
@@ -146,7 +146,7 @@ final class Create extends Base
         return $this;
     }
 
-    public function setType(DocumentType $type): self
+    public function setType(InvoiceType $type): self
     {
         $this->type = $type;
 
@@ -203,7 +203,7 @@ final class Create extends Base
 
     protected function ensureHasItems(): void
     {
-        if ($this->type() === DocumentType::Receipt) {
+        if ($this->type() === InvoiceType::Receipt) {
             return;
         }
 

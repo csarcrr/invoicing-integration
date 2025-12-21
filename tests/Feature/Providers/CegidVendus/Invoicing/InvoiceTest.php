@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\ProviderConfig;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -41,14 +41,14 @@ test(
         $item = new Item('reference-1');
         $item->setPrice(500);
 
-        $this->invoice->setType(DocumentType::Invoice);
+        $this->invoice->setType(InvoiceType::Invoice);
         $this->invoice->addItem($item);
 
         $details = $this->invoice->execute();
 
         $receipt = Invoice::create();
-        $receipt->setType(DocumentType::Receipt);
-        $receipt->addPayment(new Payment(DocumentPaymentMethod::MONEY, 500));
+        $receipt->setType(InvoiceType::Receipt);
+        $receipt->addPayment(new Payment(InvoicePaymentMethod::MONEY, 500));
         $receipt->addRelatedDocument($details->sequence());
 
         $details = $receipt->execute();

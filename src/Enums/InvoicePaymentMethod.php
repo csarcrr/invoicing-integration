@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Enums;
 
-enum DocumentPaymentMethod: string
+enum InvoicePaymentMethod: string
 {
     case MONEY = 'MONEY';
     case MB = 'MB';

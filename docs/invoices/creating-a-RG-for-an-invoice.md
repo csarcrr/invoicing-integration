@@ -9,24 +9,24 @@ Below is a complete example for creating a RG (receipt) for an invoice:
 
 ```php
 use CsarCrr\InvoicingIntegration\InvoicingIntegration;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
 
 // Create the integration instance
-$integration = Invoice::create();
+$invoice = Invoice::create();
 
 // Set the document type to RG/Receipt
-$integration->setType(DocumentType::Receipt);
+$invoice->setType(InvoiceType::Receipt);
 
 // Add the related invoice reference (provider identifier)
-$integration->addRelatedDocument('FT 01P2025/1');
+$invoice->addRelatedDocument('FT 01P2025/1');
 
 // Add payment details
-$integration->addPayment(new Payment(DocumentPaymentMethod::MONEY, 10000)); // Amount in cents
+$invoice->addPayment(new Payment(InvoicePaymentMethod::MONEY, 10000)); // Amount in cents
 
 // Generate and send the RG
-$integration->execute();
+$invoice->execute();
 ```
 
 You can also have multiple types of payments assigned. Just make sure that the amounts sum, are the total, or the original issued invoice will not be "marked" as paid in most providers.
@@ -34,12 +34,12 @@ You can also have multiple types of payments assigned. Just make sure that the a
 ```php
 // ...
 
-$integration = Invoice::create();
+$invoice = Invoice::create();
 
-$integration->addPayment(new Payment(DocumentPaymentMethod::MONEY, 5000)); 
-$integration->addPayment(new Payment(DocumentPaymentMethod::MB, 5000)); 
+$invoice->addPayment(new Payment(InvoicePaymentMethod::MONEY, 5000)); 
+$invoice->addPayment(new Payment(InvoicePaymentMethod::MB, 5000)); 
 
-$integration->execute();
+$invoice->execute();
 ```
 
 ---

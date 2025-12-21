@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
@@ -11,13 +11,13 @@ beforeEach(function () {
 });
 
 it('can set transport type', function () {
-    $this->invoice->setType(DocumentType::Transport);
+    $this->invoice->setType(InvoiceType::Transport);
 
-    expect($this->invoice->type())->toBe(DocumentType::Transport);
+    expect($this->invoice->type())->toBe(InvoiceType::Transport);
 });
 
 it('can set origin details', function () {
-    $this->invoice->setType(DocumentType::Transport);
+    $this->invoice->setType(InvoiceType::Transport);
 
     $transport = new TransportDetails;
     $transport->origin()->date(now()->addWeek());
@@ -35,7 +35,7 @@ it('can set origin details', function () {
 });
 
 it('can set destination details', function () {
-    $this->invoice->setType(DocumentType::Transport);
+    $this->invoice->setType(InvoiceType::Transport);
 
     $transport = new TransportDetails;
     $transport->destination()->date(now()->addWeek());
@@ -53,7 +53,7 @@ it('can set destination details', function () {
 });
 
 it('can set a vehicle license plate', function () {
-    $this->invoice->setType(DocumentType::Transport);
+    $this->invoice->setType(InvoiceType::Transport);
 
     $transport = new TransportDetails;
     $transport->vehicleLicensePlate('ABC-1234');

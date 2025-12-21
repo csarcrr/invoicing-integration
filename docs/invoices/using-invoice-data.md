@@ -8,7 +8,7 @@ The `InvoiceData` class is returned by all providers when issuing an invoice. It
 When you issue an invoice, you receive an `InvoiceData` object:
 
 ```php
-$invoiceData = $integration->execute();
+$invoiceData = $invoice->execute();
 
 // Get the provider's invoice reference
 $reference = $invoiceData->sequence(); // FT 01P2025/1

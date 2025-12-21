@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
@@ -15,12 +15,12 @@ it('does not set items when issuing a RG', function () {
     $item = new Item(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new Payment(DocumentPaymentMethod::MONEY, 500);
+    $payment = new Payment(InvoicePaymentMethod::MONEY, 500);
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
     $invoicing->addPayment($payment);
-    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->setType(InvoiceType::Receipt);
     $invoicing->addRelatedDocument('FT 10000');
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);
@@ -32,12 +32,12 @@ it('has a valid related documents payload', function () {
     $item = new Item(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new Payment(amount: 500, method: DocumentPaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
     $invoicing->addPayment($payment);
-    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->setType(InvoiceType::Receipt);
     $invoicing->addRelatedDocument('FT 10000');
     $invoicing->addRelatedDocument('FT 20000');
 
@@ -62,12 +62,12 @@ it('makes sure that invoices document numbers are string', function () {
     $item = new Item(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new Payment(amount: 500, method: DocumentPaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
     $invoicing->addPayment($payment);
-    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->setType(InvoiceType::Receipt);
     $invoicing->addRelatedDocument('FT 1000');
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);
@@ -87,7 +87,7 @@ it('makes sure it fails when no payments are set', function () {
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
-    $invoicing->setType(DocumentType::Receipt);
+    $invoicing->setType(InvoiceType::Receipt);
     $invoicing->addRelatedDocument('FT 10000');
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);

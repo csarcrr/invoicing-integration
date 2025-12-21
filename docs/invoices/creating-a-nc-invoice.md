@@ -13,16 +13,16 @@ $item->setRelatedDocument(documentNumber: 'FT 01P2025/1', lineNumber: 1);
 
 $payment = new Payment;
 $payment->setAmount(500);
-$payment->setMethod(DocumentPaymentMethod::MB);
+$payment->setMethod(InvoicePaymentMethod::MB);
 
-$integration = Invoice::create();
-$integration->setType(DocumentType::CreditNote);
-$integration->addItem($item);
-$integration->addPayment($item);
+$invoice = Invoice::create();
+$invoice->setType(InvoiceType::CreditNote);
+$invoice->addItem($item);
+$invoice->addPayment($item);
 
-$integration->setCreditNoteReason('Product returned by customer');
+$invoice->setCreditNoteReason('Product returned by customer');
 
-$integration->execute();
+$invoice->execute();
 
 ```
 

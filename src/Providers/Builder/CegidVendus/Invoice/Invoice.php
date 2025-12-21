@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Providers\Builder\CegidVendus\Invoice;
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Providers\Builder\CegidVendus\Base;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
@@ -28,15 +28,15 @@ abstract class Invoice extends Base
 
     protected Collection $payload;
 
-    protected DocumentType $type = DocumentType::Invoice;
+    protected InvoiceType $type = InvoiceType::Invoice;
 
     protected ?Carbon $dueDate = null;
 
     protected array $invoiceTypesThatRequirePayments = [
-        DocumentType::Receipt,
-        DocumentType::InvoiceReceipt,
-        DocumentType::InvoiceSimple,
-        DocumentType::CreditNote,
+        InvoiceType::Receipt,
+        InvoiceType::InvoiceReceipt,
+        InvoiceType::InvoiceSimple,
+        InvoiceType::CreditNote,
     ];
 
     public function payload(): Collection

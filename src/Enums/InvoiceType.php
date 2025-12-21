@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Enums;
 
 use CsarCrr\InvoicingIntegration\Traits\EnumOptions;
 
-enum DocumentType: string
+enum InvoiceType: string
 {
     use EnumOptions;
 

@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Actions\Invoice\Base;
 use CsarCrr\InvoicingIntegration\Actions\Invoice\Create\Create as InvoiceCreate;
 use CsarCrr\InvoicingIntegration\Contracts\HasHandler;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
@@ -58,7 +58,7 @@ final class Create extends Invoice implements HasHandler
 
     protected function createPayloadStructure(): void
     {
-        $this->ensureDocumentType();
+        $this->ensureInvoiceType();
         $this->ensureClientFormat();
         $this->ensureItemsFormat();
         $this->ensurePaymentsFormat();
@@ -70,7 +70,7 @@ final class Create extends Invoice implements HasHandler
         $this->ensureNoEmptyItemsArray();
     }
 
-    protected function ensureDocumentType()
+    protected function ensureInvoiceType()
     {
         $this->payload->put('type', $this->invoicing->type()->value);
     }
@@ -132,7 +132,7 @@ final class Create extends Invoice implements HasHandler
 
     protected function ensureItemsFormat(): void
     {
-        if ($this->invoicing->type() === DocumentType::Receipt) {
+        if ($this->invoicing->type() === InvoiceType::Receipt) {
             return;
         }
 
@@ -209,7 +209,7 @@ final class Create extends Invoice implements HasHandler
         }
 
         throw_if(
-            ! in_array($this->invoicing->type(), [DocumentType::Invoice, DocumentType::Transport]),
+            ! in_array($this->invoicing->type(), [InvoiceType::Invoice, InvoiceType::Transport]),
             InvoiceTypeDoesNotSupportTransportException::class
         );
 
@@ -258,7 +258,7 @@ final class Create extends Invoice implements HasHandler
         }
 
         throw_if(
-            $this->invoicing->type() !== DocumentType::Invoice,
+            $this->invoicing->type() !== InvoiceType::Invoice,
             Exception::class,
             'Due date can only be set for Invoice document types.'
         );
@@ -268,7 +268,7 @@ final class Create extends Invoice implements HasHandler
 
     protected function ensureCreditNoteDetails(): void
     {
-        if ($this->invoicing->type() !== DocumentType::CreditNote) {
+        if ($this->invoicing->type() !== InvoiceType::CreditNote) {
             return;
         }
 
@@ -359,7 +359,7 @@ final class Create extends Invoice implements HasHandler
             }
         }
 
-        if ($this->invoicing->type() === DocumentType::CreditNote) {
+        if ($this->invoicing->type() === InvoiceType::CreditNote) {
             throw_if(
                 $item->relatedDocument()->isEmpty(),
                 InvoiceItemIsNotValidException::class,
@@ -388,7 +388,7 @@ final class Create extends Invoice implements HasHandler
 
     protected function handleRelatedDocumentsForReceipts(): void
     {
-        if ($this->invoicing->type() !== DocumentType::Receipt) {
+        if ($this->invoicing->type() !== InvoiceType::Receipt) {
             return;
         }
 
@@ -405,7 +405,7 @@ final class Create extends Invoice implements HasHandler
 
     protected function handleRelatedDocumentsForOtherTypes(): void
     {
-        if (in_array($this->invoicing->type(), [DocumentType::CreditNote, DocumentType::Receipt])) {
+        if (in_array($this->invoicing->type(), [InvoiceType::CreditNote, InvoiceType::Receipt])) {
             return;
         }
 

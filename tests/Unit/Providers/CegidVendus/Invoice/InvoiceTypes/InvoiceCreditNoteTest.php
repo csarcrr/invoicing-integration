@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -26,9 +26,9 @@ it('has a valid payload', function () {
 
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(DocumentPaymentMethod::MB);
+    $payment->setMethod(InvoicePaymentMethod::MB);
 
-    $this->invoice->setType(DocumentType::CreditNote);
+    $this->invoice->setType(InvoiceType::CreditNote);
     $this->invoice->addPayment($payment);
     $this->invoice->addItem($this->item);
 
@@ -59,7 +59,7 @@ it('fails when no related document was set in every item', function () {
     $this->invoice->addItem($this->item);
     $this->invoice->addItem($item2);
 
-    $this->invoice->setType(DocumentType::CreditNote);
+    $this->invoice->setType(InvoiceType::CreditNote);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
 })->throws(
@@ -72,7 +72,7 @@ it('fails when no payment is set in the credit note', function () {
     $this->item->setPrice(500);
     $this->item->setRelatedDocument('FT 01P2025/1', 1);
 
-    $this->invoice->setType(DocumentType::CreditNote);
+    $this->invoice->setType(InvoiceType::CreditNote);
     $this->invoice->addItem($this->item);
 
     $this->invoice->setCreditNoteReason('Product returned by customer');

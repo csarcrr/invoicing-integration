@@ -7,9 +7,9 @@ Retrieve and store generated invoice documents (PDFs or ESC/POS data) after crea
 Save the invoice PDF to your local storage and get the file path:
 
 ```php
-$integration = Invoice::create();
+$invoice = Invoice::create();
 // ...
-$invoice = $integration->execute();
+$invoice = $invoice->execute();
 
 $invoice->output()->save(); // saves to storage/private/output/ft_01p2025_1.pdf and outputs the path
 ```
@@ -21,10 +21,10 @@ The `save()` method stores the file in `storage_path` and returns the full file 
 Generate ESC/POS data for thermal printers (when supported by the provider):
 
 ```php
-$integration = Invoice::create();
+$invoice = Invoice::create();
 // ...
-$integration->asEscPos();
-$invoice = $integration->execute();
+$invoice->asEscPos();
+$invoice = $invoice->execute();
 
 $invoice->output()->get();
 ```

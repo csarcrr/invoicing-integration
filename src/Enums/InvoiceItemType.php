@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Enums;
 
 use CsarCrr\InvoicingIntegration\Traits\EnumOptions;
 
-enum DocumentItemType: string
+enum InvoiceItemType: string
 {
     use EnumOptions;
 
@@ -19,11 +19,11 @@ enum DocumentItemType: string
     public function vendus(): string
     {
         return match ($this) {
-            DocumentItemType::Product => 'P',
-            DocumentItemType::Service => 'S',
-            DocumentItemType::Other => 'O',
-            DocumentItemType::Tax => 'I',
-            DocumentItemType::SpecialTax => 'E',
+            InvoiceItemType::Product => 'P',
+            InvoiceItemType::Service => 'S',
+            InvoiceItemType::Other => 'O',
+            InvoiceItemType::Tax => 'I',
+            InvoiceItemType::SpecialTax => 'E',
         };
     }
 }

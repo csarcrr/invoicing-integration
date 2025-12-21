@@ -1,6 +1,6 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 beforeEach(function () {
@@ -8,7 +8,7 @@ beforeEach(function () {
 });
 
 it('can assign related documents to a receipt', function () {
-    $this->invoice->setType(DocumentType::Receipt);
+    $this->invoice->setType(InvoiceType::Receipt);
     $this->invoice->addRelatedDocument('FT 1000');
 
     expect($this->invoice->relatedDocuments()->count())->toBe(1);

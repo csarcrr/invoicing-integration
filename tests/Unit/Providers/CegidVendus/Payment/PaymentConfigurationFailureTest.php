@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -17,17 +17,17 @@ beforeEach(function () {
 
 it('fails when no payment id is configured', function () {
     config()->set('invoicing-integration.providers.CegidVendus.config.payments', [
-        DocumentPaymentMethod::MB->value => null,
-        DocumentPaymentMethod::CREDIT_CARD->value => null,
-        DocumentPaymentMethod::CURRENT_ACCOUNT->value => null,
-        DocumentPaymentMethod::MONEY->value => null,
-        DocumentPaymentMethod::MONEY_TRANSFER->value => null,
+        InvoicePaymentMethod::MB->value => null,
+        InvoicePaymentMethod::CREDIT_CARD->value => null,
+        InvoicePaymentMethod::CURRENT_ACCOUNT->value => null,
+        InvoicePaymentMethod::MONEY->value => null,
+        InvoicePaymentMethod::MONEY_TRANSFER->value => null,
     ]);
 
     $this->item->setReference('reference-1');
     $this->item->setPrice(500);
 
-    $payment = new Payment(amount: 500, method: DocumentPaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
 
     $this->invoice->addItem($this->item);
     $this->invoice->addPayment($payment);

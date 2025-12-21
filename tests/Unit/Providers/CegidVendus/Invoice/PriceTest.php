@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -19,7 +19,7 @@ it('has a valid final price payload', function () {
     $this->item->setPrice(500);
 
     $this->invoice->addItem($this->item);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
 

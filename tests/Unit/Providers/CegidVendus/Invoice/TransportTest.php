@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -37,7 +37,7 @@ it('formats transport load point data correctly', function () {
 
     $this->invoice->addItem($this->item);
     $this->invoice->setTransport($transport);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
     $this->invoice->setClient($this->client);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
@@ -80,7 +80,7 @@ it('formats transport land point data correctly', function () {
 
     $this->invoice->addItem($this->item);
     $this->invoice->setTransport($transport);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
     $this->invoice->setClient($this->client);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
@@ -125,7 +125,7 @@ it('formats transport vehicle license plate correctly', function () {
 
     $this->invoice->addItem($this->item);
     $this->invoice->setTransport($transport);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
     $this->invoice->setClient($this->client);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
@@ -160,7 +160,7 @@ it('fails when no date is set for load point', function () {
 
     $this->invoice->addItem($this->item);
     $this->invoice->setTransport($transport);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
     $this->invoice->setClient($this->client);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
@@ -187,7 +187,7 @@ it('fails when setting an invalid country on origin', function () {
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
     $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::Invoice);
+    $invoicing->setType(InvoiceType::Invoice);
     $invoicing->setClient($client);
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);
@@ -214,7 +214,7 @@ it('fails when setting an invalid country on destination', function () {
 
     $this->invoice->addItem($this->item);
     $this->invoice->setTransport($transport);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
     $this->invoice->setClient($this->client);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
@@ -240,7 +240,7 @@ it('fails when no client is set and transport details are provided', function ()
 
     $this->invoice->addItem($this->item);
     $this->invoice->setTransport($transport);
-    $this->invoice->setType(DocumentType::Invoice);
+    $this->invoice->setType(InvoiceType::Invoice);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);
 })->throws(Exception::class, 'Client information is required when transport details are provided.');

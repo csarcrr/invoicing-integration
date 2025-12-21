@@ -11,42 +11,42 @@ use CsarCrr\InvoicingIntegration\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
 
 // Create the integration instance
-$integration = Invoice::create();
+$invoice = Invoice::create();
 
 // (Optional) Set client details. Skip this for final consumer invoices.
 $client = new Client(vat: '123456789', name: 'John Doe');
-$integration->setClient($client);
+$invoice->setClient($client);
 
 // Add an item to the invoice
 $item = new Item(reference: 'SKU-001', quantity: 2);
 $item->setPrice(1000); // price in cents
 $item->setDescription('Product Description');
-$integration->addItem($item);
+$invoice->addItem($item);
 
 // Generate and send the invoice
-$invoiceData = $integration->execute();
+$invoiceData = $invoice->execute();
 ```
 
 If you want to change the invoice type you should do:
 ```php
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
-$integration = Invoice::create();
-$integration->setType(DocumentType::InvoiceReceipt);
+$invoice = Invoice::create();
+$invoice->setType(InvoiceType::InvoiceReceipt);
 ```
 
 Adding a payment:
 ```php
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
-$integration = Invoice::create();
+$invoice = Invoice::create();
 
 // Add payment details
-$payment = new Payment(DocumentPaymentMethod::MONEY, 2000); // Amount in cents
-$integration->addPayment($payment);
+$payment = new Payment(InvoicePaymentMethod::MONEY, 2000); // Amount in cents
+$invoice->addPayment($payment);
 ```
 
 Payments are only required in certain types of documents. Make sure you are fully aware of what types require it or not.

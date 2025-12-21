@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
@@ -17,7 +17,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 it('fails when transport is set', function () {
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
+    $payment->setMethod(InvoicePaymentMethod::CREDIT_CARD);
 
     $client = new Client;
     $client->setVat('1234567890');
@@ -49,7 +49,7 @@ it('fails when transport is set', function () {
     $invoicing->addItem($item);
     $invoicing->addPayment($payment);
     $invoicing->setTransport($transport);
-    $invoicing->setType(DocumentType::InvoiceSimple);
+    $invoicing->setType(InvoiceType::InvoiceSimple);
     $invoicing->setClient($client);
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);
@@ -58,7 +58,7 @@ it('fails when transport is set', function () {
 it('fails when no items are set ', function () {
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
+    $payment->setMethod(InvoicePaymentMethod::CREDIT_CARD);
 
     $invoicing = Invoice::create();
     $invoicing->addPayment($payment);
@@ -72,7 +72,7 @@ it('fails when no payments are set', function () {
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
-    $invoicing->setType(DocumentType::InvoiceSimple);
+    $invoicing->setType(InvoiceType::InvoiceSimple);
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);
 })->throws(MissingPaymentWhenIssuingReceiptException::class);

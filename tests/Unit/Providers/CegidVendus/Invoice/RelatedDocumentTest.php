@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\DocumentType;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -47,11 +47,11 @@ it('can set a related document when RG', function () {
 
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(DocumentPaymentMethod::CREDIT_CARD);
+    $payment->setMethod(InvoicePaymentMethod::CREDIT_CARD);
 
     $this->invoice->addRelatedDocument('FT 01P2025/1');
     $this->invoice->addItem($this->item);
-    $this->invoice->setType(DocumentType::Receipt);
+    $this->invoice->setType(InvoiceType::Receipt);
     $this->invoice->addPayment($payment);
 
     $resolve = Provider::resolve()->invoice()->create($this->invoice);

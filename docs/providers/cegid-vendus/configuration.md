@@ -9,11 +9,11 @@ The current configuration for Cegid Vendus will look like this
         'mode' => env('VENDUS_MODE', null),
         'config' => [
             'payments' => [
-                DocumentPaymentMethod::MB->value => env('VENDUS_PAYMENT_MB_ID', null),
-                DocumentPaymentMethod::CREDIT_CARD->value => env('VENDUS_PAYMENT_CREDIT_CARD_ID', null),
-                DocumentPaymentMethod::CURRENT_ACCOUNT->value => env('VENDUS_PAYMENT_CURRENT_ACCOUNT_ID', null),
-                DocumentPaymentMethod::MONEY->value => env('VENDUS_PAYMENT_MONEY_ID', null),
-                DocumentPaymentMethod::MONEY_TRANSFER->value => env('VENDUS_PAYMENT_MONEY_TRANSFER_ID', null),
+                InvoicePaymentMethod::MB->value => env('VENDUS_PAYMENT_MB_ID', null),
+                InvoicePaymentMethod::CREDIT_CARD->value => env('VENDUS_PAYMENT_CREDIT_CARD_ID', null),
+                InvoicePaymentMethod::CURRENT_ACCOUNT->value => env('VENDUS_PAYMENT_CURRENT_ACCOUNT_ID', null),
+                InvoicePaymentMethod::MONEY->value => env('VENDUS_PAYMENT_MONEY_ID', null),
+                InvoicePaymentMethod::MONEY_TRANSFER->value => env('VENDUS_PAYMENT_MONEY_TRANSFER_ID', null),
             ]
         ]
     ],
@@ -52,7 +52,7 @@ You need to take that last ID an assign to the desired payment method.
 
 [
     // ...
-    DocumentPaymentMethod::MB->value => env('VENDUS_PAYMENT_MB_ID', 284458541)
+    InvoicePaymentMethod::MB->value => env('VENDUS_PAYMENT_MB_ID', 284458541)
     //...
 ]
 ```

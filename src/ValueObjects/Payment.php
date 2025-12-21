@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
-use CsarCrr\InvoicingIntegration\Enums\DocumentPaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
 
 class Payment
 {
     public function __construct(
-        protected ?DocumentPaymentMethod $method = null,
+        protected ?InvoicePaymentMethod $method = null,
         protected ?int $amount = null
     ) {}
 
@@ -18,7 +18,7 @@ class Payment
         return $this->amount;
     }
 
-    public function method(): ?DocumentPaymentMethod
+    public function method(): ?InvoicePaymentMethod
     {
         return $this->method;
     }
@@ -30,7 +30,7 @@ class Payment
         return $this;
     }
 
-    public function setMethod(DocumentPaymentMethod $method): self
+    public function setMethod(InvoicePaymentMethod $method): self
     {
         $this->method = $method;
 
