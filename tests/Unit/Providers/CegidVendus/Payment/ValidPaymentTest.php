@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -20,7 +20,7 @@ it('has a valid payment payload', function () {
     $this->item->setReference('reference-1');
     $this->item->setPrice(500);
 
-    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: PaymentMethod::MB);
 
     $this->invoice->addItem($this->item);
     $this->invoice->addPayment($payment);

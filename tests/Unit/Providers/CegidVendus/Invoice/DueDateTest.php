@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType as EnumsInvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
@@ -33,7 +33,7 @@ it('assigns due date properly', function () {
 it('fails when due date is assigned not to a FT invoice', function () {
     $this->item->setReference('reference-1');
     $this->item->setPrice(500);
-    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: PaymentMethod::MB);
 
     $this->invoice->addItem($this->item);
     $this->invoice->addPayment($payment);

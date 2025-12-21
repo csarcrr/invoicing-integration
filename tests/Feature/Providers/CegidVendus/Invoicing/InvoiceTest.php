@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\ProviderConfig;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
@@ -48,7 +48,7 @@ test(
 
         $receipt = Invoice::create();
         $receipt->setType(InvoiceType::Receipt);
-        $receipt->addPayment(new Payment(InvoicePaymentMethod::MONEY, 500));
+        $receipt->addPayment(new Payment(PaymentMethod::MONEY, 500));
         $receipt->addRelatedDocument($details->sequence());
 
         $details = $receipt->execute();

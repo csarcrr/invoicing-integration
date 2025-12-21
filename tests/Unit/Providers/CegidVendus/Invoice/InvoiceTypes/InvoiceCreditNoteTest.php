@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
@@ -26,7 +26,7 @@ it('has a valid payload', function () {
 
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(InvoicePaymentMethod::MB);
+    $payment->setMethod(PaymentMethod::MB);
 
     $this->invoice->setType(InvoiceType::CreditNote);
     $this->invoice->addPayment($payment);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -14,11 +14,11 @@ pest()->beforeEach(function () {
     config()->set('invoicing-integration.providers.CegidVendus.key', '1234');
     config()->set('invoicing-integration.providers.CegidVendus.mode', 'test');
     config()->set('invoicing-integration.providers.CegidVendus.config.payments', [
-        InvoicePaymentMethod::MB->value => 19999,
-        InvoicePaymentMethod::CREDIT_CARD->value => 29999,
-        InvoicePaymentMethod::CURRENT_ACCOUNT->value => 39999,
-        InvoicePaymentMethod::MONEY->value => 49999,
-        InvoicePaymentMethod::MONEY_TRANSFER->value => 59999,
+        PaymentMethod::MB->value => 19999,
+        PaymentMethod::CREDIT_CARD->value => 29999,
+        PaymentMethod::CURRENT_ACCOUNT->value => 39999,
+        PaymentMethod::MONEY->value => 49999,
+        PaymentMethod::MONEY_TRANSFER->value => 59999,
     ]);
 })->in('Unit/Providers/CegidVendus/', 'Feature/Providers/CegidVendus/');
 

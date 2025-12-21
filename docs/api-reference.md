@@ -75,7 +75,7 @@
 -   `quantity(): int` — Get the quantity.
 -   `price(): ?int` — Get the price (in cents).
 -   `note(): ?string` — Get the note/description.
--   `type(): ?InvoiceItemType` — Get the item type.
+-   `type(): ?ItemType` — Get the item type.
 -   `tax(): ?DocumentItemTax` — Get the tax type.
 -   `taxExemption(): ?TaxExemptionReason` — Get the tax exemption reason.
 -   `taxExemptionLaw(): ?string` — Get the tax exemption law.
@@ -87,7 +87,7 @@
 -   `setQuantity(int $quantity): void` — Set the quantity.
 -   `setPrice(int $price): void` — Set price (in cents).
 -   `setNote(string $note): void` — Set item description/note.
--   `setType(InvoiceItemType $type): self` — Set the item type.
+-   `setType(ItemType $type): self` — Set the item type.
 -   `setTax(?DocumentItemTax $tax = null): self` — Set tax type.
 -   `setTaxExemption(?TaxExemptionReason $reason = null): self` — Set tax exemption reason (only for exempt tax).
 -   `setTaxExemptionLaw(string $law): self` — Set exemption law (requires exemption reason).
@@ -100,14 +100,14 @@
 ### Payment
 
 **Constructor:**
--   `__construct(?InvoicePaymentMethod $method = null, ?int $amount = null)` — Create a new payment with optional method and amount.
+-   `__construct(?PaymentMethod $method = null, ?int $amount = null)` — Create a new payment with optional method and amount.
 
 **Getter Methods:**
--   `method(): ?InvoicePaymentMethod` — Get the payment method.
+-   `method(): ?PaymentMethod` — Get the payment method.
 -   `amount(): ?int` — Get the payment amount (in cents).
 
 **Setter Methods:**
--   `setMethod(InvoicePaymentMethod $method): self` — Set the payment method.
+-   `setMethod(PaymentMethod $method): self` — Set the payment method.
 -   `setAmount(int $amount): self` — Set the payment amount (in cents).
 
 > **Note:** At least one payment is required for every invoice.
@@ -150,14 +150,14 @@ Available document types:
 -   `InvoiceType::CreditNote` — Credit note (NC)
 
 
-### InvoicePaymentMethod
+### PaymentMethod
 
 Available payment methods:
--   `InvoicePaymentMethod::MONEY` — Cash payment
--   `InvoicePaymentMethod::MB` — ATM/Debit card
--   `InvoicePaymentMethod::CREDIT_CARD` — Credit card
--   `InvoicePaymentMethod::MONEY_TRANSFER` — Bank transfer
--   `InvoicePaymentMethod::CURRENT_ACCOUNT` — Current account
+-   `PaymentMethod::MONEY` — Cash payment
+-   `PaymentMethod::MB` — ATM/Debit card
+-   `PaymentMethod::CREDIT_CARD` — Credit card
+-   `PaymentMethod::MONEY_TRANSFER` — Bank transfer
+-   `PaymentMethod::CURRENT_ACCOUNT` — Current account
 
 
 ### DocumentItemTax

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
-use CsarCrr\InvoicingIntegration\Enums\InvoiceItemType;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
@@ -21,7 +21,7 @@ class Item
 
     protected ?string $note = null;
 
-    protected ?InvoiceItemType $type = null;
+    protected ?ItemType $type = null;
 
     protected ?DocumentItemTax $tax = null;
 
@@ -38,7 +38,7 @@ class Item
         protected null|int|string $reference = null,
         protected ?int $quantity = null,
     ) {
-        $this->type = InvoiceItemType::Product;
+        $this->type = ItemType::Product;
         $this->quantity = $quantity ?? 1;
         $this->relatedDocument = collect();
     }
@@ -109,7 +109,7 @@ class Item
         return $this->price;
     }
 
-    public function type(): ?InvoiceItemType
+    public function type(): ?ItemType
     {
         return $this->type;
     }
@@ -163,7 +163,7 @@ class Item
         $this->note = $note;
     }
 
-    public function setType(InvoiceItemType $type): self
+    public function setType(ItemType $type): self
     {
         $this->type = $type;
 

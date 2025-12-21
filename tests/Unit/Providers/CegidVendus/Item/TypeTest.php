@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoiceItemType;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -16,7 +16,7 @@ beforeEach(function () {
 
 it('has a type', function () {
     $this->item->setReference('reference-1');
-    $this->item->setType(InvoiceItemType::Service);
+    $this->item->setType(ItemType::Service);
 
     $this->invoice->addItem($this->item);
 

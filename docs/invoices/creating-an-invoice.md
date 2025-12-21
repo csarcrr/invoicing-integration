@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 // Create the integration instance
 $invoice = Invoice::create();
@@ -45,7 +45,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 $invoice = Invoice::create();
 
 // Add payment details
-$payment = new Payment(InvoicePaymentMethod::MONEY, 2000); // Amount in cents
+$payment = new Payment(PaymentMethod::MONEY, 2000); // Amount in cents
 $invoice->addPayment($payment);
 ```
 

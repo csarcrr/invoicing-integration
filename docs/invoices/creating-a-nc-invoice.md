@@ -13,7 +13,7 @@ $item->setRelatedDocument(documentNumber: 'FT 01P2025/1', lineNumber: 1);
 
 $payment = new Payment;
 $payment->setAmount(500);
-$payment->setMethod(InvoicePaymentMethod::MB);
+$payment->setMethod(PaymentMethod::MB);
 
 $invoice = Invoice::create();
 $invoice->setType(InvoiceType::CreditNote);

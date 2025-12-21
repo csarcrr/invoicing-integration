@@ -11,7 +11,7 @@ Below is a complete example for creating a RG (receipt) for an invoice:
 use CsarCrr\InvoicingIntegration\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 // Create the integration instance
 $invoice = Invoice::create();
@@ -23,7 +23,7 @@ $invoice->setType(InvoiceType::Receipt);
 $invoice->addRelatedDocument('FT 01P2025/1');
 
 // Add payment details
-$invoice->addPayment(new Payment(InvoicePaymentMethod::MONEY, 10000)); // Amount in cents
+$invoice->addPayment(new Payment(PaymentMethod::MONEY, 10000)); // Amount in cents
 
 // Generate and send the RG
 $invoice->execute();
@@ -36,8 +36,8 @@ You can also have multiple types of payments assigned. Just make sure that the a
 
 $invoice = Invoice::create();
 
-$invoice->addPayment(new Payment(InvoicePaymentMethod::MONEY, 5000)); 
-$invoice->addPayment(new Payment(InvoicePaymentMethod::MB, 5000)); 
+$invoice->addPayment(new Payment(PaymentMethod::MONEY, 5000)); 
+$invoice->addPayment(new Payment(PaymentMethod::MB, 5000)); 
 
 $invoice->execute();
 ```

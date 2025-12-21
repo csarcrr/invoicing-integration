@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
@@ -23,7 +23,7 @@ beforeEach(function () {
 it('fails when transport is set', function () {
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(InvoicePaymentMethod::CREDIT_CARD);
+    $payment->setMethod(PaymentMethod::CREDIT_CARD);
 
     $this->client->setVat('1234567890');
     $this->client->setName('Client Name');
@@ -62,7 +62,7 @@ it('fails when transport is set', function () {
 it('fails when no items are set ', function () {
     $payment = new Payment;
     $payment->setAmount(500);
-    $payment->setMethod(InvoicePaymentMethod::CREDIT_CARD);
+    $payment->setMethod(PaymentMethod::CREDIT_CARD);
 
     $this->invoice->addPayment($payment);
     $this->invoice->setType(InvoiceType::InvoiceReceipt);

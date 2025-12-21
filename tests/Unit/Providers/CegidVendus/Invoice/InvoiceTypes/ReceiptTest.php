@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -15,7 +15,7 @@ it('does not set items when issuing a RG', function () {
     $item = new Item(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new Payment(InvoicePaymentMethod::MONEY, 500);
+    $payment = new Payment(PaymentMethod::MONEY, 500);
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
@@ -32,7 +32,7 @@ it('has a valid related documents payload', function () {
     $item = new Item(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: PaymentMethod::MB);
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);
@@ -62,7 +62,7 @@ it('makes sure that invoices document numbers are string', function () {
     $item = new Item(reference: 'reference-1');
     $item->setPrice(500);
 
-    $payment = new Payment(amount: 500, method: InvoicePaymentMethod::MB);
+    $payment = new Payment(amount: 500, method: PaymentMethod::MB);
 
     $invoicing = Invoice::create();
     $invoicing->addItem($item);

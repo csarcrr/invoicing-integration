@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\InvoicePaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
@@ -11,20 +11,20 @@ beforeEach(function () {
 });
 
 it('assigns a payment', function () {
-    $payment = new Payment(InvoicePaymentMethod::CREDIT_CARD, amount: 500);
+    $payment = new Payment(PaymentMethod::CREDIT_CARD, amount: 500);
 
     $this->invoice->addPayment($payment);
 
     expect($this->invoice->payments()->count())->toBe(1);
     expect($this->invoice->payments()->first())->toBeInstanceOf(Payment::class);
-    expect($this->invoice->payments()->first()->method())->toBe(InvoicePaymentMethod::CREDIT_CARD);
+    expect($this->invoice->payments()->first()->method())->toBe(PaymentMethod::CREDIT_CARD);
     expect($this->invoice->payments()->first()->amount())->toBe(500);
 });
 
 it('accumulates payments of same type', function () {
-    $payment1 = new Payment(InvoicePaymentMethod::CREDIT_CARD, amount: 500);
-    $payment2 = new Payment(InvoicePaymentMethod::CREDIT_CARD, amount: 500);
-    $payment3 = new Payment(InvoicePaymentMethod::CREDIT_CARD, amount: 500);
+    $payment1 = new Payment(PaymentMethod::CREDIT_CARD, amount: 500);
+    $payment2 = new Payment(PaymentMethod::CREDIT_CARD, amount: 500);
+    $payment3 = new Payment(PaymentMethod::CREDIT_CARD, amount: 500);
 
     $this->invoice->addPayment($payment1);
     $this->invoice->addPayment($payment2);
