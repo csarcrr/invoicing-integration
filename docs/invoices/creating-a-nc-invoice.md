@@ -22,7 +22,7 @@ $integration->addPayment($item);
 
 $integration->setCreditNoteReason('Product returned by customer');
 
-$integration->invoice();
+$integration->execute();
 
 ```
 

@@ -26,7 +26,7 @@ $integration->addRelatedDocument('FT 01P2025/1');
 $integration->addPayment(new Payment(DocumentPaymentMethod::MONEY, 10000)); // Amount in cents
 
 // Generate and send the RG
-$integration->invoice();
+$integration->execute();
 ```
 
 You can also have multiple types of payments assigned. Just make sure that the amounts sum, are the total, or the original issued invoice will not be "marked" as paid in most providers.
@@ -39,7 +39,7 @@ $integration = Invoice::create();
 $integration->addPayment(new Payment(DocumentPaymentMethod::MONEY, 5000)); 
 $integration->addPayment(new Payment(DocumentPaymentMethod::MB, 5000)); 
 
-$integration->invoice();
+$integration->execute();
 ```
 
 ---

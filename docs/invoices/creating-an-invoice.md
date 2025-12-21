@@ -27,7 +27,7 @@ $item->setDescription('Product Description');
 $integration->addItem($item);
 
 // Generate and send the invoice
-$invoiceData = $integration->invoice();
+$invoiceData = $integration->execute();
 ```
 
 If you want to change the invoice type you should do:

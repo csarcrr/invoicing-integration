@@ -22,7 +22,7 @@ test('can invoice successfully with minimum data', function () {
 
     $this->invoice->addItem(new Item('reference-1'));
 
-    $response = $this->invoice->data();
+    $response = $this->invoice->execute();
 
     expect($response)->toBeInstanceOf(ValueObjectsInvoice::class);
     expect($response->sequence())->toBe('FT 01P2025/1');
@@ -44,14 +44,14 @@ test(
         $this->invoice->setType(DocumentType::Invoice);
         $this->invoice->addItem($item);
 
-        $details = $this->invoice->data();
+        $details = $this->invoice->execute();
 
         $receipt = Invoice::create();
         $receipt->setType(DocumentType::Receipt);
         $receipt->addPayment(new Payment(DocumentPaymentMethod::MONEY, 500));
         $receipt->addRelatedDocument($details->sequence());
 
-        $details = $receipt->data();
+        $details = $receipt->execute();
 
         expect($details)->toBeInstanceOf(ValueObjectsInvoice::class);
         expect($details->sequence())->toBe('RG 01P2025/1');
@@ -64,5 +64,5 @@ test('handle integration errors', function () {
     ]);
 
     $this->invoice->addItem(new Item('reference-1'));
-    $this->invoice->data();
+    $this->invoice->execute();
 })->throws(RequestFailedException::class);

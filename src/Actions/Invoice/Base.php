@@ -6,5 +6,5 @@ namespace CsarCrr\InvoicingIntegration\Actions\Invoice;
 use CsarCrr\InvoicingIntegration\Contracts\HasData;
 
 abstract class Base {    
-    abstract public function data (): HasData;
+    abstract public function execute (): HasData;
 }

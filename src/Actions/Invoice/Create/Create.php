@@ -52,7 +52,7 @@ final class Create extends Base
         $this->type = DocumentType::Invoice;
     }
 
-    public function data(): HasData
+    public function execute(): HasData
     {
         $this->ensureHasItems();
         $this->ensureTypeIsSet();

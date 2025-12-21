@@ -9,7 +9,7 @@ Save the invoice PDF to your local storage and get the file path:
 ```php
 $integration = Invoice::create();
 // ...
-$invoice = $integration->invoice();
+$invoice = $integration->execute();
 
 $invoice->output()->save(); // saves to storage/private/output/ft_01p2025_1.pdf and outputs the path
 ```
@@ -24,7 +24,7 @@ Generate ESC/POS data for thermal printers (when supported by the provider):
 $integration = Invoice::create();
 // ...
 $integration->asEscPos();
-$invoice = $integration->invoice();
+$invoice = $integration->execute();
 
 $invoice->output()->get();
 ```

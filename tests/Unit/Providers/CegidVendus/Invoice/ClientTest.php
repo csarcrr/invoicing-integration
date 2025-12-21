@@ -18,7 +18,7 @@ it('fails to invoice when client has name but no vat', function () {
     $this->invoice->setClient($this->client);
     $this->invoice->addItem(new Item('reference-1'));
 
-    $this->invoice->data();
+    $this->invoice->execute();
 })->throws(InvoiceRequiresVatWhenClientHasName::class);
 
 it('fails to invoice when vat is not valid', function () {
@@ -27,5 +27,5 @@ it('fails to invoice when vat is not valid', function () {
     $this->invoice->setClient($this->client);
     $this->invoice->addItem(new Item('reference-1'));
 
-    $this->invoice->data();
+    $this->invoice->execute();
 })->throws(InvoiceRequiresClientVatException::class);
