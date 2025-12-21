@@ -79,7 +79,7 @@ abstract class Base {
 
     private function setupAuthenticationHeader(): void
     {
-        $this->headers['Authorization'] = 'Bearer ' . ($this->provider['api_key'] ?? '');
+        $this->headers['Authorization'] = 'Bearer ' . ($this->provider['key'] ?? '');
     }
 
     abstract protected function payload() : Collection;
