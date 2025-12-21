@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -9,43 +9,49 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-abstract class Base {
+abstract class Base
+{
     private array $provider = [];
 
     protected string $method = 'GET';
+
     protected array $headers = [];
 
     private ?string $endpoint = null;
+
     private ?string $baseUrl = null;
 
-    public function __construct () 
+    public function __construct()
     {
         $this->setProvider(config('invoicing-integration.providers')['CegidVendus'] ?? []);
         $this->setupURL();
         $this->setupAuthenticationHeader();
     }
 
-    protected function providerOptions(): Collection {
+    protected function providerOptions(): Collection
+    {
         return collect($this->provider['config']);
     }
 
-    protected function endpoint (): string 
+    protected function endpoint(): string
     {
         return $this->endpoint;
     }
 
-    protected function headers (): array 
+    protected function headers(): array
     {
         return $this->headers;
     }
 
-    protected function setEndpoint (string $endpoint): void {
+    protected function setEndpoint(string $endpoint): void
+    {
         $this->endpoint = $endpoint;
     }
 
-    protected function request (): array {
+    protected function request(): array
+    {
         $request = Http::withHeaders($this->headers())->post(
-            $this->baseUrl . $this->endpoint(),
+            $this->baseUrl.$this->endpoint(),
             $this->payload()->toArray()
         );
 
@@ -59,7 +65,7 @@ abstract class Base {
     private function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
@@ -79,9 +85,8 @@ abstract class Base {
 
     private function setupAuthenticationHeader(): void
     {
-        $this->headers['Authorization'] = 'Bearer ' . ($this->provider['key'] ?? '');
+        $this->headers['Authorization'] = 'Bearer '.($this->provider['key'] ?? '');
     }
 
-    abstract protected function payload() : Collection;
-    
+    abstract protected function payload(): Collection;
 }

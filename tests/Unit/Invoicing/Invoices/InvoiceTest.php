@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 beforeEach(function () {
     $this->invoice = Invoice::create();

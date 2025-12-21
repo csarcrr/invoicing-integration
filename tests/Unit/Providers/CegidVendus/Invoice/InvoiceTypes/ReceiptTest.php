@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
@@ -42,8 +42,6 @@ it('has a valid related documents payload', function () {
     $invoicing->addRelatedDocument('FT 20000');
 
     $resolve = Provider::resolve()->invoice()->create($invoicing);
-
-    $resolve;
 
     expect(
         $resolve->payload()->get('invoices')

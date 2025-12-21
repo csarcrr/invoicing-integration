@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Providers\Builder\CegidVendus\Invoice;
 
-use CsarCrr\InvoicingIntegration\Actions\Invoice\Base;
 use CsarCrr\InvoicingIntegration\Actions\Invoice\Create\Create as InvoiceCreate;
 use CsarCrr\InvoicingIntegration\Contracts\HasHandler;
-use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
@@ -15,12 +13,13 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\ValueObjects\Invoice as InvoiceData;
+use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use Exception;
 use Illuminate\Support\Collection;
 
-final class Create extends Invoice implements HasHandler
+final class Create extends InvoiceBase implements HasHandler
 {
     protected InvoiceCreate $invoicing;
 
@@ -49,9 +48,9 @@ final class Create extends Invoice implements HasHandler
         return $this;
     }
 
-    public function new (): InvoiceData
+    public function new(): Invoice
     {
-        $response = $this->request($this->payload());
+        $response = $this->request();
 
         return $this->generate($response);
     }
@@ -76,11 +75,8 @@ final class Create extends Invoice implements HasHandler
         $this->payload->put('type', $this->invoicing->type()->value);
     }
 
-    protected function ensureOutputFormat (): void {
-        if( !$this->invoicing->outputFormat() ) {
-            return;
-        }
-
+    protected function ensureOutputFormat(): void
+    {
         $this->payload->put('output', $this->invoicing->outputFormat()->value);
     }
 
@@ -297,9 +293,9 @@ final class Create extends Invoice implements HasHandler
         });
     }
 
-    protected function generate(array $data): InvoiceData
+    protected function generate(array $data): Invoice
     {
-        $invoice = new InvoiceData();
+        $invoice = new Invoice;
 
         if ($data['number'] ?? false) {
             $invoice->setSequence($data['number']);

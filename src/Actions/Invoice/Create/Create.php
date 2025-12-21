@@ -56,7 +56,6 @@ final class Create extends Base
     {
         $this->ensureHasItems();
         $this->ensureTypeIsSet();
-        $this->ensureClientHasNeededDetails();
 
         return Provider::resolve()->invoice()->create($this)->new();
     }
@@ -208,12 +207,5 @@ final class Create extends Base
         }
 
         throw_if($this->items->isEmpty(), InvoiceRequiresItemsException::class);
-    }
-
-    protected function ensureClientHasNeededDetails()
-    {
-        if (! $this->client) {
-            return;
-        }
     }
 }

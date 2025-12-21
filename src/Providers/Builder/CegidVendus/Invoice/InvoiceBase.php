@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Providers\Builder\CegidVendus\Invoice;
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Providers\Builder\CegidVendus\Base;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\Invoice as ValueObjectsInvoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Illuminate\Support\Collection;
 
-abstract class Invoice extends Base
+abstract class InvoiceBase extends Base
 {
     protected ?Client $client = null;
 
-    protected InvoiceData $invoice;
+    protected ValueObjectsInvoice $invoice;
 
     protected ?TransportDetails $transportDetails = null;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Actions\Invoice\Invoice;
-use CsarCrr\InvoicingIntegration\Providers\Provider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -26,7 +25,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     protected function setupInvoiceBindings(): void
     {
         $this->app->bind('invoice', function () {
-            return new Invoice();
+            return new Invoice;
         });
     }
 

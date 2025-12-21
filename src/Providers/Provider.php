@@ -13,9 +13,9 @@ final class Provider
 
     protected string $path = '';
 
-    static public function resolve(): Provider
+    public static function resolve(): Provider
     {
-        $instance = new self();
+        $instance = new self;
 
         $instance->setProvider(config('invoicing-integration.provider'));
 
@@ -25,7 +25,7 @@ final class Provider
     public function setProvider(string $provider): self
     {
         $this->provider = $provider;
-        $this->path .= 'CsarCrr\\InvoicingIntegration\\Providers\\Builder\\' . $this->provider . '\\';
+        $this->path .= 'CsarCrr\\InvoicingIntegration\\Providers\\Builder\\'.$this->provider.'\\';
 
         return $this;
     }
@@ -58,9 +58,9 @@ final class Provider
     protected function ensureHandlerExists(mixed $action): void
     {
         throw_if(
-            !$action instanceof HasHandler,
+            ! $action instanceof HasHandler,
             Exception::class,
-            "The provider action must implement the HasHandler contract to process the action."
+            'The provider action must implement the HasHandler contract to process the action.'
         );
     }
 }

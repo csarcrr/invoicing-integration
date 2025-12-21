@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
+use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 
 it('is able to set the output', function () {
     $invoiceData = new Invoice;

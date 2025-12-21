@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
 use CsarCrr\InvoicingIntegration\Contracts\HasData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 
 class Invoice implements HasData
 {

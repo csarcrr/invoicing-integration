@@ -5,8 +5,8 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Enums\ProviderConfig;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\Provider;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,4 +53,4 @@ it('can output escpos', function () {
     $invoice = Provider::resolve()->invoice()->create($this->invoice)->new();
 
     expect($invoice->output()->get())->toBeString();
-})->with([ProviderConfig::CegidVendus])->only();
+})->with([ProviderConfig::CegidVendus]);
