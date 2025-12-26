@@ -32,82 +32,82 @@ class Client
         $this->name = $name;
     }
 
-    public function address(): ?string
+    public function getAddress(): ?string
     {
         return $this->address;
     }
 
-    public function city(): ?string
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
-    public function postalCode(): ?string
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
 
-    public function country(): ?string
+    public function getCountry(): ?string
     {
         return $this->country;
     }
 
-    public function vat(): ?string
+    public function getVat(): ?string
     {
         return $this->vat;
     }
 
-    public function name(): ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function email(): ?string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function phone(): ?string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
 
-    public function irsRetention(): ?bool
+    public function getIrsRetention(): ?bool
     {
         return $this->irsRetention;
     }
 
-    public function setAddress(?string $address): void
+    public function address(?string $address): void
     {
         $this->address = $address;
     }
 
-    public function setCity(?string $city): void
+    public function city(?string $city): void
     {
         $this->city = $city;
     }
 
-    public function setPostalCode(?string $postalCode): void
+    public function postalCode(?string $postalCode): void
     {
         $this->postalCode = $postalCode;
     }
 
-    public function setCountry(?string $country): void
+    public function country(?string $country): void
     {
         $this->country = $country;
     }
 
-    public function setVat(?string $vat): void
+    public function vat(?string $vat): void
     {
         $this->vat = $vat;
     }
 
-    public function setName(?string $name): void
+    public function name(?string $name): void
     {
         $this->name = $name;
     }
 
-    public function setEmail(?string $email): void
+    public function email(?string $email): void
     {
 
         Validator::make(['email' => $email], [
@@ -119,12 +119,12 @@ class Client
         $this->email = $email;
     }
 
-    public function setPhone(?string $phone): void
+    public function phone(?string $phone): void
     {
         $this->phone = $phone;
     }
 
-    public function setIrsRetention(bool $irsRetention): void
+    public function irsRetention(bool $irsRetention): void
     {
         $this->irsRetention = $irsRetention;
     }
