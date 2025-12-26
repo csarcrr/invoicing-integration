@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
-use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
@@ -23,7 +23,7 @@ class Item
 
     protected ?ItemType $type = null;
 
-    protected ?DocumentItemTax $tax = null;
+    protected ?ItemTax $tax = null;
 
     protected ?TaxExemptionReason $taxExemptionReason = null;
 
@@ -43,42 +43,42 @@ class Item
         $this->relatedDocument = collect();
     }
 
-    public function reference(): int|string
+    public function getReference(): int|string
     {
         return $this->reference;
     }
 
-    public function quantity(): int
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
 
-    public function note(): ?string
+    public function getNote(): ?string
     {
         return $this->note;
     }
 
-    public function setTax(?DocumentItemTax $tax = null): self
+    public function tax(?ItemTax $tax = null): self
     {
         $this->tax = $tax;
 
         return $this;
     }
 
-    public function tax(): ?DocumentItemTax
+    public function getTax(): ?ItemTax
     {
         return $this->tax;
     }
 
-    public function taxExemption(): ?TaxExemptionReason
+    public function getTaxExemption(): ?TaxExemptionReason
     {
         return $this->taxExemptionReason;
     }
 
-    public function setTaxExemption(?TaxExemptionReason $taxExemptionReason = null): self
+    public function taxExemption(?TaxExemptionReason $taxExemptionReason = null): self
     {
         throw_if(
-            $this->tax() !== DocumentItemTax::EXEMPT,
+            $this->getTax() !== ItemTax::EXEMPT,
             ExemptionCanOnlyBeUsedWithExemptTaxException::class
         );
 
@@ -87,12 +87,12 @@ class Item
         return $this;
     }
 
-    public function taxExemptionLaw(): ?string
+    public function getTaxExemptionLaw(): ?string
     {
         return $this->taxExemptionLaw;
     }
 
-    public function setTaxExemptionLaw(string $taxExemptionLaw): self
+    public function taxExemptionLaw(string $taxExemptionLaw): self
     {
         throw_if(
             ! $this->taxExemptionReason,
@@ -104,73 +104,73 @@ class Item
         return $this;
     }
 
-    public function price(): ?int
+    public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function type(): ?ItemType
+    public function getType(): ?ItemType
     {
         return $this->type;
     }
 
-    public function amountDiscount(): ?int
+    public function getAmountDiscount(): ?int
     {
         return $this->amountDiscount;
     }
 
-    public function percentageDiscount(): ?int
+    public function getPercentageDiscount(): ?int
     {
         return $this->percentageDiscount;
     }
 
-    public function relatedDocument(): ?Collection
+    public function getRelatedDocument(): ?Collection
     {
         return $this->relatedDocument;
     }
 
-    public function setAmountDiscount(int $amountDiscount): self
+    public function amountDiscount(int $amountDiscount): self
     {
         $this->amountDiscount = $amountDiscount;
 
         return $this;
     }
 
-    public function setPercentageDiscount(int $percentageDiscount): self
+    public function percentageDiscount(int $percentageDiscount): self
     {
         $this->percentageDiscount = $percentageDiscount;
 
         return $this;
     }
 
-    public function setReference(int|string $reference): void
+    public function reference(int|string $reference): void
     {
         $this->reference = $reference;
     }
 
-    public function setQuantity(int $quantity): void
+    public function quantity(int $quantity): void
     {
         $this->quantity = $quantity;
     }
 
-    public function setPrice(int $price): void
+    public function price(int $price): void
     {
         $this->price = $price;
     }
 
-    public function setNote(string $note): void
+    public function note(string $note): void
     {
         $this->note = $note;
     }
 
-    public function setType(ItemType $type): self
+    public function type(ItemType $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function setRelatedDocument(string $documentNumber, int $lineNumber): void
+    public function relatedDocument(string $documentNumber, int $lineNumber): void
     {
         $this->relatedDocument = collect([
             'document_id' => $documentNumber,

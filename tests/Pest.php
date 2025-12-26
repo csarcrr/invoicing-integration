@@ -12,21 +12,8 @@ use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__ . '/Fixtures/');
 
-// pest()->beforeEach(function () {
-//     config()->set('invoicing-integration.provider', 'CegidVendus');
-//     config()->set('invoicing-integration.providers.CegidVendus.key', '1234');
-//     config()->set('invoicing-integration.providers.CegidVendus.mode', 'test');
-//     config()->set('invoicing-integration.providers.CegidVendus.config.payments', [
-//         PaymentMethod::MB->value => 19999,
-//         PaymentMethod::CREDIT_CARD->value => 29999,
-//         PaymentMethod::CURRENT_ACCOUNT->value => 39999,
-//         PaymentMethod::MONEY->value => 49999,
-//         PaymentMethod::MONEY_TRANSFER->value => 59999,
-//     ]);
-// })->in('Unit/Providers/CegidVendus/', 'Feature/Providers/CegidVendus/');
-
 dataset('create-invoice', [
-    [Create::create()]
+    [fn() => Create::create()] // resets the state for each test
 ]);
 
 dataset('providers', [

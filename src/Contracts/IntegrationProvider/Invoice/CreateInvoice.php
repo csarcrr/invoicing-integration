@@ -15,13 +15,17 @@ interface CreateInvoice {
 
     public function invoice () : Invoice;
 
-    public function payload () : Collection ;
-
     public function client(Client $client) : self ;
 
     public function item(Item $item) : self ;
 
     public function payment(Payment $payments) : self ;
-
+    
+    public function getPayload(): Collection;
+    
     public function getClient() : ?Client ;
+
+    public function getItems() : Collection ;
+
+    public function getPayments() : Collection ;
 }

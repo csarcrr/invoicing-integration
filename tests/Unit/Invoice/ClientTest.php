@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 it('assigns a client', function (CreateInvoice $invoice) {
     $invoice->client(
@@ -33,22 +34,39 @@ it('has the expected payload', function (
         vat: '123456789'
     );
 
+    $client->address('Rua das Flores 125');
+    $client->city('Porto');
+    $client->postalCode('4410-000');
+    $client->country('PT');
+    $client->email('john.doe@mail.com');
+    $client->phone('220123123');
+    $client->irsRetention(true);
+
+    $item = new Item(
+        reference: 'reference-1'
+    );
+
     $invoice->client($client);
+    $invoice->item($item);
 
-    expect($invoice->payload())->toMatchArray($data);
-})->with('create-invoice', 'providers', ['simple_client']);
+    expect($invoice->getPayload())->toMatchArray($data);
+})->with('create-invoice', 'providers', ['complete_client']);
 
-it('fails when vat is not valid', function (
-    CreateInvoice $invoice,
-    IntegrationProvider $provider
-) {
+it('fails when vat is not valid', function (CreateInvoice $invoice) {
 
     $client = new Client(
         vat: ''
     );
 
+    $item = new Item(
+        reference: 'reference-1'
+    );
+
+    $invoice->item($item);
     $invoice->client($client);
-})->with('create-invoice', 'providers')->throws(InvoiceRequiresClientVatException::class);
+
+    $invoice->getPayload();
+})->with('create-invoice')->throws(InvoiceRequiresClientVatException::class);
 
 it('fails when name is provided but vat is missing', function (
     CreateInvoice $invoice, IntegrationProvider $provider
@@ -60,6 +78,13 @@ it('fails when name is provided but vat is missing', function (
     $client = new Client(
         name: 'John Doe',
     );
+    
+    $item = new Item(
+        reference: 'reference-1'
+    );
 
+    $invoice->item($item);
     $invoice->client($client);
+
+    $invoice->getPayload();
 })->with('create-invoice', 'providers')->throws(InvoiceRequiresVatWhenClientHasName::class);

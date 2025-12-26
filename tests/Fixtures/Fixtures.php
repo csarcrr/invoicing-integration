@@ -12,7 +12,9 @@ class Fixtures
 {
     protected array $path = [];
 
-    public function __construct(protected IntegrationProvider $provider) {}
+    public function __construct(protected IntegrationProvider $provider) {
+        $this->path = [];
+    }
 
     static public function request(IntegrationProvider $provider): self
     {
@@ -38,6 +40,12 @@ class Fixtures
     public function client(): self
     {
         $this->path[] = 'Client';
+        return $this;
+    }
+
+    public function item(): self
+    {
+        $this->path[] = 'Item';
         return $this;
     }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Enums\Tax;
 
-enum DocumentItemTax
+enum ItemTax
 {
     case NORMAL;
     case INTERMEDIATE;
@@ -15,11 +15,11 @@ enum DocumentItemTax
     public function vendus(): string
     {
         return match ($this) {
-            DocumentItemTax::NORMAL => 'NOR',
-            DocumentItemTax::INTERMEDIATE => 'INT',
-            DocumentItemTax::REDUCED => 'RED',
-            DocumentItemTax::EXEMPT => 'ISE',
-            DocumentItemTax::OTHER => 'OUT',
+            ItemTax::NORMAL => 'NOR',
+            ItemTax::INTERMEDIATE => 'INT',
+            ItemTax::REDUCED => 'RED',
+            ItemTax::EXEMPT => 'ISE',
+            ItemTax::OTHER => 'OUT',
         };
     }
 }

@@ -1,0 +1,13 @@
+{
+    "client": {
+        "name": "John Doe",
+        "fiscal_id": "123456789",
+        "address": "Rua das Flores 125",
+        "postalcode": "4410-000",
+        "city": "Porto",
+        "phone": "220123123",
+        "email": "john.doe@mail.com",
+        "country": "PT",
+        "irs_retention": "yes"
+    }
+}
