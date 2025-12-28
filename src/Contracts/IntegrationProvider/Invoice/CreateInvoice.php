@@ -8,11 +8,10 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Illuminate\Support\Collection;
 
 interface CreateInvoice {
-    static public function create () ;
-
     public function invoice () : Invoice;
 
     public function client(Client $client) : self ;
@@ -20,6 +19,8 @@ interface CreateInvoice {
     public function item(Item $item) : self ;
 
     public function payment(Payment $payments) : self ;
+
+    public function transport(TransportDetails $transport) : self ;
     
     public function getPayload(): Collection;
     
@@ -28,4 +29,6 @@ interface CreateInvoice {
     public function getItems() : Collection ;
 
     public function getPayments() : Collection ;
+
+    public function getTransport(): ?TransportDetails ;
 }

@@ -47,72 +47,93 @@ class TransportDetails
         return $this;
     }
 
-    public function vehicleLicensePlate(?string $vehicleLicensePlate = null): ?string
+    public function getVehicleLicensePlate(): ?string
     {
-        if (! $vehicleLicensePlate) {
-            return $this->vehicleLicensePlate;
-        }
-
-        return $this->vehicleLicensePlate = $vehicleLicensePlate;
+        return $this->vehicleLicensePlate;
     }
 
-    public function address(?string $address = null): ?string
+    public function vehicleLicensePlate(string $vehicleLicensePlate): self
     {
-        if (! $address) {
-            return $this->data[$this->type]['address'];
-        }
+        $this->vehicleLicensePlate = $vehicleLicensePlate;
 
-        return $this->data[$this->type]['address'] = $address;
+        return $this;
     }
 
-    public function city(?string $city = null): ?string
+    public function getAddress(): ?string
     {
-        if (! $city) {
-            return $this->data[$this->type]['city'];
-        }
-
-        return $this->data[$this->type]['city'] = $city;
+        return $this->data[$this->type]['address'];
     }
 
-    public function postalCode(?string $postalCode = null): ?string
+    public function address(string $address): self
     {
-        if (! $postalCode) {
-            return $this->data[$this->type]['postalCode'];
-        }
+        $this->data[$this->type]['address'] = $address;
 
-        return $this->data[$this->type]['postalCode'] = $postalCode;
+        return $this;
     }
 
-    public function country(?string $country = null): ?string
+    public function getCity(): ?string
     {
-        if (! $country) {
-            return $this->data[$this->type]['country'];
-        }
+        return $this->data[$this->type]['city'];
+    }
 
+    public function city(string $city): self
+    {
+        $this->data[$this->type]['city'] = $city;
+
+        return $this;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->data[$this->type]['postalCode'];
+    }
+
+    public function postalCode(string $postalCode): self
+    {
+        $this->data[$this->type]['postalCode'] = $postalCode;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->data[$this->type]['country'];
+    }
+
+    public function country(string $country): self
+    {
         try {
             $data = (new ISO3166)->alpha2(strtolower($country));
         } catch (\Exception $e) {
             throw new InvalidCountryException;
         }
 
-        return $this->data[$this->type]['country'] = $data['alpha2'];
+        $this->data[$this->type]['country'] = $data['alpha2'];
+
+        return $this;
     }
 
-    public function date(?Carbon $date = null): ?Carbon
+    public function getDate(): ?Carbon
     {
-        if (! $date) {
-            return $this->data[$this->type]['date'] ?? null;
-        }
-
-        return $this->data[$this->type]['date'] = $date;
+        return $this->data[$this->type]['date'] ?? null;
     }
 
-    public function time(?Carbon $time = null): ?Carbon
+    public function date(Carbon $date): self
     {
-        if (! $time) {
-            return $this->data[$this->type]['time'] ?? null;
-        }
+        $this->data[$this->type]['date'] = $date;
 
-        return $this->data[$this->type]['time'] = $time;
+        return $this;
+    }
+
+    public function getTime(): ?Carbon
+    {
+        return $this->data[$this->type]['time'] ?? null;
+    }
+
+    public function time(Carbon $time): self
+    {
+        $this->data[$this->type]['time'] = $time;
+
+        return $this;
     }
 }

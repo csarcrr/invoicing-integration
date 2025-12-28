@@ -9,32 +9,45 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use Exception;
 use Illuminate\Support\Collection;
 
 class Create implements CreateInvoice
 {
+    use ProviderConfiguration; 
+
     protected Collection $payload;
+
     protected Collection $items;
     protected Collection $payments;
     protected ?Client $client = null;
+    protected ?TransportDetails $transport = null;
     protected InvoiceType $type = InvoiceType::Invoice;
 
-    public function __construct()
+    protected array $invoiceTypesThatRequirePayments = [
+        InvoiceType::Receipt,
+        InvoiceType::InvoiceReceipt,
+        InvoiceType::InvoiceSimple,
+        InvoiceType::CreditNote,
+    ];
+
+    public function __construct(array|Collection $config)
     {
+        $this->config($config);
         $this->payload = collect([
             'type' => $this->getType()->value,
         ]);
         $this->items = collect();
         $this->payments = collect();
-    }
-
-    static public function create()
-    {
-        return app()->make(self::class);
     }
 
     /**
@@ -52,6 +65,8 @@ class Create implements CreateInvoice
     {
         $this->buildClient();
         $this->buildItems();
+        $this->buildPayments();
+        $this->buildTransport();
         
         return $this->payload;
     }
@@ -78,8 +93,16 @@ class Create implements CreateInvoice
         return $this;
     }
 
-    public function payment(Payment $payments): self
+    public function payment(Payment $payment): self
     {
+        $this->payments->push($payment);
+
+        return $this;
+    }
+
+    public function transport(TransportDetails $transport): self
+    {
+        $this->transport= $transport;
         return $this;
     }
 
@@ -98,9 +121,93 @@ class Create implements CreateInvoice
         return $this->payments;
     }
 
+    public function getTransport(): ?TransportDetails
+    {
+        return $this->transport;
+    }
+
     public function getType(): InvoiceType
     {
         return $this->type;
+    }
+
+    protected function buildTransport(): void {
+        if (!$this->getTransport()) {
+            return;
+        }
+
+        if (! $this->getClient()) {
+            throw new Exception('Client information is required when transport details are provided.');
+        }
+
+        throw_if(
+            ! in_array($this->getType(), [InvoiceType::Invoice, InvoiceType::Transport]),
+            InvoiceTypeDoesNotSupportTransportException::class
+        );
+
+        throw_if(
+            is_null($this->getTransport()->origin()->getDate()),
+            NeedsDateToSetLoadPointException::class
+        );
+
+        $data = [];
+
+        $data['loadpoint'] = [
+            'date' => $this->getTransport()->origin()->getDate()->toDateString(),
+            'time' => $this->getTransport()->origin()->getTime()->format('H:i'),
+            'address' => $this->getTransport()->origin()->getAddress(),
+            'postalcode' => $this->getTransport()->origin()->getPostalCode(),
+            'city' => $this->getTransport()->origin()->getCity(),
+            'country' => $this->getTransport()->origin()->getCountry(),
+        ];
+
+        $landpointData = [
+            'address' => $this->getTransport()->destination()->getAddress(),
+            'postalcode' => $this->getTransport()->destination()->getPostalCode(),
+            'city' => $this->getTransport()->destination()->getCity(),
+            'country' => $this->getTransport()->destination()->getCountry(),
+        ];
+
+        if ($this->getTransport()->destination()->getDate()) {
+            $landpointData['date'] = $this->getTransport()->destination()->getDate()->toDateString();
+            $landpointData['time'] = $this->getTransport()->destination()->getTime()->format('H:i');
+        }
+
+        $data['landpoint'] = $landpointData;
+
+        if ($this->getTransport()->getVehicleLicensePlate()) {
+            $data['vehicle_id'] = $this->getTransport()->getVehicleLicensePlate();
+        }
+
+        $this->payload->put('movement_of_goods', $data);
+    }
+
+    protected function buildPayments (): void {
+
+        throw_if(
+            in_array(
+                $this->getType(),
+                $this->invoiceTypesThatRequirePayments
+            ) && $this->getPayments()->isEmpty(),
+            MissingPaymentWhenIssuingReceiptException::class,
+        );
+
+        if ($this->getPayments()->isEmpty()) {
+            return;
+        }
+
+        $payments = $this->getPayments()->map(function (Payment $payment) {
+            $id = $this->getConfig()->get('payments')[$payment->getMethod()->value] ?? null;
+
+            throw_if(!$id, Exception::class, 'Payment method not configured.');
+
+            return [
+                'amount' => (float) ($payment->getAmount() / 100),
+                'id' => $id,
+            ];
+        });
+
+        $this->payload->put('payments', $payments);
     }
 
     protected function buildItems(): void {

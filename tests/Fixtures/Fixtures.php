@@ -49,6 +49,18 @@ class Fixtures
         return $this;
     }
 
+    public function transport(): self
+    {
+        $this->path[] = 'Transport';
+        return $this;
+    }
+
+    public function payment(): self
+    {
+        $this->path[] = 'Payment';
+        return $this;
+    }
+
     public function files(?string $name = null): array
     {
         $basePath = __DIR__ . '/IntegrationProvider/';

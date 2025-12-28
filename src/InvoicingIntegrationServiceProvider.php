@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Actions\Invoice\Invoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Invoice as InvoicingIntegrationInvoice;
 use Spatie\LaravelPackageTools\Package;
@@ -18,6 +19,11 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             ->needs(IntegrationProvider::class)
             ->give(function () {
                 return IntegrationProvider::from(config('invoicing-integration.provider'));
+            });
+
+        $this->app->when(CreateInvoice::class)
+            ->give(function () {
+                $config = config('invoicing-integration.provider');
             });
 
         $this->setupInvoiceBindings();

@@ -10,8 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('can assign an item', function (CreateInvoice $invoice) {
-
+it('can assign an item', function (CreateInvoice $invoice, Fixtures $fixture) {
     $item = new Item(
         reference: 'reference-1'
     );
@@ -24,10 +23,10 @@ it('can assign an item', function (CreateInvoice $invoice) {
 
 it('has a valid payload', function (
     CreateInvoice $invoice,
-    IntegrationProvider $provider,
-    string $fixture
+    Fixtures $fixture,
+    string $fixtureName
 ) {
-    $data = Fixtures::request($provider)->invoice()->item()->files($fixture);
+    $data = $fixture->invoice()->item()->files($fixtureName);
 
     $item = new Item(
         reference: 'reference-1',
@@ -41,14 +40,14 @@ it('has a valid payload', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', 'providers', ['item']);
+})->with('create-invoice', ['item']);
 
 it('correctly applies custom taxes', function (
     CreateInvoice $invoice,
-    IntegrationProvider $provider,
-    string $fixture
+    Fixtures $fixture,
+    string $fixtureName
 ) {
-    $data = Fixtures::request($provider)->invoice()->item()->files($fixture);
+    $data = $fixture->invoice()->item()->files($fixtureName);
 
     $item = new Item(
         reference: 'reference-1',
@@ -61,4 +60,4 @@ it('correctly applies custom taxes', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', 'providers', ['item_tax_ise']);
+})->with('create-invoice', ['item_tax_ise']);

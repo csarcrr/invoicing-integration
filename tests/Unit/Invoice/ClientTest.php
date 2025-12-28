@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('assigns a client', function (CreateInvoice $invoice) {
+it('assigns a client', function (CreateInvoice $invoice, Fixtures $fixture) {
     $invoice->client(
         new Client(
             name: 'John Doe',
@@ -24,10 +24,10 @@ it('assigns a client', function (CreateInvoice $invoice) {
 
 it('has the expected payload', function (
     CreateInvoice $invoice,
-    IntegrationProvider $provider,
-    string $fixture
+    Fixtures $fixture,
+    string $fixtureName
 ) {
-    $data = Fixtures::request($provider)->invoice()->client()->files($fixture);
+    $data = $fixture->invoice()->client()->files($fixtureName);
 
     $client = new Client(
         name: 'John Doe',
@@ -50,9 +50,9 @@ it('has the expected payload', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', 'providers', ['complete_client']);
+})->with('create-invoice', ['complete_client']);
 
-it('fails when vat is not valid', function (CreateInvoice $invoice) {
+it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fixture) {
 
     $client = new Client(
         vat: ''
@@ -69,7 +69,7 @@ it('fails when vat is not valid', function (CreateInvoice $invoice) {
 })->with('create-invoice')->throws(InvoiceRequiresClientVatException::class);
 
 it('fails when name is provided but vat is missing', function (
-    CreateInvoice $invoice, IntegrationProvider $provider
+    CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider
 ) {
     if($provider !== IntegrationProvider::CEGID_VENDUS) {
         $this->markTestSkipped('This test is only for CegidVendus provider.');

@@ -13,24 +13,24 @@ class Payment
         protected ?int $amount = null
     ) {}
 
-    public function amount(): ?int
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
 
-    public function method(): ?PaymentMethod
+    public function getMethod(): ?PaymentMethod
     {
         return $this->method;
     }
 
-    public function setAmount(int $amount): self
+    public function amount(int $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function setMethod(PaymentMethod $method): self
+    public function method(PaymentMethod $method): self
     {
         $this->method = $method;
 

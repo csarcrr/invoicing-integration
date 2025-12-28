@@ -21,6 +21,7 @@ class Invoice
     static public function create(): CreateInvoice
     {
         $class = app()->make(self::class);
+        
         return $class->provider(Action::CREATE);
     }
 
