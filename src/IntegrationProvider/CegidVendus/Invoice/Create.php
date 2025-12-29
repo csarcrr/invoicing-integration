@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
-use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
@@ -17,13 +16,18 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPayment
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasItems;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasOutputFormat;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
 use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -31,15 +35,15 @@ use Illuminate\Support\Facades\Http;
 class Create implements CreateInvoice, HasConfig
 {
     use ProviderConfiguration;
+    use HasClient;
+    use HasDueDate;
+    use HasItems;
+    use HasOutputFormat;
+    use HasPayments;
+    use HasTransport;
+    use HasType;
 
     protected Collection $payload;
-
-    protected Collection $items;
-    protected Collection $payments;
-    protected ?Client $client = null;
-    protected ?TransportDetails $transport = null;
-    protected ?OutputFormat $outputFormat = OutputFormat::PDF_BASE64;
-    protected InvoiceType $type = InvoiceType::Invoice;
 
     protected array $invoiceTypesThatRequirePayments = [
         InvoiceType::Receipt,
@@ -119,97 +123,29 @@ class Create implements CreateInvoice, HasConfig
         $this->buildPayments();
         $this->buildTransport();
         $this->buildOutput();
+        $this->buildDueDate();
 
         return $this->payload;
     }
 
-    public function type(InvoiceType $type): self
+    protected function buildType(): void
     {
-        $this->type = $type;
-
-        return $this;
+        $this->payload->put('type', $this->getType()->value);
     }
 
-    public function client(Client $client): self
+    protected function buildDueDate(): void
     {
-        $this->client = $client;
+        if (!$this->getDueDate()) {
+            return;
+        }
 
-        return $this;
-    }
-
-    public function item(Item $items): self
-    {
-        $this->items->push($items);
-
-        return $this;
-    }
-
-    public function payment(Payment $payment): self
-    {
-        $this->payments->push($payment);
-
-        return $this;
-    }
-
-    public function transport(TransportDetails $transport): self
-    {
-        $this->transport = $transport;
-        return $this;
-    }
-
-    public function dueDate(Carbon $dueDate): self
-    {
         throw_if(
             $this->getType() !== InvoiceType::Invoice,
             Exception::class,
             'Due date can only be set for FT document types.'
         );
         
-        $this->payload->put('due_date', $dueDate->toDateString());
-
-        return $this;
-    }
-
-    public function outputFormat(OutputFormat $outputFormat): self
-    {
-        $this->outputFormat = $outputFormat;
-
-        return $this;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    public function getItems(): Collection
-    {
-        return $this->items;
-    }
-
-    public function getPayments(): Collection
-    {
-        return $this->payments;
-    }
-
-    public function getTransport(): ?TransportDetails
-    {
-        return $this->transport;
-    }
-
-    public function getType(): InvoiceType
-    {
-        return $this->type;
-    }
-
-    public function getOutputFormat(): OutputFormat
-    {
-        return $this->outputFormat;
-    }
-
-    protected function buildType(): void
-    {
-        $this->payload->put('type', $this->getType()->value);
+        $this->payload->put('due_date', $this->getDueDate()->toDateString());
     }
 
     protected function buildOutput(): void
