@@ -11,16 +11,18 @@ trait ProviderConfiguration
 {
     protected Collection $providerOptions;
 
-    protected function config(array|Collection $config): void
+    public function config(array|Collection $config): self
     {
         if(is_array($config)) {
             $config = collect($config);
         }
 
         $this->providerOptions = $config;
+
+        return $this;
     }
 
-    protected function getConfig(): Collection
+    public function getConfig(): Collection
     {
         return $this->providerOptions;
     }

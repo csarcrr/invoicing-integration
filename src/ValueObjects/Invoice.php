@@ -20,72 +20,72 @@ class Invoice implements HasData
 
     protected int $totalNet;
 
-    public function atcudHash(): ?string
+    public function getAtcudHash(): ?string
     {
         return $this->atcudHash;
     }
 
-    public function setAtcudHash(?string $atcudHash): self
+    public function atcudHash(?string $atcudHash): self
     {
         $this->atcudHash = $atcudHash;
 
         return $this;
     }
 
-    public function output(): Output
+    public function getOutput(): Output
     {
         return $this->output;
     }
 
-    public function setOutput(Output $output): self
+    public function output(Output $output): self
     {
         $this->output = $output;
 
         return $this;
     }
 
-    public function sequence()
+    public function getSequence()
     {
         return $this->sequence;
     }
 
-    public function setSequence(string $sequence): self
+    public function sequence(string $sequence): self
     {
         $this->sequence = $sequence;
 
         return $this;
     }
 
-    public function id()
+    public function getId()
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function id(int $id): self
     {
         $this->id = $id;
 
         return $this;
     }
 
-    public function total(): int
+    public function getTotal(): int
     {
         return $this->total;
     }
 
-    public function setTotal(int $total): self
+    public function total(int $total): self
     {
         $this->total = $total;
 
         return $this;
     }
 
-    public function totalNet(): int
+    public function getTotalNet(): int
     {
         return $this->totalNet;
     }
 
-    public function setTotalNet(int $totalNet): self
+    public function totalNet(int $totalNet): self
     {
         $this->totalNet = $totalNet;
 

@@ -36,7 +36,7 @@ it('can assign multiple payments', function (CreateInvoice $invoice, Fixtures $f
 })->with('create-invoice');
 
 it('has expected payload', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
-    $data = $fixture->invoice()->payment()->files($fixtureName);
+    $data = $fixture->request()->invoice()->payment()->files($fixtureName);
 
     $item = new Item(reference: 'reference-1');
     $payment = new Payment(amount: 500, method: PaymentMethod::CREDIT_CARD);
@@ -48,7 +48,7 @@ it('has expected payload', function (CreateInvoice $invoice, Fixtures $fixture, 
 })->with('create-invoice', ['payment']);
 
 it('has expected payload with multiple payments', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
-    $data = $fixture->invoice()->payment()->files($fixtureName);
+    $data = $fixture->request()->invoice()->payment()->files($fixtureName);
 
     $item = new Item(reference: 'reference-1');
     $payment = new Payment(amount: 500, method: PaymentMethod::CREDIT_CARD);

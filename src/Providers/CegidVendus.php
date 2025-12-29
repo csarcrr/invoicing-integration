@@ -23,6 +23,6 @@ class CegidVendus {
     }
 
     protected function loadConfiguration () : void {
-        $this->config = config('invoicing-integration.providers')[IntegrationProvider::CEGID_VENDUS->value]['config'];
+        $this->config = config('invoicing-integration.providers')[IntegrationProvider::CEGID_VENDUS->value];
     }
 }

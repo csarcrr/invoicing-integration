@@ -1,0 +1,10 @@
+{
+    "due_date": "2025-12-31",
+    "items": [
+        {
+            "reference": "reference-1",
+            "qty": 1,
+            "type_id": "P"
+        }
+    ]
+}

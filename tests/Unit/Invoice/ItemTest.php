@@ -26,7 +26,7 @@ it('has a valid payload', function (
     Fixtures $fixture,
     string $fixtureName
 ) {
-    $data = $fixture->invoice()->item()->files($fixtureName);
+    $data = $fixture->request()->invoice()->item()->files($fixtureName);
 
     $item = new Item(
         reference: 'reference-1',
@@ -47,7 +47,7 @@ it('correctly applies custom taxes', function (
     Fixtures $fixture,
     string $fixtureName
 ) {
-    $data = $fixture->invoice()->item()->files($fixtureName);
+    $data = $fixture->request()->invoice()->item()->files($fixtureName);
 
     $item = new Item(
         reference: 'reference-1',

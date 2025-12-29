@@ -4,26 +4,33 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
 
+use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 
-class Create implements CreateInvoice
+class Create implements CreateInvoice, HasConfig
 {
-    use ProviderConfiguration; 
+    use ProviderConfiguration;
 
     protected Collection $payload;
 
@@ -31,6 +38,7 @@ class Create implements CreateInvoice
     protected Collection $payments;
     protected ?Client $client = null;
     protected ?TransportDetails $transport = null;
+    protected ?OutputFormat $outputFormat = OutputFormat::PDF_BASE64;
     protected InvoiceType $type = InvoiceType::Invoice;
 
     protected array $invoiceTypesThatRequirePayments = [
@@ -55,7 +63,49 @@ class Create implements CreateInvoice
      */
     public function invoice(): Invoice
     {
-        return new Invoice();
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->getConfig()->get('key'),
+        ])->post('https://www.vendus.pt/ws/documents/', $this->getPayload());
+
+        if (! in_array($response->status(), [200, 201, 300, 301])) {
+            $this->throwErrors($response->json());
+        }
+
+        $data = $response->json();
+
+        $invoice = new Invoice();
+
+        if (isset($data['id'])) {
+            $invoice->id($data['id']);
+        }
+
+        if (isset($data['sequence'])) {
+            $invoice->id($data['number']);
+        }
+
+        if (isset($data['total'])) {
+            $invoice->total($data['total']);
+        }
+
+        if (isset($data['total_net'])) {
+            $invoice->totalNet($data['total_net']);
+        }
+
+        if (isset($data['atcud'])) {
+            $invoice->atcudHash($data['atcud']);
+        }
+
+        if (isset($data['output'])) {
+            $invoice->output(
+                new Output(
+                    format: $this->getOutputFormat(),
+                    content: $data['output'],
+                    fileName: $data['number']
+                )
+            );
+        }
+
+        return $invoice;
     }
 
     /**
@@ -63,18 +113,19 @@ class Create implements CreateInvoice
      */
     public function getPayload(): Collection
     {
+        $this->buildType();
         $this->buildClient();
         $this->buildItems();
         $this->buildPayments();
         $this->buildTransport();
-        
+        $this->buildOutput();
+
         return $this->payload;
     }
 
     public function type(InvoiceType $type): self
     {
         $this->type = $type;
-        $this->payload->put('type', $type->value);
 
         return $this;
     }
@@ -102,7 +153,27 @@ class Create implements CreateInvoice
 
     public function transport(TransportDetails $transport): self
     {
-        $this->transport= $transport;
+        $this->transport = $transport;
+        return $this;
+    }
+
+    public function dueDate(Carbon $dueDate): self
+    {
+        throw_if(
+            $this->getType() !== InvoiceType::Invoice,
+            Exception::class,
+            'Due date can only be set for FT document types.'
+        );
+        
+        $this->payload->put('due_date', $dueDate->toDateString());
+
+        return $this;
+    }
+
+    public function outputFormat(OutputFormat $outputFormat): self
+    {
+        $this->outputFormat = $outputFormat;
+
         return $this;
     }
 
@@ -131,7 +202,23 @@ class Create implements CreateInvoice
         return $this->type;
     }
 
-    protected function buildTransport(): void {
+    public function getOutputFormat(): OutputFormat
+    {
+        return $this->outputFormat;
+    }
+
+    protected function buildType(): void
+    {
+        $this->payload->put('type', $this->getType()->value);
+    }
+
+    protected function buildOutput(): void
+    {
+        $this->payload->put('output', $this->getOutputFormat()->vendus());
+    }
+
+    protected function buildTransport(): void
+    {
         if (!$this->getTransport()) {
             return;
         }
@@ -182,7 +269,8 @@ class Create implements CreateInvoice
         $this->payload->put('movement_of_goods', $data);
     }
 
-    protected function buildPayments (): void {
+    protected function buildPayments(): void
+    {
 
         throw_if(
             in_array(
@@ -210,7 +298,8 @@ class Create implements CreateInvoice
         $this->payload->put('payments', $payments);
     }
 
-    protected function buildItems(): void {
+    protected function buildItems(): void
+    {
         if ($this->getType() === InvoiceType::Receipt) {
             return;
         }
@@ -222,41 +311,41 @@ class Create implements CreateInvoice
         );
 
         $items = $this->getItems()->map(function (Item $item) {
-            $data= [];
-            
-            if($item->getReference()) {
+            $data = [];
+
+            if ($item->getReference()) {
                 $data['reference'] = $item->getReference();
             }
 
-            if($item->getPrice()) {
+            if ($item->getPrice()) {
                 $data['price'] = $item->getPrice() / 100;
             }
 
-            if($item->getQuantity()) {
+            if ($item->getQuantity()) {
                 $data['qty'] = $item->getQuantity();
             }
 
-            if($item->getNote()) {
+            if ($item->getNote()) {
                 $data['note'] = $item->getNote();
             }
 
-            if($item->getType()) {
+            if ($item->getType()) {
                 $data['type_id'] = $item->getType()->vendus();
             }
 
-            if($item->getPercentageDiscount()) {
+            if ($item->getPercentageDiscount()) {
                 $data['discount_percent'] = $item->getPercentageDiscount();
             }
 
-            if($item->getAmountDiscount()) {
+            if ($item->getAmountDiscount()) {
                 $data['discount_amount'] = $item->getAmountDiscount() / 100;
             }
 
-            if($item->getTax()) {
+            if ($item->getTax()) {
                 $data['tax_id'] = $item->getTax()->vendus();
             }
 
-            if($item->getTaxExemption()) {
+            if ($item->getTaxExemption()) {
                 $data['tax_exemption'] = $item->getTaxExemption()->value;
 
                 if ($item->getTaxExemptionLaw()) {
@@ -264,7 +353,7 @@ class Create implements CreateInvoice
                 }
             }
 
-            if($this->getType() === InvoiceType::CreditNote) {
+            if ($this->getType() === InvoiceType::CreditNote) {
                 throw_if(
                     $item->getRelatedDocument()->isEmpty(),
                     InvoiceItemIsNotValidException::class,
@@ -336,5 +425,16 @@ class Create implements CreateInvoice
         }
 
         $this->payload->put('client', $data);
+    }
+
+    protected function throwErrors(array $errors): void
+    {
+        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
+            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+        })->toArray();
+
+        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
+
+        throw new Exception('The integration API request failed for an unknown reason.');
     }
 }

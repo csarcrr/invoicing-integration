@@ -27,7 +27,7 @@ it('has the expected payload', function (
     Fixtures $fixture,
     string $fixtureName
 ) {
-    $data = $fixture->invoice()->client()->files($fixtureName);
+    $data = $fixture->request()->invoice()->client()->files($fixtureName);
 
     $client = new Client(
         name: 'John Doe',

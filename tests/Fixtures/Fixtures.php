@@ -16,11 +16,21 @@ class Fixtures
         $this->path = [];
     }
 
-    static public function request(IntegrationProvider $provider): self
+    static public function build (IntegrationProvider $provider): self
     {
-        $class = new self($provider);
-        $class->addPath('Request');
-        return $class;
+        return new self($provider);
+    }
+
+    public function response(): self
+    {
+        $this->addPath('Response');
+        return $this;
+    }
+
+    public function request(): self
+    {
+        $this->addPath('Request');
+        return $this;
     }
 
     public function addPath(string $path): self
@@ -33,6 +43,13 @@ class Fixtures
     public function invoice(): self
     {
         $this->path[] = 'Invoice';
+
+        return $this;
+    }
+
+    public function type(): self
+    {
+        $this->path[] = 'Type';
 
         return $this;
     }
@@ -52,6 +69,12 @@ class Fixtures
     public function transport(): self
     {
         $this->path[] = 'Transport';
+        return $this;
+    }
+
+    public function output(): self
+    {
+        $this->path[] = 'Output';
         return $this;
     }
 
