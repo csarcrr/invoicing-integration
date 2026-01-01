@@ -32,6 +32,8 @@ interface CreateInvoice
 
     public function outputFormat(OutputFormat $outputFormat): self;
 
+    public function relatedDocument(int|string $relatedDocument, ?int $row = null): self;
+
     public function getPayload(): Collection;
 
     public function getClient(): ?Client;
@@ -43,4 +45,9 @@ interface CreateInvoice
     public function getTransport(): ?TransportDetails;
 
     public function getOutputFormat(): OutputFormat;
+
+    public function getType(): InvoiceType;
+
+    public function getRelatedDocument(): int|string|null;
+
 }

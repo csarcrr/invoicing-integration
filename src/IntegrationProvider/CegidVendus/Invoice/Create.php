@@ -21,6 +21,7 @@ use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasItems;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasOutputFormat;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
 use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
@@ -40,8 +41,10 @@ class Create implements CreateInvoice, HasConfig
     use HasItems;
     use HasOutputFormat;
     use HasPayments;
+    use HasRelatedDocument;
     use HasTransport;
     use HasType;
+    use HasRelatedDocument;
 
     protected Collection $payload;
 
@@ -124,6 +127,7 @@ class Create implements CreateInvoice, HasConfig
         $this->buildTransport();
         $this->buildOutput();
         $this->buildDueDate();
+        $this->buildRelatedDocument();
 
         return $this->payload;
     }
@@ -203,6 +207,38 @@ class Create implements CreateInvoice, HasConfig
         }
 
         $this->payload->put('movement_of_goods', $data);
+    }
+
+    protected function buildRelatedDocument(): void
+    {
+        if (is_null($this->getRelatedDocument())) {
+            throw_if(
+                $this->getType() === InvoiceType::CreditNote,
+                InvoiceItemIsNotValidException::class,
+                'Credit Note items must have a related document set.'
+            
+            );
+            return;
+        }
+
+        if($this->getType() !== InvoiceType::CreditNote) {
+            $this->payload->put('related_document_id', (int) $this->getRelatedDocument());
+
+            return ;
+        }
+
+        if ($this->getType() === InvoiceType::CreditNote) {
+            $data = $this->payload->get('items')->map(function (array $item) {
+                $item['reference_document'] = [
+                    'document_number' => $this->getRelatedDocument(),
+                    'document_row' => $this->getRelatedDocumentRow(),
+                ];
+
+                return $item;
+            });
+
+            $this->payload->put('items', $data);
+        }
     }
 
     protected function buildPayments(): void
@@ -287,19 +323,6 @@ class Create implements CreateInvoice, HasConfig
                 if ($item->getTaxExemptionLaw()) {
                     $data['tax_exemption_law'] = $item->getTaxExemptionLaw();
                 }
-            }
-
-            if ($this->getType() === InvoiceType::CreditNote) {
-                throw_if(
-                    $item->getRelatedDocument()->isEmpty(),
-                    InvoiceItemIsNotValidException::class,
-                    'Credit Note items must have a related document set.'
-                );
-
-                $data['reference_document'] = [
-                    'document_number' => $item->getRelatedDocument()->get('document_id'),
-                    'document_row' => $item->getRelatedDocument()->get('row'),
-                ];
             }
 
             return $data;

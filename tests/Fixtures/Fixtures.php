@@ -40,6 +40,13 @@ class Fixtures
         return $this;
     }
 
+    public function relatedDocument(): self
+    {
+        $this->path[] = 'RelatedDocument';
+
+        return $this;
+    }
+
     public function invoice(): self
     {
         $this->path[] = 'Invoice';
