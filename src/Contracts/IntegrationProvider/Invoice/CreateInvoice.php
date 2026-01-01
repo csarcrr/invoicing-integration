@@ -34,6 +34,10 @@ interface CreateInvoice
 
     public function relatedDocument(int|string $relatedDocument, ?int $row = null): self;
 
+    public function creditNoteReason(string $reason): self;
+
+    public function notes(string $notes): self;
+
     public function getPayload(): Collection;
 
     public function getClient(): ?Client;
@@ -50,4 +54,7 @@ interface CreateInvoice
 
     public function getRelatedDocument(): int|string|null;
 
+    public function getCreditNoteReason(): ?string;
+
+    public function getNotes(): ?string;
 }

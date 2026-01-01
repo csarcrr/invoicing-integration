@@ -54,6 +54,13 @@ class Fixtures
         return $this;
     }
 
+    public function invoiceTypes(): self
+    {
+        $this->path[] = 'InvoiceTypes';
+
+        return $this;
+    }
+
     public function type(): self
     {
         $this->path[] = 'Type';

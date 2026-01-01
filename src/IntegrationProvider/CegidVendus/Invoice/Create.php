@@ -11,14 +11,17 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasItems;
+use CsarCrr\InvoicingIntegration\Traits\Invoice\HasNotes;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasOutputFormat;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
@@ -37,14 +40,15 @@ class Create implements CreateInvoice, HasConfig
 {
     use ProviderConfiguration;
     use HasClient;
+    use HasCreditNoteReason;
     use HasDueDate;
     use HasItems;
+    use HasNotes;
     use HasOutputFormat;
     use HasPayments;
     use HasRelatedDocument;
     use HasTransport;
     use HasType;
-    use HasRelatedDocument;
 
     protected Collection $payload;
 
@@ -127,6 +131,8 @@ class Create implements CreateInvoice, HasConfig
         $this->buildTransport();
         $this->buildOutput();
         $this->buildDueDate();
+        $this->buildNotes();
+        $this->buildCreditNoteReason();
         $this->buildRelatedDocument();
 
         return $this->payload;
@@ -148,7 +154,7 @@ class Create implements CreateInvoice, HasConfig
             Exception::class,
             'Due date can only be set for FT document types.'
         );
-        
+
         $this->payload->put('due_date', $this->getDueDate()->toDateString());
     }
 
@@ -209,6 +215,29 @@ class Create implements CreateInvoice, HasConfig
         $this->payload->put('movement_of_goods', $data);
     }
 
+    protected function buildNotes(): void
+    {
+        if (!$this->getNotes()) {
+            return;
+        }
+
+        $this->payload->put('notes', $this->getNotes());
+    }
+
+    protected function buildCreditNoteReason(): void
+    {
+        if ($this->getType() !== InvoiceType::CreditNote) {
+            return;
+        }
+
+        throw_if(
+            is_null($this->getCreditNoteReason()),
+            CreditNoteReasonIsMissingException::class
+        );
+
+        $this->payload->put('notes', $this->getCreditNoteReason());
+    }
+
     protected function buildRelatedDocument(): void
     {
         if (is_null($this->getRelatedDocument())) {
@@ -216,15 +245,15 @@ class Create implements CreateInvoice, HasConfig
                 $this->getType() === InvoiceType::CreditNote,
                 InvoiceItemIsNotValidException::class,
                 'Credit Note items must have a related document set.'
-            
+
             );
             return;
         }
 
-        if($this->getType() !== InvoiceType::CreditNote) {
+        if ($this->getType() !== InvoiceType::CreditNote) {
             $this->payload->put('related_document_id', (int) $this->getRelatedDocument());
 
-            return ;
+            return;
         }
 
         if ($this->getType() === InvoiceType::CreditNote) {
