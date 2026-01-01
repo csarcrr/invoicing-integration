@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
@@ -16,12 +17,12 @@ define('FIXTURES_PATH', __DIR__ . '/Fixtures/');
 
 dataset('create-invoice', [
     [
-        function () { // resets the state for each test
+        function (): CreateInvoice { // resets the state for each test
             mockConfiguration(IntegrationProvider::CEGID_VENDUS);
             return CegidVendus::invoice(Action::CREATE);
         },
-        fn() => Fixtures::build(IntegrationProvider::CEGID_VENDUS)
-    ], 
+        fn(): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS)
+    ],
 
     // [function () {
     //     mockConfiguration(IntegrationProvider::MOLONI);

@@ -10,37 +10,38 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('can assign an item', function (CreateInvoice $invoice, Fixtures $fixture) {
-    $item = new Item(
-        reference: 'reference-1'
-    );
-
-    $invoice->item($item);
-
-    expect($invoice->getItems()->count())->toBe(1);
-    expect($invoice->getItems()->first()->getReference())->toBe('reference-1');
-})->with('create-invoice');
-
-it('has a valid payload', function (
+it('can assign an item', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
     string $fixtureName
 ) {
     $data = $fixture->request()->invoice()->item()->files($fixtureName);
 
-    $item = new Item(
-        reference: 'reference-1',
-        quantity: 2,
-    );
-    $item->price(1000);
-    $item->note('This is a test item');
-    $item->percentageDiscount(10);
-    $item->amountDiscount(50);
+    $item = new Item();
+    $item->reference('reference-1')
+        ->quantity(2)
+        ->price(1000)
+        ->note('This is a test item')
+        ->percentageDiscount(10)
+        ->amountDiscount(50);
 
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('create-invoice', ['item']);
+
+it('can assign multiple items', function (
+    CreateInvoice $invoice,
+    Fixtures $fixture,
+    string $fixtureName
+) {
+    $data = $fixture->request()->invoice()->item()->files($fixtureName);
+
+    $invoice->item(new Item('reference-1'));
+    $invoice->item(new Item('reference-2'));
+
+    expect($invoice->getPayload())->toMatchArray($data);
+})->with('create-invoice', ['multiple_items']);
 
 it('correctly applies custom taxes', function (
     CreateInvoice $invoice,

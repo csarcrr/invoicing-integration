@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-it('has the correct due date payload', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
+it('assigns the correct due date payload', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
     $data = $fixture->request()->invoice()->files($fixtureName);
 
     $invoice->item(new Item(reference: 'reference-1'));

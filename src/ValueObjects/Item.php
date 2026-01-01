@@ -143,24 +143,32 @@ class Item
         return $this;
     }
 
-    public function reference(int|string $reference): void
+    public function reference(int|string $reference): self
     {
         $this->reference = $reference;
+
+        return $this;
     }
 
-    public function quantity(int $quantity): void
+    public function quantity(int $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
-    public function price(int $price): void
+    public function price(int $price): self
     {
         $this->price = $price;
+
+        return $this;
     }
 
-    public function note(string $note): void
+    public function note(string $note): self
     {
         $this->note = $note;
+
+        return $this;
     }
 
     public function type(ItemType $type): self
@@ -170,11 +178,13 @@ class Item
         return $this;
     }
 
-    public function relatedDocument(string $documentNumber, int $lineNumber): void
+    public function relatedDocument(string $documentNumber, int $lineNumber): self
     {
         $this->relatedDocument = collect([
             'document_id' => $documentNumber,
             'row' => $lineNumber,
         ]);
+
+        return $this;
     }
 }
