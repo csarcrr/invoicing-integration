@@ -12,11 +12,12 @@ class Fixtures
 {
     protected array $path = [];
 
-    public function __construct(protected IntegrationProvider $provider) {
+    public function __construct(protected IntegrationProvider $provider)
+    {
         $this->path = [];
     }
 
-    static public function build (IntegrationProvider $provider): self
+    static public function build(IntegrationProvider $provider): self
     {
         return new self($provider);
     }

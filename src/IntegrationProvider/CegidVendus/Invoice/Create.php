@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
 
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
@@ -16,7 +15,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoe
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
@@ -90,16 +88,16 @@ class Create implements CreateInvoice, HasConfig
             $invoice->id($data['id']);
         }
 
-        if (isset($data['sequence'])) {
-            $invoice->id($data['number']);
+        if (isset($data['number'])) {
+            $invoice->sequence($data['number']);
         }
 
-        if (isset($data['total'])) {
-            $invoice->total($data['total']);
+        if (isset($data['amount_gross'])) {
+            $invoice->total((int) ((float) $data['amount_gross'] * 100));
         }
 
-        if (isset($data['total_net'])) {
-            $invoice->totalNet($data['total_net']);
+        if (isset($data['amount_net'])) {
+            $invoice->totalNet((int) ((float) $data['amount_net'] * 100));
         }
 
         if (isset($data['atcud'])) {

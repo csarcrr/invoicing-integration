@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('assigns a client', function (CreateInvoice $invoice, Fixtures $fixture) {
+it('has the simple client payload', function (CreateInvoice $invoice, Fixtures $fixture) {
     $invoice->client(
         new Client(
             name: 'John Doe',
@@ -22,7 +22,7 @@ it('assigns a client', function (CreateInvoice $invoice, Fixtures $fixture) {
     expect($invoice->getClient()->getName())->toBe('John Doe');
 })->with('create-invoice');
 
-it('has the expected payload', function (
+it('has the correct full client payload', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
     string $fixtureName
@@ -42,9 +42,7 @@ it('has the expected payload', function (
     $client->phone('220123123');
     $client->irsRetention(true);
 
-    $item = new Item(
-        reference: 'reference-1'
-    );
+    $item = new Item(reference: 'reference-1');
 
     $invoice->client($client);
     $invoice->item($item);
@@ -53,7 +51,6 @@ it('has the expected payload', function (
 })->with('create-invoice', ['complete_client']);
 
 it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fixture) {
-
     $client = new Client(
         vat: ''
     );
