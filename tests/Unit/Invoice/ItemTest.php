@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('can assign an item', function (
+it('can assign an item with all properties', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
     string $fixtureName
