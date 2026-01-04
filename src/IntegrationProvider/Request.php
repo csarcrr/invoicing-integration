@@ -44,6 +44,6 @@ final class Request
         return Http::withHeader(
             'Authorization',
             'Bearer ' . $this->getConfig()->get('key')
-        )->baseUrl('https://www.vendus.pt/ws/documents/');
+        )->baseUrl('https://www.vendus.pt/ws/');
     }
 }

@@ -77,7 +77,7 @@ class Create implements CreateInvoice, HasConfig
         $response = Request::get(
             IntegrationProvider::CEGID_VENDUS,
             $this->getConfig()
-        )->post('create', $this->getPayload());
+        )->post('documents', $this->getPayload());
 
         if (! in_array($response->status(), [200, 201, 300, 301])) {
             $this->throwErrors($response->json());
