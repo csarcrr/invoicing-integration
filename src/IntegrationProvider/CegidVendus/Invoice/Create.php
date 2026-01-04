@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
 
 use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
@@ -15,6 +16,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoe
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
+use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
@@ -72,9 +74,10 @@ class Create implements CreateInvoice, HasConfig
      */
     public function invoice(): Invoice
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->getConfig()->get('key'),
-        ])->post('https://www.vendus.pt/ws/documents/', $this->getPayload());
+        $response = Request::get(
+            IntegrationProvider::CEGID_VENDUS,
+            $this->getConfig()
+        )->post('create', $this->getPayload());
 
         if (! in_array($response->status(), [200, 201, 300, 301])) {
             $this->throwErrors($response->json());
@@ -317,7 +320,7 @@ class Create implements CreateInvoice, HasConfig
             }
 
             if ($item->getPrice()) {
-                $data['price'] = $item->getPrice() / 100;
+                $data['gross_price'] = $item->getPrice() / 100;
             }
 
             if ($item->getQuantity()) {

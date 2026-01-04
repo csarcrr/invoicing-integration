@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 
-it('properly sets the auth for '.IntegrationProvider::CEGID_VENDUS->value, function () {
-    $invoice = Invoice::create();
-    $invoice->addItem(new Item('bb'));
+it('properly sets the auth for ' . IntegrationProvider::CEGID_VENDUS->value, function () {
+    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+    $config = collect(config('invoicing-integration.providers')[IntegrationProvider::CEGID_VENDUS->value]);
+    $request = Request::get(
+        IntegrationProvider::CEGID_VENDUS,
+        $config
+    );
 
-    $object = Provider::resolve()->invoice()->create($invoice);
-    $reflectionClass = new ReflectionClass($object);
-    $property = $reflectionClass->getProperty('headers');
-    $value = $property->getValue($object);
+    $headers = $request->getOptions()['headers'];
 
-    expect($value)->toBeArray()
-        ->toHaveKey('Authorization')
-        ->and($value['Authorization'])
-        ->toBe('Bearer 1234');
-})->todo();
+    expect($headers)->toHaveKey('Authorization');
+    expect($headers['Authorization'])->toBe('Bearer ' . $config->get('key'));
+})->with('providers');
