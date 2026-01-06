@@ -9,7 +9,6 @@ use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Spatie\LaravelPackageTools\Concerns\Package\HasConfigs;
 
 final class Request
 {
@@ -22,16 +21,16 @@ final class Request
         $this->config($config);
     }
 
-    static public function get(
+    public static function get(
         IntegrationProvider $provider,
         Collection $config
     ): PendingRequest {
         $self = new self($provider, $config);
 
-        $request= match ($provider) {
+        $request = match ($provider) {
             IntegrationProvider::CEGID_VENDUS => $self->cegidVendus(),
         };
-        
+
         $request->asJson();
         $request->acceptJson();
 
@@ -48,7 +47,7 @@ final class Request
 
         return Http::withHeader(
             'Authorization',
-            'Bearer ' . $this->getConfig()->get('key')
+            'Bearer '.$this->getConfig()->get('key')
         )->baseUrl('https://www.vendus.pt/ws/v1.1/');
     }
 }

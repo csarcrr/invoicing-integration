@@ -6,7 +6,6 @@ namespace CsarCrr\InvoicingIntegration\Tests\Fixtures;
 
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class Fixtures
 {
@@ -17,7 +16,7 @@ class Fixtures
         $this->path = [];
     }
 
-    static public function build(IntegrationProvider $provider): self
+    public static function build(IntegrationProvider $provider): self
     {
         return new self($provider);
     }
@@ -25,12 +24,14 @@ class Fixtures
     public function response(): self
     {
         $this->addPath('Response');
+
         return $this;
     }
 
     public function request(): self
     {
         $this->addPath('Request');
+
         return $this;
     }
 
@@ -72,45 +73,50 @@ class Fixtures
     public function client(): self
     {
         $this->path[] = 'Client';
+
         return $this;
     }
 
     public function item(): self
     {
         $this->path[] = 'Item';
+
         return $this;
     }
 
     public function transport(): self
     {
         $this->path[] = 'Transport';
+
         return $this;
     }
 
     public function output(): self
     {
         $this->path[] = 'Output';
+
         return $this;
     }
 
     public function payment(): self
     {
         $this->path[] = 'Payment';
+
         return $this;
     }
 
     public function files(?string $name = null): array
     {
-        $basePath = __DIR__ . '/IntegrationProvider/';
-        $filesPath = "{$basePath}{$this->provider->value}/" . implode('/', $this->path) . '/';
+        $basePath = __DIR__.'/IntegrationProvider/';
+        $filesPath = "{$basePath}{$this->provider->value}/".implode('/', $this->path).'/';
 
         $files = [];
 
         foreach (scandir($filesPath) as $file) {
-            if (str_ends_with($file, '.json') && is_file($filesPath . $file)) {
+            if (str_ends_with($file, '.json') && is_file($filesPath.$file)) {
                 $key = str_replace('.json', '', $file);
 
-                $files[$key] = File::json($filesPath . $file);
+                $files[$key] = File::json($filesPath.$file);
             }
         }
 

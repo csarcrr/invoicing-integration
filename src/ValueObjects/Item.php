@@ -9,7 +9,6 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
-use Illuminate\Support\Collection;
 
 class Item
 {
@@ -179,7 +178,8 @@ class Item
 
     public function relatedDocument(string $documentNumber, int $lineNumber): self
     {
-        $this->relatedDocument = new class($documentNumber, $lineNumber) {
+        $this->relatedDocument = new class($documentNumber, $lineNumber)
+        {
             public function __construct(
                 public readonly string $documentId,
                 public readonly int $row

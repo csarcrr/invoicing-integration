@@ -62,7 +62,7 @@ it('has expected payload with multiple payments', function (CreateInvoice $invoi
 })->with('create-invoice', ['payment_multiple']);
 
 it('throws error when configuration is not set', function (CreateInvoice $invoice) {
-    config()->set('invoicing-integration.providers.' . IntegrationProvider::CEGID_VENDUS->value . '.config', [
+    config()->set('invoicing-integration.providers.'.IntegrationProvider::CEGID_VENDUS->value.'.config', [
         'payments' => [
             PaymentMethod::CREDIT_CARD->value => null,
             PaymentMethod::MONEY->value => null,
@@ -80,5 +80,5 @@ it('throws error when configuration is not set', function (CreateInvoice $invoic
 
     $invoice->getPayload();
 })->with([
-    [fn() => CegidVendus::invoice(Action::CREATE)]
+    [fn () => CegidVendus::invoice(Action::CREATE)],
 ])->throws(Exception::class, 'Payment method not configured.');

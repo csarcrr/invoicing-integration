@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 trait HasRelatedDocument
 {
     protected int|string|null $relatedDocument = null;
+
     protected ?int $relatedDocumentRow = null;
 
     public function relatedDocument(int|string $relatedDocument, ?int $row = null): self

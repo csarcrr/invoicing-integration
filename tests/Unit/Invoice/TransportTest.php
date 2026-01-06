@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
@@ -13,7 +12,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
 it('assigns a transport to the invoice', function (CreateInvoice $invoice, Fixtures $fixture) {
-    $transport = new TransportDetails();
+    $transport = new TransportDetails;
 
     $transport->origin()
         ->address('Rua das Flores, 125')
@@ -41,7 +40,7 @@ it('has a valid payload', function (
 ) {
     $data = $fixture->request()->invoice()->files($fixtureName);
 
-    $transport = new TransportDetails();
+    $transport = new TransportDetails;
 
     $transport->origin()
         ->date(Carbon::now()->setDay(12)->setMonth(12)->setYear(2025))
@@ -73,7 +72,7 @@ it('fails when no client is provided with transport', function (
     Fixtures $fixture
 ) {
 
-    $transport = new TransportDetails();
+    $transport = new TransportDetails;
 
     $transport->origin()
         ->date(Carbon::now())
@@ -102,7 +101,7 @@ it('fails when no load date is provided with transport', function (
     CreateInvoice $invoice,
     Fixtures $fixture
 ) {
-    $transport = new TransportDetails();
+    $transport = new TransportDetails;
 
     $transport->origin()
         ->address('Rua das Flores, 125')
@@ -126,7 +125,7 @@ it('fails when setting an invalid country', function (
     CreateInvoice $invoice,
     Fixtures $fixture
 ) {
-    $transport = new TransportDetails();
+    $transport = new TransportDetails;
 
     $transport->origin()
         ->date(Carbon::now())

@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 
 declare(strict_types=1);
 
@@ -9,6 +8,7 @@ use Illuminate\Support\Collection;
 
 interface HasConfig
 {
-    public function config (array|Collection $config): self;
+    public function config(array|Collection $config): self;
+
     public function getConfig(): Collection;
 }

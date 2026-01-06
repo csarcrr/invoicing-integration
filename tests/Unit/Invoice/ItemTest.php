@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\Enums\Tax\DocumentItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
@@ -17,7 +15,7 @@ it('can assign an item with all properties', function (
 ) {
     $data = $fixture->request()->invoice()->item()->files($fixtureName);
 
-    $item = new Item();
+    $item = new Item;
     $item->reference('reference-1')
         ->quantity(2)
         ->price(1000)

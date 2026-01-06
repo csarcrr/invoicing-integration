@@ -14,7 +14,7 @@ it('handles invoicing errors properly', function (
     Fixtures $fixture,
     string $fixtureName,
     IntegrationProvider $provider
-) {    
+) {
     $payload = $fixture->response()->invoice()->files($fixtureName);
     Http::fake(mockResponse($provider, $payload, 400));
 

@@ -10,18 +10,18 @@ use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
-define('FIXTURES_PATH', __DIR__ . '/Fixtures/');
+define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
 dataset('create-invoice', [
     [
         function (): CreateInvoice { // resets the state for each test
             mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+
             return CegidVendus::invoice(Action::CREATE);
         },
-        fn(): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS)
+        fn (): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS),
     ],
 
     // [function () {
@@ -40,7 +40,7 @@ function mockConfiguration(IntegrationProvider $provider): void
 {
     if ($provider === IntegrationProvider::CEGID_VENDUS) {
         config()->set('invoicing-integration.provider', IntegrationProvider::CEGID_VENDUS->value);
-        config()->set('invoicing-integration.providers.' . IntegrationProvider::CEGID_VENDUS->value, [
+        config()->set('invoicing-integration.providers.'.IntegrationProvider::CEGID_VENDUS->value, [
             'key' => 'test-api-key',
             'mode' => 'normal',
             'payments' => [

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Traits;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 trait ProviderConfiguration
@@ -13,7 +12,7 @@ trait ProviderConfiguration
 
     public function config(array|Collection $config): self
     {
-        if(is_array($config)) {
+        if (is_array($config)) {
             $config = collect($config);
         }
 

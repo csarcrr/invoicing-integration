@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 
 class Invoice
@@ -18,10 +17,10 @@ class Invoice
         protected IntegrationProvider $provider
     ) {}
 
-    static public function create(): CreateInvoice
+    public static function create(): CreateInvoice
     {
         $class = app()->make(self::class);
-        
+
         return $class->provider(Action::CREATE);
     }
 

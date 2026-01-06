@@ -13,6 +13,7 @@ trait HasTransport
     public function transport(TransportDetails $transport): self
     {
         $this->transport = $transport;
+
         return $this;
     }
 

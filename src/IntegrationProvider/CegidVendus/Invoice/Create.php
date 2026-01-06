@@ -34,11 +34,9 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 
 class Create implements CreateInvoice, HasConfig
 {
-    use ProviderConfiguration;
     use HasClient;
     use HasCreditNoteReason;
     use HasDueDate;
@@ -49,6 +47,7 @@ class Create implements CreateInvoice, HasConfig
     use HasRelatedDocument;
     use HasTransport;
     use HasType;
+    use ProviderConfiguration;
 
     protected Collection $payload;
 
@@ -85,7 +84,7 @@ class Create implements CreateInvoice, HasConfig
 
         $data = $response->json();
 
-        $invoice = new Invoice();
+        $invoice = new Invoice;
 
         if (isset($data['id'])) {
             $invoice->id($data['id']);
@@ -146,7 +145,7 @@ class Create implements CreateInvoice, HasConfig
 
     protected function buildDueDate(): void
     {
-        if (!$this->getDueDate()) {
+        if (! $this->getDueDate()) {
             return;
         }
 
@@ -166,7 +165,7 @@ class Create implements CreateInvoice, HasConfig
 
     protected function buildTransport(): void
     {
-        if (!$this->getTransport()) {
+        if (! $this->getTransport()) {
             return;
         }
 
@@ -218,7 +217,7 @@ class Create implements CreateInvoice, HasConfig
 
     protected function buildNotes(): void
     {
-        if (!$this->getNotes()) {
+        if (! $this->getNotes()) {
             return;
         }
 
@@ -266,7 +265,7 @@ class Create implements CreateInvoice, HasConfig
         $payments = $this->getPayments()->map(function (Payment $payment) {
             $id = $this->getConfig()->get('payments')[$payment->getMethod()->value] ?? null;
 
-            throw_if(!$id, Exception::class, 'Payment method not configured.');
+            throw_if(! $id, Exception::class, 'Payment method not configured.');
 
             return [
                 'amount' => (float) ($payment->getAmount() / 100),
@@ -332,7 +331,7 @@ class Create implements CreateInvoice, HasConfig
                 }
             }
 
-            if($this->getType() === InvoiceType::CreditNote) {
+            if ($this->getType() === InvoiceType::CreditNote) {
                 throw_if(
                     ! $item->getRelatedDocument(),
                     InvoiceItemIsNotValidException::class,
@@ -355,7 +354,7 @@ class Create implements CreateInvoice, HasConfig
 
     protected function buildClient(): void
     {
-        if (!$this->getClient()) {
+        if (! $this->getClient()) {
             return;
         }
 
@@ -411,7 +410,7 @@ class Create implements CreateInvoice, HasConfig
     protected function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));

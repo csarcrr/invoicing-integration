@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
@@ -38,8 +37,11 @@ it('can add related document to a NC', function (
 ) {
     $data = $fixture->request()->invoice()->relatedDocument()->files($fixtureName);
 
+    $item = new Item(reference: 'reference-1');
+    $item->relatedDocument('FT 01P2025/1', 1);
+
     $invoice->type(InvoiceType::CreditNote);
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item($item);
     $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
     $invoice->relatedDocument('FT 01P2025/1', 1);
     $invoice->creditNoteReason('Product damaged');

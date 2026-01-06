@@ -68,14 +68,14 @@ it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fi
 it('fails when name is provided but vat is missing', function (
     CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider
 ) {
-    if($provider !== IntegrationProvider::CEGID_VENDUS) {
+    if ($provider !== IntegrationProvider::CEGID_VENDUS) {
         $this->markTestSkipped('This test is only for CegidVendus provider.');
     }
 
     $client = new Client(
         name: 'John Doe',
     );
-    
+
     $item = new Item(
         reference: 'reference-1'
     );

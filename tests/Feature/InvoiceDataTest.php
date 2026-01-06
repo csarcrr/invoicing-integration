@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 it('it has the valid invoice data after issuing', function (CreateInvoice $create, Fixtures $fixture, IntegrationProvider $provider, string $fixtureName) {
     $data = $fixture->response()->invoice()->files($fixtureName);
-    
+
     Http::fake(mockResponse($provider, $data));
 
     $create->item(new Item(reference: 'reference-1'));
