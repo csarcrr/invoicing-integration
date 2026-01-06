@@ -29,7 +29,7 @@ class Item
 
     protected ?string $taxExemptionLaw = null;
 
-    protected Collection $relatedDocument;
+    protected ?object $relatedDocument = null;
 
     /**
      * @param  string  $reference  - avoids duplicate products in some providers
@@ -40,7 +40,6 @@ class Item
     ) {
         $this->type = ItemType::Product;
         $this->quantity = $quantity ?? 1;
-        $this->relatedDocument = collect();
     }
 
     public function getReference(): int|string
@@ -124,7 +123,7 @@ class Item
         return $this->percentageDiscount;
     }
 
-    public function getRelatedDocument(): ?Collection
+    public function getRelatedDocument(): ?object
     {
         return $this->relatedDocument;
     }
@@ -180,10 +179,22 @@ class Item
 
     public function relatedDocument(string $documentNumber, int $lineNumber): self
     {
-        $this->relatedDocument = collect([
-            'document_id' => $documentNumber,
-            'row' => $lineNumber,
-        ]);
+        $this->relatedDocument = new class($documentNumber, $lineNumber) {
+            public function __construct(
+                public readonly string $documentId,
+                public readonly int $row
+            ) {}
+
+            public function getDocumentId(): string
+            {
+                return $this->documentId;
+            }
+
+            public function getRow(): int
+            {
+                return $this->row;
+            }
+        };
 
         return $this;
     }
