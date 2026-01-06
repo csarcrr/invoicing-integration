@@ -28,9 +28,14 @@ final class Request
     ): PendingRequest {
         $self = new self($provider, $config);
 
-        return match ($provider) {
+        $request= match ($provider) {
             IntegrationProvider::CEGID_VENDUS => $self->cegidVendus(),
         };
+        
+        $request->asJson();
+        $request->acceptJson();
+
+        return $request;
     }
 
     public function getProvider(): IntegrationProvider
@@ -44,6 +49,6 @@ final class Request
         return Http::withHeader(
             'Authorization',
             'Bearer ' . $this->getConfig()->get('key')
-        )->baseUrl('https://www.vendus.pt/ws/');
+        )->baseUrl('https://www.vendus.pt/ws/v1.1/');
     }
 }
