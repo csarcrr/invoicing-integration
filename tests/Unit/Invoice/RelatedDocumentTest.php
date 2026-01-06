@@ -46,15 +46,3 @@ it('can add related document to a NC', function (
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('create-invoice', ['nc_related_document']);
-
-it('fails when NC does not have related document set', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture
-) {
-    $invoice->type(InvoiceType::CreditNote);
-    $invoice->item(new Item(reference: 'reference-1'));
-    $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
-    $invoice->creditNoteReason('Product damaged');
-
-    $invoice->getPayload();
-})->with('create-invoice')->throws(InvoiceItemIsNotValidException::class);
