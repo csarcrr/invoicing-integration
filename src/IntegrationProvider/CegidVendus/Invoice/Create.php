@@ -288,7 +288,8 @@ class Create implements CreateInvoice, HasConfig
             'The invoice must have at least one item.'
         );
 
-        $items = $this->getItems()->map(function (Item $item) {
+        /** @var \Illuminate\Support\Collection $items */
+        $items = $this->getItems()->map(function (Item $item): array {
             $data = [];
 
             if ($item->getReference()) {
@@ -338,12 +339,10 @@ class Create implements CreateInvoice, HasConfig
                     'Credit Note items must have a related document set.'
                 );
 
-                if ($item->getRelatedDocument()) {
-                    $data['reference_document'] = [
-                        'document_number' => $item->getRelatedDocument()->getDocumentId(),
-                        'document_row' => $item->getRelatedDocument()->getRow(),
-                    ];
-                }
+                $data['reference_document'] = [
+                    'document_number' => $item->getRelatedDocument()->getDocumentId(),
+                    'document_row' => $item->getRelatedDocument()->getRow(),
+                ];
             }
 
             return $data;
@@ -410,7 +409,7 @@ class Create implements CreateInvoice, HasConfig
     protected function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));

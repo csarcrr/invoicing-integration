@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Actions\Invoice\Invoice;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Invoice as InvoicingIntegrationInvoice;
@@ -25,8 +24,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             ->give(function () {
                 $config = config('invoicing-integration.provider');
             });
-
-        $this->setupInvoiceBindings();
     }
 
     public function configurePackage(Package $package): void
@@ -34,13 +31,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         $package
             ->name('invoicing-integration')
             ->hasConfigFile('invoicing-integration');
-    }
-
-    protected function setupInvoiceBindings(): void
-    {
-        $this->app->bind('invoice', function () {
-            return new Invoice;
-        });
     }
 
     protected function guardAgainstInvalidConfig(array $config): void

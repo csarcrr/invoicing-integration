@@ -28,7 +28,7 @@ class Item
 
     protected ?string $taxExemptionLaw = null;
 
-    protected ?object $relatedDocument = null;
+    protected ?RelatedDocumentReference $relatedDocument = null;
 
     /**
      * @param  string  $reference  - avoids duplicate products in some providers
@@ -122,7 +122,7 @@ class Item
         return $this->percentageDiscount;
     }
 
-    public function getRelatedDocument(): ?object
+    public function getRelatedDocument(): ?RelatedDocumentReference
     {
         return $this->relatedDocument;
     }
@@ -178,23 +178,7 @@ class Item
 
     public function relatedDocument(string $documentNumber, int $lineNumber): self
     {
-        $this->relatedDocument = new class($documentNumber, $lineNumber)
-        {
-            public function __construct(
-                public readonly string $documentId,
-                public readonly int $row
-            ) {}
-
-            public function getDocumentId(): string
-            {
-                return $this->documentId;
-            }
-
-            public function getRow(): int
-            {
-                return $this->row;
-            }
-        };
+        $this->relatedDocument = new RelatedDocumentReference($documentNumber, $lineNumber);
 
         return $this;
     }
