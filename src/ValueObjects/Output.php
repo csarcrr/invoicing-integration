@@ -23,12 +23,21 @@ class Output
 
     public function save(?string $path = null): string
     {
-        $this->path = $path ?? "invoices/{$this->fileName()}";
+        $this->path = $this->sanitizePath($path ?? "invoices/{$this->fileName()}");
 
         return match ($this->format) {
             OutputFormat::PDF_BASE64 => $this->base64EncodedPdf(),
             OutputFormat::ESCPOS => $this->base64EncodedEscPos(),
         };
+    }
+
+    protected function sanitizePath(string $path): string
+    {
+        $path = ltrim($path, '/\\');
+        $path = str_replace(['../', '..\\', '..'], '', $path);
+        $path = preg_replace('/[\x00-\x1F]/', '_', $path);
+
+        return $path;
     }
 
     public function get(): string
