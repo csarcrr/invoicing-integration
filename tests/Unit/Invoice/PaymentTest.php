@@ -51,8 +51,14 @@ it('has expected payload with multiple payments', function (CreateInvoice $invoi
     $data = $fixture->request()->invoice()->payment()->files($fixtureName);
 
     $item = new Item(reference: 'reference-1');
-    $payment = new Payment(amount: 500, method: PaymentMethod::CREDIT_CARD);
-    $payment2 = new Payment(amount: 500, method: PaymentMethod::MONEY);
+
+    $payment = new Payment;
+    $payment->method(PaymentMethod::CREDIT_CARD);
+    $payment->amount(500);
+
+    $payment2 = new Payment;
+    $payment2->method(PaymentMethod::MONEY);
+    $payment2->amount(500);
 
     $invoice->item($item);
     $invoice->payment($payment);

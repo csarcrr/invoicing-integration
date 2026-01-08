@@ -1,65 +1,147 @@
-# This package aims to help integrations with invoicing systems
+# Invoicing Integration
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
-## About
+Invoicing Integration is an aggregator for invoicing software providers in Portugal. It provides a unified, fluent API so you can issue invoices without learning the nuances of each provider's API.
 
-Invoicing Integration is an agregator of several invoicing softwares in Portugal. We aim to help you use these softwares
-without the assle of learning every nuance of their API.
+**Supported Providers:** Cegid Vendus
 
-## ⚠️ Important Legal Disclaimer
+## Important Legal Disclaimer
 
-**This package is a tool for facilitating the usage of invoicing provider APIs and is not intended to serve as a safeguard or provide legal guidance.**
+**This package facilitates invoicing provider API usage and is not intended to serve as legal guidance.**
 
-It is the **responsibility of the end user** to:
-- Understand and comply with all applicable laws and regulations regarding invoicing in their jurisdiction
-- Understand how each provider works and their specific requirements
-- Ensure proper invoicing practices according to their legal obligations
-- Validate that their usage complies with tax laws, accounting standards, and other relevant regulations
+It is **your responsibility** to:
 
-This package aims to simplify API integration but does not provide opinions on how you should be issuing invoices. Always consult with legal and accounting professionals when implementing invoicing solutions.
+- Comply with all applicable invoicing laws and regulations in your jurisdiction
+- Understand each provider's specific requirements
+- Ensure proper invoicing practices according to your legal obligations
+- Validate that your usage complies with tax laws and accounting standards
 
-## Current Features
-
-For a full list of features and capabilities, please see [FEATURES.md](docs/features.md).
-
-## Usage
-
-For more in-depth usage details and examples, please visit the [official documentation](https://csarcrr.github.io/invoicing-integration/#/).
+Always consult with legal and accounting professionals when implementing invoicing solutions.
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require csarcrr/invoicing-integration
 ```
 
-You can publish the config file with:
+Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag="invoicing-integration-config"
 ```
 
-Example
+## Configuration
+
+Set your provider and credentials in your `.env` file:
+
+```bash
+INVOICING_INTEGRATION_PROVIDER=CegidVendus
+
+# Cegid Vendus credentials
+CEGID_VENDUS_API_KEY=your-api-key
+CEGID_VENDUS_MODE=tests   # "tests" issues training documents, "normal" issues fiscal documents
+
+# Payment method IDs (required - get these from your Cegid Vendus account)
+CEGID_VENDUS_PAYMENT_MB_ID=123456
+CEGID_VENDUS_PAYMENT_CREDIT_CARD_ID=123457
+CEGID_VENDUS_PAYMENT_CURRENT_ACCOUNT_ID=123458
+CEGID_VENDUS_PAYMENT_MONEY_ID=123459
+CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID=123460
+```
+
+See [Cegid Vendus Configuration](docs/providers/cegid-vendus/configuration.md) for details on obtaining payment IDs.
+
+## Quick Start
+
+```php
+use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+
+// Create an invoice
+$invoice = Invoice::create();
+
+// (Optional) Add client details - skip for final consumer invoices
+$client = new Client();
+$client->name('John Doe');
+$client->vat('123456789');
+$invoice->client($client);
+
+// Add items (price in cents)
+$item = new Item();
+$item->reference('SKU-001');
+$item->price(1000);
+$item->quantity(2);
+$item->note('Product description');
+$invoice->item($item);
+
+// Add payment (required for FR, FS, RG, NC document types)
+$payment = new Payment();
+$payment->method(PaymentMethod::CREDIT_CARD);
+$payment->amount(2000);
+$invoice->payment($payment);
+
+// Issue the invoice
+$result = $invoice->invoice();
+
+// Access invoice data
+echo $result->getSequence();  // e.g., "FT 01P2025/1"
+
+// Save the PDF
+$path = $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
+```
+
+## Configuration File
+
+The published `config/invoicing-integration.php` file exposes provider credentials and payment
+mapping:
 
 ```php
 <?php
 
-use CsarCrr\InvoicingIntegration\InvoicingIntegration;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
-$integration = Invoice::create();
+return [
+    'provider' => env('INVOICING_INTEGRATION_PROVIDER'),
 
-$item = new Item(reference: 'SKU-001', quantity: 2);
-$item->setPrice(1000);
-$item->setDescription('Product Description');
-$integration->addItem($item);
-
-$invoiceData = $integration->invoice();
+    'providers' => [
+        'CegidVendus' => [
+            'key' => env('CEGID_VENDUS_API_KEY'),
+            'mode' => env('CEGID_VENDUS_MODE'),
+            'payments' => [
+                PaymentMethod::MB->value => env('CEGID_VENDUS_PAYMENT_MB_ID'),
+                PaymentMethod::CREDIT_CARD->value => env('CEGID_VENDUS_PAYMENT_CREDIT_CARD_ID'),
+                PaymentMethod::CURRENT_ACCOUNT->value => env('CEGID_VENDUS_PAYMENT_CURRENT_ACCOUNT_ID'),
+                PaymentMethod::MONEY->value => env('CEGID_VENDUS_PAYMENT_MONEY_ID'),
+                PaymentMethod::MONEY_TRANSFER->value => env('CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID'),
+            ],
+        ],
+    ],
+];
 ```
+
+- `mode` must be either `normal` (fiscal documents) or `tests` (training mode)
+- Each payment method maps to the numeric ID you obtain from Cegid Vendus
+
+## Features
+
+For a full list of features and provider compatibility, see [FEATURES.md](docs/features.md).
+
+## Documentation
+
+For detailed usage and examples, visit the [official documentation](https://csarcrr.github.io/invoicing-integration/#/).
+
+- [Getting Started](docs/getting-started.md)
+- [Creating an Invoice](docs/invoices/creating-an-invoice.md)
+- [Creating a Receipt (RG)](docs/invoices/creating-a-RG-for-an-invoice.md)
+- [Creating a Credit Note (NC)](docs/invoices/creating-a-nc-invoice.md)
+- [Output Formats](docs/invoices/outputting-invoice.md)
+- [API Reference](docs/api-reference.md)
 
 ## Testing
 
@@ -77,8 +159,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
--   [csarcrr](https://github.com/csarcrr)
--   [All Contributors](../../contributors)
+- [csarcrr](https://github.com/csarcrr)
+- [All Contributors](../../contributors)
 
 ## License
 

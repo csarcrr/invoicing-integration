@@ -1,182 +1,327 @@
 # API Reference
 
-## Main Classes
+Complete reference for the Invoicing Integration package classes, methods, and enums.
 
+## Invoice Facade
 
-### InvoicingIntegration
+Entry point for creating invoices.
 
--   `__construct(string $provider)` — Create a new invoicing integration instance with the specified provider.
--   `create(): self` — Initialize the integration (returns self for method chaining).
--   `setClient(Client $client): self` — Set the client for the invoice. **Optional for final consumer invoices:** do not call this method if invoicing to a final consumer.
--   `addItem(Item $item): self` — Add an item to the invoice.
--   `addPayment(Payment $payment): self` — Add a payment to the invoice.
--   `setType(InvoiceType $type): self` — Set the document type.
--   `setDate(Carbon $date): self` — Set the invoice date (Default: ``date('Y-m-d')``).
--   `setDueDate(Carbon $dateDue): self` — Set the due date (cannot be in the past).
--   `addRelatedDocument(string $relatedDocument): self` — Add a related document.
--   `setTransport(?TransportDetails $transport): self` — Set transport details.
--   `asEscPos(): self` — Sets the output format type to ESCPOS.
--   `invoice(): InvoiceData` — Generate and send the invoice.
--   `get(): self` — Returns the current instance.
+```php
+use CsarCrr\InvoicingIntegration\Invoice;
+```
 
-**Getter Methods:**
--   `client(): ?Client` — Get the current client.
--   `payments(): Collection` — Get all payments.
--   `items(): Collection` — Get all items.
--   `relatedDocuments(): Collection` — Get all related documents.
--   `type(): InvoiceType` — Get the document type.
--   `date(): Carbon` — Get the invoice date.
--   `dueDate(): ?Carbon` — Get the due date.
--   `transport(): ?TransportDetails` — Get transport details.
--   `outputFormat(): OutputFormat` — Get the current output format.
+| Method              | Return Type     | Description                            |
+| ------------------- | --------------- | -------------------------------------- |
+| `Invoice::create()` | `CreateInvoice` | Creates a new invoice builder instance |
 
-> **Note:** For final consumer invoices, do not set any client information (do not call `setClient`).
+## CreateInvoice Contract
 
+The builder interface returned by `Invoice::create()`. All methods return `self` for chaining unless otherwise noted.
 
-### Client
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+```
 
-**Constructor:**
--   `__construct(?string $vat = null, ?string $name = null)` — Create a new client with optional VAT and name.
+### Builder Methods
 
-**Public Properties:**
--   `$vat` — Client VAT number.
--   `$name` — Client name.
+| Method                                         | Parameters                         | Description                                      |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ |
+| `client(Client $client)`                       | Client object                      | Set client details (optional for final consumer) |
+| `item(Item $item)`                             | Item object                        | Add an item to the invoice                       |
+| `payment(Payment $payment)`                    | Payment object                     | Add a payment to the invoice                     |
+| `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            |
+| `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  |
+| `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           |
+| `outputFormat(OutputFormat $format)`           | OutputFormat enum                  | Set output format (PDF or ESC/POS)               |
+| `relatedDocument(int\|string $doc, ?int $row)` | Document ID/sequence, optional row | Link to related document                         |
+| `creditNoteReason(string $reason)`             | Reason text                        | Set credit note reason (NC only)                 |
+| `notes(string $notes)`                         | Notes text                         | Add notes to the invoice                         |
 
-**Getter Methods:**
--   `vat(): ?string` — Get the VAT number.
--   `name(): ?string` — Get the client name.
--   `address(): ?string` — Get the address.
--   `city(): ?string` — Get the city.
--   `postalCode(): ?string` — Get the postal code.
--   `country(): ?string` — Get the country.
--   `email(): ?string` — Get the email.
--   `phone(): ?string` — Get the phone number.
+### Execution Method
 
-**Setter Methods:**
--   `setVat(?string $vat): void` — Set the VAT number.
--   `setName(?string $name): void` — Set the client name.
--   `setAddress(?string $address): void` — Set the address.
--   `setCity(?string $city): void` — Set the city.
--   `setPostalCode(?string $postalCode): void` — Set the postal code.
--   `setCountry(?string $country): void` — Set the country.
--   `setEmail(?string $email): void` — Set the email.
--   `setPhone(?string $phone): void` — Set the phone number.
+| Method      | Return Type             | Description                         |
+| ----------- | ----------------------- | ----------------------------------- |
+| `invoice()` | `Invoice` (ValueObject) | Issue the invoice and return result |
 
-> **Note:** Only required for non-final-consumer invoices.
+### Getter Methods
 
-
-### Item
-
-**Constructor:**
--   `__construct(null|int|string $reference = null, ?int $quantity = null)` — Create a new item with optional reference and quantity (defaults to 1).
-
-**Getter Methods:**
--   `reference(): int|string` — Get the product reference.
--   `quantity(): int` — Get the quantity.
--   `price(): ?int` — Get the price (in cents).
--   `note(): ?string` — Get the note/description.
--   `type(): ?ItemType` — Get the item type.
--   `tax(): ?DocumentItemTax` — Get the tax type.
--   `taxExemption(): ?TaxExemptionReason` — Get the tax exemption reason.
--   `taxExemptionLaw(): ?string` — Get the tax exemption law.
--   `amountDiscount(): ?int` — Get the amount discount.
--   `percentageDiscount(): ?int` — Get the percentage discount.
-
-**Setter Methods:**
--   `setReference(int|string $reference): void` — Set the product reference.
--   `setQuantity(int $quantity): void` — Set the quantity.
--   `setPrice(int $price): void` — Set price (in cents).
--   `setNote(string $note): void` — Set item description/note.
--   `setType(ItemType $type): self` — Set the item type.
--   `setTax(?DocumentItemTax $tax = null): self` — Set tax type.
--   `setTaxExemption(?TaxExemptionReason $reason = null): self` — Set tax exemption reason (only for exempt tax).
--   `setTaxExemptionLaw(string $law): self` — Set exemption law (requires exemption reason).
--   `setAmountDiscount(int $amount): self` — Set amount discount.
--   `setPercentageDiscount(int $percent): self` — Set percentage discount.
-
-> **Note:** At least one item is required for every invoice (except receipts).
-
-
-### Payment
-
-**Constructor:**
--   `__construct(?PaymentMethod $method = null, ?int $amount = null)` — Create a new payment with optional method and amount.
-
-**Getter Methods:**
--   `method(): ?PaymentMethod` — Get the payment method.
--   `amount(): ?int` — Get the payment amount (in cents).
-
-**Setter Methods:**
--   `setMethod(PaymentMethod $method): self` — Set the payment method.
--   `setAmount(int $amount): self` — Set the payment amount (in cents).
-
-> **Note:** At least one payment is required for every invoice.
-
-
-### TransportDetails
-
-**Methods:**
--   `origin(): self` — Set the context to origin for subsequent operations.
--   `destination(): self` — Set the context to destination for subsequent operations.
--   `vehicleLicensePlate(?string $vehicleLicensePlate = null): ?string` — Get or set the vehicle license plate.
-
-> **Note:** Used for transport documents and logistics information.
-
-
-### InvoiceData
-
-The return type from the `invoice()` method containing the generated invoice information.
-
-**Methods:**
--   `id(): int` — Get the invoice ID.
--   `sequence(): string` — Get the invoice sequence number.
--   `output(): Output` — Get the output data (PDF, ESCPOS, etc.).
--   `setId(int $id): self` — Set the invoice ID.
--   `setSequence(string $sequence): self` — Set the sequence number.
--   `setOutput(Output $output): self` — Set the output data.
-
-
-## Enums
-
-
-### InvoiceType
-
-Available document types:
--   `InvoiceType::Invoice` — Regular invoice (FT)
--   `InvoiceType::InvoiceReceipt` — Invoice receipt (FR)
--   `InvoiceType::InvoiceSimple` — Simplified invoice (FS)
--   `InvoiceType::Receipt` — Receipt (RG)
--   `InvoiceType::Transport` — Transport document (GT)
--   `InvoiceType::CreditNote` — Credit note (NC)
-
-
-### PaymentMethod
-
-Available payment methods:
--   `PaymentMethod::MONEY` — Cash payment
--   `PaymentMethod::MB` — ATM/Debit card
--   `PaymentMethod::CREDIT_CARD` — Credit card
--   `PaymentMethod::MONEY_TRANSFER` — Bank transfer
--   `PaymentMethod::CURRENT_ACCOUNT` — Current account
-
-
-### DocumentItemTax
-
-Available tax rates:
--   `DocumentItemTax::NORMAL` — Normal tax rate
--   `DocumentItemTax::INTERMEDIATE` — Intermediate tax rate
--   `DocumentItemTax::REDUCED` — Reduced tax rate
--   `DocumentItemTax::EXEMPT` — Tax exempt
--   `DocumentItemTax::OTHER` — Other tax rate
-
-
-### TaxExemptionReason
-
-Tax exemption reasons (Portuguese tax system codes):
--   `TaxExemptionReason::M01` through `TaxExemptionReason::M30` — Various exemption reasons as defined by Portuguese tax authority.
-
-> **Note:** Use only when `DocumentItemTax::EXEMPT` is set on an item.
+| Method                  | Return Type         | Description                      |
+| ----------------------- | ------------------- | -------------------------------- |
+| `getClient()`           | `?Client`           | Get the current client           |
+| `getItems()`            | `Collection`        | Get all items                    |
+| `getPayments()`         | `Collection`        | Get all payments                 |
+| `getTransport()`        | `?TransportDetails` | Get transport details            |
+| `getType()`             | `InvoiceType`       | Get document type                |
+| `getOutputFormat()`     | `OutputFormat`      | Get output format                |
+| `getRelatedDocument()`  | `int\|string\|null` | Get related document reference   |
+| `getCreditNoteReason()` | `?string`           | Get credit note reason           |
+| `getNotes()`            | `?string`           | Get invoice notes                |
+| `getPayload()`          | `Collection`        | Get the prepared request payload |
 
 ---
 
-For more details, see the source code in the `src/` directory.
+## Value Objects
+
+### Client
+
+```php
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+```
+
+**Constructor:**
+
+```php
+new Client()
+```
+
+**Methods (fluent, return self):**
+
+| Method                           | Parameter         | Description           |
+| -------------------------------- | ----------------- | --------------------- |
+| `address(string $address)`       | Address string    | Set street address    |
+| `city(string $city)`             | City name         | Set city              |
+| `postalCode(string $postalCode)` | Postal code       | Set postal code       |
+| `country(string $country)`       | ISO 2-letter code | Set country           |
+| `email(string $email)`           | Email address     | Set email (validated) |
+| `phone(string $phone)`           | Phone number      | Set phone             |
+| `irsRetention(bool $retention)`  | Boolean           | Enable IRS retention  |
+
+**Getter Methods:**
+
+| Method              | Return Type |
+| ------------------- | ----------- |
+| `getName()`         | `?string`   |
+| `getVat()`          | `?string`   |
+| `getAddress()`      | `?string`   |
+| `getCity()`         | `?string`   |
+| `getPostalCode()`   | `?string`   |
+| `getCountry()`      | `?string`   |
+| `getEmail()`        | `?string`   |
+| `getPhone()`        | `?string`   |
+| `getIrsRetention()` | `?bool`     |
+
+---
+
+### Item
+
+```php
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+```
+
+**Constructor:**
+
+```php
+new Item()
+```
+
+**Methods (fluent, return self):**
+
+| Method                                     | Parameter             | Description                   |
+| ------------------------------------------ | --------------------- | ----------------------------- |
+| `reference(string $reference)`             | Product SKU/code      | Set product reference         |
+| `quantity(int $quantity)`                  | Quantity              | Set quantity (default: 1)     |
+| `price(int $price)`                        | Price in cents        | Set unit price                |
+| `note(string $note)`                       | Description           | Set item description          |
+| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                  |
+| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason          |
+| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law             |
+| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount            |
+| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount       |
+| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC) |
+
+**Getter Methods:**
+
+| Method                    | Return Type           |
+| ------------------------- | --------------------- |
+| `getReference()`          | `?string`             |
+| `getQuantity()`           | `int`                 |
+| `getPrice()`              | `?int`                |
+| `getNote()`               | `?string`             |
+| `getTax()`                | `?ItemTax`            |
+| `getTaxExemption()`       | `?TaxExemptionReason` |
+| `getTaxExemptionLaw()`    | `?string`             |
+| `getAmountDiscount()`     | `?int`                |
+| `getPercentageDiscount()` | `?int`                |
+
+---
+
+### Payment
+
+```php
+use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+```
+
+**Constructor:**
+
+```php
+new Payment()
+```
+
+**Methods (fluent, return self):**
+
+| Method                          | Parameter          | Description        |
+| ------------------------------- | ------------------ | ------------------ |
+| `method(PaymentMethod $method)` | PaymentMethod enum | Set payment method |
+| `amount(int $amount)`           | Amount in cents    | Set payment amount |
+
+**Getter Methods:**
+
+| Method        | Return Type      |
+| ------------- | ---------------- |
+| `getMethod()` | `?PaymentMethod` |
+| `getAmount()` | `?int`           |
+
+---
+
+### TransportDetails
+
+```php
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+```
+
+**Constructor:**
+
+```php
+new TransportDetails()
+```
+
+**Context Methods:**
+
+| Method          | Return Type | Description                         |
+| --------------- | ----------- | ----------------------------------- |
+| `origin()`      | `self`      | Set context to origin location      |
+| `destination()` | `self`      | Set context to destination location |
+
+**Location Methods (call after origin() or destination()):**
+
+| Method                           | Parameter         | Description     |
+| -------------------------------- | ----------------- | --------------- |
+| `address(string $address)`       | Address string    | Set address     |
+| `city(string $city)`             | City name         | Set city        |
+| `postalCode(string $postalCode)` | Postal code       | Set postal code |
+| `country(string $country)`       | ISO 2-letter code | Set country     |
+| `date(Carbon $date)`             | Carbon date       | Set date        |
+| `time(Carbon $time)`             | Carbon time       | Set time        |
+
+**Other Methods:**
+
+| Method                               | Parameter     | Description       |
+| ------------------------------------ | ------------- | ----------------- |
+| `vehicleLicensePlate(string $plate)` | License plate | Set vehicle plate |
+
+---
+
+### Invoice (Response)
+
+```php
+use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
+```
+
+Returned by `invoice()` method after issuing.
+
+**Methods:**
+
+| Method          | Return Type | Description                             |
+| --------------- | ----------- | --------------------------------------- |
+| `getId()`       | `int`       | Provider's internal ID                  |
+| `getSequence()` | `string`    | Invoice sequence (e.g., "FT 01P2025/1") |
+| `getOutput()`   | `Output`    | Output object for PDF/ESC/POS           |
+
+---
+
+### Output
+
+```php
+use CsarCrr\InvoicingIntegration\ValueObjects\Output;
+```
+
+**Methods:**
+
+| Method               | Return Type | Description                        |
+| -------------------- | ----------- | ---------------------------------- |
+| `fileName()`         | `string`    | Auto-generated filename            |
+| `save(string $path)` | `string`    | Save to storage, returns full path |
+
+---
+
+## Enums
+
+### InvoiceType
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+```
+
+| Value            | Code | Description        |
+| ---------------- | ---- | ------------------ |
+| `Invoice`        | FT   | Regular invoice    |
+| `InvoiceReceipt` | FR   | Invoice receipt    |
+| `InvoiceSimple`  | FS   | Simplified invoice |
+| `Receipt`        | RG   | Receipt            |
+| `CreditNote`     | NC   | Credit note        |
+| `Transport`      | GT   | Transport document |
+
+### PaymentMethod
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+```
+
+| Value             | Description     |
+| ----------------- | --------------- |
+| `MONEY`           | Cash payment    |
+| `MB`              | ATM/Multibanco  |
+| `CREDIT_CARD`     | Credit card     |
+| `MONEY_TRANSFER`  | Bank transfer   |
+| `CURRENT_ACCOUNT` | Current account |
+
+### ItemTax
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+```
+
+| Value          | Description             |
+| -------------- | ----------------------- |
+| `NORMAL`       | Normal VAT rate (23%)   |
+| `INTERMEDIATE` | Intermediate rate (13%) |
+| `REDUCED`      | Reduced rate (6%)       |
+| `EXEMPT`       | Tax exempt              |
+| `OTHER`        | Other tax rate          |
+
+### TaxExemptionReason
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+```
+
+Portuguese tax exemption codes: `M01` through `M30`
+
+Use `TaxExemptionReason::M04->laws()` to get applicable law references.
+
+### OutputFormat
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+```
+
+| Value        | Description                    |
+| ------------ | ------------------------------ |
+| `PDF_BASE64` | PDF document (base64 encoded)  |
+| `ESCPOS`     | ESC/POS thermal printer format |
+
+---
+
+## Exceptions
+
+| Exception                             | When Thrown                        |
+| ------------------------------------- | ---------------------------------- |
+| `InvoiceRequiresClientVatException`   | Client provided with empty VAT     |
+| `InvoiceRequiresVatWhenClientHasName` | Client has name but no VAT         |
+| `CreditNoteReasonIsMissingException`  | NC type without credit note reason |
+| `NeedsDateToSetLoadPointException`    | Transport without origin date      |
+| `InvalidCountryException`             | Invalid ISO country code           |
+
+---
+
+For more details, see the source code in `src/` or the tests in `tests/Unit/Invoice/`.

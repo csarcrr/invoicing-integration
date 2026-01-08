@@ -58,8 +58,7 @@ it('can save the output to pdf', function (CreateInvoice $invoice, Fixtures $fix
     $output = $data->getOutput()->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')
-        ->assertExists($path);
+    Storage::disk('local')->assertExists($path);
 })->with('create-invoice', 'providers', ['output_with_pdf']);
 
 it('can output escpos', function (CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider, string $fixtureName) {
@@ -78,6 +77,29 @@ it('can output escpos', function (CreateInvoice $invoice, Fixtures $fixture, Int
     $output = $data->getOutput()->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')
-        ->assertExists($path);
+    Storage::disk('local')->assertExists($path);
 })->with('create-invoice', 'providers', ['output_with_escpos']);
+
+it('can save the output under a custom name and path', function (
+    CreateInvoice $invoice,
+    Fixtures $fixture,
+    IntegrationProvider $provider,
+    string $fixtureName
+) {
+    Http::fake(
+        mockResponse(
+            $provider,
+            $fixture->response()->invoice()->output()->files($fixtureName)
+        )
+    );
+
+    $invoice->item(new Item(reference: 'item-1'));
+    $data = $invoice->invoice();
+
+    $path = 'invoice/custom-name.pdf';
+
+    $output = $data->getOutput()->save($path);
+
+    expect($output)->toBeString();
+    Storage::disk('local')->assertExists($path);
+})->with('create-invoice', 'providers', ['output_with_pdf']);

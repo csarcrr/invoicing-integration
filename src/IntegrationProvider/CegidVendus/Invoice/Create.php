@@ -409,7 +409,7 @@ class Create implements CreateInvoice, HasConfig
     protected function throwErrors(array $errors): void
     {
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'] . ' - ' . $error['message'] : 'Unknown error';
+            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
