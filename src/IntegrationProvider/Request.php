@@ -44,10 +44,12 @@ final class Request
 
     protected function cegidVendus(): PendingRequest
     {
-
         return Http::withHeader(
             'Authorization',
             'Bearer '.$this->getConfig()->get('key')
-        )->baseUrl('https://www.vendus.pt/ws/v1.1/');
+        )
+            ->baseUrl('https://www.vendus.pt/ws/v1.1/')
+            ->timeout(30)
+            ->connectTimeout(10);
     }
 }
