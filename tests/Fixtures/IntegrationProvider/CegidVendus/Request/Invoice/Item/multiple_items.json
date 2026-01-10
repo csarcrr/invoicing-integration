@@ -1,0 +1,14 @@
+{
+    "items" : [
+        {
+            "reference": "reference-1",
+            "qty": 1,
+            "type_id": "P"
+        },
+        {
+            "reference": "reference-2",
+            "qty": 1,
+            "type_id": "P"
+        }
+    ]
+}

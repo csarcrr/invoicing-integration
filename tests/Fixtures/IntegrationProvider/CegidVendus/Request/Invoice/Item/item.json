@@ -1,0 +1,13 @@
+{
+    "items" : [
+        {
+            "reference": "reference-1",
+            "gross_price": 10,
+            "qty": 2,
+            "type_id": "P",
+            "note": "This is a test item",
+            "discount_percent": 10,
+            "discount_amount": 0.5
+        }
+    ]
+}

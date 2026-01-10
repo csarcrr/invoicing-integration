@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
-use Illuminate\Contracts\Foundation\Application;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Invoice as InvoicingIntegrationInvoice;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -13,31 +14,16 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
     public function bootingPackage(): void
     {
-        $this->app->bind('invoice', function () {
-            $config = config('invoicing-integration');
+        $this->app->when(InvoicingIntegrationInvoice::class)
+            ->needs(IntegrationProvider::class)
+            ->give(function () {
+                return IntegrationProvider::from(config('invoicing-integration.provider'));
+            });
 
-            $this->guardAgainstInvalidConfig($config);
-
-            return new InvoicingIntegration($config['provider']);
-        });
-
-        $this->app->bind(
-            'cegid_vendus',
-            function (Application $app, array $parameters) {
-                $invoicing = $parameters['invoicing'] ?? throw new \InvalidArgumentException('Invoicing instance is required to instantiate the CegidVendus provider.');
-
-                $config = config('invoicing-integration');
-
-                $this->guardAgainstInvalidProviderConfig($config['providers'][$config['provider']]);
-
-                return new CegidVendus(
-                    apiKey: $config['providers'][$config['provider']]['key'],
-                    mode: $config['providers'][$config['provider']]['mode'],
-                    options: collect($config['providers'][$config['provider']]['config']),
-                    invoicing: $invoicing,
-                );
-            }
-        );
+        $this->app->when(CreateInvoice::class)
+            ->give(function () {
+                $config = config('invoicing-integration.provider');
+            });
     }
 
     public function configurePackage(Package $package): void

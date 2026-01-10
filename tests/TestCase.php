@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration\Tests;
 
 use CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider;
