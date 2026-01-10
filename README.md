@@ -56,6 +56,8 @@ See [Cegid Vendus Configuration](docs/providers/cegid-vendus/configuration.md) f
 
 ## Quick Start
 
+Issuing a simple FT invoice.
+
 ```php
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
@@ -63,36 +65,17 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
-// Create an invoice
-$invoice = Invoice::create();
-
-// (Optional) Add client details - skip for final consumer invoices
-$client = new Client();
-$client->name('John Doe');
-$client->vat('123456789');
-$invoice->client($client);
-
-// Add items (price in cents)
 $item = new Item();
 $item->reference('SKU-001');
-$item->price(1000);
-$item->quantity(2);
-$item->note('Product description');
+
+$invoice = Invoice::create();
 $invoice->item($item);
 
-// Add payment (required for FR, FS, RG, NC document types)
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(2000);
-$invoice->payment($payment);
-
-// Issue the invoice
 $result = $invoice->invoice();
 
-// Access invoice data
 echo $result->getSequence();  // e.g., "FT 01P2025/1"
 
-// Save the PDF
+// Save the PDF (when available)
 $path = $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
 ```
 
