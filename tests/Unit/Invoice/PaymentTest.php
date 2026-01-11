@@ -20,7 +20,7 @@ it('can assign a payment', function (CreateInvoice $invoice, Fixtures $fixture) 
     $invoice->payment($payment);
 
     expect($invoice->getPayments())->toHaveCount(1);
-})->with('create-invoice');
+})->with('invoice-full');
 
 it('can assign multiple payments', function (CreateInvoice $invoice, Fixtures $fixture) {
     $item = new Item(reference: 'reference-1');
@@ -33,7 +33,7 @@ it('can assign multiple payments', function (CreateInvoice $invoice, Fixtures $f
     $invoice->payment($payment2);
 
     expect($invoice->getPayments())->toHaveCount(2);
-})->with('create-invoice');
+})->with('invoice-full');
 
 it('has expected payload', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
     $data = $fixture->request()->invoice()->payment()->files($fixtureName);
@@ -45,7 +45,7 @@ it('has expected payload', function (CreateInvoice $invoice, Fixtures $fixture, 
     $invoice->payment($payment);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['payment']);
+})->with('invoice-full', ['payment']);
 
 it('has expected payload with multiple payments', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
     $data = $fixture->request()->invoice()->payment()->files($fixtureName);
@@ -65,7 +65,7 @@ it('has expected payload with multiple payments', function (CreateInvoice $invoi
     $invoice->payment($payment2);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['payment_multiple']);
+})->with('invoice-full', ['payment_multiple']);
 
 it('throws error when configuration is not set', function (CreateInvoice $invoice) {
     config()->set('invoicing-integration.providers.'.IntegrationProvider::CEGID_VENDUS->value.'.config', [

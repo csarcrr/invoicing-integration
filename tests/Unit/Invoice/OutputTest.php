@@ -15,7 +15,7 @@ it('has pdf has the default output', function (
     Fixtures $fixture
 ) {
     expect($invoice->getOutputFormat())->toBe(OutputFormat::PDF_BASE64);
-})->with('create-invoice');
+})->with('invoice-full');
 
 it('has the correct payload to request a pdf response', function (
     CreateInvoice $invoice,
@@ -27,7 +27,7 @@ it('has the correct payload to request a pdf response', function (
     $invoice->item(new Item(reference: 'item-1'));
     $invoice->outputFormat(OutputFormat::PDF_BASE64);
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['has_pdf']);
+})->with('invoice-full', ['has_pdf']);
 
 it('has the correct payload to request a escpos response', function (
     CreateInvoice $invoice,
@@ -40,7 +40,7 @@ it('has the correct payload to request a escpos response', function (
     $invoice->outputFormat(OutputFormat::ESCPOS);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['has_escpos']);
+})->with('invoice-full', ['has_escpos']);
 
 it('can save the output to pdf', function (CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider, string $fixtureName) {
     Http::fake(
@@ -59,7 +59,7 @@ it('can save the output to pdf', function (CreateInvoice $invoice, Fixtures $fix
 
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($path);
-})->with('create-invoice', 'providers', ['output_with_pdf']);
+})->with('invoice-full', 'providers', ['output_with_pdf']);
 
 it('can output escpos', function (CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider, string $fixtureName) {
     Http::fake(
@@ -78,7 +78,7 @@ it('can output escpos', function (CreateInvoice $invoice, Fixtures $fixture, Int
 
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($path);
-})->with('create-invoice', 'providers', ['output_with_escpos']);
+})->with('invoice-full', 'providers', ['output_with_escpos']);
 
 it('can save the output under a custom name and path', function (
     CreateInvoice $invoice,
@@ -102,7 +102,7 @@ it('can save the output under a custom name and path', function (
 
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($path);
-})->with('create-invoice', 'providers', ['output_with_pdf']);
+})->with('invoice-full', 'providers', ['output_with_pdf']);
 
 it('is able to sanitize the path and filename when saving', function (
     CreateInvoice $invoice,
@@ -127,7 +127,7 @@ it('is able to sanitize the path and filename when saving', function (
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($expectedPath);
 })
-    ->with('create-invoice', 'providers', ['output_with_pdf'])
+    ->with('invoice-full', 'providers', ['output_with_pdf'])
     ->with([
         ['/absolute/path/file.pdf', 'absolute/path/file.pdf'],
         ['\\windows\\path\\file.pdf', 'windows\\path\\file.pdf'],

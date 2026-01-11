@@ -25,4 +25,4 @@ it('it has the valid invoice data after issuing', function (CreateInvoice $creat
     expect($invoice->getSequence())->not->toBeEmpty();
     expect($invoice->getTotal())->not->toBeEmpty();
     expect($invoice->getOutput())->not->toBeEmpty();
-})->with('create-invoice', 'providers', ['full']);
+})->with('invoice-full', 'providers', ['full']);

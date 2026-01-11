@@ -14,20 +14,22 @@ use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
-dataset('create-invoice', [
-    [
-        function (): CreateInvoice { // resets the state for each test
-            mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+function invoice (): CreateInvoice {
+    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+    return CegidVendus::invoice(Action::CREATE);
+}
 
-            return CegidVendus::invoice(Action::CREATE);
-        },
+dataset('invoice', [
+    [
+        fn() => invoice()
+    ],
+]);
+
+dataset('invoice-full', [
+    [
+        fn() => invoice(),
         fn (): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS),
     ],
-
-    // [function () {
-    //     mockConfiguration(IntegrationProvider::MOLONI);
-    //     return Moloni::invoice(Action::CREATE);
-    // }],
 ]);
 
 dataset('providers', [

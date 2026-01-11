@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
@@ -174,11 +175,6 @@ class Create implements CreateInvoice, HasConfig
         }
 
         throw_if(
-            ! in_array($this->getType(), [InvoiceType::Invoice, InvoiceType::Transport]),
-            InvoiceTypeDoesNotSupportTransportException::class
-        );
-
-        throw_if(
             is_null($this->getTransport()->origin()->getDate()),
             NeedsDateToSetLoadPointException::class
         );
@@ -249,15 +245,6 @@ class Create implements CreateInvoice, HasConfig
 
     protected function buildPayments(): void
     {
-
-        throw_if(
-            in_array(
-                $this->getType(),
-                $this->invoiceTypesThatRequirePayments
-            ) && $this->getPayments()->isEmpty(),
-            MissingPaymentWhenIssuingReceiptException::class,
-        );
-
         if ($this->getPayments()->isEmpty()) {
             return;
         }
@@ -281,12 +268,6 @@ class Create implements CreateInvoice, HasConfig
         if ($this->getType() === InvoiceType::Receipt) {
             return;
         }
-
-        throw_if(
-            $this->getItems()->isEmpty(),
-            InvoiceItemIsNotValidException::class,
-            'The invoice must have at least one item.'
-        );
 
         /** @var \Illuminate\Support\Collection $items */
         $items = $this->getItems()->map(function (Item $item): array {
@@ -335,8 +316,7 @@ class Create implements CreateInvoice, HasConfig
             if ($this->getType() === InvoiceType::CreditNote) {
                 throw_if(
                     ! $item->getRelatedDocument(),
-                    InvoiceItemIsNotValidException::class,
-                    'Credit Note items must have a related document set.'
+                    MissingRelatedDocumentException::class
                 );
 
                 $data['reference_document'] = [
@@ -347,6 +327,10 @@ class Create implements CreateInvoice, HasConfig
 
             return $data;
         });
+
+        if($items->isEmpty()) {
+            return ;
+        }
 
         $this->payload->put('items', $items);
     }

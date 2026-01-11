@@ -20,7 +20,7 @@ it('has the simple client payload', function (CreateInvoice $invoice, Fixtures $
 
     expect($invoice->getClient())->toBeInstanceOf(Client::class);
     expect($invoice->getClient()->getName())->toBe('John Doe');
-})->with('create-invoice');
+})->with('invoice-full');
 
 it('has the correct full client payload', function (
     CreateInvoice $invoice,
@@ -48,7 +48,7 @@ it('has the correct full client payload', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['complete_client']);
+})->with('invoice-full', ['complete_client']);
 
 it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fixture) {
     $client = new Client(
@@ -63,7 +63,7 @@ it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fi
     $invoice->client($client);
 
     $invoice->getPayload();
-})->with('create-invoice')->throws(InvoiceRequiresClientVatException::class);
+})->with('invoice-full')->throws(InvoiceRequiresClientVatException::class);
 
 it('fails when name is provided but vat is missing', function (
     CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider
@@ -84,4 +84,4 @@ it('fails when name is provided but vat is missing', function (
     $invoice->client($client);
 
     $invoice->getPayload();
-})->with('create-invoice', 'providers')->throws(InvoiceRequiresVatWhenClientHasName::class);
+})->with('invoice-full', 'providers')->throws(InvoiceRequiresVatWhenClientHasName::class);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
@@ -26,7 +27,7 @@ it('can assign an item with all properties', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['item']);
+})->with('invoice-full', ['item']);
 
 it('can assign multiple items', function (
     CreateInvoice $invoice,
@@ -39,7 +40,7 @@ it('can assign multiple items', function (
     $invoice->item(new Item('reference-2'));
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['multiple_items']);
+})->with('invoice-full', ['multiple_items']);
 
 it('correctly applies custom taxes', function (
     CreateInvoice $invoice,
@@ -59,4 +60,17 @@ it('correctly applies custom taxes', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['item_tax_ise']);
+})->with('invoice-full', ['item_tax_ise']);
+
+it('has the item always with the default quantity of one', function () {
+    $item = new Item('reference-1');
+
+    expect($item->getQuantity())->toBe(1);
+});
+
+it('fails when unsupported quantities are provided', function (mixed $invalidQuantity) {
+    $item = new Item('reference-1');
+    $item->quantity($invalidQuantity);
+
+    expect($item->getQuantity())->toBe(1);
+})->with([-1,0])->throws(UnsupportedQuantityException::class);

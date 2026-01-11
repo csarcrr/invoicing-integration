@@ -20,4 +20,4 @@ it('handles invoicing errors properly', function (
 
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->invoice();
-})->with('create-invoice', ['invoice_fail'], 'providers')->throws(RequestFailedException::class);
+})->with('invoice-full', ['invoice_fail'], 'providers')->throws(RequestFailedException::class);
