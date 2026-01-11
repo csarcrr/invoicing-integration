@@ -14,7 +14,6 @@ it('has the default type as FT', function (CreateInvoice $invoice, Fixtures $fix
     $invoice->item(new Item(reference: 'reference-1'));
 
     expect($invoice->getPayload())->toMatchArray($data);
-
 })->with('invoice-full', ['default_type']);
 
 it('has the correct payload for invoices', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName, InvoiceType $type) {
@@ -29,4 +28,6 @@ it('has the correct payload for invoices', function (CreateInvoice $invoice, Fix
     ['default_type', InvoiceType::Invoice],
     ['fr_type', InvoiceType::InvoiceReceipt],
     ['fs_type', InvoiceType::InvoiceSimple],
+    ['rg_type', InvoiceType::Receipt],
+    ['gt_type', InvoiceType::Transport],
 ]);
