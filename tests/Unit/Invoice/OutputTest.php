@@ -103,3 +103,43 @@ it('can save the output under a custom name and path', function (
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($path);
 })->with('create-invoice', 'providers', ['output_with_pdf']);
+
+it('is able to sanitize the path and filename when saving', function (
+    CreateInvoice $invoice,
+    Fixtures $fixture,
+    IntegrationProvider $provider,
+    string $fixtureName,
+    string $invalidPath,
+    string $expectedPath
+) {
+    Http::fake(
+        mockResponse(
+            $provider,
+            $fixture->response()->invoice()->output()->files($fixtureName)
+        )
+    );
+
+    $invoice->item(new Item(reference: 'item-1'));
+    $data = $invoice->invoice();
+
+    $output = $data->getOutput()->save($invalidPath);
+
+    expect($output)->toBeString();
+    Storage::disk('local')->assertExists($expectedPath);
+})
+    ->with('create-invoice', 'providers')
+    ->with([
+        ['output_with_pdf', '/absolute/path/file.pdf', 'absolute/path/file.pdf'],
+        ['output_with_pdf', '\\windows\\path\\file.pdf', 'windows\\path\\file.pdf'],
+        ['output_with_pdf', '//double/slash.pdf', 'double/slash.pdf'],
+        ['output_with_pdf', '../../../etc/passwd', 'etc/passwd'],
+        ['output_with_pdf', 'invoices/../../../secret', 'invoices/secret'],
+        ['output_with_pdf', '..\\..\\windows\\system32', 'windows\\system32'],
+        ['output_with_pdf', 'foo/..bar/baz', 'foo/bar/baz'],
+        ['output_with_pdf', "file\x00name.pdf", 'file_name.pdf'],
+        ['output_with_pdf', "file\x0Aname.pdf", 'file_name.pdf'],
+        ['output_with_pdf', "file\x09name.pdf", 'file_name.pdf'],
+        ['output_with_pdf', "file\x0Dname.pdf", 'file_name.pdf'],
+        ['output_with_pdf', '/../../../\x00etc/passwd', 'etc/passwd']
+
+    ]);
