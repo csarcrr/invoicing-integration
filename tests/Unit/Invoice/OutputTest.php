@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoices\InvoiceWithoutOutputException;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use Illuminate\Support\Facades\Http;
@@ -149,3 +150,23 @@ it('is able to sanitize the path and filename when saving', function (
         ['Émojis 🎉 Test', 'emojis__test.pdf'],
         ['CamelCaseFileName', 'camelcasefilename.pdf'],
     ]);
+
+it('outputs null when there is no invoice output provided', function (
+    CreateInvoice $invoice,
+    Fixtures $fixture,
+    IntegrationProvider $provider,
+    string $fixtureName
+) {
+    Http::fake(
+        mockResponse(
+            $provider,
+            $fixture->response()->invoice()->output()->files($fixtureName)
+        )
+    );
+
+    $invoice->item(new Item(reference: 'item-1'));
+    $data = $invoice->invoice();
+
+    $data->getOutput();
+})->with('invoice-full', 'providers', ['output_with_no_output'])
+    ->throws(InvoiceWithoutOutputException::class);

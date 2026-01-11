@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
 use CsarCrr\InvoicingIntegration\Contracts\HasData;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoices\InvoiceWithoutOutputException;
 
 class Invoice implements HasData
 {
@@ -12,7 +13,7 @@ class Invoice implements HasData
 
     protected string $sequence;
 
-    protected Output $output;
+    protected ?Output $output = null;
 
     protected ?string $atcudHash = null;
 
@@ -34,6 +35,8 @@ class Invoice implements HasData
 
     public function getOutput(): Output
     {
+        throw_if(is_null($this->output), InvoiceWithoutOutputException::class);
+
         return $this->output;
     }
 
