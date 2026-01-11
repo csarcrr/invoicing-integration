@@ -2,7 +2,7 @@
 
 Complete reference for the Invoicing Integration package classes, methods, and enums.
 
-## Invoice Facade
+## Invoice
 
 Entry point for creating invoices.
 
@@ -314,6 +314,8 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 ## Exceptions
 
+### Validation Exceptions
+
 | Exception                             | When Thrown                                     |
 | ------------------------------------- | ----------------------------------------------- |
 | `InvoiceRequiresClientVatException`   | Client provided with empty VAT                  |
@@ -324,6 +326,14 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 | `InvoiceWithoutOutputException`       | Calling `getOutput()` when no output is present |
 | `UnsupportedQuantityException`        | Item quantity is zero or negative               |
 | `MissingRelatedDocumentException`     | Credit note item without related document       |
+
+### Provider Exceptions
+
+| Exception                         | When Thrown                              |
+| --------------------------------- | ---------------------------------------- |
+| `RequestFailedException`          | Provider returned an error response      |
+| `UnauthorizedException`           | Invalid or missing API credentials (401) |
+| `FailedReachingProviderException` | Provider is unreachable or returned 500  |
 
 ---
 
