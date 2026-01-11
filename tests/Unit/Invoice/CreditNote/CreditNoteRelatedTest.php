@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocument
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('fails when not reason is provided on the item', function (
+it('fails when no reason is provided on the item', function (
     CreateInvoice $invoice, Fixtures $fixture
 ) {
     $item = new Item(reference: 'reference-1');
