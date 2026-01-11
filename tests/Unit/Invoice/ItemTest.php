@@ -73,4 +73,4 @@ it('fails when unsupported quantities are provided', function (mixed $invalidQua
     $item->quantity($invalidQuantity);
 
     expect($item->getQuantity())->toBe(1);
-})->with([-1,0])->throws(UnsupportedQuantityException::class);
+})->with([-1, 0])->throws(UnsupportedQuantityException::class);

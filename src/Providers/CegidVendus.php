@@ -18,8 +18,7 @@ class CegidVendus
         $provider->loadConfiguration();
 
         return match ($action) {
-            Action::CREATE => new Create($provider->config),
-            default => throw new \InvalidArgumentException("Action {$action->value} is not supported."),
+            Action::CREATE => new Create($provider->config)
         };
     }
 

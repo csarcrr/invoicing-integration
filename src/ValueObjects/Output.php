@@ -78,7 +78,7 @@ class Output
         return $this->fileName;
     }
 
-    public function getPath (): ?string
+    public function getPath(): ?string
     {
         return $this->path;
     }
@@ -110,7 +110,7 @@ class Output
 
     private function ensurePdfSuffix(): void
     {
-        if (!Str::endsWith($this->path, '.pdf')) {
+        if (! Str::endsWith($this->path, '.pdf')) {
             $this->path .= '.pdf';
         }
     }
