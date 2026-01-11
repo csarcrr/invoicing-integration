@@ -43,7 +43,7 @@ it('can assign multiple items', function (
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('invoice-full', ['multiple_items']);
 
-it('sets types correctly', function (
+it('sets item types correctly', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
     string $fixtureName,
@@ -66,25 +66,33 @@ it('sets types correctly', function (
     ['item_type_other', ItemType::Other],
 ]);
 
-it('correctly applies custom taxes', function (
+it('sets tax types correctly', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
-    string $fixtureName
+    string $fixtureName,
+    ItemTax $taxType
 ) {
-    $data = $fixture->request()->invoice()->item()->files($fixtureName);
+    $data = $fixture->request()->invoice()->item()->tax()->files($fixtureName);
 
-    $item = new Item(
-        reference: 'reference-1',
-    );
+    $item = new Item(reference: 'reference-1');
 
-    $item->tax(ItemTax::EXEMPT);
-    $item->taxExemption(TaxExemptionReason::M04);
-    $item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+    $item->tax($taxType);
+
+    if ($taxType === ItemTax::EXEMPT) {
+        $item->taxExemption(TaxExemptionReason::M04);
+        $item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+    }
 
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['item_tax_ise']);
+})->with('invoice-full', [
+    ['item_tax_normal', ItemTax::NORMAL],
+    ['item_tax_reduced', ItemTax::REDUCED],
+    ['item_tax_other', ItemTax::OTHER],
+    ['item_tax_intermediate', ItemTax::INTERMEDIATE],
+    ['item_tax_ise', ItemTax::EXEMPT],
+]);
 
 it('has the item always with the default quantity of one', function () {
     $item = new Item('reference-1');

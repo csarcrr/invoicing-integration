@@ -84,6 +84,13 @@ class Fixtures
         return $this;
     }
 
+    public function tax(): self
+    {
+        $this->path[] = 'Tax';
+
+        return $this;
+    }
+
     public function transport(): self
     {
         $this->path[] = 'Transport';
