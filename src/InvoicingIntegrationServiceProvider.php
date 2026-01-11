@@ -19,11 +19,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             ->give(function () {
                 return IntegrationProvider::from(config('invoicing-integration.provider'));
             });
-
-        $this->app->when(CreateInvoice::class)
-            ->give(function () {
-                $config = config('invoicing-integration.provider');
-            });
     }
 
     public function configurePackage(Package $package): void
@@ -31,25 +26,5 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         $package
             ->name('invoicing-integration')
             ->hasConfigFile('invoicing-integration');
-    }
-
-    protected function guardAgainstInvalidConfig(array $config): void
-    {
-        if (! isset($config['provider'])) {
-            throw new \InvalidArgumentException('A provider is needed to use the Invoicing Integration package.');
-        }
-
-        if (! isset($config['providers'][$config['provider']])) {
-            throw new \InvalidArgumentException("The specified provider [{$config['provider']}] is not configured.");
-        }
-    }
-
-    protected function guardAgainstInvalidProviderConfig(array $config): void
-    {
-        foreach ($config as $key => $value) {
-            if (is_null($value)) {
-                throw new \InvalidArgumentException("The provider configuration is missing the required key: {$key}.");
-            }
-        }
     }
 }
