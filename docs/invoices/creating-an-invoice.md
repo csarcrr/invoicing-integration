@@ -59,13 +59,15 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 $item = new Item();
 $item->reference('SKU-001');
 $item->price(1000)              // Price in cents
-    ->quantity(2)               // Quantity (default: 1)
+    ->quantity(2)               // Quantity (default: 1, accepts int or float)
     ->note('Product description')
     ->percentageDiscount(10)    // 10% discount
     ->amountDiscount(50);       // 0.50 discount in cents
 
 $invoice->item($item);
 ```
+
+> **Note:** Quantity must be greater than zero. Setting zero or negative values throws an `UnsupportedQuantityException`.
 
 ### Multiple Items
 

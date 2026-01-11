@@ -73,15 +73,13 @@ The output object provides access to the generated document:
 $result = $invoice->invoice();
 $output = $result->getOutput();
 
-// Get the auto-generated filename
-$filename = $output->fileName(); // e.g., "ft_01p2025_1.pdf"
-
-// Save to storage and get the path
-$path = $output->save('invoices/' . $filename);
+$path = $output->save(); // saves under "invoices/ft_01P2026.pdf depending on the sequence format of each provider
 
 // Or save with a custom name
-$path = $output->save('invoices/invoice-' . $result->getId() . '.pdf');
+$path = $output->save('invoices/custom-invoice-name.pdf');
 ```
+
+> **Note:** If the provider doesn't return output data, `getOutput()` throws an `InvoiceWithoutOutputException`. See [Output Formats](outputting-invoice.md#handling-missing-output) for handling this case.
 
 ## Complete Example
 
