@@ -13,6 +13,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
@@ -390,7 +391,9 @@ class Create implements CreateInvoice, HasConfig
 
     protected function throwErrors(int $status, array $errors): void
     {
+        throw_if($status === 500, FailedReachingProviderException::class);
         throw_if($status === 401, UnauthorizedException::class);
+
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
             return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();

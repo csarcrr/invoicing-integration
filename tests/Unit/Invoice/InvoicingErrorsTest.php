@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
@@ -38,3 +39,14 @@ it('handles invoicing auth errors properly', function (
     $invoice->invoice();
 })->with('invoice-full', 'providers', ['invoice_auth'])
     ->throws(UnauthorizedException::class);
+
+it('handles invoicing catastrophic errors', function (
+    CreateInvoice $invoice,
+    IntegrationProvider $provider,
+) {
+    Http::fake(mockResponse($provider, [], 500));
+
+    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->invoice();
+})->with('invoice', 'providers')
+    ->throws(FailedReachingProviderException::class);
