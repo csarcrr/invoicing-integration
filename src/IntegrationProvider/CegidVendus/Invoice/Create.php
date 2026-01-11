@@ -13,7 +13,8 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
@@ -77,7 +78,7 @@ class Create implements CreateInvoice, HasConfig
         )->post('documents', $this->getPayload());
 
         if (! in_array($response->status(), [200, 201, 300, 301])) {
-            $this->throwErrors($response->json());
+            $this->throwErrors($response->status(), $response->json());
         }
 
         $data = $response->json();
@@ -387,8 +388,9 @@ class Create implements CreateInvoice, HasConfig
         $this->payload->put('client', $data);
     }
 
-    protected function throwErrors(array $errors): void
+    protected function throwErrors(int $status, array $errors): void
     {
+        throw_if($status === 401, UnauthorizedException::class);
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
             return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();
