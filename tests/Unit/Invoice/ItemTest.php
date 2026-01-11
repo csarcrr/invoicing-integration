@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
@@ -41,6 +42,29 @@ it('can assign multiple items', function (
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('invoice-full', ['multiple_items']);
+
+it('sets types correctly', function (
+    CreateInvoice $invoice,
+    Fixtures $fixture,
+    string $fixtureName,
+    ItemType $type
+) {
+    $data = $fixture->request()->invoice()->item()->type()->files($fixtureName);
+
+    $item = new Item(reference: 'reference-1');
+
+    $item->type($type);
+
+    $invoice->item($item);
+
+    expect($invoice->getPayload())->toMatchArray($data);
+})->with('invoice-full', [
+    ['item_type_product', ItemType::Product],
+    ['item_type_service', ItemType::Service],
+    ['item_type_tax', ItemType::Tax],
+    ['item_type_special_tax', ItemType::SpecialTax],
+    ['item_type_other', ItemType::Other],
+]);
 
 it('correctly applies custom taxes', function (
     CreateInvoice $invoice,
