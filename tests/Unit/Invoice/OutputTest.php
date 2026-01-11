@@ -140,6 +140,12 @@ it('is able to sanitize the path and filename when saving', function (
         ['output_with_pdf', "file\x0Aname.pdf", 'file_name.pdf'],
         ['output_with_pdf', "file\x09name.pdf", 'file_name.pdf'],
         ['output_with_pdf', "file\x0Dname.pdf", 'file_name.pdf'],
-        ['output_with_pdf', '/../../../\x00etc/passwd', 'etc/passwd']
-
+        ['output_with_pdf', '/../../../\x00etc/passwd', 'etc/passwd'],
+        ['output_with_pdf', 'FT 2026/001', 'ft_2026/001.pdf'],
+        ['output_with_pdf', 'Invoice #123', 'invoice_123.pdf'],
+        ['output_with_pdf', 'INVOICE 2026-001', 'invoice_2026_001.pdf'],
+        ['output_with_pdf', '  Spaces Around  ', 'spaces_around.pdf'],
+        ['output_with_pdf', 'Special@Chars!Here', 'specialcharshere.pdf'],
+        ['output_with_pdf', 'Émojis 🎉 Test', 'emojis__test.pdf'],
+        ['output_with_pdf', 'CamelCaseFileName', 'camelcasefilename.pdf'],
     ]);
