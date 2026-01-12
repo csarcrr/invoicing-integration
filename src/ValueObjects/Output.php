@@ -90,7 +90,7 @@ class Output
     {
         $fileName = Str::replace('/', '_', $fileName);
 
-        $this->fileName = Str::of(Str::lower($fileName))->slug('_') . '.pdf';
+        $this->fileName = Str::of(Str::lower($fileName))->slug('_').'.pdf';
 
         return $this;
     }
