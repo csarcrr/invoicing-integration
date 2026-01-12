@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
 
 class Item
 {
@@ -35,10 +36,10 @@ class Item
      */
     public function __construct(
         protected null|int|string $reference = null,
-        protected ?int $quantity = null,
+        protected null|int|float $quantity = 1,
     ) {
         $this->type = ItemType::Product;
-        $this->quantity = $quantity ?? 1;
+        $this->quantity($this->quantity);
     }
 
     public function getReference(): int|string
@@ -148,8 +149,10 @@ class Item
         return $this;
     }
 
-    public function quantity(int $quantity): self
+    public function quantity(int|float $quantity): self
     {
+        throw_if($quantity <= 0, UnsupportedQuantityException::class);
+
         $this->quantity = $quantity;
 
         return $this;

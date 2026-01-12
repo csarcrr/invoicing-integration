@@ -8,14 +8,14 @@ use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceItemIsNotValidException;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\InvoiceTypeDoesNotSupportTransportException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\MissingPaymentWhenIssuingReceiptException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
@@ -79,7 +79,7 @@ class Create implements CreateInvoice, HasConfig
         )->post('documents', $this->getPayload());
 
         if (! in_array($response->status(), [200, 201, 300, 301])) {
-            $this->throwErrors($response->json());
+            $this->throwErrors($response->status(), $response->json());
         }
 
         $data = $response->json();
@@ -174,11 +174,6 @@ class Create implements CreateInvoice, HasConfig
         }
 
         throw_if(
-            ! in_array($this->getType(), [InvoiceType::Invoice, InvoiceType::Transport]),
-            InvoiceTypeDoesNotSupportTransportException::class
-        );
-
-        throw_if(
             is_null($this->getTransport()->origin()->getDate()),
             NeedsDateToSetLoadPointException::class
         );
@@ -249,15 +244,6 @@ class Create implements CreateInvoice, HasConfig
 
     protected function buildPayments(): void
     {
-
-        throw_if(
-            in_array(
-                $this->getType(),
-                $this->invoiceTypesThatRequirePayments
-            ) && $this->getPayments()->isEmpty(),
-            MissingPaymentWhenIssuingReceiptException::class,
-        );
-
         if ($this->getPayments()->isEmpty()) {
             return;
         }
@@ -281,12 +267,6 @@ class Create implements CreateInvoice, HasConfig
         if ($this->getType() === InvoiceType::Receipt) {
             return;
         }
-
-        throw_if(
-            $this->getItems()->isEmpty(),
-            InvoiceItemIsNotValidException::class,
-            'The invoice must have at least one item.'
-        );
 
         /** @var \Illuminate\Support\Collection $items */
         $items = $this->getItems()->map(function (Item $item): array {
@@ -335,8 +315,7 @@ class Create implements CreateInvoice, HasConfig
             if ($this->getType() === InvoiceType::CreditNote) {
                 throw_if(
                     ! $item->getRelatedDocument(),
-                    InvoiceItemIsNotValidException::class,
-                    'Credit Note items must have a related document set.'
+                    MissingRelatedDocumentException::class
                 );
 
                 $data['reference_document'] = [
@@ -347,6 +326,10 @@ class Create implements CreateInvoice, HasConfig
 
             return $data;
         });
+
+        if ($items->isEmpty()) {
+            return;
+        }
 
         $this->payload->put('items', $items);
     }
@@ -406,8 +389,11 @@ class Create implements CreateInvoice, HasConfig
         $this->payload->put('client', $data);
     }
 
-    protected function throwErrors(array $errors): void
+    protected function throwErrors(int $status, array $errors): void
     {
+        throw_if($status === 500, FailedReachingProviderException::class);
+        throw_if($status === 401, UnauthorizedException::class);
+
         $messages = collect($errors['errors'] ?? [])->map(function ($error) {
             return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
         })->toArray();

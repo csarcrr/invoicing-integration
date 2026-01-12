@@ -23,7 +23,7 @@ it('can add related document to invoice', function (
     $invoice->relatedDocument(99999999);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice')->with([
+})->with('invoice-full')->with([
     ['normal_related_document', InvoiceType::Invoice],
     ['normal_related_document', InvoiceType::InvoiceReceipt],
     ['normal_related_document', InvoiceType::InvoiceSimple],
@@ -47,4 +47,4 @@ it('can add related document to a NC', function (
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['nc_related_document']);
+})->with('invoice-full', ['nc_related_document']);

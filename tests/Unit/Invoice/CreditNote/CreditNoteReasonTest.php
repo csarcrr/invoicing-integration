@@ -22,7 +22,7 @@ it('can apply a credit note reason', function (CreateInvoice $invoice, Fixtures 
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['credit_note']);
+})->with('invoice-full', ['credit_note']);
 
 it('fails when reason is not applied', function (CreateInvoice $invoice, Fixtures $fixture) {
     $item = new Item(reference: 'reference-1');
@@ -33,7 +33,7 @@ it('fails when reason is not applied', function (CreateInvoice $invoice, Fixture
     $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
 
     $invoice->getPayload();
-})->with('create-invoice')->throws(CreditNoteReasonIsMissingException::class);
+})->with('invoice-full')->throws(CreditNoteReasonIsMissingException::class);
 
 it('results in nothing when applying reason to an invoice', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
     $data = $fixture->request()->invoice()->invoiceTypes()->files($fixtureName);
@@ -46,4 +46,4 @@ it('results in nothing when applying reason to an invoice', function (CreateInvo
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['not_credit_note_reason_check']);
+})->with('invoice-full', ['not_credit_note_reason_check']);

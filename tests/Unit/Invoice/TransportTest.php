@@ -31,7 +31,7 @@ it('assigns a transport to the invoice', function (CreateInvoice $invoice, Fixtu
     expect($invoice->getTransport())->toBeInstanceOf(TransportDetails::class);
     expect($invoice->getTransport()->origin()->getAddress())->toBe('Rua das Flores, 125');
     expect($invoice->getTransport()->destination()->getAddress())->toBe('Rua dos Paninhos, 521');
-})->with('create-invoice');
+})->with('invoice-full');
 
 it('has a valid payload', function (
     CreateInvoice $invoice,
@@ -65,7 +65,7 @@ it('has a valid payload', function (
     $invoice->transport($transport);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['transport']);
+})->with('invoice-full', ['transport']);
 
 it('fails when no client is provided with transport', function (
     CreateInvoice $invoice,
@@ -91,7 +91,7 @@ it('fails when no client is provided with transport', function (
     $invoice->transport($transport);
 
     $invoice->getPayload();
-})->with('create-invoice')
+})->with('invoice-full')
     ->throws(
         Exception::class,
         'Client information is required when transport details are provided.'
@@ -119,7 +119,7 @@ it('fails when no load date is provided with transport', function (
     $invoice->transport($transport);
 
     $invoice->getPayload();
-})->with('create-invoice')->throws(NeedsDateToSetLoadPointException::class);
+})->with('invoice-full')->throws(NeedsDateToSetLoadPointException::class);
 
 it('fails when setting an invalid country', function (
     CreateInvoice $invoice,
@@ -144,4 +144,4 @@ it('fails when setting an invalid country', function (
     $invoice->transport($transport);
 
     $invoice->getPayload();
-})->with('create-invoice')->throws(InvalidCountryException::class);
+})->with('invoice-full')->throws(InvalidCountryException::class);

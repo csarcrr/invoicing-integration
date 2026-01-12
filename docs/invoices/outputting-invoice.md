@@ -77,6 +77,16 @@ $path = $output->save('invoices/my-custom-name.pdf');
 
 The file is saved to Laravel's local storage disk by default.
 
+## Handling Missing Output
+
+Some providers may not return output data in certain scenarios. Calling `getOutput()` on an invoice without output throws an `InvoiceWithoutOutputException`.
+
+```php
+use CsarCrr\InvoicingIntegration\Exceptions\Invoices\InvoiceWithoutOutputException;
+```
+
+This exception is thrown when the provider response does not include PDF or ESC/POS data, allowing you to handle this case according to your application's requirements.
+
 ## ESC/POS for Thermal Printers
 
 Generate ESC/POS data for direct printing to thermal printers:

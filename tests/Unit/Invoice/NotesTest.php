@@ -13,4 +13,4 @@ it('applies a note to the invoice', function (CreateInvoice $invoice, Fixtures $
     $invoice->item(new Item(reference: 'reference-1'));
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('create-invoice', ['notes']);
+})->with('invoice-full', ['notes']);

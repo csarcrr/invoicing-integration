@@ -2,7 +2,7 @@
 
 Complete reference for the Invoicing Integration package classes, methods, and enums.
 
-## Invoice Facade
+## Invoice
 
 Entry point for creating invoices.
 
@@ -24,18 +24,18 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 ### Builder Methods
 
-| Method                                         | Parameters                         | Description                                      |
-| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ |
-| `client(Client $client)`                       | Client object                      | Set client details (optional for final consumer) |
-| `item(Item $item)`                             | Item object                        | Add an item to the invoice                       |
-| `payment(Payment $payment)`                    | Payment object                     | Add a payment to the invoice                     |
-| `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            |
-| `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  |
-| `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           |
-| `outputFormat(OutputFormat $format)`           | OutputFormat enum                  | Set output format (PDF or ESC/POS)               |
-| `relatedDocument(int\|string $doc, ?int $row)` | Document ID/sequence, optional row | Link to related document                         |
-| `creditNoteReason(string $reason)`             | Reason text                        | Set credit note reason (NC only)                 |
-| `notes(string $notes)`                         | Notes text                         | Add notes to the invoice                         |
+| Method                                         | Parameters                         | Description                                      | Throws |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ | ------ |
+| `client(Client $client)`                       | Client object                      | Set client details (optional for final consumer) | -      |
+| `item(Item $item)`                             | Item object                        | Add an item to the invoice                       | -      |
+| `payment(Payment $payment)`                    | Payment object                     | Add a payment to the invoice                     | -      |
+| `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            | -      |
+| `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  | -      |
+| `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           | -      |
+| `outputFormat(OutputFormat $format)`           | OutputFormat enum                  | Set output format (PDF or ESC/POS)               | -      |
+| `relatedDocument(int\|string $doc, ?int $row)` | Document ID/sequence, optional row | Link to related document                         | -      |
+| `creditNoteReason(string $reason)`             | Reason text                        | Set credit note reason (NC only)                 | -      |
+| `notes(string $notes)`                         | Notes text                         | Add notes to the invoice                         | -      |
 
 ### Execution Method
 
@@ -76,15 +76,15 @@ new Client()
 
 **Methods (fluent, return self):**
 
-| Method                           | Parameter         | Description           |
-| -------------------------------- | ----------------- | --------------------- |
-| `address(string $address)`       | Address string    | Set street address    |
-| `city(string $city)`             | City name         | Set city              |
-| `postalCode(string $postalCode)` | Postal code       | Set postal code       |
-| `country(string $country)`       | ISO 2-letter code | Set country           |
-| `email(string $email)`           | Email address     | Set email (validated) |
-| `phone(string $phone)`           | Phone number      | Set phone             |
-| `irsRetention(bool $retention)`  | Boolean           | Enable IRS retention  |
+| Method                           | Parameter         | Description           | Throws |
+| -------------------------------- | ----------------- | --------------------- | ------ |
+| `address(string $address)`       | Address string    | Set street address    | -      |
+| `city(string $city)`             | City name         | Set city              | -      |
+| `postalCode(string $postalCode)` | Postal code       | Set postal code       | -      |
+| `country(string $country)`       | ISO 2-letter code | Set country           | -      |
+| `email(string $email)`           | Email address     | Set email (validated) | -      |
+| `phone(string $phone)`           | Phone number      | Set phone             | -      |
+| `irsRetention(bool $retention)`  | Boolean           | Enable IRS retention  | -      |
 
 **Getter Methods:**
 
@@ -116,25 +116,25 @@ new Item()
 
 **Methods (fluent, return self):**
 
-| Method                                     | Parameter             | Description                   |
-| ------------------------------------------ | --------------------- | ----------------------------- |
-| `reference(string $reference)`             | Product SKU/code      | Set product reference         |
-| `quantity(int $quantity)`                  | Quantity              | Set quantity (default: 1)     |
-| `price(int $price)`                        | Price in cents        | Set unit price                |
-| `note(string $note)`                       | Description           | Set item description          |
-| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                  |
-| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason          |
-| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law             |
-| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount            |
-| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount       |
-| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC) |
+| Method                                     | Parameter             | Description                   | Throws                         |
+| ------------------------------------------ | --------------------- | ----------------------------- | ------------------------------ |
+| `reference(string $reference)`             | Product SKU/code      | Set product reference         | -                              |
+| `quantity(int\|float $quantity)`           | Quantity              | Set quantity (default: 1)     | `UnsupportedQuantityException` |
+| `price(int $price)`                        | Price in cents        | Set unit price                | -                              |
+| `note(string $note)`                       | Description           | Set item description          | -                              |
+| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                  | -                              |
+| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason          | -                              |
+| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law             | -                              |
+| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount            | -                              |
+| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount       | -                              |
+| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC) | -                              |
 
 **Getter Methods:**
 
 | Method                    | Return Type           |
 | ------------------------- | --------------------- |
 | `getReference()`          | `?string`             |
-| `getQuantity()`           | `int`                 |
+| `getQuantity()`           | `int\|float`          |
 | `getPrice()`              | `?int`                |
 | `getNote()`               | `?string`             |
 | `getTax()`                | `?ItemTax`            |
@@ -159,10 +159,10 @@ new Payment()
 
 **Methods (fluent, return self):**
 
-| Method                          | Parameter          | Description        |
-| ------------------------------- | ------------------ | ------------------ |
-| `method(PaymentMethod $method)` | PaymentMethod enum | Set payment method |
-| `amount(int $amount)`           | Amount in cents    | Set payment amount |
+| Method                          | Parameter          | Description        | Throws |
+| ------------------------------- | ------------------ | ------------------ | ------ |
+| `method(PaymentMethod $method)` | PaymentMethod enum | Set payment method | -      |
+| `amount(int $amount)`           | Amount in cents    | Set payment amount | -      |
 
 **Getter Methods:**
 
@@ -194,20 +194,20 @@ new TransportDetails()
 
 **Location Methods (call after origin() or destination()):**
 
-| Method                           | Parameter         | Description     |
-| -------------------------------- | ----------------- | --------------- |
-| `address(string $address)`       | Address string    | Set address     |
-| `city(string $city)`             | City name         | Set city        |
-| `postalCode(string $postalCode)` | Postal code       | Set postal code |
-| `country(string $country)`       | ISO 2-letter code | Set country     |
-| `date(Carbon $date)`             | Carbon date       | Set date        |
-| `time(Carbon $time)`             | Carbon time       | Set time        |
+| Method                           | Parameter         | Description     | Throws |
+| -------------------------------- | ----------------- | --------------- | ------ |
+| `address(string $address)`       | Address string    | Set address     | -      |
+| `city(string $city)`             | City name         | Set city        | -      |
+| `postalCode(string $postalCode)` | Postal code       | Set postal code | -      |
+| `country(string $country)`       | ISO 2-letter code | Set country     | -      |
+| `date(Carbon $date)`             | Carbon date       | Set date        | -      |
+| `time(Carbon $time)`             | Carbon time       | Set time        | -      |
 
 **Other Methods:**
 
-| Method                               | Parameter     | Description       |
-| ------------------------------------ | ------------- | ----------------- |
-| `vehicleLicensePlate(string $plate)` | License plate | Set vehicle plate |
+| Method                               | Parameter     | Description       | Throws |
+| ------------------------------------ | ------------- | ----------------- | ------ |
+| `vehicleLicensePlate(string $plate)` | License plate | Set vehicle plate | -      |
 
 ---
 
@@ -221,11 +221,11 @@ Returned by `invoice()` method after issuing.
 
 **Methods:**
 
-| Method          | Return Type | Description                             |
-| --------------- | ----------- | --------------------------------------- |
-| `getId()`       | `int`       | Provider's internal ID                  |
-| `getSequence()` | `string`    | Invoice sequence (e.g., "FT 01P2025/1") |
-| `getOutput()`   | `Output`    | Output object for PDF/ESC/POS           |
+| Method          | Return Type | Description                             | Throws                          |
+| --------------- | ----------- | --------------------------------------- | ------------------------------- |
+| `getId()`       | `int`       | Provider's internal ID                  | -                               |
+| `getSequence()` | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                               |
+| `getOutput()`   | `Output`    | Output object for PDF/ESC/POS           | `InvoiceWithoutOutputException` |
 
 ---
 
@@ -295,9 +295,47 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 ```
 
-Portuguese tax exemption codes: `M01` through `M30`
+Portuguese tax exemption codes supported by this package:
 
-Use `TaxExemptionReason::M04->laws()` to get applicable law references.
+| Code | Laws (`laws()[n]`)                                                                                                                                           |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M01  | 0: Art. 16.º, n.º 6, al. a) do CIVA<br>1: Art. 16.º, n.º 6, al. b) do CIVA<br>2: Art. 16.º, n.º 6, al. c) do CIVA<br>3: Art. 16.º, n.º 6, al. d) do CIVA     |
+| M02  | 0: Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho                                                                                                      |
+| M03  | 0: Não utilizar após 2022                                                                                                                                    |
+| M04  | 0: Artigo 13.º do CIVA                                                                                                                                       |
+| M05  | 0: Artigo 14.º do CIVA                                                                                                                                       |
+| M06  | 0: Artigo 15.º do CIVA                                                                                                                                       |
+| M07  | 0: Artigo 9.º do CIVA                                                                                                                                        |
+| M08  | 0: Utilizar alternativa entre M30 e M43                                                                                                                      |
+| M09  | 0: Artigo 60.º do CIVA<br>1: Artigo 72.º n.º 4 do CIVA                                                                                                       |
+| M10  | 0: Artigo 53.º n.º 1 do CIVA<br>1: Artigo 57.º do CIVA                                                                                                       |
+| M11  | 0: Decreto-Lei n.º 346/85, de 23 de agosto                                                                                                                   |
+| M12  | 0: Decreto-Lei n.º 221/85, de 3 de julho                                                                                                                     |
+| M13  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
+| M14  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
+| M15  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
+| M16  | 0: Artigo 14.º do RITI                                                                                                                                       |
+| M19  | 0: Isenções temporárias em diploma próprio                                                                                                                   |
+| M20  | 0: Artigo 59.º-D n.º 2 do CIVA                                                                                                                               |
+| M21  | 0: Artigo 72.º n.º 4 do CIVA                                                                                                                                 |
+| M25  | 0: Artigo 38.º n.º 1 alínea a) do CIVA                                                                                                                       |
+| M26  | 0: Lei n.º 17/2023                                                                                                                                           |
+| M30  | 0: Artigo 2.º n.º 1 alínea i) do CIVA                                                                                                                        |
+| M31  | 0: Artigo 2.º n.º 1 alínea j) do CIVA                                                                                                                        |
+| M32  | 0: Artigo 2.º n.º 1 alínea l) do CIVA                                                                                                                        |
+| M33  | 0: Artigo 2.º n.º 1 alínea m) do CIVA                                                                                                                        |
+| M34  | 0: Artigo 2.º n.º 1 alínea n) do CIVA                                                                                                                        |
+| M40  | 0: Artigo 6.º n.º 6 alínea a) do CIVA, a contrário                                                                                                           |
+| M41  | 0: Artigo 8.º n.º 3 do RITI                                                                                                                                  |
+| M42  | 0: Decreto-Lei n.º 21/2007, de 29 de janeiro                                                                                                                 |
+| M43  | 0: Decreto-Lei n.º 362/99, de 16 de setembro                                                                                                                 |
+| M44  | 0: Artigo 6.º do CIVA                                                                                                                                        |
+| M45  | 0: Artigo 58.º-A do CIVA                                                                                                                                     |
+| M46  | 0: Decreto-Lei n.º 19/2017, de 14 de fevereiro                                                                                                               |
+| M99  | 0: Artigo 2.º, n.º 2 do CIVA<br>1: Artigo 3.º, n.º 4 do CIVA<br>2: Artigo 3.º, n.º 6 do CIVA<br>3: Artigo 3.º, n.º 7 do CIVA<br>4: Artigo 4.º, n.º 5 do CIVA |
+
+To print the first legal reference, call `TaxExemptionReason::M04->laws()[0]`. When multiple entries
+are available, pick the index that matches your scenario (e.g., `laws()[1]` for `M10` Article 57.º).
 
 ### OutputFormat
 
@@ -314,13 +352,26 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 ## Exceptions
 
-| Exception                             | When Thrown                        |
-| ------------------------------------- | ---------------------------------- |
-| `InvoiceRequiresClientVatException`   | Client provided with empty VAT     |
-| `InvoiceRequiresVatWhenClientHasName` | Client has name but no VAT         |
-| `CreditNoteReasonIsMissingException`  | NC type without credit note reason |
-| `NeedsDateToSetLoadPointException`    | Transport without origin date      |
-| `InvalidCountryException`             | Invalid ISO country code           |
+### Validation Exceptions
+
+| Exception                             | When Thrown                                     |
+| ------------------------------------- | ----------------------------------------------- |
+| `InvoiceRequiresClientVatException`   | Client provided with empty VAT                  |
+| `InvoiceRequiresVatWhenClientHasName` | Client has name but no VAT                      |
+| `CreditNoteReasonIsMissingException`  | NC type without credit note reason              |
+| `NeedsDateToSetLoadPointException`    | Transport without origin date                   |
+| `InvalidCountryException`             | Invalid ISO country code                        |
+| `InvoiceWithoutOutputException`       | Calling `getOutput()` when no output is present |
+| `UnsupportedQuantityException`        | Item quantity is zero or negative               |
+| `MissingRelatedDocumentException`     | Credit note item without related document       |
+
+### Provider Exceptions
+
+| Exception                         | When Thrown                              |
+| --------------------------------- | ---------------------------------------- |
+| `RequestFailedException`          | Provider returned an error response      |
+| `UnauthorizedException`           | Invalid or missing API credentials (401) |
+| `FailedReachingProviderException` | Provider is unreachable or returned 500  |
 
 ---
 

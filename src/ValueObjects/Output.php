@@ -33,9 +33,18 @@ class Output
 
     protected function sanitizePath(string $path): string
     {
-        $path = ltrim($path, '/\\');
-        $path = str_replace(['../', '..\\', '..'], '', $path);
-        $path = preg_replace('/[\x00-\x1F]/', '_', $path);
+        // $path = preg_replace('/[\x00-\x1F]|\\\\x[0-1][0-9A-Fa-f]/', '', $path);
+
+        $path = Str::of($path)
+            ->ltrim('/\\')
+            ->squish()
+            ->replaceMatches('/[\x00-\x1F]|\\\\x[0-1][0-9A-Fa-f]/', '')
+            ->replace(['../', '..\\', '..', '#', '@', '!'], '')
+            ->replace([' ', '-'], '_')
+            ->lower()
+            ->snake()
+            ->ascii()
+            ->toString();
 
         return $path;
     }
@@ -72,6 +81,11 @@ class Output
         return $this->fileName;
     }
 
+    public function getPath(): ?string
+    {
+        return $this->path;
+    }
+
     protected function setFileName(?string $fileName): self
     {
         $fileName = Str::replace('/', '_', $fileName);
@@ -85,6 +99,8 @@ class Output
     {
         $decoded = base64_decode($this->content);
 
+        $this->ensurePdfSuffix();
+
         Storage::disk('local')->put($this->path, $decoded);
 
         return $this->path;
@@ -93,5 +109,12 @@ class Output
     protected function base64EncodedEscPos(): string
     {
         return base64_decode($this->content);
+    }
+
+    private function ensurePdfSuffix(): void
+    {
+        if (! Str::endsWith($this->path, '.pdf')) {
+            $this->path .= '.pdf';
+        }
     }
 }

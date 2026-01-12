@@ -49,11 +49,10 @@
     "scripts": {
         "post-autoload-dump": "@composer run prepare",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
-        "analyse": "vendor/bin/phpstan analyse",
-        "test": "vendor/bin/pest",
-        "test-coverage": "vendor/bin/pest --coverage",
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
+        "test": "vendor/bin/pest --parallel",
         "format": "vendor/bin/pint",
-        "complete": "vendor/bin/pest && vendor/bin/pint && vendor/bin/phpstan analyse"
+        "complete": "vendor/bin/pest && vendor/bin/pint && vendor/bin/phpstan analyse --memory-limit=2G"
     },
     "config": {
         "sort-packages": true,
