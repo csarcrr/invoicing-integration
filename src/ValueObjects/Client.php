@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
+use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use Illuminate\Support\Facades\Validator;
+use League\ISO3166\ISO3166;
 
 class Client
 {
@@ -94,6 +96,12 @@ class Client
 
     public function country(?string $country): void
     {
+        try {
+            $data = (new ISO3166)->alpha2(strtolower($country));
+        } catch (\Exception $e) {
+            throw new InvalidCountryException;
+        }
+
         $this->country = $country;
     }
 

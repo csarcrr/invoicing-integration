@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
@@ -85,3 +86,9 @@ it('fails when name is provided but vat is missing', function (
 
     $invoice->getPayload();
 })->with('invoice-full', 'providers')->throws(InvoiceRequiresVatWhenClientHasName::class);
+
+it('fails when assigning an invalid country', function () {
+    $client = new Client;
+
+    $client->country('InvalidCountry');
+})->throws(InvalidCountryException::class);
