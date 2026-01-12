@@ -295,9 +295,47 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 ```
 
-Portuguese tax exemption codes: `M01` through `M30`
+Portuguese tax exemption codes supported by this package:
 
-Use `TaxExemptionReason::M04->laws()` to get applicable law references.
+| Code | Laws (`laws()[n]`)                                                                                                                                           |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M01  | 0: Art. 16.º, n.º 6, al. a) do CIVA<br>1: Art. 16.º, n.º 6, al. b) do CIVA<br>2: Art. 16.º, n.º 6, al. c) do CIVA<br>3: Art. 16.º, n.º 6, al. d) do CIVA     |
+| M02  | 0: Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho                                                                                                      |
+| M03  | 0: Não utilizar após 2022                                                                                                                                    |
+| M04  | 0: Artigo 13.º do CIVA                                                                                                                                       |
+| M05  | 0: Artigo 14.º do CIVA                                                                                                                                       |
+| M06  | 0: Artigo 15.º do CIVA                                                                                                                                       |
+| M07  | 0: Artigo 9.º do CIVA                                                                                                                                        |
+| M08  | 0: Utilizar alternativa entre M30 e M43                                                                                                                      |
+| M09  | 0: Artigo 60.º do CIVA<br>1: Artigo 72.º n.º 4 do CIVA                                                                                                       |
+| M10  | 0: Artigo 53.º n.º 1 do CIVA<br>1: Artigo 57.º do CIVA                                                                                                       |
+| M11  | 0: Decreto-Lei n.º 346/85, de 23 de agosto                                                                                                                   |
+| M12  | 0: Decreto-Lei n.º 221/85, de 3 de julho                                                                                                                     |
+| M13  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
+| M14  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
+| M15  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
+| M16  | 0: Artigo 14.º do RITI                                                                                                                                       |
+| M19  | 0: Isenções temporárias em diploma próprio                                                                                                                   |
+| M20  | 0: Artigo 59.º-D n.º 2 do CIVA                                                                                                                               |
+| M21  | 0: Artigo 72.º n.º 4 do CIVA                                                                                                                                 |
+| M25  | 0: Artigo 38.º n.º 1 alínea a) do CIVA                                                                                                                       |
+| M26  | 0: Lei n.º 17/2023                                                                                                                                           |
+| M30  | 0: Artigo 2.º n.º 1 alínea i) do CIVA                                                                                                                        |
+| M31  | 0: Artigo 2.º n.º 1 alínea j) do CIVA                                                                                                                        |
+| M32  | 0: Artigo 2.º n.º 1 alínea l) do CIVA                                                                                                                        |
+| M33  | 0: Artigo 2.º n.º 1 alínea m) do CIVA                                                                                                                        |
+| M34  | 0: Artigo 2.º n.º 1 alínea n) do CIVA                                                                                                                        |
+| M40  | 0: Artigo 6.º n.º 6 alínea a) do CIVA, a contrário                                                                                                           |
+| M41  | 0: Artigo 8.º n.º 3 do RITI                                                                                                                                  |
+| M42  | 0: Decreto-Lei n.º 21/2007, de 29 de janeiro                                                                                                                 |
+| M43  | 0: Decreto-Lei n.º 362/99, de 16 de setembro                                                                                                                 |
+| M44  | 0: Artigo 6.º do CIVA                                                                                                                                        |
+| M45  | 0: Artigo 58.º-A do CIVA                                                                                                                                     |
+| M46  | 0: Decreto-Lei n.º 19/2017, de 14 de fevereiro                                                                                                               |
+| M99  | 0: Artigo 2.º, n.º 2 do CIVA<br>1: Artigo 3.º, n.º 4 do CIVA<br>2: Artigo 3.º, n.º 6 do CIVA<br>3: Artigo 3.º, n.º 7 do CIVA<br>4: Artigo 4.º, n.º 5 do CIVA |
+
+To print the first legal reference, call `TaxExemptionReason::M04->laws()[0]`. When multiple entries
+are available, pick the index that matches your scenario (e.g., `laws()[1]` for `M10` Article 57.º).
 
 ### OutputFormat
 

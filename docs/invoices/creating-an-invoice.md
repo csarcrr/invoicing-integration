@@ -96,7 +96,8 @@ $item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
 $invoice->item($item);
 ```
 
-> **Note:** Tax exemption reason is only valid when `ItemTax::EXEMPT` is set.
+> **Note:** Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. See
+> [Tax Exemptions](invoices/tax-exemption.md?id=working-with-tax-exemptions-1) for the complete list of `M` codes and validation rules.
 
 ## Adding Payments
 
