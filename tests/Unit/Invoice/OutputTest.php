@@ -97,12 +97,12 @@ it('can save the output under a custom name and path', function (
     $invoice->item(new Item(reference: 'item-1'));
     $data = $invoice->invoice();
 
-    $path = 'invoice/custom-name.pdf';
+    $path = 'invoices/custom-name.pdf';
 
     $output = $data->getOutput()->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('local')->assertExists($output);
 })->with('invoice-full', 'providers', ['output_with_pdf']);
 
 it('is able to sanitize the path and filename when saving', function (
@@ -123,25 +123,25 @@ it('is able to sanitize the path and filename when saving', function (
     $invoice->item(new Item(reference: 'item-1'));
     $data = $invoice->invoice();
 
-    $output = $data->getOutput()->save($invalidPath);
+    $savePath = $data->getOutput()->save($invalidPath);
 
-    expect($output)->toBeString();
-    Storage::disk('local')->assertExists($expectedPath);
+    expect($savePath)->toBeString()->toBe($expectedPath);
+    Storage::disk('local')->assertExists($savePath);
 })
     ->with('invoice-full', 'providers', ['output_with_pdf'])
     ->with([
         ['/absolute/path/file.pdf', 'absolute/path/file.pdf'],
         ['\\windows\\path\\file.pdf', 'windows\\path\\file.pdf'],
         ['//double/slash.pdf', 'double/slash.pdf'],
-        ['../../../etc/passwd', 'etc/passwd'],
-        ['invoices/../../../secret', 'invoices/secret'],
-        ['..\\..\\windows\\system32', 'windows\\system32'],
-        ['foo/..bar/baz', 'foo/bar/baz'],
-        ["file\x00name.pdf", 'file_name.pdf'],
+        ['../../../etc/passwd', 'etc/passwd.pdf'],
+        ['invoices/../../../secret', 'invoices/secret.pdf'],
+        ['..\\..\\windows\\system32', 'windows\\system32.pdf'],
+        ['foo/..bar/baz', 'foo/bar/baz.pdf'],
+        ["file\x00name.pdf", 'filename.pdf'],
         ["file\x0Aname.pdf", 'file_name.pdf'],
         ["file\x09name.pdf", 'file_name.pdf'],
         ["file\x0Dname.pdf", 'file_name.pdf'],
-        ['/../../../\x00etc/passwd', 'etc/passwd'],
+        ['/../../../\x00etc/passwd', 'etc/passwd.pdf'],
         ['FT 2026/001', 'ft_2026/001.pdf'],
         ['Invoice #123', 'invoice_123.pdf'],
         ['INVOICE 2026-001', 'invoice_2026_001.pdf'],

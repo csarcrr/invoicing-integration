@@ -33,11 +33,14 @@ class Output
 
     protected function sanitizePath(string $path): string
     {
+        // $path = preg_replace('/[\x00-\x1F]|\\\\x[0-1][0-9A-Fa-f]/', '', $path);
+
         $path = Str::of($path)
             ->ltrim('/\\')
             ->squish()
+            ->replaceMatches('/[\x00-\x1F]|\\\\x[0-1][0-9A-Fa-f]/', '')
             ->replace(['../', '..\\', '..', '#', '@', '!'], '')
-            ->replace([' ', '-', '/[\x00-\x1F]/'], '_')
+            ->replace([' ', '-'], '_')
             ->lower()
             ->snake()
             ->ascii()
@@ -87,7 +90,7 @@ class Output
     {
         $fileName = Str::replace('/', '_', $fileName);
 
-        $this->fileName = Str::of(Str::lower($fileName))->slug('_').'.pdf';
+        $this->fileName = Str::of(Str::lower($fileName))->slug('_') . '.pdf';
 
         return $this;
     }
