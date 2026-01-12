@@ -6,6 +6,8 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -106,3 +108,15 @@ it('fails when unsupported quantities are provided', function (mixed $invalidQua
 
     expect($item->getQuantity())->toBe(1);
 })->with([-1, 0])->throws(UnsupportedQuantityException::class);
+
+it('fails when attempting to use tax exemption with non-exempt tax', function () {
+    $item = new Item('reference-1');
+    $item->tax(ItemTax::NORMAL);
+    $item->taxExemption(TaxExemptionReason::M04);
+})->throws(ExemptionCanOnlyBeUsedWithExemptTaxException::class);
+
+it('fails when attempting to set tax exemption law without exemption reason', function () {
+    $item = new Item('reference-1');
+    $item->tax(ItemTax::EXEMPT);
+    $item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+})->throws(ExemptionLawCanOnlyBeUsedWithExemptionException::class);
