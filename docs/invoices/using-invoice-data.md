@@ -13,7 +13,7 @@ $item = new Item();
 $item->reference('SKU-001');
 $invoice->item($item);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Get the invoice sequence number (provider's reference)
 $sequence = $result->getSequence(); // e.g., "FT 01P2025/1"
@@ -38,7 +38,7 @@ $output = $result->getOutput();
 The sequence number is the official invoice identifier used in Portugal:
 
 ```php
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 $sequence = $result->getSequence();
 // Format: "{TYPE} {SERIES}/{NUMBER}"
@@ -54,7 +54,7 @@ $yourInvoiceRecord->save();
 The provider's internal ID is useful for API operations like creating receipts or credit notes:
 
 ```php
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 $id = $result->getId();
 
@@ -70,7 +70,7 @@ $receipt->relatedDocument($id);
 The output object provides access to the generated document:
 
 ```php
-$result = $invoice->invoice();
+$result = $invoice->execute();
 $output = $result->getOutput();
 
 $path = $output->save(); // saves under "invoices/ft_01P2026.pdf depending on the sequence format of each provider
@@ -101,7 +101,7 @@ $payment->method(PaymentMethod::CREDIT_CARD);
 $payment->amount(1000);
 $invoice->payment($payment);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Log the result
 logger()->info('Invoice issued', [

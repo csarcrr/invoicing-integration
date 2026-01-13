@@ -16,7 +16,7 @@ $item = new Item();
 $item->reference('SKU-001');
 $invoice->item($item);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Get the output object
 $output = $result->getOutput();
@@ -50,7 +50,7 @@ $invoice->outputFormat(OutputFormat::PDF_BASE64);
 // Or request ESC/POS output for thermal printers
 $invoice->outputFormat(OutputFormat::ESCPOS);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 ```
 
 ## Available Formats
@@ -65,7 +65,7 @@ $result = $invoice->invoice();
 The `save()` method stores the output file and returns the full path:
 
 ```php
-$result = $invoice->invoice();
+$result = $invoice->execute();
 $output = $result->getOutput();
 
 // Save with custom path
@@ -103,7 +103,7 @@ $item->reference('SKU-001');
 $invoice->item($item);
 $invoice->outputFormat(OutputFormat::ESCPOS);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Save ESC/POS data to file
 $path = $result->getOutput()->save('print-jobs/' . $result->getOutput()->fileName());
@@ -158,7 +158,7 @@ $invoice->payment($payment);
 $invoice->outputFormat(OutputFormat::PDF_BASE64);
 
 // Issue invoice
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Access invoice data
 $sequence = $result->getSequence();  // "FT 01P2025/1"

@@ -34,7 +34,7 @@ $invoice->payment($payment);
 $invoice->creditNoteReason('Product returned by customer');
 
 // Issue the credit note
-$result = $invoice->invoice();
+$result = $invoice->execute();
 ```
 
 ## Requirements
@@ -117,7 +117,7 @@ $invoice->relatedDocument('FT 01P2025/1', 1);
 $invoice->creditNoteReason('Product damaged during shipping');
 
 // Issue
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 echo $result->getSequence(); // e.g., "NC 01P2025/1"
 
@@ -154,7 +154,7 @@ $invoice->payment($payment);
 $invoice->relatedDocument('FT 01P2025/1', 1);
 $invoice->creditNoteReason('Order cancelled by customer');
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 ```
 
 ---

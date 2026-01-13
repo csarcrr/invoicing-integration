@@ -52,7 +52,7 @@ it('can save the output to pdf', function (CreateInvoice $invoice, Fixtures $fix
     );
 
     $invoice->item(new Item(reference: 'item-1'));
-    $data = $invoice->invoice();
+    $data = $invoice->execute();
 
     $path = "invoices/{$data->getOutput()->fileName()}";
 
@@ -71,7 +71,7 @@ it('can output escpos', function (CreateInvoice $invoice, Fixtures $fixture, Int
     );
 
     $invoice->item(new Item(reference: 'item-1'));
-    $data = $invoice->invoice();
+    $data = $invoice->execute();
 
     $path = "invoices/{$data->getOutput()->fileName()}";
 
@@ -95,7 +95,7 @@ it('can save the output under a custom name and path', function (
     );
 
     $invoice->item(new Item(reference: 'item-1'));
-    $data = $invoice->invoice();
+    $data = $invoice->execute();
 
     $path = 'invoices/custom-name.pdf';
 
@@ -121,7 +121,7 @@ it('is able to sanitize the path and filename when saving', function (
     );
 
     $invoice->item(new Item(reference: 'item-1'));
-    $data = $invoice->invoice();
+    $data = $invoice->execute();
 
     $savePath = $data->getOutput()->save($invalidPath);
 
@@ -165,7 +165,7 @@ it('outputs null when there is no invoice output provided', function (
     );
 
     $invoice->item(new Item(reference: 'item-1'));
-    $data = $invoice->invoice();
+    $data = $invoice->execute();
 
     $data->getOutput();
 })->with('invoice-full', 'providers', ['output_with_no_output'])

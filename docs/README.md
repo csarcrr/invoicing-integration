@@ -59,7 +59,7 @@ $payment->method(PaymentMethod::CREDIT_CARD);
 $payment->amount(2000);
 $invoice->payment($payment);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Save the PDF
 $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());

@@ -25,7 +25,7 @@ $payment->amount(10000); // 100.00
 $invoice->payment($payment);
 
 // Issue the receipt
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 echo $result->getSequence(); // e.g., "RG 01P2025/1"
 ```
@@ -50,7 +50,7 @@ $mb->method(PaymentMethod::MB);
 $mb->amount(5000);
 $invoice->payment($mb);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 ```
 
 > **Important:** The total of all payments should match the invoice amount for the original invoice to be marked as "paid" by most providers.
@@ -91,7 +91,7 @@ $invoice->payment($payment);
 $invoice->notes('Payment received. Thank you!');
 
 // Issue
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Save receipt PDF
 $result->getOutput()->save('receipts/' . $result->getOutput()->fileName());

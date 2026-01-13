@@ -70,9 +70,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     }
 
     /**
-     * Request an invoice creation
+     * Request an invoice creation 
      */
-    public function invoice(): Invoice
+    public function execute(): Invoice
     {
         $response = Request::get(
             IntegrationProvider::CEGID_VENDUS,

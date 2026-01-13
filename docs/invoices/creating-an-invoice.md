@@ -17,7 +17,7 @@ $item->reference('SKU-001');
 $item->price(1000); // Price in cents (10.00)
 $invoice->item($item);
 
-$result = $invoice->invoice();
+$result = $invoice->execute();
 ```
 
 This creates an **FT (Invoice)** document for a final consumer.
@@ -254,7 +254,7 @@ $invoice->type(InvoiceType::InvoiceReceipt);
 $invoice->notes('Thank you for your purchase.');
 
 // Issue the invoice
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Access the result
 echo $result->getSequence();  // "FR 01P2025/1"
