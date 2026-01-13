@@ -44,11 +44,41 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
         $this->config($config);
     }
 
-    public function execute (): Client {
-        return new Client();
+    public function execute(): Client
+    {
+        return new Client;
     }
+
     public function getPayload(): Collection
     {
+        $this->buildName();
+        $this->buildEmail();
+        $this->buildCompleteAddress();
+        $this->buildVat();
+        $this->buildNotes();
+        $this->buildIrsRetention();
+        $this->buildEmailNotification();
+        $this->buildContacts();
+        $this->buildDefaultPayDue();
+
         return collect();
     }
+
+    protected function buildName(): void {}
+
+    protected function buildEmail(): void {}
+
+    protected function buildCompleteAddress(): void {}
+
+    protected function buildVat(): void {}
+
+    protected function buildNotes(): void {}
+
+    protected function buildIrsRetention(): void {}
+
+    protected function buildEmailNotification(): void {}
+
+    protected function buildContacts(): void {}
+
+    protected function buildDefaultPayDue(): void {}
 }

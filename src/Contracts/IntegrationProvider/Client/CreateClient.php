@@ -9,8 +9,8 @@ use Illuminate\Support\Collection;
 
 interface CreateClient
 {
-    public function execute () : Client;
-    
+    public function execute(): Client;
+
     public function name(string $name): self;
 
     public function getName(): string;

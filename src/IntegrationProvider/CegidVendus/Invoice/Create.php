@@ -19,7 +19,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
-use CsarCrr\InvoicingIntegration\Traits\HasPayload;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
@@ -71,7 +70,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     }
 
     /**
-     * Request an invoice creation 
+     * Request an invoice creation
      */
     public function execute(): Invoice
     {
