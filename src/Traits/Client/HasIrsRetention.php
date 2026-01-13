@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasIrsRetention
 {
-    protected ?bool $irsRetention = null;
+    protected bool $irsRetention = false;
 
     public function irsRetention(bool $irsRetention): self
     {
@@ -15,7 +15,7 @@ trait HasIrsRetention
         return $this;
     }
 
-    public function getIrsRetention(): ?bool
+    public function getIrsRetention(): bool
     {
         return $this->irsRetention;
     }

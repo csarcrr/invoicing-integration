@@ -39,12 +39,15 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     use HasPostalCode;
     use HasVat;
 
+    protected Collection $payload;
+
     /**
-     * @param  array<string, mixed>  $config
+     * @param array<string, mixed> $config
      */
     public function __construct(array $config)
     {
         $this->config($config);
+        $this->payload = collect();
     }
 
     public function execute(): Client
@@ -58,33 +61,63 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     public function getPayload(): Collection
     {
         $this->buildName();
-        $this->buildEmail();
-        $this->buildCompleteAddress();
-        $this->buildVat();
-        $this->buildNotes();
-        $this->buildIrsRetention();
-        $this->buildEmailNotification();
-        $this->buildContacts();
-        $this->buildDefaultPayDue();
+//        $this->buildEmail();
+//        $this->buildCompleteAddress();
+//        $this->buildVat();
+//        $this->buildNotes();
+//        $this->buildIrsRetention();
+//        $this->buildEmailNotification();
+//        $this->buildContacts();
+//        $this->buildDefaultPayDue();
 
-        return collect();
+        return $this->payload;
     }
 
-    protected function buildName(): void {}
+    protected function buildName(): void
+    {
+        $this->getName() && $this->payload->put('name', $this->getName());
+    }
 
-    protected function buildEmail(): void {}
+    protected function buildEmail(): void
+    {
+        $this->getEmail() && $this->payload->put('email', $this->getEmail());
+    }
 
-    protected function buildCompleteAddress(): void {}
+    protected function buildCompleteAddress(): void
+    {
+        $this->getAddress() && $this->payload->put('address', $this->getAddress());
+        $this->getCity() && $this->payload->put('city', $this->getCity());
+        $this->getPostalCode() && $this->payload->put('postalcode', $this->getPostalCode());
+        $this->getCountry() && $this->payload->put('country', $this->getCountry());
+    }
 
-    protected function buildVat(): void {}
+    protected function buildVat(): void
+    {
+        $this->getVat() && $this->payload->put('fiscal_id', $this->getVat());
+    }
 
-    protected function buildNotes(): void {}
+    protected function buildNotes(): void
+    {
+        $this->getNotes() && $this->payload->put('notes', $this->getNotes());
+    }
 
-    protected function buildIrsRetention(): void {}
+    protected function buildIrsRetention(): void
+    {
+        $this->getIrsRetention() ? $this->payload->put('irs_retention', "yes") : $this->payload->put('irs_retention', "no");
+    }
 
-    protected function buildEmailNotification(): void {}
+    protected function buildEmailNotification(): void
+    {
+        $this->getEmailNotification() ? $this->payload->put('email_notification', "yes") : $this->payload->put('email_notification', "no");
+    }
 
-    protected function buildContacts(): void {}
+    protected function buildContacts(): void
+    {
+        $this->getPhone() && $this->payload->put('phone', $this->getPhone());
+     }
 
-    protected function buildDefaultPayDue(): void {}
+    protected function buildDefaultPayDue(): void
+    {
+        $this->getDefaultPayDue() && $this->payload->put('default_pay_due', $this->getDefaultPayDue());
+    }
 }

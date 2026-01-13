@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasEmailNotification
 {
-    protected ?bool $emailNotification = null;
+    protected bool $emailNotification = false;
 
     public function emailNotification(bool $emailNotification): self
     {
@@ -15,7 +15,7 @@ trait HasEmailNotification
         return $this;
     }
 
-    public function getEmailNotification(): ?bool
+    public function getEmailNotification(): bool
     {
         return $this->emailNotification;
     }

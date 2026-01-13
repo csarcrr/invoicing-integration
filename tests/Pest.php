@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
@@ -20,6 +21,19 @@ function invoice(): CreateInvoice
     return CegidVendus::invoice(Action::CREATE);
 }
 
+function client(): CreateClient
+{
+    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+
+    return CegidVendus::client(Action::CREATE);
+}
+
+dataset('client', [
+    [
+        fn () => client(),
+    ],
+]);
+
 dataset('invoice', [
     [
         fn () => invoice(),
@@ -29,6 +43,13 @@ dataset('invoice', [
 dataset('invoice-full', [
     [
         fn () => invoice(),
+        fn (): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS),
+    ],
+]);
+
+dataset('client-full', [
+    [
+        fn () => client(),
         fn (): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS),
     ],
 ]);
