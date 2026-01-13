@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasPhone
 {
-    protected string $phone;
+    protected ?string $phone = null;
 
     public function phone(string $phone): self
     {
@@ -15,7 +15,7 @@ trait HasPhone
         return $this;
     }
 
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }

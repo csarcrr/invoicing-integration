@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasName
 {
-    protected string $name;
+    protected ?string $name = null;
 
     public function name(string $name): self
     {
@@ -15,7 +15,7 @@ trait HasName
         return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

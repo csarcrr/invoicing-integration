@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasNotes
 {
-    protected string $notes;
+    protected ?string $notes = null;
 
     public function notes(string $notes): self
     {
@@ -15,7 +15,7 @@ trait HasNotes
         return $this;
     }
 
-    public function getNotes(): string
+    public function getNotes(): ?string
     {
         return $this->notes;
     }

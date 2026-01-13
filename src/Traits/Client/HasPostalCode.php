@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasPostalCode
 {
-    protected string $postalCode;
+    protected ?string $postalCode = null;
 
     public function postalCode(string $postalCode): self
     {
@@ -15,7 +15,7 @@ trait HasPostalCode
         return $this;
     }
 
-    public function getPostalCode(): string
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }

@@ -9,7 +9,7 @@ use League\ISO3166\ISO3166;
 
 trait HasCountry
 {
-    protected string $country;
+    protected ?string $country = null;
 
     public function country(string $country): self
     {
@@ -24,7 +24,7 @@ trait HasCountry
         return $this;
     }
 
-    public function getCountry(): string
+    public function getCountry(): ?string
     {
         return $this->country;
     }

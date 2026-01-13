@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasDefaultPayDue
 {
-    protected int $defaultPayDue;
+    protected ?int $defaultPayDue = null;
 
     public function defaultPayDue(int $defaultPayDue): self
     {
@@ -15,7 +15,7 @@ trait HasDefaultPayDue
         return $this;
     }
 
-    public function getDefaultPayDue(): int
+    public function getDefaultPayDue(): ?int
     {
         return $this->defaultPayDue;
     }

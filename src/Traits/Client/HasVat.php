@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasVat
 {
-    protected string|int $vat;
+    protected string|int|null $vat = null;
 
     public function vat(string|int $vat): self
     {
@@ -15,7 +15,7 @@ trait HasVat
         return $this;
     }
 
-    public function getVat(): string|int
+    public function getVat(): string|int|null
     {
         return $this->vat;
     }

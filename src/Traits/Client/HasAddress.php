@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasAddress
 {
-    protected string $address;
+    protected ?string $address = null;
 
     public function address(string $address): self
     {
@@ -15,7 +15,7 @@ trait HasAddress
         return $this;
     }
 
-    public function getAddress(): string
+    public function getAddress(): ?string
     {
         return $this->address;
     }

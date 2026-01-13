@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits\Client;
 
 trait HasCity
 {
-    protected string $city;
+    protected ?string $city = null;
 
     public function city(string $city): self
     {
@@ -15,7 +15,7 @@ trait HasCity
         return $this;
     }
 
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
