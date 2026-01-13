@@ -1,10 +1,10 @@
-<?php
+<?php 
 
 declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
@@ -17,7 +17,7 @@ final class Invoice
         protected IntegrationProvider $provider
     ) {}
 
-    public static function create(): CreateInvoice
+    public static function create(): CreateClient
     {
         $class = app()->make(self::class);
 
@@ -27,7 +27,7 @@ final class Invoice
     public function provider(Action $action): mixed
     {
         return match ($this->provider) {
-            IntegrationProvider::CEGID_VENDUS => CegidVendus::invoice($action)
+            IntegrationProvider::CEGID_VENDUS => CegidVendus::client($action)
         };
     }
 }
