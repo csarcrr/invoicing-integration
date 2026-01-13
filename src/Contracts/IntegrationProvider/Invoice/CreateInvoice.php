@@ -55,4 +55,6 @@ interface CreateInvoice
     public function getCreditNoteReason(): ?string;
 
     public function getNotes(): ?string;
+
+    public function getPayload(): Collection;
 }

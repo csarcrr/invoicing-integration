@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use Illuminate\Support\Collection;
+
 interface CreateClient
 {
+    public function execute () : Client;
+    
     public function name(string $name): self;
 
     public function getName(): string;
@@ -53,4 +58,6 @@ interface CreateClient
     public function irsRetention(bool $irsRetention): self;
 
     public function getIrsRetention(): bool;
+
+    public function getPayload(): Collection;
 }

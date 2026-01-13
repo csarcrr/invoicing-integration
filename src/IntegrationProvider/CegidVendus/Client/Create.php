@@ -20,7 +20,8 @@ use CsarCrr\InvoicingIntegration\Traits\Client\HasPhone;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasPostalCode;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasVat;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
-use CsarCrr\InvoicingIntegration\Traits\HasPayload;
+use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use Illuminate\Support\Collection;
 
 class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
 {
@@ -34,7 +35,6 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     use HasIrsRetention;
     use HasName;
     use HasNotes;
-    use HasPayload;
     use HasPhone;
     use HasPostalCode;
     use HasVat;
@@ -42,5 +42,13 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     public function __construct(array $config)
     {
         $this->config($config);
+    }
+
+    public function execute (): Client {
+        return new Client();
+    }
+    public function getPayload(): Collection
+    {
+        return collect();
     }
 }

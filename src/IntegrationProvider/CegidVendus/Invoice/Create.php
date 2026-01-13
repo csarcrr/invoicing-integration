@@ -46,11 +46,12 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     use HasItems;
     use HasNotes;
     use HasOutputFormat;
-    use HasPayload;
     use HasPayments;
     use HasRelatedDocument;
     use HasTransport;
     use HasType;
+
+    protected Collection $payload;
 
     protected array $invoiceTypesThatRequirePayments = [
         InvoiceType::Receipt,

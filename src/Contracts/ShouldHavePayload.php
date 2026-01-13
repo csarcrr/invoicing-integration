@@ -8,7 +8,5 @@ use Illuminate\Support\Collection;
 
 interface ShouldHavePayload
 {
-    public function payload(array|Collection $payload): self;
-
     public function getPayload(): Collection;
 }
