@@ -38,8 +38,6 @@ interface CreateInvoice
 
     public function notes(string $notes): self;
 
-    public function getPayload(): Collection;
-
     public function getClient(): ?Client;
 
     public function getItems(): Collection;

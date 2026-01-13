@@ -13,24 +13,32 @@ class CegidVendus
 {
     protected array $config = [];
 
+    public function __construct()
+    {
+        $this->loadConfiguration();
+    }
+
     public static function invoice(Action $action): mixed
     {
         $provider = new self;
-        $provider->loadConfiguration();
 
         return match ($action) {
-            Action::CREATE => new InvoiceCreate($provider->config)
+            Action::CREATE => new InvoiceCreate($provider->getConfig())
         };
     }
 
     public static function client(Action $action): mixed
     {
         $provider = new self;
-        $provider->loadConfiguration();
 
         return match ($action) {
-            Action::CREATE => new ClientCreate($provider->config)
+            Action::CREATE => new ClientCreate($provider->getConfig())
         };
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 
     protected function loadConfiguration(): void

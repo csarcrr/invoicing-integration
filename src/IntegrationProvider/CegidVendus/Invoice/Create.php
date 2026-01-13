@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
 
-use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
@@ -17,6 +18,8 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderExce
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
+use CsarCrr\InvoicingIntegration\Traits\HasConfig;
+use CsarCrr\InvoicingIntegration\Traits\HasPayload;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
@@ -27,7 +30,6 @@ use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
-use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
@@ -35,21 +37,20 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Exception;
 use Illuminate\Support\Collection;
 
-class Create implements CreateInvoice, HasConfig
+class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasClient;
+    use HasConfig;
     use HasCreditNoteReason;
     use HasDueDate;
     use HasItems;
     use HasNotes;
     use HasOutputFormat;
+    use HasPayload;
     use HasPayments;
     use HasRelatedDocument;
     use HasTransport;
     use HasType;
-    use ProviderConfiguration;
-
-    protected Collection $payload;
 
     protected array $invoiceTypesThatRequirePayments = [
         InvoiceType::Receipt,

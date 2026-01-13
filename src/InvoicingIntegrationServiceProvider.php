@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\Invoice;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits;
 
 use Illuminate\Support\Collection;
 
-trait ProviderConfiguration
+trait HasConfig
 {
     protected Collection $providerOptions;
 

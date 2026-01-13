@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Contracts;
 
 use Illuminate\Support\Collection;
 
-interface HasConfig
+interface ShouldHaveConfig
 {
     public function config(array|Collection $config): self;
 
