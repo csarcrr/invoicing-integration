@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\IntegrationProvider;
 
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
+use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-final class Request
+final class Request implements ShouldHaveConfig
 {
-    use ProviderConfiguration;
+    use HasConfig;
 
     public function __construct(
         protected IntegrationProvider $provider,
