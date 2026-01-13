@@ -61,14 +61,14 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     public function getPayload(): Collection
     {
         $this->buildName();
-//        $this->buildEmail();
-//        $this->buildCompleteAddress();
-//        $this->buildVat();
-//        $this->buildNotes();
-//        $this->buildIrsRetention();
-//        $this->buildEmailNotification();
-//        $this->buildContacts();
-//        $this->buildDefaultPayDue();
+        $this->buildEmail();
+        $this->buildCompleteAddress();
+        $this->buildVat();
+        $this->buildNotes();
+        $this->buildIrsRetention();
+        $this->buildEmailNotification();
+        $this->buildContacts();
+        $this->buildDefaultPayDue();
 
         return $this->payload;
     }

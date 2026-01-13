@@ -10,8 +10,8 @@ it('has the correct name', function (CreateClient $client, Fixtures $fixtures, s
 
     $client->name('Alberto Albertino');
 
-    expect($data)->toMatchArray($client->getPayload()->toArray());
-})->with('client-full', ['client_full']);
+    expect($client->getPayload())->toMatchArray($data);
+})->with('client-full', ['name']);
 
 it('assures invalid name do not get set', function (CreateClient $client, mixed $value, mixed $expected) {
     $client->name($value);
@@ -20,4 +20,4 @@ it('assures invalid name do not get set', function (CreateClient $client, mixed 
     ['', null],
     ['💣', null],
     ['Alberto The 💣', 'Alberto The'],
-])->only();
+]);
