@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Contracts\HasHandler;
 use Exception;
+use Throwable;
 
 final class Provider
 {
@@ -30,24 +31,28 @@ final class Provider
         return $this;
     }
 
-    public function invoice()
+    public function invoice(): self
     {
         $this->path .= 'Invoice\\';
 
         return $this;
     }
 
-    public function product()
+    public function product(): self
     {
         $this->path .= 'Product\\';
 
         return $this;
     }
 
-    public function create(mixed ...$args)
+    /**
+     * @throws Throwable
+     */
+    public function create(mixed ...$args): HasHandler
     {
         $this->path .= 'Create';
 
+        /** @var HasHandler $providerAction */
         $providerAction = (new ($this->path)());
 
         $this->ensureHandlerExists($providerAction);
@@ -55,6 +60,9 @@ final class Provider
         return $providerAction->handle(...$args);
     }
 
+    /**
+     * @throws Throwable
+     */
     protected function ensureHandlerExists(mixed $action): void
     {
         throw_if(

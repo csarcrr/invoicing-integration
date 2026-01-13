@@ -9,6 +9,9 @@ use Illuminate\Support\Collection;
 
 trait HasItems
 {
+    /**
+     * @var Collection<int, Item>
+     */
     protected Collection $items;
 
     public function item(Item $items): self
@@ -18,6 +21,9 @@ trait HasItems
         return $this;
     }
 
+    /**
+     * @return Collection<int, Item>
+     */
     public function getItems(): Collection
     {
         return $this->items;

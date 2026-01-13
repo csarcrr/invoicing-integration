@@ -39,6 +39,9 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     use HasPostalCode;
     use HasVat;
 
+    /**
+     * @param  array<string, mixed>  $config
+     */
     public function __construct(array $config)
     {
         $this->config($config);
@@ -49,6 +52,9 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
         return new Client;
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getPayload(): Collection
     {
         $this->buildName();

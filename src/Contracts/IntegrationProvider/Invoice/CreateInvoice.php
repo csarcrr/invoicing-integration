@@ -40,8 +40,14 @@ interface CreateInvoice
 
     public function getClient(): ?Client;
 
+    /**
+     * @return Collection<int, Item>
+     */
     public function getItems(): Collection;
 
+    /**
+     * @return Collection<int, Payment>
+     */
     public function getPayments(): Collection;
 
     public function getTransport(): ?TransportDetails;
@@ -56,5 +62,8 @@ interface CreateInvoice
 
     public function getNotes(): ?string;
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getPayload(): Collection;
 }

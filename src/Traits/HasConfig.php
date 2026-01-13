@@ -8,8 +8,14 @@ use Illuminate\Support\Collection;
 
 trait HasConfig
 {
+    /**
+     * @var Collection<string, mixed>
+     */
     protected Collection $providerOptions;
 
+    /**
+     * @param  array<string, mixed>|Collection<string, mixed>  $config
+     */
     public function config(array|Collection $config): self
     {
         if (is_array($config)) {
@@ -21,6 +27,9 @@ trait HasConfig
         return $this;
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getConfig(): Collection
     {
         return $this->providerOptions;

@@ -8,5 +8,8 @@ use Illuminate\Support\Collection;
 
 interface ShouldHavePayload
 {
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getPayload(): Collection;
 }

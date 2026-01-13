@@ -41,6 +41,9 @@ enum TaxExemptionReason: string
     case M46 = 'M46';
     case M99 = 'M99';
 
+    /**
+     * @return array<int, string>
+     */
     public function laws(): array
     {
         return match ($this) {

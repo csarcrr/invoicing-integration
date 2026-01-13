@@ -14,6 +14,9 @@ class TransportDetails
 
     protected ?string $vehicleLicensePlate = null;
 
+    /**
+     * @var array<string, array<string, mixed>>
+     */
     protected array $data = [
         'origin' => [
             'date' => null,

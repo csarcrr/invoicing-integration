@@ -86,7 +86,7 @@ class Output
         return $this->path;
     }
 
-    protected function setFileName(?string $fileName): self
+    protected function setFileName(string $fileName): self
     {
         $fileName = Str::replace('/', '_', $fileName);
 

@@ -15,6 +15,9 @@ final class Request implements ShouldHaveConfig
 {
     use HasConfig;
 
+    /**
+     * @param  Collection<string, mixed>  $config
+     */
     public function __construct(
         protected IntegrationProvider $provider,
         protected Collection $config
@@ -22,6 +25,9 @@ final class Request implements ShouldHaveConfig
         $this->config($config);
     }
 
+    /**
+     * @param  Collection<string, mixed>  $config
+     */
     public static function get(
         IntegrationProvider $provider,
         Collection $config

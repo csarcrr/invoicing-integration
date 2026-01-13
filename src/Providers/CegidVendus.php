@@ -11,6 +11,9 @@ use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create 
 
 class CegidVendus
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $config = [];
 
     public function __construct()
@@ -36,6 +39,9 @@ class CegidVendus
         };
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getConfig(): array
     {
         return $this->config;

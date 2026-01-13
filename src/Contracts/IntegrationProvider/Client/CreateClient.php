@@ -59,5 +59,8 @@ interface CreateClient
 
     public function getIrsRetention(): bool;
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getPayload(): Collection;
 }

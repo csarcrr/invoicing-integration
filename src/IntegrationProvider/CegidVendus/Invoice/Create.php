@@ -50,8 +50,14 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     use HasTransport;
     use HasType;
 
+    /**
+     * @var Collection<string, mixed>
+     */
     protected Collection $payload;
 
+    /**
+     * @var array<int, InvoiceType>
+     */
     protected array $invoiceTypesThatRequirePayments = [
         InvoiceType::Receipt,
         InvoiceType::InvoiceReceipt,
@@ -59,6 +65,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         InvoiceType::CreditNote,
     ];
 
+    /**
+     * @param  array<string, mixed>|Collection<string, mixed>  $config
+     */
     public function __construct(array|Collection $config)
     {
         $this->config($config);
@@ -122,6 +131,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     /**
      * Get the payload to send to the provider
+     *
+     * @return Collection<string, mixed>
      */
     public function getPayload(): Collection
     {
@@ -269,7 +280,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             return;
         }
 
-        /** @var \Illuminate\Support\Collection $items */
+        /** @var Collection<int, array<string, mixed>> $items */
         $items = $this->getItems()->map(function (Item $item): array {
             $data = [];
 
@@ -390,13 +401,18 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('client', $data);
     }
 
+    /**
+     * @param  array<string, mixed>  $errors
+     */
     protected function throwErrors(int $status, array $errors): void
     {
         throw_if($status === 500, FailedReachingProviderException::class);
         throw_if($status === 401, UnauthorizedException::class);
 
-        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
+        /** @var array<int, array{code?: string, message?: string}> $errorList */
+        $errorList = $errors['errors'] ?? [];
+        $messages = collect($errorList)->map(function (array $error): string {
+            return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
         })->toArray();
 
         throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
