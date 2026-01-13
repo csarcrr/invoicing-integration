@@ -69,9 +69,9 @@ class Create implements CreateInvoice, HasConfig
     }
 
     /**
-     * Request an invoice creation
+     * Request an invoice creation 
      */
-    public function invoice(): Invoice
+    public function execute(): Invoice
     {
         $response = Request::get(
             IntegrationProvider::CEGID_VENDUS,

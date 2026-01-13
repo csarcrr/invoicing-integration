@@ -80,7 +80,7 @@ $item->quantity(1);
 $invoice->item($item);
 
 // Issue the invoice
-$result = $invoice->invoice();
+$result = $invoice->execute();
 
 // Get the invoice sequence number
 echo $result->getSequence(); // e.g., "FT 01P2025/1"
@@ -103,7 +103,7 @@ $invoice
     ->dueDate($date);      // Optional: only for FT type
 
 // Issue the invoice
-$result = $invoice->invoice();
+$result = $invoice->execute();
 ```
 
 ---
