@@ -21,7 +21,7 @@ it('handles invoicing input errors properly', function (
     Http::fake(mockResponse($provider, $payload, 400));
 
     $invoice->item(new Item(reference: 'reference-1'));
-    $invoice->invoice();
+    $invoice->execute();
 })->with('invoice-full', 'providers', ['invoice_fail'])
     ->throws(RequestFailedException::class);
 
@@ -36,7 +36,7 @@ it('handles invoicing auth errors properly', function (
     Http::fake(mockResponse($provider, $payload, 401));
 
     $invoice->item(new Item(reference: 'reference-1'));
-    $invoice->invoice();
+    $invoice->execute();
 })->with('invoice-full', 'providers', ['invoice_auth'])
     ->throws(UnauthorizedException::class);
 
@@ -47,6 +47,6 @@ it('handles invoicing catastrophic errors', function (
     Http::fake(mockResponse($provider, [], 500));
 
     $invoice->item(new Item(reference: 'reference-1'));
-    $invoice->invoice();
+    $invoice->execute();
 })->with('invoice', 'providers')
     ->throws(FailedReachingProviderException::class);
