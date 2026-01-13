@@ -14,7 +14,7 @@ trait HasName
     {
         $name = Str::of($name)->ascii()->squish()->toString();
 
-        if(empty($name)) {
+        if (empty($name)) {
             return $this;
         }
 

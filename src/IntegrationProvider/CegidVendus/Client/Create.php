@@ -42,7 +42,7 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     protected Collection $payload;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function __construct(array $config)
     {
@@ -103,18 +103,18 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
 
     protected function buildIrsRetention(): void
     {
-        $this->getIrsRetention() ? $this->payload->put('irs_retention', "yes") : $this->payload->put('irs_retention', "no");
+        $this->getIrsRetention() ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
     }
 
     protected function buildEmailNotification(): void
     {
-        $this->getEmailNotification() ? $this->payload->put('email_notification', "yes") : $this->payload->put('email_notification', "no");
+        $this->getEmailNotification() ? $this->payload->put('email_notification', 'yes') : $this->payload->put('email_notification', 'no');
     }
 
     protected function buildContacts(): void
     {
         $this->getPhone() && $this->payload->put('phone', $this->getPhone());
-     }
+    }
 
     protected function buildDefaultPayDue(): void
     {
