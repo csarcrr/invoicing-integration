@@ -18,5 +18,5 @@ it('throws error when email is invalid', function (CreateClient $client, string 
     $client->email($invalidEmail);
 })->with('client', [
     ['invalid'],
-    ['email@']
+    ['email@'],
 ])->throws(ValidationException::class);
