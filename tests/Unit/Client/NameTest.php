@@ -13,7 +13,7 @@ it('has the correct name', function (CreateClient $client, Fixtures $fixtures, s
     expect($client->getPayload())->toMatchArray($data);
 })->with('client-full', ['name']);
 
-it('assures invalid name do not get set', function (CreateClient $client, mixed $value, mixed $expected) {
+it('ensures invalid name do not get set', function (CreateClient $client, mixed $value, mixed $expected) {
     $client->name($value);
     expect($client->getName())->toBe($expected);
 })->with('client', [
