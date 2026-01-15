@@ -19,8 +19,8 @@ it('has the simple client payload', function (CreateInvoice $invoice, Fixtures $
         )
     );
 
-    expect($invoice->getClient())->toBeInstanceOf(Client::class);
-    expect($invoice->getClient()->getName())->toBe('John Doe');
+    expect($invoice->getClient())->toBeInstanceOf(Client::class)
+        ->and($invoice->getClient()->getName())->toBe('John Doe');
 })->with('invoice-full');
 
 it('has the correct full client payload', function (
