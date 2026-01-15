@@ -353,20 +353,20 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
 
         throw_if(
-            ! is_null($this->getClient()->vat) &&
-                empty($this->getClient()->vat),
+            ! is_null($this->getClient()->getVat()) &&
+                empty($this->getClient()->getVat()),
             InvoiceRequiresClientVatException::class
         );
 
         throw_if(
-            $this->getClient()->name &&
-                ! $this->getClient()->vat,
+            $this->getClient()->getName() &&
+                ! $this->getClient()->getVat(),
             InvoiceRequiresVatWhenClientHasName::class
         );
 
         $data = [
-            'name' => $this->getClient()->name,
-            'fiscal_id' => $this->getClient()->vat,
+            'name' => $this->getClient()->getName(),
+            'fiscal_id' => $this->getClient()->getVat(),
         ];
 
         if ($this->getClient()->getAddress()) {
