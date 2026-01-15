@@ -24,10 +24,7 @@ class Client
 
     protected ?bool $irsRetention = null;
 
-    public function __construct(protected ?string $vat = null, protected ?string $name = null)
-    {
-
-    }
+    public function __construct(protected ?string $vat = null, protected ?string $name = null) {}
 
     public function getAddress(): ?string
     {
