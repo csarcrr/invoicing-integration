@@ -39,6 +39,7 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
     use HasPostalCode;
     use HasVat;
 
+    /** @var Collection<string, mixed> */
     protected Collection $payload;
 
     /**
