@@ -108,7 +108,7 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
 
     protected function buildEmailNotification(): void
     {
-        $this->getEmailNotification() ? $this->payload->put('email_notification', 'yes') : $this->payload->put('email_notification', 'no');
+        $this->getEmailNotification() ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
     }
 
     protected function buildContacts(): void
