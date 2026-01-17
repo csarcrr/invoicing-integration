@@ -22,6 +22,7 @@ use CsarCrr\InvoicingIntegration\Traits\Client\HasVat;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\ValueObjects\Client;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 
 class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
 {
@@ -53,6 +54,12 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
 
     public function execute(): Client
     {
+        /** @phpstan-ignore-next-line */
+        $response = Http::provider()->post('/clients', $this->getPayload());
+
+        /** @phpstan-ignore-next-line */
+        Http::handleUnwantedFailures($response);
+
         return new Client;
     }
 

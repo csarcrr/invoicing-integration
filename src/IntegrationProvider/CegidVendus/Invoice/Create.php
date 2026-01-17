@@ -7,16 +7,12 @@ namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
@@ -35,6 +31,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 
 class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
@@ -83,14 +80,11 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
      */
     public function execute(): Invoice
     {
-        $response = Request::get(
-            IntegrationProvider::CEGID_VENDUS,
-            $this->getConfig()
-        )->post('documents', $this->getPayload());
+        /** @phpstan-ignore-next-line */
+        $response = Http::provider()->post('documents', $this->getPayload());
 
-        if (! in_array($response->status(), [200, 201, 300, 301])) {
-            $this->throwErrors($response->status(), $response->json());
-        }
+        /** @phpstan-ignore-next-line */
+        Http::handleUnwantedFailures($response);
 
         $data = $response->json();
 
@@ -399,24 +393,5 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
 
         $this->payload->put('client', $data);
-    }
-
-    /**
-     * @param  array<string, mixed>  $errors
-     */
-    protected function throwErrors(int $status, array $errors): void
-    {
-        throw_if($status === 500, FailedReachingProviderException::class);
-        throw_if($status === 401, UnauthorizedException::class);
-
-        /** @var array<int, array{code?: string, message?: string}> $errorList */
-        $errorList = $errors['errors'] ?? [];
-        $messages = collect($errorList)->map(function (array $error): string {
-            return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
-        })->toArray();
-
-        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
-
-        throw new Exception('The integration API request failed for an unknown reason.');
     }
 }
