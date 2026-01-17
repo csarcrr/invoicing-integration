@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use Illuminate\Support\Facades\Http;
 
-it('handles invoicing input errors properly', function (
+test('when creating request fails it handles errors properly', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
     IntegrationProvider $provider,
@@ -25,7 +25,7 @@ it('handles invoicing input errors properly', function (
 })->with('invoice-full', 'providers', ['invoice_fail'])
     ->throws(RequestFailedException::class);
 
-it('handles invoicing auth errors properly', function (
+test('when auth in create fails it handles errors properly', function (
     CreateInvoice $invoice,
     Fixtures $fixture,
     IntegrationProvider $provider,
@@ -40,7 +40,7 @@ it('handles invoicing auth errors properly', function (
 })->with('invoice-full', 'providers', ['invoice_auth'])
     ->throws(UnauthorizedException::class);
 
-it('handles invoicing catastrophic errors', function (
+test('when provider fails catastrophically it handles the errors properly', function (
     CreateInvoice $invoice,
     IntegrationProvider $provider,
 ) {
