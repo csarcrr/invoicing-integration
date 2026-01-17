@@ -30,10 +30,8 @@ it('has the correct full client payload', function (
 ) {
     $data = $fixture->request()->invoice()->client()->files($fixtureName);
 
-    $client = new Client(
-        name: 'John Doe',
-        vat: '123456789'
-    );
+    $client = new Client;
+    $client->name('John Doe')->vat('123456789');
 
     $client->address('Rua das Flores 125');
     $client->city('Porto');
