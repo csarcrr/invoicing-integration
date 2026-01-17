@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client\Create as ClientCreate;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create as InvoiceCreate;
+use Illuminate\Support\Facades\Http;
 
 class CegidVendus
 {
@@ -37,6 +38,19 @@ class CegidVendus
         return match ($action) {
             Action::CREATE => new ClientCreate($provider->getConfig())
         };
+    }
+
+    public static function setupHttpConfiguration(): mixed
+    {
+        $self = new self;
+        $config = $self->getConfig();
+
+        return Http::withHeaders([
+            'Authorization' => 'Bearer '.$config['key'],
+        ])
+            ->baseUrl('https://www.vendus.pt/ws/v1.1/')
+            ->timeout(30)
+            ->connectTimeout(10);
     }
 
     /**
