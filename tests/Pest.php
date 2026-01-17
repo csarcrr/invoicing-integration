@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
@@ -83,6 +84,6 @@ function mockResponse(
     $jsonFixture,
     $status = 200,
     $headers = [],
-) {
+): PromiseInterface {
     return Http::response($jsonFixture, $status, $headers);
 }
