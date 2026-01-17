@@ -71,22 +71,28 @@ class Client
         return $this->irsRetention;
     }
 
-    public function address(?string $address): void
+    public function address(?string $address): self
     {
         $this->address = $address;
+
+        return $this;
     }
 
-    public function city(?string $city): void
+    public function city(?string $city): self
     {
         $this->city = $city;
+
+        return $this;
     }
 
-    public function postalCode(?string $postalCode): void
+    public function postalCode(?string $postalCode): self
     {
         $this->postalCode = $postalCode;
+
+        return $this;
     }
 
-    public function country(?string $country): void
+    public function country(?string $country): self
     {
         try {
             $data = (new ISO3166)->alpha2(strtolower($country));
@@ -95,19 +101,25 @@ class Client
         }
 
         $this->country = $country;
+
+        return $this;
     }
 
-    public function vat(?string $vat): void
+    public function vat(?string $vat): self
     {
         $this->vat = $vat;
+
+        return $this;
     }
 
-    public function name(?string $name): void
+    public function name(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
-    public function email(?string $email): void
+    public function email(?string $email): self
     {
 
         Validator::make(['email' => $email], [
@@ -117,15 +129,21 @@ class Client
         ])->validate();
 
         $this->email = $email;
+
+        return $this;
     }
 
-    public function phone(?string $phone): void
+    public function phone(?string $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
     }
 
-    public function irsRetention(bool $irsRetention): void
+    public function irsRetention(bool $irsRetention): self
     {
         $this->irsRetention = $irsRetention;
+
+        return $this;
     }
 }
