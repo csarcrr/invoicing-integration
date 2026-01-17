@@ -5,54 +5,22 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasAddress;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasCity;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasCountry;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasDefaultPayDue;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasEmailNotification;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasIrsRetention;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasName;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasNotes;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasPhone;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasPostalCode;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasVat;
-use CsarCrr\InvoicingIntegration\Traits\HasConfig;
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
+class Create implements CreateClient, ShouldHavePayload
 {
-    use HasAddress;
-    use HasCity;
-    use HasConfig;
-    use HasCountry;
-    use HasDefaultPayDue;
-    use HasEmail;
-    use HasEmailNotification;
-    use HasIrsRetention;
-    use HasName;
-    use HasNotes;
-    use HasPhone;
-    use HasPostalCode;
-    use HasVat;
-
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    /**
-     * @param  array<string, mixed>  $config
-     */
-    public function __construct(array $config)
+    public function __construct(protected ClientData $client)
     {
-        $this->config($config);
         $this->payload = collect();
     }
 
-    public function execute(): Client
+    public function execute(): ClientData
     {
         /** @phpstan-ignore-next-line */
         $response = Http::provider()->post('/clients', $this->getPayload());
@@ -60,7 +28,11 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
         /** @phpstan-ignore-next-line */
         Http::handleUnwantedFailures($response);
 
-        return new Client;
+        $data = $response->json();
+
+        $this->client->id($data['id']);
+
+        return $this->client;
     }
 
     /**
@@ -83,49 +55,49 @@ class Create implements CreateClient, ShouldHaveConfig, ShouldHavePayload
 
     protected function buildName(): void
     {
-        $this->getName() && $this->payload->put('name', $this->getName());
+        $this->client->getName() && $this->payload->put('name', $this->client->getName());
     }
 
     protected function buildEmail(): void
     {
-        $this->getEmail() && $this->payload->put('email', $this->getEmail());
+        $this->client->getEmail() && $this->payload->put('email', $this->client->getEmail());
     }
 
     protected function buildCompleteAddress(): void
     {
-        $this->getAddress() && $this->payload->put('address', $this->getAddress());
-        $this->getCity() && $this->payload->put('city', $this->getCity());
-        $this->getPostalCode() && $this->payload->put('postalcode', $this->getPostalCode());
-        $this->getCountry() && $this->payload->put('country', $this->getCountry());
+        $this->client->getAddress() && $this->payload->put('address', $this->client->getAddress());
+        $this->client->getCity() && $this->payload->put('city', $this->client->getCity());
+        $this->client->getPostalCode() && $this->payload->put('postalcode', $this->client->getPostalCode());
+        $this->client->getCountry() && $this->payload->put('country', $this->client->getCountry());
     }
 
     protected function buildVat(): void
     {
-        $this->getVat() && $this->payload->put('fiscal_id', $this->getVat());
+        $this->client->getVat() && $this->payload->put('fiscal_id', $this->client->getVat());
     }
 
     protected function buildNotes(): void
     {
-        $this->getNotes() && $this->payload->put('notes', $this->getNotes());
+        $this->client->getNotes() && $this->payload->put('notes', $this->client->getNotes());
     }
 
     protected function buildIrsRetention(): void
     {
-        $this->getIrsRetention() ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
+        $this->client->getIrsRetention() ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
     }
 
     protected function buildEmailNotification(): void
     {
-        $this->getEmailNotification() ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
+        $this->client->getEmailNotification() ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
     }
 
     protected function buildContacts(): void
     {
-        $this->getPhone() && $this->payload->put('phone', $this->getPhone());
+        $this->client->getPhone() && $this->payload->put('phone', $this->client->getPhone());
     }
 
     protected function buildDefaultPayDue(): void
     {
-        $this->getDefaultPayDue() && $this->payload->put('default_pay_due', $this->getDefaultPayDue());
+        $this->client->getDefaultPayDue() && $this->payload->put('default_pay_due', $this->client->getDefaultPayDue());
     }
 }

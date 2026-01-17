@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 trait HasClient
 {
-    protected ?Client $client = null;
+    protected ?ClientData $client = null;
 
-    public function client(Client $client): self
+    public function client(ClientData $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getClient(): ?Client
+    public function getClient(): ?ClientData
     {
         return $this->client;
     }

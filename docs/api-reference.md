@@ -65,7 +65,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 ### Client
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 ```
 
 **Constructor:**

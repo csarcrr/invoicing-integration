@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -19,14 +17,14 @@ function invoice(): CreateInvoice
 {
     mockConfiguration(IntegrationProvider::CEGID_VENDUS);
 
-    return CegidVendus::invoice(Action::CREATE);
+    return Invoice::create();
 }
 
-function client(): CreateClient
+function client(): IntegrationProvider
 {
     mockConfiguration(IntegrationProvider::CEGID_VENDUS);
 
-    return CegidVendus::client(Action::CREATE);
+    return IntegrationProvider::current();
 }
 
 dataset('client', [

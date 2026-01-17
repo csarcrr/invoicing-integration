@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
+use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create;
 
 final class Invoice
 {
@@ -21,13 +20,8 @@ final class Invoice
     {
         $class = app()->make(self::class);
 
-        return $class->provider(Action::CREATE);
-    }
-
-    public function provider(Action $action): mixed
-    {
-        return match ($this->provider) {
-            IntegrationProvider::CEGID_VENDUS => CegidVendus::invoice($action)
+        return match ($class->provider) {
+            IntegrationProvider::CEGID_VENDUS => new Create(IntegrationProvider::CEGID_VENDUS->config()),
         };
     }
 }

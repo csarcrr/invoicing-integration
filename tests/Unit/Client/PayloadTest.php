@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
+use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-it('builds the correct payload with all parameters', function (CreateClient $client, Fixtures $fixtures) {
+it('builds the correct payload with all parameters', function (IntegrationProvider $provider, Fixtures $fixtures) {
     $data = $fixtures->request()->client()->files('client_full');
 
-    $client
-        ->name('Alberto Albertino')
+    $client = (new ClientData)->name('Alberto Albertino')
         ->vat('223098091')
         ->address('Rua das Flores 125')
         ->postalCode('4100-100')
@@ -22,5 +23,7 @@ it('builds the correct payload with all parameters', function (CreateClient $cli
         ->defaultPayDue(15)
         ->irsRetention(true);
 
-    expect($client->getPayload()->toArray())->toMatchArray($data);
+    $create = Client::create($client);
+
+    expect($create->getPayload()->toArray())->toMatchArray($data);
 })->with('client-full');

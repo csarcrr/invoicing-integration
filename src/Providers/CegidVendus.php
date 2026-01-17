@@ -6,7 +6,6 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client\Create as ClientCreate;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create as InvoiceCreate;
 use Illuminate\Support\Facades\Http;
 
@@ -28,15 +27,6 @@ class CegidVendus
 
         return match ($action) {
             Action::CREATE => new InvoiceCreate($provider->getConfig())
-        };
-    }
-
-    public static function client(Action $action): mixed
-    {
-        $provider = new self;
-
-        return match ($action) {
-            Action::CREATE => new ClientCreate($provider->getConfig())
         };
     }
 

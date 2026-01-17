@@ -27,9 +27,9 @@ This creates an **FT (Invoice)** document for a final consumer.
 For non-final-consumer invoices, add client information:
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-$client = new Client();
+$client = new ClientData();
 $client->name('John Doe');
 $client->vat('123456789');
 $client->address('Rua das Flores 125');
@@ -175,7 +175,7 @@ For invoices with transport information:
 ```php
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $transport = new TransportDetails;
 
@@ -198,7 +198,7 @@ $transport->destination()
 $transport->vehicleLicensePlate('00-AB-00');
 
 // Transport requires client information
-$client = new Client();
+$client = new ClientData();
 $client->vat('PT123456789');
 $client->name('Client Name');
 $invoice->client($client);
@@ -215,7 +215,7 @@ $invoice->transport($transport);
 
 ```php
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
@@ -224,7 +224,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 $invoice = Invoice::create();
 
 // Set client
-$client = new Client();
+$client = new ClientData();
 $client->name('John Doe');
 $client->vat('123456789');
 $client->address('Rua das Flores 125');

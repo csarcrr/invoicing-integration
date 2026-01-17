@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Validation\ValidationException;
 
-it('throws error when email is invalid', function (CreateClient $client, string $invalidEmail) {
-    $client->email($invalidEmail);
-})->with('client', [
+it('throws error when email is invalid', function (IntegrationProvider $provider, Fixtures $fixtures, string $invalidEmail) {
+    (new ClientData)->email($invalidEmail);
+})->with('client-full', [
     ['invalid'],
     ['email@'],
 ])->throws(ValidationException::class);

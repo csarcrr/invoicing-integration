@@ -7,7 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\ValueObjects\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
@@ -18,7 +18,7 @@ interface CreateInvoice
 {
     public function execute(): Invoice;
 
-    public function client(Client $client): self;
+    public function client(ClientData $client): self;
 
     public function item(Item $item): self;
 
@@ -38,7 +38,7 @@ interface CreateInvoice
 
     public function notes(string $notes): self;
 
-    public function getClient(): ?Client;
+    public function getClient(): ?ClientData;
 
     /**
      * @return Collection<int, Item>

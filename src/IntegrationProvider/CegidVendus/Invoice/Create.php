@@ -387,10 +387,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             $data['phone'] = $this->getClient()->getPhone();
         }
 
-        if (! is_null($this->getClient()->getIrsRetention())) {
-            $retention = $this->getClient()->getIrsRetention();
-            $data['irs_retention'] = $retention ? 'yes' : 'no';
-        }
+        $retention = $this->getClient()->getIrsRetention();
+        $data['irs_retention'] = $retention ? 'yes' : 'no';
 
         $this->payload->put('client', $data);
     }

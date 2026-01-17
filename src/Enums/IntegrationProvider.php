@@ -8,6 +8,11 @@ enum IntegrationProvider: string
 {
     case CEGID_VENDUS = 'CegidVendus';
 
+    public static function current(): self
+    {
+        return self::from(config('invoicing-integration.provider'));
+    }
+
     public function config(): mixed
     {
         return match ($this) {
