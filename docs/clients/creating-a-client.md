@@ -37,24 +37,24 @@ $clientData = (new ClientData())
     ->defaultPayDue(30);            // Default payment due days
 ```
 
-### Required vs Optional Fields
+### Available Fields
 
-| Field               | Required | Notes                                  |
-| ------------------- | -------- | -------------------------------------- |
-| `name`              | Yes      | Client display name                    |
-| `vat`               | No       | Tax ID / Fiscal ID                     |
-| `email`             | No       | Must be valid email format             |
-| `phone`             | No       | Phone number                           |
-| `address`           | No       | Street address                         |
-| `city`              | No       | City name                              |
-| `postalCode`        | No       | Postal/ZIP code                        |
-| `country`           | No       | ISO 3166-1 alpha-2 code (e.g., PT, ES) |
-| `notes`             | No       | Internal notes (not shown on invoices) |
-| `irsRetention`      | No       | Portuguese IRS withholding flag        |
-| `emailNotification` | No       | Auto-send documents via email          |
-| `defaultPayDue`     | No       | Default payment due days               |
+| Field               | Description                            |
+| ------------------- | -------------------------------------- |
+| `name`              | Client display name                    |
+| `vat`               | Tax ID / Fiscal ID                     |
+| `email`             | Email address (validated format)       |
+| `phone`             | Phone number                           |
+| `address`           | Street address                         |
+| `city`              | City name                              |
+| `postalCode`        | Postal/ZIP code                        |
+| `country`           | ISO 3166-1 alpha-2 code (e.g., PT, ES) |
+| `notes`             | Internal notes (not shown on invoices) |
+| `irsRetention`      | Portuguese IRS withholding flag        |
+| `emailNotification` | Auto-send documents via email          |
+| `defaultPayDue`     | Default payment due days               |
 
-> **Note:** Provider requirements may vary. Cegid Vendus requires at least a `name`.
+> **Note:** Required fields vary by provider. Check your provider's documentation for specific requirements. If a required field is missing, the request will fail with an explicit error message from the provider.
 
 ## Complete Example
 
