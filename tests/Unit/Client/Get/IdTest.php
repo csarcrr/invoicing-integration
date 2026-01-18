@@ -20,3 +20,9 @@ it('can set the client id', function (IntegrationProvider $provider) {
         return Str::contains($request->url(), '999999');
     });
 })->with('providers');
+
+it('fails when no id is set', function (IntegrationProvider $provider) {
+    $client = new ClientData();
+
+    Client::get($client)->execute();
+})->with('providers')->throws(InvalidArgumentException::class, 'Client ID is required.');

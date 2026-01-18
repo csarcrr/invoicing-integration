@@ -7,6 +7,8 @@ use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
+use function throw_if;
 
 class Get implements GetClient
 {
@@ -18,9 +20,27 @@ class Get implements GetClient
 
     public function execute(): ClientData
     {
+        throw_if(!$this->client->getId(), InvalidArgumentException::class, 'Client ID is required.');
+
         $request = Http::provider()->get('/clients/'.$this->client->getId());
         Http::handleUnwantedFailures($request);
 
-        return new ClientData();
+        $this->fill($request->json());
+
+        return $this->client;
+    }
+
+    protected function fill(array $data): void
+    {
+        !empty($data['name']) && $this->client->name($data['name']);
+        !empty($data['email']) && $this->client->email($data['email']);
+        !empty($data['address']) && $this->client->address($data['address']);
+        !empty($data['phone']) && $this->client->phone($data['phone']);
+        !empty($data['notes']) && $this->client->notes($data['notes']);
+        !empty($data['postalcode']) && $this->client->postalCode($data['postalcode']);
+        !empty($data['fiscal_id']) && $this->client->vat($data['fiscal_id']);
+        !empty($data['city']) && $this->client->city($data['city']);
+        !empty($data['country']) && $this->client->country($data['country']);
+
     }
 }
