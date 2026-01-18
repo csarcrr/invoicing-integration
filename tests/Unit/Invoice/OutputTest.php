@@ -37,12 +37,7 @@ it('has the correct payload to request a escpos response', function (Integration
 })->with('providers', ['has_escpos']);
 
 it('can save the output to pdf', function (IntegrationProvider $provider, string $fixtureName) {
-    Http::fake(
-        mockResponse(
-            $provider,
-            fixtures()->response()->invoice()->output()->files($fixtureName)
-        )
-    );
+    Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'item-1'));
@@ -57,12 +52,7 @@ it('can save the output to pdf', function (IntegrationProvider $provider, string
 })->with('providers', ['output_with_pdf']);
 
 it('can output escpos', function (IntegrationProvider $provider, string $fixtureName) {
-    Http::fake(
-        mockResponse(
-            $provider,
-            fixtures()->response()->invoice()->output()->files($fixtureName)
-        )
-    );
+    Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'item-1'));
@@ -77,12 +67,7 @@ it('can output escpos', function (IntegrationProvider $provider, string $fixture
 })->with('providers', ['output_with_escpos']);
 
 it('can save the output under a custom name and path', function (IntegrationProvider $provider, string $fixtureName) {
-    Http::fake(
-        mockResponse(
-            $provider,
-            fixtures()->response()->invoice()->output()->files($fixtureName)
-        )
-    );
+    Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'item-1'));
@@ -102,12 +87,7 @@ it('is able to sanitize the path and filename when saving', function (
     string $invalidPath,
     string $expectedPath
 ) {
-    Http::fake(
-        mockResponse(
-            $provider,
-            fixtures()->response()->invoice()->output()->files($fixtureName)
-        )
-    );
+    Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'item-1'));
@@ -142,12 +122,7 @@ it('is able to sanitize the path and filename when saving', function (
     ]);
 
 it('outputs null when there is no invoice output provided', function (IntegrationProvider $provider, string $fixtureName) {
-    Http::fake(
-        mockResponse(
-            $provider,
-            fixtures()->response()->invoice()->output()->files($fixtureName)
-        )
-    );
+    Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'item-1'));

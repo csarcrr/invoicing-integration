@@ -15,7 +15,7 @@ test('when creating request fails it handles errors properly', function (
     string $fixtureName,
 ) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
-    Http::fake(mockResponse($provider, $payload, 400));
+    Http::fake(mockResponse($payload, 400));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'reference-1'));
@@ -29,7 +29,7 @@ test('when auth in create fails it handles errors properly', function (
 ) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
 
-    Http::fake(mockResponse($provider, $payload, 401));
+    Http::fake(mockResponse($payload, 401));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'reference-1'));
@@ -40,7 +40,7 @@ test('when auth in create fails it handles errors properly', function (
 test('when provider fails catastrophically it handles the errors properly', function (
     IntegrationProvider $provider,
 ) {
-    Http::fake(mockResponse($provider, [], 500));
+    Http::fake(mockResponse([], 500));
 
     $invoice = Invoice::create();
     $invoice->item(new Item(reference: 'reference-1'));
