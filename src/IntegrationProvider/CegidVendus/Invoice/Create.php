@@ -358,34 +358,15 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             InvoiceRequiresVatWhenClientHasName::class
         );
 
-        $data = [
-            'name' => $this->getClient()->getName(),
-            'fiscal_id' => $this->getClient()->getVat(),
-        ];
-
-        if ($this->getClient()->getAddress()) {
-            $data['address'] = $this->getClient()->getAddress();
-        }
-
-        if ($this->getClient()->getCity()) {
-            $data['city'] = $this->getClient()->getCity();
-        }
-
-        if ($this->getClient()->getPostalCode()) {
-            $data['postalcode'] = $this->getClient()->getPostalCode();
-        }
-
-        if ($this->getClient()->getCountry()) {
-            $data['country'] = $this->getClient()->getCountry();
-        }
-
-        if ($this->getClient()->getEmail()) {
-            $data['email'] = $this->getClient()->getEmail();
-        }
-
-        if ($this->getClient()->getPhone()) {
-            $data['phone'] = $this->getClient()->getPhone();
-        }
+        $this->getClient()->getId() && $data['id'] = $this->getClient()->getId();
+        $this->getClient()->getName() && $data['name'] = $this->getClient()->getName();
+        $this->getClient()->getVat() && $data['fiscal_id'] = $this->getClient()->getVat();
+        $this->getClient()->getAddress() && $data['address'] = $this->getClient()->getAddress();
+        $this->getClient()->getCity() && $data['city'] = $this->getClient()->getCity();
+        $this->getClient()->getPostalCode() && $data['postalcode'] = $this->getClient()->getPostalCode();
+        $this->getClient()->getCountry() && $data['country'] = $this->getClient()->getCountry();
+        $this->getClient()->getEmail() && $data['email'] = $this->getClient()->getEmail();
+        $this->getClient()->getPhone() && $data['phone'] = $this->getClient()->getPhone();
 
         $retention = $this->getClient()->getIrsRetention();
         $data['irs_retention'] = $retention ? 'yes' : 'no';
