@@ -22,6 +22,12 @@ Always consult with legal and accounting professionals when implementing invoici
 - [Getting Started](getting-started.md) - Installation and configuration
 - [Features](features.md) - Supported features by provider and document type
 
+### Clients
+
+- [Overview](clients/README.md)
+- [Creating a Client](clients/creating-a-client.md)
+- [Getting a Client](clients/getting-a-client.md)
+
 ### Invoices
 
 - [Creating an Invoice](invoices/creating-an-invoice.md)

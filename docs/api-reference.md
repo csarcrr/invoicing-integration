@@ -2,6 +2,45 @@
 
 Complete reference for the Invoicing Integration package classes, methods, and enums.
 
+## Client
+
+Entry point for client management operations.
+
+```php
+use CsarCrr\InvoicingIntegration\Client;
+```
+
+| Method                               | Return Type    | Description                           |
+| ------------------------------------ | -------------- | ------------------------------------- |
+| `Client::create(ClientData $client)` | `CreateClient` | Creates a new client builder instance |
+| `Client::get(ClientData $client)`    | `GetClient`    | Creates a client retrieval instance   |
+
+## CreateClient Contract
+
+The interface returned by `Client::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
+```
+
+| Method      | Return Type  | Description                                 |
+| ----------- | ------------ | ------------------------------------------- |
+| `execute()` | `ClientData` | Create the client and return populated data |
+
+## GetClient Contract
+
+The interface returned by `Client::get()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
+```
+
+| Method      | Return Type  | Description                                   | Throws                                     |
+| ----------- | ------------ | --------------------------------------------- | ------------------------------------------ |
+| `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing) |
+
+---
+
 ## Invoice
 
 Entry point for creating invoices.
@@ -26,7 +65,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 | Method                                         | Parameters                         | Description                                      | Throws |
 | ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ | ------ |
-| `client(Client $client)`                       | Client object                      | Set client details (optional for final consumer) | -      |
+| `client(ClientData $client)`                   | ClientData object                  | Set client details (optional for final consumer) | -      |
 | `item(Item $item)`                             | Item object                        | Add an item to the invoice                       | -      |
 | `payment(Payment $payment)`                    | Payment object                     | Add a payment to the invoice                     | -      |
 | `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            | -      |
@@ -47,7 +86,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 | Method                  | Return Type         | Description                      |
 | ----------------------- | ------------------- | -------------------------------- |
-| `getClient()`           | `?Client`           | Get the current client           |
+| `getClient()`           | `?ClientData`       | Get the current client           |
 | `getItems()`            | `Collection`        | Get all items                    |
 | `getPayments()`         | `Collection`        | Get all payments                 |
 | `getTransport()`        | `?TransportDetails` | Get transport details            |
@@ -62,7 +101,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 ## Value Objects
 
-### Client
+### ClientData
 
 ```php
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
@@ -71,34 +110,44 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 **Constructor:**
 
 ```php
-new Client()
+new ClientData()
 ```
 
 **Methods (fluent, return self):**
 
-| Method                           | Parameter         | Description           | Throws |
-| -------------------------------- | ----------------- | --------------------- | ------ |
-| `address(string $address)`       | Address string    | Set street address    | -      |
-| `city(string $city)`             | City name         | Set city              | -      |
-| `postalCode(string $postalCode)` | Postal code       | Set postal code       | -      |
-| `country(string $country)`       | ISO 2-letter code | Set country           | -      |
-| `email(string $email)`           | Email address     | Set email (validated) | -      |
-| `phone(string $phone)`           | Phone number      | Set phone             | -      |
-| `irsRetention(bool $retention)`  | Boolean           | Enable IRS retention  | -      |
+| Method                                  | Parameter         | Description              | Throws |
+| --------------------------------------- | ----------------- | ------------------------ | ------ |
+| `id(int $id)`                           | Provider ID       | Set provider-assigned ID | -      |
+| `name(string $name)`                    | Name string       | Set client name          | -      |
+| `vat(string $vat)`                      | VAT/Fiscal ID     | Set tax identification   | -      |
+| `address(string $address)`              | Address string    | Set street address       | -      |
+| `city(string $city)`                    | City name         | Set city                 | -      |
+| `postalCode(string $postalCode)`        | Postal code       | Set postal code          | -      |
+| `country(string $country)`              | ISO 2-letter code | Set country              | -      |
+| `email(string $email)`                  | Email address     | Set email (validated)    | -      |
+| `phone(string $phone)`                  | Phone number      | Set phone                | -      |
+| `notes(string $notes)`                  | Notes text        | Set internal notes       | -      |
+| `irsRetention(bool $retention)`         | Boolean           | Enable IRS retention     | -      |
+| `emailNotification(bool $notification)` | Boolean           | Enable email alerts      | -      |
+| `defaultPayDue(int $days)`              | Days              | Set default payment due  | -      |
 
 **Getter Methods:**
 
-| Method              | Return Type |
-| ------------------- | ----------- |
-| `getName()`         | `?string`   |
-| `getVat()`          | `?string`   |
-| `getAddress()`      | `?string`   |
-| `getCity()`         | `?string`   |
-| `getPostalCode()`   | `?string`   |
-| `getCountry()`      | `?string`   |
-| `getEmail()`        | `?string`   |
-| `getPhone()`        | `?string`   |
-| `getIrsRetention()` | `?bool`     |
+| Method                   | Return Type |
+| ------------------------ | ----------- |
+| `getId()`                | `?int`      |
+| `getName()`              | `?string`   |
+| `getVat()`               | `?string`   |
+| `getAddress()`           | `?string`   |
+| `getCity()`              | `?string`   |
+| `getPostalCode()`        | `?string`   |
+| `getCountry()`           | `?string`   |
+| `getEmail()`             | `?string`   |
+| `getPhone()`             | `?string`   |
+| `getNotes()`             | `?string`   |
+| `getIrsRetention()`      | `?bool`     |
+| `getEmailNotification()` | `?bool`     |
+| `getDefaultPayDue()`     | `?int`      |
 
 ---
 

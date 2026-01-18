@@ -1,0 +1,141 @@
+# Creating a Client
+
+Register a new client in your invoicing provider using `Client::create()`.
+
+## Basic Example
+
+```php
+use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+
+$clientData = (new ClientData())
+    ->name('John Doe')
+    ->vat('123456789');
+
+$client = Client::create($clientData)->execute();
+
+echo $client->getId(); // Provider-assigned ID (e.g., 12345)
+```
+
+## ClientData Properties
+
+The `ClientData` value object supports the following properties:
+
+```php
+$clientData = (new ClientData())
+    ->name('John Doe')              // Client name
+    ->vat('123456789')              // Tax identification number
+    ->email('john@example.com')     // Email address (validated)
+    ->phone('220123456')            // Phone number
+    ->address('Rua das Flores 125') // Street address
+    ->city('Porto')                 // City
+    ->postalCode('4410-000')        // Postal code
+    ->country('PT')                 // ISO 2-letter country code
+    ->notes('VIP customer')         // Internal notes
+    ->irsRetention(true)            // Enable IRS retention (Portugal)
+    ->emailNotification(true)       // Send email notifications
+    ->defaultPayDue(30);            // Default payment due days
+```
+
+### Required vs Optional Fields
+
+| Field               | Required | Notes                                  |
+| ------------------- | -------- | -------------------------------------- |
+| `name`              | Yes      | Client display name                    |
+| `vat`               | No       | Tax ID / Fiscal ID                     |
+| `email`             | No       | Must be valid email format             |
+| `phone`             | No       | Phone number                           |
+| `address`           | No       | Street address                         |
+| `city`              | No       | City name                              |
+| `postalCode`        | No       | Postal/ZIP code                        |
+| `country`           | No       | ISO 3166-1 alpha-2 code (e.g., PT, ES) |
+| `notes`             | No       | Internal notes (not shown on invoices) |
+| `irsRetention`      | No       | Portuguese IRS withholding flag        |
+| `emailNotification` | No       | Auto-send documents via email          |
+| `defaultPayDue`     | No       | Default payment due days               |
+
+> **Note:** Provider requirements may vary. Cegid Vendus requires at least a `name`.
+
+## Complete Example
+
+```php
+use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+
+// Build client data
+$clientData = (new ClientData())
+    ->name('Acme Corporation')
+    ->vat('PT501234567')
+    ->email('billing@acme.example.com')
+    ->phone('210000000')
+    ->address('Avenida da Liberdade, 100')
+    ->city('Lisboa')
+    ->postalCode('1250-096')
+    ->country('PT')
+    ->irsRetention(false)
+    ->emailNotification(true)
+    ->defaultPayDue(30);
+
+// Create client in provider
+$client = Client::create($clientData)->execute();
+
+// The client now has an ID assigned by the provider
+$clientId = $client->getId();
+
+// Store this ID for future use (e.g., in your database)
+echo "Client created with ID: {$clientId}";
+```
+
+## Using Created Clients with Invoices
+
+Once a client is created, you can use it when issuing invoices:
+
+```php
+use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+
+// Create or retrieve client
+$clientData = (new ClientData())
+    ->name('Acme Corporation')
+    ->vat('PT501234567');
+
+$client = Client::create($clientData)->execute();
+
+// Use client in invoice
+$invoice = Invoice::create();
+$invoice->client($client);
+
+$item = (new Item())->reference('SKU-001')->price(1000);
+$invoice->item($item);
+
+$result = $invoice->execute();
+```
+
+## Error Handling
+
+Client creation may fail due to provider-specific validation:
+
+```php
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
+
+try {
+    $client = Client::create($clientData)->execute();
+} catch (UnauthorizedException $e) {
+    // Invalid API credentials
+} catch (RequestFailedException $e) {
+    // Provider rejected the request (e.g., duplicate client, invalid data)
+}
+```
+
+---
+
+**Tips:**
+
+- Store the provider-assigned `id` in your database for future reference
+- Use `emailNotification(true)` to have the provider send documents automatically
+- Country codes must be valid ISO 3166-1 alpha-2 codes
+
+---
+
+Next: [Getting a Client](getting-a-client.md)
