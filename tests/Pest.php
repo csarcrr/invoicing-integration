@@ -57,7 +57,7 @@ dataset('client-full', [
 ]);
 
 dataset('providers', [
-    [fn () => cegidVendusProvider()],
+    'vendus' => fn () => cegidVendusProvider(),
 ]);
 
 function cegidVendusProvider(): IntegrationProvider
