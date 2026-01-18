@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client\Get;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+
 use function app;
 
 final class Client
@@ -27,7 +28,8 @@ final class Client
         };
     }
 
-    public static function get(ClientData $client) : GetClient {
+    public static function get(ClientData $client): GetClient
+    {
         $class = app()->make(self::class);
 
         return match ($class->provider) {
