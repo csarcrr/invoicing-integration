@@ -7,9 +7,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Facades\Http;
 
 test('create client request is successful', function (IntegrationProvider $provider, string $createFixture, $responseFixture) {
-    Http::fake(
-        mockResponse(fixtures()->response()->client()->files($responseFixture))
-    );
+    Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = (new ClientData)->name('Quim');
     $data = Client::create($client)->execute();
@@ -19,9 +17,7 @@ test('create client request is successful', function (IntegrationProvider $provi
 })->with('providers', ['create'], ['response']);
 
 test('handles errors successfully', function (IntegrationProvider $provider) {
-    Http::fake(
-        mockResponse([], 500)
-    );
+    Http::fake(mockResponse([], 500));
 
     $client = (new ClientData)->name('Quim');
     Client::create($client)->execute();
