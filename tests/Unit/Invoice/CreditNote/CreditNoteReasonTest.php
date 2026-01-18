@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
-use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-it('can apply a credit note reason', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
-    $data = $fixture->request()->invoice()->invoiceTypes()->files($fixtureName);
+it('can apply a credit note reason', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
     $item->relatedDocument('FT 01P2025/1', 1);
 
@@ -22,9 +23,10 @@ it('can apply a credit note reason', function (CreateInvoice $invoice, Fixtures 
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['credit_note']);
+})->with('providers', ['credit_note']);
 
-it('fails when reason is not applied', function (CreateInvoice $invoice, Fixtures $fixture) {
+it('fails when reason is not applied', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
     $item->relatedDocument('FT 01P2025/1', 1);
 
@@ -33,11 +35,12 @@ it('fails when reason is not applied', function (CreateInvoice $invoice, Fixture
     $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
 
     $invoice->getPayload();
-})->with('invoice-full')->throws(CreditNoteReasonIsMissingException::class);
+})->with('providers')->throws(CreditNoteReasonIsMissingException::class);
 
-it('results in nothing when applying reason to an invoice', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
-    $data = $fixture->request()->invoice()->invoiceTypes()->files($fixtureName);
+it('results in nothing when applying reason to an invoice', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
     $item->relatedDocument('FT 01P2025/1', 1);
 
@@ -46,4 +49,4 @@ it('results in nothing when applying reason to an invoice', function (CreateInvo
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['not_credit_note_reason_check']);
+})->with('providers', ['not_credit_note_reason_check']);

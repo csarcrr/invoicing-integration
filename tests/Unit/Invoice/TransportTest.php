@@ -3,15 +3,16 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
-it('assigns a transport to the invoice', function (CreateInvoice $invoice, Fixtures $fixture) {
+it('assigns a transport to the invoice', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
     $transport = new TransportDetails;
 
     $transport->origin()
@@ -31,15 +32,12 @@ it('assigns a transport to the invoice', function (CreateInvoice $invoice, Fixtu
     expect($invoice->getTransport())->toBeInstanceOf(TransportDetails::class);
     expect($invoice->getTransport()->origin()->getAddress())->toBe('Rua das Flores, 125');
     expect($invoice->getTransport()->destination()->getAddress())->toBe('Rua dos Paninhos, 521');
-})->with('invoice-full');
+})->with('providers');
 
-it('has a valid payload', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture,
-    string $fixtureName
-) {
-    $data = $fixture->request()->invoice()->files($fixtureName);
+it('has a valid payload', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $transport = new TransportDetails;
 
     $transport->origin()
@@ -65,13 +63,10 @@ it('has a valid payload', function (
     $invoice->transport($transport);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['transport']);
+})->with('providers', ['transport']);
 
-it('fails when no client is provided with transport', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture
-) {
-
+it('fails when no client is provided with transport', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
     $transport = new TransportDetails;
 
     $transport->origin()
@@ -91,16 +86,14 @@ it('fails when no client is provided with transport', function (
     $invoice->transport($transport);
 
     $invoice->getPayload();
-})->with('invoice-full')
+})->with('providers')
     ->throws(
         Exception::class,
         'Client information is required when transport details are provided.'
     );
 
-it('fails when no load date is provided with transport', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture
-) {
+it('fails when no load date is provided with transport', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
     $transport = new TransportDetails;
 
     $transport->origin()
@@ -114,17 +107,16 @@ it('fails when no load date is provided with transport', function (
         ->city('Porto')
         ->postalCode('4410-100')
         ->country('PT');
+
     $invoice->client((new ClientData)->vat('PT123456789')->name('Client Name'));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 
     $invoice->getPayload();
-})->with('invoice-full')->throws(NeedsDateToSetLoadPointException::class);
+})->with('providers')->throws(NeedsDateToSetLoadPointException::class);
 
-it('fails when setting an invalid country', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture
-) {
+it('fails when setting an invalid country', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
     $transport = new TransportDetails;
 
     $transport->origin()
@@ -144,4 +136,4 @@ it('fails when setting an invalid country', function (
     $invoice->transport($transport);
 
     $invoice->getPayload();
-})->with('invoice-full')->throws(InvalidCountryException::class);
+})->with('providers')->throws(InvalidCountryException::class);

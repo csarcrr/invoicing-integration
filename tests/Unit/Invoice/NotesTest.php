@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('applies a note to the invoice', function (CreateInvoice $invoice, Fixtures $fixture, string $fixtureName) {
-    $data = $fixture->request()->invoice()->files($fixtureName);
+it('applies a note to the invoice', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $invoice->notes('This is a note for the invoice.');
     $invoice->item(new Item(reference: 'reference-1'));
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['notes']);
+})->with('providers', ['notes']);

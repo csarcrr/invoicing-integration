@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
-use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('has the simple client payload', function (CreateInvoice $invoice, Fixtures $fixture) {
+it('has the simple client payload', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
+
     $client = new ClientData;
     $client->name('John Doe');
     $client->vat('123456789');
@@ -20,14 +21,12 @@ it('has the simple client payload', function (CreateInvoice $invoice, Fixtures $
 
     expect($invoice->getClient())->toBeInstanceOf(ClientData::class)
         ->and($invoice->getClient()->getName())->toBe('John Doe');
-})->with('invoice-full');
+})->with('providers');
 
-it('has the correct full client payload', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture,
-    string $fixtureName
-) {
-    $data = $fixture->request()->invoice()->client()->files($fixtureName);
+it('has the correct full client payload', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->client()->files($fixtureName);
+
+    $invoice = Invoice::create();
 
     $client = new ClientData;
     $client->name('John Doe')->vat('123456789');
@@ -46,9 +45,11 @@ it('has the correct full client payload', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['complete_client']);
+})->with('providers', ['complete_client']);
 
-it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fixture) {
+it('fails when vat is not valid', function (IntegrationProvider $provider) {
+    $invoice = Invoice::create();
+
     $client = (new ClientData)->vat('');
 
     $item = new Item(
@@ -59,14 +60,14 @@ it('fails when vat is not valid', function (CreateInvoice $invoice, Fixtures $fi
     $invoice->client($client);
 
     $invoice->getPayload();
-})->with('invoice-full')->throws(InvoiceRequiresClientVatException::class);
+})->with('providers')->throws(InvoiceRequiresClientVatException::class);
 
-it('fails when name is provided but vat is missing', function (
-    CreateInvoice $invoice, Fixtures $fixture, IntegrationProvider $provider
-) {
+it('fails when name is provided but vat is missing', function (IntegrationProvider $provider) {
     if ($provider !== IntegrationProvider::CEGID_VENDUS) {
         $this->markTestSkipped('This test is only for CegidVendus provider.');
     }
+
+    $invoice = Invoice::create();
 
     $client = (new ClientData)->name('John Doe');
 
@@ -78,7 +79,7 @@ it('fails when name is provided but vat is missing', function (
     $invoice->client($client);
 
     $invoice->getPayload();
-})->with('invoice-full', 'providers')->throws(InvoiceRequiresVatWhenClientHasName::class);
+})->with('providers')->throws(InvoiceRequiresVatWhenClientHasName::class);
 
 it('fails when assigning an invalid country', function () {
     $client = new ClientData;

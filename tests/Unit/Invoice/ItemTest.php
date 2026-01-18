@@ -2,23 +2,20 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
-use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('can assign an item with all properties', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture,
-    string $fixtureName
-) {
-    $data = $fixture->request()->invoice()->item()->files($fixtureName);
+it('can assign an item with all properties', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $item = new Item;
     $item->reference('reference-1')
         ->quantity(2)
@@ -30,29 +27,22 @@ it('can assign an item with all properties', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['item']);
+})->with('providers', ['item']);
 
-it('can assign multiple items', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture,
-    string $fixtureName
-) {
-    $data = $fixture->request()->invoice()->item()->files($fixtureName);
+it('can assign multiple items', function (IntegrationProvider $provider, string $fixtureName) {
+    $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $invoice->item(new Item('reference-1'));
     $invoice->item(new Item('reference-2'));
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', ['multiple_items']);
+})->with('providers', ['multiple_items']);
 
-it('sets item types correctly', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture,
-    string $fixtureName,
-    ItemType $type
-) {
-    $data = $fixture->request()->invoice()->item()->type()->files($fixtureName);
+it('sets item types correctly', function (IntegrationProvider $provider, string $fixtureName, ItemType $type) {
+    $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
 
     $item->type($type);
@@ -60,7 +50,7 @@ it('sets item types correctly', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', [
+})->with('providers')->with([
     ['item_type_product', ItemType::Product],
     ['item_type_service', ItemType::Service],
     ['item_type_tax', ItemType::Tax],
@@ -68,14 +58,10 @@ it('sets item types correctly', function (
     ['item_type_other', ItemType::Other],
 ]);
 
-it('sets tax types correctly', function (
-    CreateInvoice $invoice,
-    Fixtures $fixture,
-    string $fixtureName,
-    ItemTax $taxType
-) {
-    $data = $fixture->request()->invoice()->item()->tax()->files($fixtureName);
+it('sets tax types correctly', function (IntegrationProvider $provider, string $fixtureName, ItemTax $taxType) {
+    $data = fixtures()->request()->invoice()->item()->tax()->files($fixtureName);
 
+    $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
 
     $item->tax($taxType);
@@ -88,7 +74,7 @@ it('sets tax types correctly', function (
     $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
-})->with('invoice-full', [
+})->with('providers')->with([
     ['item_tax_normal', ItemTax::NORMAL],
     ['item_tax_reduced', ItemTax::REDUCED],
     ['item_tax_other', ItemTax::OTHER],

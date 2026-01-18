@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Client;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-it('builds the correct payload with all parameters', function (IntegrationProvider $provider, Fixtures $fixtures) {
-    $data = $fixtures->request()->client()->files('client_full');
+it('builds the correct payload with all parameters', function (IntegrationProvider $provider) {
+    $data = fixtures()->request()->client()->files('client_full');
 
     $client = (new ClientData)->name('Alberto Albertino')
         ->vat('223098091')
@@ -26,4 +25,4 @@ it('builds the correct payload with all parameters', function (IntegrationProvid
     $create = Client::create($client);
 
     expect($create->getPayload()->toArray())->toMatchArray($data);
-})->with('client-full');
+})->with('providers');
