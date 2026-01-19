@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client\Get;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
 
 use function app;
 
@@ -19,7 +19,7 @@ final class Client
         protected IntegrationProvider $provider
     ) {}
 
-    public static function create(ValueObjects\ClientData $client): CreateClient
+    public static function create(ValueObjects\ClientDataObject $client): CreateClient
     {
         $class = app()->make(self::class);
 
@@ -28,7 +28,7 @@ final class Client
         };
     }
 
-    public static function get(ClientData $client): GetClient
+    public static function get(ClientDataObject $client): GetClient
     {
         $class = app()->make(self::class);
 

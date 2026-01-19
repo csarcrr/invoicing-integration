@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClie
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 it('returns an instance of CreateInvoice', function (IntegrationProvider $provider) {
     config()->set('invoicing-integration.provider', $provider->value);
@@ -18,7 +18,7 @@ it('returns an instance of CreateInvoice', function (IntegrationProvider $provid
 it('returns an instance of CreateClient', function (IntegrationProvider $provider) {
     config()->set('invoicing-integration.provider', $provider->value);
 
-    $client = (new ClientData)->name('Alberto Albertino');
+    $client = ClientData::name('Alberto Albertino');
 
     expect(Client::create($client))->toBeInstanceOf(CreateClient::class);
 })->with('providers');

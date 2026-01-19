@@ -27,18 +27,17 @@ This creates an **FT (Invoice)** document for a final consumer.
 For non-final-consumer invoices, add client information:
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
-$client = new ClientData();
-$client->name('John Doe');
-$client->vat('123456789');
-$client->address('Rua das Flores 125');
-$client->city('Porto');
-$client->postalCode('4410-000');
-$client->country('PT');
-$client->email('john.doe@mail.com');
-$client->phone('220123123');
-$client->irsRetention(true); // Enable IRS retention
+$client = ClientData::name('John Doe')
+    ->vat('123456789')
+    ->address('Rua das Flores 125')
+    ->city('Porto')
+    ->postalCode('4410-000')
+    ->country('PT')
+    ->email('john.doe@mail.com')
+    ->phone('220123123')
+    ->irsRetention(true); // Enable IRS retention
 
 $invoice->client($client);
 ```
@@ -175,7 +174,7 @@ For invoices with transport information:
 ```php
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 $transport = new TransportDetails;
 
@@ -198,9 +197,7 @@ $transport->destination()
 $transport->vehicleLicensePlate('00-AB-00');
 
 // Transport requires client information
-$client = new ClientData();
-$client->vat('PT123456789');
-$client->name('Client Name');
+$client = ClientData::vat('PT123456789')->name('Client Name');
 $invoice->client($client);
 $invoice->transport($transport);
 ```
@@ -215,7 +212,7 @@ $invoice->transport($transport);
 
 ```php
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
@@ -224,13 +221,12 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 $invoice = Invoice::create();
 
 // Set client
-$client = new ClientData();
-$client->name('John Doe');
-$client->vat('123456789');
-$client->address('Rua das Flores 125');
-$client->city('Porto');
-$client->postalCode('4410-000');
-$client->country('PT');
+$client = ClientData::name('John Doe')
+    ->vat('123456789')
+    ->address('Rua das Flores 125')
+    ->city('Porto')
+    ->postalCode('4410-000')
+    ->country('PT');
 $invoice->client($client);
 
 // Add items

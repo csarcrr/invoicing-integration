@@ -104,13 +104,13 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 ### ClientData
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 ```
 
-**Constructor:**
+**Usage:**
 
 ```php
-new ClientData()
+ClientData::name('John Doe')->vat('123456789')
 ```
 
 **Methods (fluent, return self):**

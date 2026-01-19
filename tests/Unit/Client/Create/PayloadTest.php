@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Client;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 it('builds the correct payload with all parameters', function (IntegrationProvider $provider) {
     $data = fixtures()->request()->client()->files('client_full');
 
-    $client = (new ClientData)->name('Alberto Albertino')
+    $client = ClientData::name('Alberto Albertino')
         ->vat('223098091')
         ->address('Rua das Flores 125')
         ->postalCode('4100-100')

@@ -6,10 +6,10 @@ Retrieve an existing client from your invoicing provider using `Client::get()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 // Create a ClientData object with the known ID
-$clientData = (new ClientData())->id(12345);
+$clientData = ClientData::id(12345);
 
 // Fetch the client from the provider
 $client = Client::get($clientData)->execute();
@@ -26,11 +26,11 @@ The `id` property is **required** when retrieving a client:
 
 ```php
 // This will throw an InvalidArgumentException
-$clientData = new ClientData();
+$clientData = new ClientData;
 Client::get($clientData)->execute(); // Error: Client ID is required.
 
 // Correct usage
-$clientData = (new ClientData())->id(12345);
+$clientData = ClientData::id(12345);
 Client::get($clientData)->execute(); // Works
 ```
 
@@ -39,7 +39,7 @@ Client::get($clientData)->execute(); // Works
 After calling `execute()`, the `ClientData` object is populated with all available data from the provider:
 
 ```php
-$clientData = (new ClientData())->id(12345);
+$clientData = ClientData::id(12345);
 $client = Client::get($clientData)->execute();
 
 // All properties are now available
@@ -64,13 +64,13 @@ $client->getDefaultPayDue();    // Default payment due days
 
 ```php
 use CsarCrr\InvoicingIntegration\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 // Assume you stored the client ID from a previous create operation
 $storedClientId = 12345;
 
 // Retrieve the client
-$clientData = (new ClientData())->id($storedClientId);
+$clientData = ClientData::id($storedClientId);
 $client = Client::get($clientData)->execute();
 
 // Display client information
@@ -89,11 +89,11 @@ You can use a retrieved client when creating invoices:
 ```php
 use CsarCrr\InvoicingIntegration\Client;
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 // Retrieve existing client
-$clientData = (new ClientData())->id(12345);
+$clientData = ClientData::id(12345);
 $client = Client::get($clientData)->execute();
 
 // Use client in invoice
@@ -111,10 +111,11 @@ $result = $invoice->execute();
 ```php
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use InvalidArgumentException;
 
 try {
-    $clientData = (new ClientData())->id(12345);
+    $clientData = ClientData::id(12345);
     $client = Client::get($clientData)->execute();
 } catch (InvalidArgumentException $e) {
     // Client ID was not provided

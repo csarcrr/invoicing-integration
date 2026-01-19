@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
@@ -58,7 +58,7 @@ it('has a valid payload', function (IntegrationProvider $provider, string $fixtu
 
     $transport->vehicleLicensePlate('00-AB-00');
 
-    $invoice->client((new ClientData)->vat('PT123456789')->name('Client Name'));
+    $invoice->client(ClientData::vat('PT123456789')->name('Client Name'));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 
@@ -108,7 +108,7 @@ it('fails when no load date is provided with transport', function (IntegrationPr
         ->postalCode('4410-100')
         ->country('PT');
 
-    $invoice->client((new ClientData)->vat('PT123456789')->name('Client Name'));
+    $invoice->client(ClientData::vat('PT123456789')->name('Client Name'));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 

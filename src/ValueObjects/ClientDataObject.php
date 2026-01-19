@@ -17,7 +17,7 @@ use CsarCrr\InvoicingIntegration\Traits\Client\HasPhone;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasPostalCode;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasVat;
 
-class ClientData
+class ClientDataObject
 {
     use HasAddress;
     use HasCity;

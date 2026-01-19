@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use Illuminate\Validation\ValidationException;
 
 it('throws error when email is invalid', function (IntegrationProvider $provider, string $invalidEmail) {
-    (new ClientData)->email($invalidEmail);
+    ClientData::email($invalidEmail);
 })->with('providers', [
     ['invalid'],
     ['email@'],

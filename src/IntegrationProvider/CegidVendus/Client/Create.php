@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -15,12 +15,12 @@ class Create implements CreateClient, ShouldHavePayload
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    public function __construct(protected ClientData $client)
+    public function __construct(protected ClientDataObject $client)
     {
         $this->payload = collect();
     }
 
-    public function execute(): ClientData
+    public function execute(): ClientDataObject
     {
         /** @phpstan-ignore-next-line */
         $response = Http::provider()->post('/clients', $this->getPayload());
