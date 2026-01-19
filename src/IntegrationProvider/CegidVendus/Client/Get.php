@@ -41,8 +41,8 @@ class Get implements GetClient
         ! empty($data['fiscal_id']) && $this->client->vat($data['fiscal_id']);
         ! empty($data['city']) && $this->client->city($data['city']);
         ! empty($data['country']) && $this->client->country($data['country']);
-        ! empty($data['irs_retention']) && $this->client->irsRetention($data['irs_retention']);
-        ! empty($data['send_email']) && $this->client->emailNotification($data['send_email']);
-        ! empty($data['default_pay_due']) && $this->client->defaultPayDue($data['default_pay_due']);
+        ! empty($data['irs_retention']) && $this->client->irsRetention($data['irs_retention'] === 'yes');
+        ! empty($data['send_email']) && $this->client->emailNotification($data['send_email'] === 'yes');
+        ! empty($data['default_pay_due']) && $this->client->defaultPayDue((int) $data['default_pay_due']);
     }
 }
