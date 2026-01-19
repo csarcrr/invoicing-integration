@@ -6,8 +6,8 @@ use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
-use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 

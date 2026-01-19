@@ -6,8 +6,8 @@ use CsarCrr\InvoicingIntegration\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
-use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\Invoice;
 
 it('returns an instance of CreateInvoice', function (IntegrationProvider $provider) {
     config()->set('invoicing-integration.provider', $provider->value);
