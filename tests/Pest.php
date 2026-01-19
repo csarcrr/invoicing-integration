@@ -31,31 +31,6 @@ function client(): IntegrationProvider
     return IntegrationProvider::current();
 }
 
-dataset('client', [
-    [
-        fn () => client(),
-    ],
-]);
-
-dataset('invoice', [
-    [
-        fn () => invoice(),
-    ],
-]);
-
-dataset('invoice-full', [
-    [
-        fn () => invoice(),
-        fn (): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS),
-    ],
-]);
-
-dataset('client-full', [
-    [
-        fn () => client(),
-    ],
-]);
-
 dataset('providers', [
     'vendus' => fn () => cegidVendusProvider(),
 ]);
