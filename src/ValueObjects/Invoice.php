@@ -47,7 +47,7 @@ class Invoice implements HasData
         return $this;
     }
 
-    public function getSequence()
+    public function getSequence(): string
     {
         return $this->sequence;
     }
@@ -59,7 +59,7 @@ class Invoice implements HasData
         return $this;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }

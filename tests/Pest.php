@@ -3,39 +3,44 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
+use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
+function fixtures(): Fixtures
+{
+    return Fixtures::build(IntegrationProvider::current());
+}
 function invoice(): CreateInvoice
 {
     mockConfiguration(IntegrationProvider::CEGID_VENDUS);
 
-    return CegidVendus::invoice(Action::CREATE);
+    return Invoice::create();
 }
 
-dataset('invoice', [
-    [
-        fn () => invoice(),
-    ],
-]);
+function client(): IntegrationProvider
+{
+    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
 
-dataset('invoice-full', [
-    [
-        fn () => invoice(),
-        fn (): Fixtures => Fixtures::build(IntegrationProvider::CEGID_VENDUS),
-    ],
-]);
+    return IntegrationProvider::current();
+}
 
 dataset('providers', [
-    [IntegrationProvider::CEGID_VENDUS],
+    'vendus' => fn () => cegidVendusProvider(),
 ]);
+
+function cegidVendusProvider(): IntegrationProvider
+{
+    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+
+    return IntegrationProvider::current();
+}
 
 uses(TestCase::class)->in('Unit', 'Feature');
 
@@ -58,10 +63,9 @@ function mockConfiguration(IntegrationProvider $provider): void
 }
 
 function mockResponse(
-    $provider,
     $jsonFixture,
     $status = 200,
     $headers = [],
-) {
+): PromiseInterface {
     return Http::response($jsonFixture, $status, $headers);
 }

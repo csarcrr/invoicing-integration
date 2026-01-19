@@ -2,6 +2,11 @@
 - [Getting Started](getting-started.md)
 - [Features](features.md)
 
+- **Clients**
+    - [Overview](clients/README.md)
+    - [Creating a Client](clients/creating-a-client.md)
+    - [Getting a Client](clients/getting-a-client.md)
+
 - **Invoices**
     - [Creating an Invoice](invoices/creating-an-invoice.md)
     - [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)

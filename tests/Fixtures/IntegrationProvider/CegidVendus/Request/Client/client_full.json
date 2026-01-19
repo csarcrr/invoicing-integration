@@ -1,0 +1,14 @@
+{
+    "name": "Alberto Albertino",
+    "fiscal_id": "223098091",
+    "address": "Rua das Flores 125",
+    "postalcode": "4100-100",
+    "city": "Porto",
+    "phone": "222333444",
+    "notes": "Client Notes",
+    "email": "alberto.albertino@aa.pt",
+    "country": "PT",
+    "send_email": "yes",
+    "default_pay_due": 15,
+    "irs_retention": "yes"
+}

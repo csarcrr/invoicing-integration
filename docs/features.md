@@ -4,9 +4,21 @@ This page documents the supported features and their implementation status for e
 
 ### Legend
 
--   ✅ — Implemented
--   ❌ — Not Implemented
--   ⛔ — Not applicable
+- ✅ — Implemented
+- ❌ — Not Implemented
+- ⛔ — Not applicable
+
+# Client Management
+
+Features for managing clients independently of invoices.
+
+|               | Invoicing | Cegid Vendus |
+| ------------- | --------- | ------------ |
+| Create Client | ✅        | ✅           |
+| Get Client    | ✅        | ✅           |
+| Update Client | ❌        | ❌           |
+| Delete Client | ❌        | ❌           |
+| List Clients  | ❌        | ❌           |
 
 # Invoicing
 

@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
 
-use CsarCrr\InvoicingIntegration\Contracts\HasConfig;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
+use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
@@ -27,17 +25,18 @@ use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
-use CsarCrr\InvoicingIntegration\Traits\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 
-class Create implements CreateInvoice, HasConfig
+class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasClient;
+    use HasConfig;
     use HasCreditNoteReason;
     use HasDueDate;
     use HasItems;
@@ -47,10 +46,15 @@ class Create implements CreateInvoice, HasConfig
     use HasRelatedDocument;
     use HasTransport;
     use HasType;
-    use ProviderConfiguration;
 
+    /**
+     * @var Collection<string, mixed>
+     */
     protected Collection $payload;
 
+    /**
+     * @var array<int, InvoiceType>
+     */
     protected array $invoiceTypesThatRequirePayments = [
         InvoiceType::Receipt,
         InvoiceType::InvoiceReceipt,
@@ -58,6 +62,9 @@ class Create implements CreateInvoice, HasConfig
         InvoiceType::CreditNote,
     ];
 
+    /**
+     * @param  array<string, mixed>|Collection<string, mixed>  $config
+     */
     public function __construct(array|Collection $config)
     {
         $this->config($config);
@@ -69,18 +76,15 @@ class Create implements CreateInvoice, HasConfig
     }
 
     /**
-     * Request an invoice creation 
+     * Request an invoice creation
      */
     public function execute(): Invoice
     {
-        $response = Request::get(
-            IntegrationProvider::CEGID_VENDUS,
-            $this->getConfig()
-        )->post('documents', $this->getPayload());
+        /** @phpstan-ignore-next-line */
+        $response = Http::provider()->post('documents', $this->getPayload());
 
-        if (! in_array($response->status(), [200, 201, 300, 301])) {
-            $this->throwErrors($response->status(), $response->json());
-        }
+        /** @phpstan-ignore-next-line */
+        Http::handleUnwantedFailures($response);
 
         $data = $response->json();
 
@@ -121,6 +125,8 @@ class Create implements CreateInvoice, HasConfig
 
     /**
      * Get the payload to send to the provider
+     *
+     * @return Collection<string, mixed>
      */
     public function getPayload(): Collection
     {
@@ -268,7 +274,7 @@ class Create implements CreateInvoice, HasConfig
             return;
         }
 
-        /** @var \Illuminate\Support\Collection $items */
+        /** @var Collection<int, array<string, mixed>> $items */
         $items = $this->getItems()->map(function (Item $item): array {
             $data = [];
 
@@ -341,65 +347,30 @@ class Create implements CreateInvoice, HasConfig
         }
 
         throw_if(
-            ! is_null($this->getClient()->vat) &&
-                empty($this->getClient()->vat),
+            ! is_null($this->getClient()->getVat()) &&
+                empty($this->getClient()->getVat()),
             InvoiceRequiresClientVatException::class
         );
 
         throw_if(
-            $this->getClient()->name &&
-                ! $this->getClient()->vat,
+            $this->getClient()->getName() &&
+                ! $this->getClient()->getVat(),
             InvoiceRequiresVatWhenClientHasName::class
         );
 
-        $data = [
-            'name' => $this->getClient()->name,
-            'fiscal_id' => $this->getClient()->vat,
-        ];
+        $this->getClient()->getId() && $data['id'] = $this->getClient()->getId();
+        $this->getClient()->getName() && $data['name'] = $this->getClient()->getName();
+        $this->getClient()->getVat() && $data['fiscal_id'] = $this->getClient()->getVat();
+        $this->getClient()->getAddress() && $data['address'] = $this->getClient()->getAddress();
+        $this->getClient()->getCity() && $data['city'] = $this->getClient()->getCity();
+        $this->getClient()->getPostalCode() && $data['postalcode'] = $this->getClient()->getPostalCode();
+        $this->getClient()->getCountry() && $data['country'] = $this->getClient()->getCountry();
+        $this->getClient()->getEmail() && $data['email'] = $this->getClient()->getEmail();
+        $this->getClient()->getPhone() && $data['phone'] = $this->getClient()->getPhone();
 
-        if ($this->getClient()->getAddress()) {
-            $data['address'] = $this->getClient()->getAddress();
-        }
-
-        if ($this->getClient()->getCity()) {
-            $data['city'] = $this->getClient()->getCity();
-        }
-
-        if ($this->getClient()->getPostalCode()) {
-            $data['postalcode'] = $this->getClient()->getPostalCode();
-        }
-
-        if ($this->getClient()->getCountry()) {
-            $data['country'] = $this->getClient()->getCountry();
-        }
-
-        if ($this->getClient()->getEmail()) {
-            $data['email'] = $this->getClient()->getEmail();
-        }
-
-        if ($this->getClient()->getPhone()) {
-            $data['phone'] = $this->getClient()->getPhone();
-        }
-
-        if (! is_null($this->getClient()->getIrsRetention())) {
-            $retention = $this->getClient()->getIrsRetention();
-            $data['irs_retention'] = $retention ? 'yes' : 'no';
-        }
+        $retention = $this->getClient()->getIrsRetention();
+        $data['irs_retention'] = $retention ? 'yes' : 'no';
 
         $this->payload->put('client', $data);
-    }
-
-    protected function throwErrors(int $status, array $errors): void
-    {
-        throw_if($status === 500, FailedReachingProviderException::class);
-        throw_if($status === 401, UnauthorizedException::class);
-
-        $messages = collect($errors['errors'] ?? [])->map(function ($error) {
-            return $error['message'] ? $error['code'].' - '.$error['message'] : 'Unknown error';
-        })->toArray();
-
-        throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
-
-        throw new Exception('The integration API request failed for an unknown reason.');
     }
 }

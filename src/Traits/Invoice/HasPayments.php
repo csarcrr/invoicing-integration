@@ -9,6 +9,9 @@ use Illuminate\Support\Collection;
 
 trait HasPayments
 {
+    /**
+     * @var Collection<int, Payment>
+     */
     protected Collection $payments;
 
     public function payment(Payment $payment): self
@@ -18,6 +21,9 @@ trait HasPayments
         return $this;
     }
 
+    /**
+     * @return Collection<int, Payment>
+     */
     public function getPayments(): Collection
     {
         return $this->payments;

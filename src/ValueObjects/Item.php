@@ -47,7 +47,7 @@ class Item
         return $this->reference;
     }
 
-    public function getQuantity(): int
+    public function getQuantity(): int|float|null
     {
         return $this->quantity;
     }
