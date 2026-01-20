@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Enums\Action;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create as InvoiceCreate;
 use Illuminate\Support\Facades\Http;
 
@@ -53,6 +53,6 @@ class CegidVendus
 
     protected function loadConfiguration(): void
     {
-        $this->config = config('invoicing-integration.providers')[IntegrationProvider::CEGID_VENDUS->value];
+        $this->config = config('invoicing-integration.providers')[Provider::CEGID_VENDUS->value];
     }
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
@@ -15,40 +15,40 @@ define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
 function fixtures(): Fixtures
 {
-    return Fixtures::build(IntegrationProvider::current());
+    return Fixtures::build(Provider::current());
 }
 function invoice(): CreateInvoice
 {
-    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+    mockConfiguration(Provider::CEGID_VENDUS);
 
     return Invoice::create();
 }
 
-function client(): IntegrationProvider
+function client(): Provider
 {
-    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+    mockConfiguration(Provider::CEGID_VENDUS);
 
-    return IntegrationProvider::current();
+    return Provider::current();
 }
 
 dataset('providers', [
     'vendus' => fn () => cegidVendusProvider(),
 ]);
 
-function cegidVendusProvider(): IntegrationProvider
+function cegidVendusProvider(): Provider
 {
-    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
+    mockConfiguration(Provider::CEGID_VENDUS);
 
-    return IntegrationProvider::current();
+    return Provider::current();
 }
 
 uses(TestCase::class)->in('Unit', 'Feature');
 
-function mockConfiguration(IntegrationProvider $provider): void
+function mockConfiguration(Provider $provider): void
 {
-    if ($provider === IntegrationProvider::CEGID_VENDUS) {
-        config()->set('invoicing-integration.provider', IntegrationProvider::CEGID_VENDUS->value);
-        config()->set('invoicing-integration.providers.'.IntegrationProvider::CEGID_VENDUS->value, [
+    if ($provider === Provider::CEGID_VENDUS) {
+        config()->set('invoicing-integration.provider', Provider::CEGID_VENDUS->value);
+        config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value, [
             'key' => 'test-api-key',
             'mode' => 'normal',
             'payments' => [

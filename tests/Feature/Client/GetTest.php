@@ -1,11 +1,11 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Client;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use Illuminate\Support\Facades\Http;
 
-test('a client get request is successful', function (IntegrationProvider $provider, string $responseFixture) {
+test('a client get request is successful', function (Provider $provider, string $responseFixture) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::id(999999);
