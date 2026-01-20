@@ -1,0 +1,10 @@
+<?php
+
+namespace CsarCrr\InvoicingIntegration\Exceptions\Pagination;
+
+use Exception;
+
+class NoMorePagesException extends Exception
+{
+    protected $message = 'No more pages available to be fetched';
+}
