@@ -10,7 +10,13 @@ interface FindClient
 {
     public function execute(): self;
 
+    /**
+     * @return Collection<int, mixed>
+     */
     public function getList(): Collection;
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getPayload(): Collection;
 }

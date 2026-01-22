@@ -17,8 +17,10 @@ class Find implements FindClient, ShouldHavePayload
     use HasEmail;
     use HasPaginator;
 
+    /** @var Collection<string, mixed> */
     protected Collection $payload;
 
+    /** @var Collection<int, mixed> */
     protected Collection $list;
 
     public function __construct()
@@ -43,11 +45,17 @@ class Find implements FindClient, ShouldHavePayload
         return $this;
     }
 
+    /**
+     * @return Collection<int, mixed>
+     */
     public function getList(): Collection
     {
         return $this->list;
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function getPayload(): Collection
     {
         return $this->payload;
@@ -63,8 +71,14 @@ class Find implements FindClient, ShouldHavePayload
         $this->email && $this->payload->put('email', $this->email);
     }
 
+    /**
+     * @param  array<string, mixed>  $results
+     */
     protected function updatePaginationDetails(array $results): void {}
 
+    /**
+     * @param  array<string, mixed>  $results
+     */
     protected function updateResults(array $results): void
     {
         $this->list = collect($results)->map(function (array $item) {

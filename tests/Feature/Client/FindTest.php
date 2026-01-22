@@ -10,7 +10,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-
 test('getting list of clients returns expected instances', function (Provider $provider, string $fixtureName) {
     for ($i = 0; $i < 2; $i++) {
         $response[] = fixtures()->response()->client()->files($fixtureName);
@@ -39,4 +38,18 @@ test('automagically injects provider pagination details into the request', funct
             default => throw new Exception('Provider not supported.')
         };
     });
+})->with('providers', ['response']);
+
+test('can fetch the next page', function (Provider $provider, string $fixtureName) {
+    for ($i = 0; $i < 2; $i++) {
+        $response[] = fixtures()->response()->client()->files($fixtureName);
+    }
+
+    Http::fake(mockResponse($response));
+
+    $results = Client::find()->execute();
+    $results->next()->execute();
+
+
+
 })->with('providers', ['response']);
