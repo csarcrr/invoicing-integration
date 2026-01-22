@@ -10,7 +10,7 @@ Manage clients in your invoicing provider using the Client API. Clients can be c
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\ClientAction;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 // Create a new client
@@ -18,13 +18,13 @@ $clientData = ClientData::name('John Doe')
     ->vat('123456789')
     ->email('john@example.com');
 
-$client = ClientAction::create($clientData)->execute();
+$client = Client::create($clientData)->execute();
 
 echo $client->getId(); // Provider-assigned ID
 
 // Later, retrieve the client
 $existingClient = ClientData::id($client->getId());
-$fetched = ClientAction::get($existingClient)->execute();
+$fetched = Client::get($existingClient)->execute();
 
 echo $fetched->getName(); // "John Doe"
 ```

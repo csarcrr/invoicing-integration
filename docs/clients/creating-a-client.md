@@ -5,13 +5,13 @@ Register a new client in your invoicing provider using `Client::create()`.
 ## Basic Example
 
 ```php
-use CsarCrr\InvoicingIntegration\ClientAction;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 $clientData = ClientData::name('John Doe')
     ->vat('123456789');
 
-$client = ClientAction::create($clientData)->execute();
+$client = Client::create($clientData)->execute();
 
 echo $client->getId(); // Provider-assigned ID (e.g., 12345)
 ```
@@ -21,7 +21,7 @@ echo $client->getId(); // Provider-assigned ID (e.g., 12345)
 The `ClientData` facade supports the following properties:
 
 ```php
-$clientData = ClientData::name('John Doe')       // ClientAction name
+$clientData = ClientData::name('John Doe')       // Client name
     ->vat('123456789')              // Tax identification number
     ->email('john@example.com')     // Email address (validated)
     ->phone('220123456')            // Phone number
@@ -57,7 +57,7 @@ $clientData = ClientData::name('John Doe')       // ClientAction name
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\ClientAction;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 // Build client data
@@ -74,13 +74,13 @@ $clientData = ClientData::name('Acme Corporation')
     ->defaultPayDue(30);
 
 // Create client in provider
-$client = ClientAction::create($clientData)->execute();
+$client = Client::create($clientData)->execute();
 
 // The client now has an ID assigned by the provider
 $clientId = $client->getId();
 
 // Store this ID for future use (e.g., in your database)
-echo "ClientAction created with ID: {$clientId}";
+echo "Client created with ID: {$clientId}";
 ```
 
 ## Using Created Clients with Invoices
