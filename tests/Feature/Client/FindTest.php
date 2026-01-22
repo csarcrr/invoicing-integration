@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Http\Client\Request;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
 use Illuminate\Support\Collection;
@@ -15,8 +16,7 @@ test('getting list of clients returns expected instances', function (Provider $p
         $response[] = fixtures()->response()->client()->files($fixtureName);
     }
 
-    Http::fake(mockResponse($response, 200));
-
+    Http::fake(mockResponse($response));
 
     $results = Client::find()->execute();
 
@@ -31,7 +31,7 @@ test('automagically injects provider pagination details into the request', funct
 
     Http::fake(mockResponse($response, 200));
 
-    Client::find()->execute();
+    ClientAction::find()->execute();
 
     Http::assertSent(function (Request $request) use ($provider) {
         return match($provider) {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
@@ -22,7 +22,7 @@ it('builds the correct payload with all parameters', function (Provider $provide
         ->defaultPayDue(15)
         ->irsRetention(true);
 
-    $create = Client::create($client);
+    $create = ClientAction::create($client);
 
     expect($create->getPayload()->toArray())->toMatchArray($data);
 })->with('providers');

@@ -7,7 +7,7 @@ Complete reference for the Invoicing Integration package classes, methods, and e
 Entry point for client management operations.
 
 ```php
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ClientAction;
 ```
 
 | Method                               | Return Type    | Description                           |

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
@@ -20,5 +20,5 @@ it('returns an instance of CreateClient', function (Provider $provider) {
 
     $client = ClientData::name('Alberto Albertino');
 
-    expect(Client::create($client))->toBeInstanceOf(CreateClient::class);
+    expect(ClientAction::create($client))->toBeInstanceOf(CreateClient::class);
 })->with('providers');

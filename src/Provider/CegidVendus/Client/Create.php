@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client;
+namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;

@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Providers;
 
 use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create as InvoiceCreate;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Create as InvoiceCreate;
 use Illuminate\Support\Facades\Http;
 
 class CegidVendus

@@ -197,7 +197,7 @@ $transport->destination()
 $transport->vehicleLicensePlate('00-AB-00');
 
 // Transport requires client information
-$client = ClientData::vat('PT123456789')->name('Client Name');
+$client = ClientData::vat('PT123456789')->name('ClientAction Name');
 $invoice->client($client);
 $invoice->transport($transport);
 ```

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
@@ -12,13 +14,11 @@ use Illuminate\Support\Facades\Http;
 
 class Find implements FindClient, ShouldHavePayload
 {
-    use HasPaginator;
     use HasEmail;
+    use HasPaginator;
 
     protected Collection $payload;
-    /**
-     * @var \Illuminate\Support\Collection
-     */
+
     protected Collection $list;
 
     public function __construct()
@@ -63,16 +63,14 @@ class Find implements FindClient, ShouldHavePayload
         $this->email && $this->payload->put('email', $this->email);
     }
 
-    protected function updatePaginationDetails(array $results): void
-    {
-    }
+    protected function updatePaginationDetails(array $results): void {}
 
     protected function updateResults(array $results): void
     {
         $this->list = collect($results)->map(function (array $item) {
             $client = ClientData::getFacadeRoot();
 
-            !empty($item['name']) && $client->name($item['name']);
+            ! empty($item['name']) && $client->name($item['name']);
 
             return $client;
         });

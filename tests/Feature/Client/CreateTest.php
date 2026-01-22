@@ -1,6 +1,6 @@
 <?php
 
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
@@ -10,7 +10,7 @@ test('create client request is successful', function (Provider $provider, string
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::name('Quim');
-    $data = Client::create($client)->execute();
+    $data = ClientAction::create($client)->execute();
 
     expect($data->getId())->not->toBeNull();
     Http::assertSentCount(1);
@@ -20,5 +20,5 @@ test('handles errors successfully', function (Provider $provider) {
     Http::fake(mockResponse([], 500));
 
     $client = ClientData::name('Quim');
-    Client::create($client)->execute();
+    ClientAction::create($client)->execute();
 })->with('providers')->throws(FailedReachingProviderException::class);
