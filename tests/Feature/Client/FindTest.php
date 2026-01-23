@@ -82,7 +82,7 @@ test('can go to the next page and then go back', function (Provider $provider, s
         ->and($results->getTotalPages())->toBe(5);
 })->with('providers', ['response']);
 
-test('fails when attempting to go above or bellow the allowed pages', function (Provider $provider, string $fixtureName, int $page) {
+test('fails when attempting to go above or below the allowed pages', function (Provider $provider, string $fixtureName, int $page) {
     Http::fakeSequence()
         ->push(collect([]), 200, $this->headers)
         ->push(collect([]), 200, $this->headers);
