@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -39,7 +40,7 @@ class Find implements FindClient, ShouldHavePayload
         /* @phpstan-ignore-next-line */
         Http::handleUnwantedFailures($request);
 
-        $this->updatePaginationDetails($request->json());
+        $this->updatePaginationDetails($request);
         $this->updateResults($request->json());
 
         return $this;
@@ -72,9 +73,11 @@ class Find implements FindClient, ShouldHavePayload
     }
 
     /**
-     * @param  array<string, mixed>  $results
+     * @param \Illuminate\Http\Client\Response $results
      */
-    protected function updatePaginationDetails(array $results): void {}
+    protected function updatePaginationDetails(Response $results): void {
+        $this->totalPages((int) $results->header('X-Paginator-Pages'));
+    }
 
     /**
      * @param  array<string, mixed>  $results

@@ -9,21 +9,28 @@ use function throw_if;
 
 trait HasPaginator
 {
-    public int $currentPage = 1;
-    public int $perPage = 20;
+    protected int $currentPage = 1;
+    protected int $perPage = 20;
+    protected int $totalPages = 1;
 
     public function getTotalPages (): int {
-        return 1;
+        return $this->totalPages;
     }
 
+    /**
+     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException|\Throwable
+     */
     public function getCurrentPage (): int {
+        $isAbove = $this->currentPage > $this->getTotalPages();
+        $isBelow = $this->currentPage < 1;
+
+        throw_if($isAbove || $isBelow, NoMorePagesException::class);
+
         return $this->currentPage;
     }
 
     public function next (): self {
-        $nextPage = $this->currentPage++;
-
-        throw_if($nextPage > $this->getTotalPages(), NoMorePagesException::class);
+        $nextPage = $this->currentPage + 1;
 
         $this->page($nextPage);
 
@@ -31,9 +38,7 @@ trait HasPaginator
     }
 
     public function previous (): self {
-        $previousPage = $this->currentPage--;
-
-        throw_if($previousPage < 1, NoMorePagesException::class);
+        $previousPage = $this->currentPage - 1;
 
         $this->page($previousPage);
 
@@ -42,6 +47,12 @@ trait HasPaginator
 
     public function page(int $page): self {
         $this->currentPage = $page;
+
+        return $this;
+    }
+
+    public function totalPages(int $totalPages): self {
+        $this->totalPages = $totalPages;
 
         return $this;
     }
