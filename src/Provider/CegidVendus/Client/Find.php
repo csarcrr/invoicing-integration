@@ -72,11 +72,9 @@ class Find implements FindClient, ShouldHavePayload
         $this->email && $this->payload->put('email', $this->email);
     }
 
-    /**
-     * @param \Illuminate\Http\Client\Response $results
-     */
-    protected function updatePaginationDetails(Response $results): void {
-        $this->totalPages((int) $results->header('X-Paginator-Pages'));
+    protected function updatePaginationDetails(Response $results): void
+    {
+        $this->totalPages((int) $results->header('X-Paginator-Pages') ?: 1);
     }
 
     /**
