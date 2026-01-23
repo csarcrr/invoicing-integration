@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
@@ -13,7 +14,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class Find implements FindClient, ShouldHavePayload
+class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
 {
     use HasEmail;
     use HasPaginator;
@@ -34,10 +35,8 @@ class Find implements FindClient, ShouldHavePayload
         $this->buildPagination();
         $this->buildEmail();
 
-        /* @phpstan-ignore-next-line */
         $request = Http::provider()->get('/clients', $this->getPayload());
 
-        /* @phpstan-ignore-next-line */
         Http::handleUnwantedFailures($request);
 
         $this->updatePaginationDetails($request);
@@ -88,6 +87,6 @@ class Find implements FindClient, ShouldHavePayload
             ! empty($item['name']) && $client->name($item['name']);
 
             return $client;
-        });
+        })->values();
     }
 }
