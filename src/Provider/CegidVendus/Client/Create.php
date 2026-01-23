@@ -22,10 +22,8 @@ class Create implements CreateClient, ShouldHavePayload
 
     public function execute(): ClientDataObject
     {
-        /** @phpstan-ignore-next-line */
         $response = Http::provider()->post('/clients', $this->getPayload());
 
-        /** @phpstan-ignore-next-line */
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();

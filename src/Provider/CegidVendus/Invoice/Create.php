@@ -79,10 +79,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
      */
     public function execute(): Invoice
     {
-        /** @phpstan-ignore-next-line */
+
         $response = Http::provider()->post('documents', $this->getPayload());
 
-        /** @phpstan-ignore-next-line */
+
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();
