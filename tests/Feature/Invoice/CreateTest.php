@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 test('when creating request fails it handles errors properly', function (
     Provider $provider,
-    string   $fixtureName,
+    string $fixtureName,
 ) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
     Http::fake(mockResponse($payload, 400));
@@ -25,7 +25,7 @@ test('when creating request fails it handles errors properly', function (
 
 test('when auth in create fails it handles errors properly', function (
     Provider $provider,
-    string   $fixtureName,
+    string $fixtureName,
 ) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
 

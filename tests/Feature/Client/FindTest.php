@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use Illuminate\Http\Client\Request;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -63,7 +64,9 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
 })->with('providers', ['response']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
-    for ($i = 0; $i < 5; $i++) { $response[] = fixtures()->response()->client()->files($fixtureName); }
+    for ($i = 0; $i < 5; $i++) {
+        $response[] = fixtures()->response()->client()->files($fixtureName);
+    }
 
     Http::fakeSequence()
         ->push($response, 200, $this->headers)

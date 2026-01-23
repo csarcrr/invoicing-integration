@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\InvoiceWithoutOutputException;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
@@ -83,9 +83,9 @@ it('can save the output under a custom name and path', function (Provider $provi
 
 it('is able to sanitize the path and filename when saving', function (
     Provider $provider,
-    string   $fixtureName,
-    string   $invalidPath,
-    string   $expectedPath
+    string $fixtureName,
+    string $invalidPath,
+    string $expectedPath
 ) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
