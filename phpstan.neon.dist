@@ -2,10 +2,14 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    level: 5
+    level: 7
     paths:
         - src
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - message: '#Call to an undefined method Http::provider#'
+        - message: '#Call to an undefined method Http::handleUnwantedFailures#'
 
