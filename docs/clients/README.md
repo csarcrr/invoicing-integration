@@ -6,6 +6,7 @@ Manage clients in your invoicing provider using the Client API. Clients can be c
 
 - [Creating a Client](creating-a-client.md) - Register new clients in the provider
 - [Getting a Client](getting-a-client.md) - Retrieve existing client information
+- [Finding Clients](finding-clients.md) - Search & paginate provider clients
 
 ## Quick Example
 

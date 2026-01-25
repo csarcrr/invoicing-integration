@@ -6,6 +6,7 @@
     - [Overview](clients/README.md)
     - [Creating a Client](clients/creating-a-client.md)
     - [Getting a Client](clients/getting-a-client.md)
+    - [Finding Clients](clients/finding-clients.md)
 
 - **Invoices**
     - [Creating an Invoice](invoices/creating-an-invoice.md)

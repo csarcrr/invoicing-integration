@@ -14,6 +14,7 @@ use CsarCrr\InvoicingIntegration\Client;
 | ------------------------------------ | -------------- | ------------------------------------- |
 | `Client::create(ClientData $client)` | `CreateClient` | Creates a new client builder instance |
 | `Client::get(ClientData $client)`    | `GetClient`    | Creates a client retrieval instance   |
+| `Client::find()`                     | `FindClient`   | Lists/paginates provider clients      |
 
 ## CreateClient Contract
 
@@ -38,6 +39,28 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
 | Method      | Return Type  | Description                                   | Throws                                     |
 | ----------- | ------------ | --------------------------------------------- | ------------------------------------------ |
 | `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing) |
+
+## FindClient Contract
+
+Search/paginate provider clients via `Client::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
+```
+
+| Method             | Return Type  | Description                                   |
+| ------------------ | ------------ | --------------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request              |
+| `getList()`        | `Collection` | Collection of `ClientDataObject` results      |
+| `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
+| `next()`           | `self`       | Move to the next page                         |
+| `previous()`       | `self`       | Go back one page                              |
+| `page(int $page)`  | `self`       | Jump to a specific page                       |
+| `getCurrentPage()` | `int`        | Current page index                            |
+| `getTotalPages()`  | `int`        | Total pages reported by provider              |
+
+> `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
+> outside the available range.
 
 ---
 

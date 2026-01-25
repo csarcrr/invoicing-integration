@@ -16,6 +16,7 @@ Invoicing Integration is a Laravel package that aggregates invoicing software pr
 - [Configuration](#configuration)
 - [Quick Start](#quick-start)
 - [Common Workflows](#common-workflows)
+- [Client Directory & Search](#client-directory--search)
 - [Architecture Overview](#architecture-overview)
 - [Testing & Quality](#testing--quality)
 - [Documentation](#documentation)
@@ -156,6 +157,33 @@ Key rules:
 - [Configuring Tax Exemptions](docs/invoices/tax-exemption.md)
 - [Output Formats & Storage](docs/invoices/outputting-invoice.md)
 - [Using Invoice Data](docs/invoices/using-invoice-data.md)
+- [Finding Clients (pagination, filters)](docs/clients/finding-clients.md)
+
+## Client Directory & Search
+
+Use `Client::find()` to page through provider clients without leaving Laravel:
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Client;
+
+$clients = Client::find()
+    ->email('john@acme.example') // optional filter
+    ->execute();
+
+foreach ($clients->getList() as $client) {
+    logger()->info('Client', ['name' => $client->getName()]);
+}
+
+if ($clients->getTotalPages() > 1) {
+    $clients->next()->execute();
+}
+```
+
+- Automatic pagination uses provider headers (`X-Paginator-*`).
+- `next()`, `previous()`, and `page()` throw `NoMorePagesException` when out of bounds.
+- Filtering is provider-aware; today only `email()` is supported by Cegid Vendus.
+
+See [Finding Clients](docs/clients/finding-clients.md) for advanced usage.
 
 ## Architecture Overview
 
