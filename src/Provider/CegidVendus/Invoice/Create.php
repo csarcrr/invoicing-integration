@@ -82,7 +82,6 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
         $response = Http::provider()->post('documents', $this->getPayload());
 
-
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();

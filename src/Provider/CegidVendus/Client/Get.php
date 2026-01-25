@@ -19,7 +19,6 @@ class Get implements GetClient
     {
         throw_if(! $this->client->getId(), InvalidArgumentException::class, 'ClientAction ID is required.');
 
-
         $request = Http::provider()->get('/clients/'.$this->client->getId());
 
         Http::handleUnwantedFailures($request);
