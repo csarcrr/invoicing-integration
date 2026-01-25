@@ -76,7 +76,6 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     public function execute(): Invoice
     {
-
         $response = Http::provider()->post('documents', $this->getPayload());
 
         Http::handleUnwantedFailures($response);
