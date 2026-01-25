@@ -22,13 +22,16 @@ trait HasPaginator
     }
 
     /**
-     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException|\Throwable
+     * @throws NoMorePagesException
      */
     public function getCurrentPage(): int
     {
         return $this->currentPage;
     }
 
+    /**
+     * @throws NoMorePagesException
+     */
     public function next(): self
     {
         $nextPage = $this->currentPage + 1;
@@ -38,6 +41,9 @@ trait HasPaginator
         return $this;
     }
 
+    /**
+     * @throws NoMorePagesException
+     */
     public function previous(): self
     {
         $previousPage = $this->currentPage - 1;
@@ -47,6 +53,9 @@ trait HasPaginator
         return $this;
     }
 
+    /**
+     * @throws NoMorePagesException
+     */
     public function page(int $page): self
     {
         $isAbove = $page > $this->getTotalPages();

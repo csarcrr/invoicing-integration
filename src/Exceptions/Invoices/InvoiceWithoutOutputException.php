@@ -8,5 +8,6 @@ use Exception;
 
 class InvoiceWithoutOutputException extends Exception
 {
+    /** @var string */
     protected $message = 'Invoice did not provide any output.';
 }

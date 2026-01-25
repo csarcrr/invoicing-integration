@@ -74,9 +74,6 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payments = collect();
     }
 
-    /**
-     * Request an invoice creation
-     */
     public function execute(): Invoice
     {
 
@@ -147,6 +144,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('type', $this->getType()->value);
     }
 
+    /**
+     * @throws Exception
+     */
     protected function buildDueDate(): void
     {
         if (! $this->getDueDate()) {
@@ -167,6 +167,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('output', $this->getOutputFormat()->vendus());
     }
 
+    /**
+     * @throws Exception
+     * @throws NeedsDateToSetLoadPointException
+     */
     protected function buildTransport(): void
     {
         if (! $this->getTransport()) {
@@ -223,6 +227,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('notes', $this->getNotes());
     }
 
+    /**
+     * @throws CreditNoteReasonIsMissingException
+     */
     protected function buildCreditNoteReason(): void
     {
         if ($this->getType() !== InvoiceType::CreditNote) {
@@ -246,6 +253,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function buildPayments(): void
     {
         if ($this->getPayments()->isEmpty()) {
@@ -266,6 +276,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('payments', $payments);
     }
 
+    /**
+     * @throws MissingRelatedDocumentException
+     */
     protected function buildItems(): void
     {
         if ($this->getType() === InvoiceType::Receipt) {
@@ -338,6 +351,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('items', $items);
     }
 
+    /**
+     * @throws InvoiceRequiresClientVatException
+     * @throws InvoiceRequiresVatWhenClientHasName
+     */
     protected function buildClient(): void
     {
         if (! $this->getClient()) {

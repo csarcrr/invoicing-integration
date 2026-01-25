@@ -15,6 +15,9 @@ class Get implements GetClient
 {
     public function __construct(protected ClientDataObject $client) {}
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function execute(): ClientDataObject
     {
         throw_if(! $this->client->getId(), InvalidArgumentException::class, 'ClientAction ID is required.');
@@ -28,7 +31,9 @@ class Get implements GetClient
         return $this->client;
     }
 
-    /** @param array<string, mixed> $data */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function fill(array $data): void
     {
         ! empty($data['name']) && $this->client->name($data['name']);
