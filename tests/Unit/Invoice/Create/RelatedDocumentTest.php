@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-it('can add related document to invoice', function (IntegrationProvider $provider, string $fixtureName, InvoiceType $type) {
+it('can add related document to invoice', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -26,7 +26,7 @@ it('can add related document to invoice', function (IntegrationProvider $provide
     ['normal_related_document', InvoiceType::Receipt],
 ]);
 
-it('can add related document to a NC', function (IntegrationProvider $provider, string $fixtureName) {
+it('can add related document to a NC', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create();

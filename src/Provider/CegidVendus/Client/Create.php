@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client;
+namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
@@ -22,10 +22,8 @@ class Create implements CreateClient, ShouldHavePayload
 
     public function execute(): ClientDataObject
     {
-        /** @phpstan-ignore-next-line */
         $response = Http::provider()->post('/clients', $this->getPayload());
 
-        /** @phpstan-ignore-next-line */
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();

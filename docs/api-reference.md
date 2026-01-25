@@ -7,7 +7,7 @@ Complete reference for the Invoicing Integration package classes, methods, and e
 Entry point for client management operations.
 
 ```php
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 ```
 
 | Method                               | Return Type    | Description                           |
@@ -80,7 +80,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 | Method      | Return Type             | Description                         |
 | ----------- | ----------------------- | ----------------------------------- |
-| `invoice()` | `Invoice` (ValueObject) | Issue the invoice and return result |
+| `execute()` | `Invoice` (ValueObject) | Issue the invoice and return result |
 
 ### Getter Methods
 
@@ -165,32 +165,35 @@ new Item()
 
 **Methods (fluent, return self):**
 
-| Method                                     | Parameter             | Description                   | Throws                         |
-| ------------------------------------------ | --------------------- | ----------------------------- | ------------------------------ |
-| `reference(string $reference)`             | Product SKU/code      | Set product reference         | -                              |
-| `quantity(int\|float $quantity)`           | Quantity              | Set quantity (default: 1)     | `UnsupportedQuantityException` |
-| `price(int $price)`                        | Price in cents        | Set unit price                | -                              |
-| `note(string $note)`                       | Description           | Set item description          | -                              |
-| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                  | -                              |
-| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason          | -                              |
-| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law             | -                              |
-| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount            | -                              |
-| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount       | -                              |
-| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC) | -                              |
+| Method                                     | Parameter             | Description                      | Throws                                            |
+| ------------------------------------------ | --------------------- | -------------------------------- | ------------------------------------------------- |
+| `reference(int\|string $reference)`        | Product SKU/code      | Set product reference            | -                                                 |
+| `quantity(int\|float $quantity)`           | Quantity              | Set quantity (default: 1)        | `UnsupportedQuantityException`                    |
+| `price(int $price)`                        | Price in cents        | Set unit price                   | -                                                 |
+| `note(string $note)`                       | Description           | Set item description             | -                                                 |
+| `type(ItemType $type)`                     | ItemType enum         | Set item type (default: Product) | -                                                 |
+| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                     | -                                                 |
+| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason             | `ExemptionCanOnlyBeUsedWithExemptTaxException`    |
+| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law                | `ExemptionLawCanOnlyBeUsedWithExemptionException` |
+| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount               | -                                                 |
+| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount          | -                                                 |
+| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC)    | -                                                 |
 
 **Getter Methods:**
 
-| Method                    | Return Type           |
-| ------------------------- | --------------------- |
-| `getReference()`          | `?string`             |
-| `getQuantity()`           | `int\|float`          |
-| `getPrice()`              | `?int`                |
-| `getNote()`               | `?string`             |
-| `getTax()`                | `?ItemTax`            |
-| `getTaxExemption()`       | `?TaxExemptionReason` |
-| `getTaxExemptionLaw()`    | `?string`             |
-| `getAmountDiscount()`     | `?int`                |
-| `getPercentageDiscount()` | `?int`                |
+| Method                    | Return Type                 |
+| ------------------------- | --------------------------- |
+| `getReference()`          | `int\|string`               |
+| `getQuantity()`           | `int\|float`                |
+| `getPrice()`              | `?int`                      |
+| `getNote()`               | `?string`                   |
+| `getTax()`                | `?ItemTax`                  |
+| `getTaxExemption()`       | `?TaxExemptionReason`       |
+| `getTaxExemptionLaw()`    | `?string`                   |
+| `getAmountDiscount()`     | `?int`                      |
+| `getPercentageDiscount()` | `?int`                      |
+| `getRelatedDocument()`    | `?RelatedDocumentReference` |
+| `getType()`               | `?ItemType`                 |
 
 ---
 
@@ -266,15 +269,18 @@ new TransportDetails()
 use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
 ```
 
-Returned by `invoice()` method after issuing.
+Returned by `execute()` method after issuing.
 
 **Methods:**
 
-| Method          | Return Type | Description                             | Throws                          |
-| --------------- | ----------- | --------------------------------------- | ------------------------------- |
-| `getId()`       | `int`       | Provider's internal ID                  | -                               |
-| `getSequence()` | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                               |
-| `getOutput()`   | `Output`    | Output object for PDF/ESC/POS           | `InvoiceWithoutOutputException` |
+| Method           | Return Type | Description                             | Throws                          |
+| ---------------- | ----------- | --------------------------------------- | ------------------------------- |
+| `getId()`        | `int`       | Provider's internal ID                  | -                               |
+| `getSequence()`  | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                               |
+| `getTotal()`     | `int`       | Total amount in cents (gross)           | -                               |
+| `getTotalNet()`  | `int`       | Net total amount in cents               | -                               |
+| `getAtcudHash()` | `?string`   | ATCUD hash (Portugal AT code)           | -                               |
+| `getOutput()`    | `Output`    | Output object for PDF/ESC/POS           | `InvoiceWithoutOutputException` |
 
 ---
 
@@ -286,10 +292,15 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 
 **Methods:**
 
-| Method               | Return Type | Description                        |
-| -------------------- | ----------- | ---------------------------------- |
-| `fileName()`         | `string`    | Auto-generated filename            |
-| `save(string $path)` | `string`    | Save to storage, returns full path |
+| Method | Return Type | Description |
+| Method | Return Type | Description |
+| -------------------------- | -------------- | ---------------------------------- |
+| `fileName()` | `?string` | Auto-generated filename |
+| `save(?string $path)` | `string` | Save to storage, returns full path |
+| `get()` | `string` | Alias for `save()`, returns path |
+| `content()` | `string` | Raw output content |
+| `format()` | `OutputFormat` | Output format enum |
+| `getPath()` | `?string` | Path after saving (null if unsaved)|
 
 ---
 
@@ -323,6 +334,20 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 | `CREDIT_CARD`     | Credit card     |
 | `MONEY_TRANSFER`  | Bank transfer   |
 | `CURRENT_ACCOUNT` | Current account |
+
+### ItemType
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
+```
+
+| Value        | Description      |
+| ------------ | ---------------- |
+| `Product`    | Physical product |
+| `Service`    | Service          |
+| `Other`      | Other type       |
+| `Tax`        | Tax (VAT)        |
+| `SpecialTax` | Special tax      |
 
 ### ItemTax
 
@@ -403,16 +428,18 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 ### Validation Exceptions
 
-| Exception                             | When Thrown                                     |
-| ------------------------------------- | ----------------------------------------------- |
-| `InvoiceRequiresClientVatException`   | Client provided with empty VAT                  |
-| `InvoiceRequiresVatWhenClientHasName` | Client has name but no VAT                      |
-| `CreditNoteReasonIsMissingException`  | NC type without credit note reason              |
-| `NeedsDateToSetLoadPointException`    | Transport without origin date                   |
-| `InvalidCountryException`             | Invalid ISO country code                        |
-| `InvoiceWithoutOutputException`       | Calling `getOutput()` when no output is present |
-| `UnsupportedQuantityException`        | Item quantity is zero or negative               |
-| `MissingRelatedDocumentException`     | Credit note item without related document       |
+| Exception                                         | When Thrown                                     |
+| ------------------------------------------------- | ----------------------------------------------- |
+| `InvoiceRequiresClientVatException`               | Client provided with empty VAT                  |
+| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                      |
+| `CreditNoteReasonIsMissingException`              | NC type without credit note reason              |
+| `NeedsDateToSetLoadPointException`                | Transport without origin date                   |
+| `InvalidCountryException`                         | Invalid ISO country code                        |
+| `InvoiceWithoutOutputException`                   | Calling `getOutput()` when no output is present |
+| `UnsupportedQuantityException`                    | Item quantity is zero or negative               |
+| `MissingRelatedDocumentException`                 | Credit note item without related document       |
+| `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption set without `ItemTax::EXEMPT`     |
+| `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason      |
 
 ### Provider Exceptions
 

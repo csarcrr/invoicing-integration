@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use Illuminate\Support\Facades\Http;
 
-it('properly sets the auth for '.IntegrationProvider::CEGID_VENDUS->value, function () {
-    mockConfiguration(IntegrationProvider::CEGID_VENDUS);
-    $config = collect(config('invoicing-integration.providers')[IntegrationProvider::CEGID_VENDUS->value]);
+it('properly sets the auth for '.Provider::CEGID_VENDUS->value, function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+    $config = collect(config('invoicing-integration.providers')[Provider::CEGID_VENDUS->value]);
     $request = Http::provider();
 
     $headers = $request->getOptions()['headers'];

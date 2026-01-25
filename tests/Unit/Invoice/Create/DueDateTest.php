@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-it('assigns the correct due date payload', function (IntegrationProvider $provider, string $fixtureName) {
+it('assigns the correct due date payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -20,7 +20,7 @@ it('assigns the correct due date payload', function (IntegrationProvider $provid
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['due_date']);
 
-it('fails setting a due date in a type different than FT', function (IntegrationProvider $provider) {
+it('fails setting a due date in a type different than FT', function (Provider $provider) {
     $invoice = Invoice::create();
     $invoice->type(InvoiceType::InvoiceReceipt);
 

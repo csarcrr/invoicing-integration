@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Tests\Fixtures;
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use Illuminate\Support\Facades\File;
 
 class Fixtures
 {
     protected array $path = [];
 
-    public function __construct(protected IntegrationProvider $provider)
+    public function __construct(protected Provider $provider)
     {
         $this->path = [];
     }
 
-    public static function build(IntegrationProvider $provider): self
+    public static function build(Provider $provider): self
     {
         return new self($provider);
     }

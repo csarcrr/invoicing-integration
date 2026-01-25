@@ -8,5 +8,6 @@ use Exception;
 
 class NeedsDateToSetLoadPointException extends Exception
 {
+    /** @var string */
     protected $message = 'A date is required to set the load point.';
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Enums;
 
-enum IntegrationProvider: string
+enum Provider: string
 {
     case CEGID_VENDUS = 'CegidVendus';
 
@@ -16,7 +16,7 @@ enum IntegrationProvider: string
     public function config(): mixed
     {
         return match ($this) {
-            IntegrationProvider::CEGID_VENDUS => config('invoicing-integration.providers.CegidVendus')
+            Provider::CEGID_VENDUS => config('invoicing-integration.providers.CegidVendus')
         };
     }
 }

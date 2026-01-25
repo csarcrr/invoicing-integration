@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\Action;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-it('can assign a payment', function (IntegrationProvider $provider) {
+it('can assign a payment', function (Provider $provider) {
     $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
 
@@ -22,7 +22,7 @@ it('can assign a payment', function (IntegrationProvider $provider) {
     expect($invoice->getPayments())->toHaveCount(1);
 })->with('providers');
 
-it('can assign multiple payments', function (IntegrationProvider $provider) {
+it('can assign multiple payments', function (Provider $provider) {
     $invoice = Invoice::create();
     $item = new Item(reference: 'reference-1');
 
@@ -36,7 +36,7 @@ it('can assign multiple payments', function (IntegrationProvider $provider) {
     expect($invoice->getPayments())->toHaveCount(2);
 })->with('providers');
 
-it('has expected payload', function (IntegrationProvider $provider, string $fixtureName) {
+it('has expected payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -49,7 +49,7 @@ it('has expected payload', function (IntegrationProvider $provider, string $fixt
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['payment']);
 
-it('has expected payload with multiple payments', function (IntegrationProvider $provider, string $fixtureName) {
+it('has expected payload with multiple payments', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -71,7 +71,7 @@ it('has expected payload with multiple payments', function (IntegrationProvider 
 })->with('providers', ['payment_multiple']);
 
 it('throws error when configuration is not set', function () {
-    config()->set('invoicing-integration.providers.'.IntegrationProvider::CEGID_VENDUS->value.'.config', [
+    config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value.'.config', [
         'payments' => [
             PaymentMethod::CREDIT_CARD->value => null,
             PaymentMethod::MONEY->value => null,

@@ -8,5 +8,6 @@ use Exception;
 
 class UnsupportedQuantityException extends Exception
 {
+    /** @var string */
     protected $message = 'The quantity provided is not supported.';
 }

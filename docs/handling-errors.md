@@ -52,15 +52,17 @@ This typically occurs when:
 
 These exceptions are thrown before the request is sent to the provider, during local validation.
 
-| Exception                             | When Thrown                               |
-| ------------------------------------- | ----------------------------------------- |
-| `InvoiceRequiresClientVatException`   | Client provided with empty VAT            |
-| `InvoiceRequiresVatWhenClientHasName` | Client has name but no VAT                |
-| `CreditNoteReasonIsMissingException`  | NC type without credit note reason        |
-| `NeedsDateToSetLoadPointException`    | Transport without origin date             |
-| `InvalidCountryException`             | Invalid ISO country code                  |
-| `UnsupportedQuantityException`        | Item quantity is zero or negative         |
-| `MissingRelatedDocumentException`     | Credit note item without related document |
+| Exception                                         | When Thrown                                 |
+| ------------------------------------------------- | ------------------------------------------- |
+| `InvoiceRequiresClientVatException`               | Client provided with empty VAT              |
+| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                  |
+| `CreditNoteReasonIsMissingException`              | NC type without credit note reason          |
+| `NeedsDateToSetLoadPointException`                | Transport without origin date               |
+| `InvalidCountryException`                         | Invalid ISO country code                    |
+| `UnsupportedQuantityException`                    | Item quantity is zero or negative           |
+| `MissingRelatedDocumentException`                 | Credit note item without related document   |
+| `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption set without `ItemTax::EXEMPT` |
+| `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason  |
 
 ## Output Exceptions
 

@@ -8,5 +8,6 @@ use Exception;
 
 class InvoiceRequiresClientVatException extends Exception
 {
+    /** @var string */
     protected $message = 'An invoice client requires a VAT number to be assigned before the invoice can be sent.';
 }
