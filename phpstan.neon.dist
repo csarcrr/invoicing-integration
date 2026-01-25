@@ -10,6 +10,6 @@ parameters:
     checkModelProperties: true
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
-        - message: '#Call to an undefined method Http::provider#'
-        - message: '#Call to an undefined method Http::handleUnwantedFailures#'
+        - identifier: staticMethod.notFound
+          message: '#Illuminate\\Support\\Facades\\Http::(provider|handleUnwantedFailures)\(\)#'
 
