@@ -24,4 +24,4 @@ it('fails when no id is set', function (Provider $provider) {
     $client = ClientData::getFacadeRoot();
 
     ClientAction::get($client)->execute();
-})->with('providers')->throws(InvalidArgumentException::class, 'ClientAction ID is required.');
+})->with('providers')->throws(InvalidArgumentException::class, 'Client ID is required.');

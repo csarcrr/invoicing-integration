@@ -20,7 +20,7 @@ class Get implements GetClient
      */
     public function execute(): ClientDataObject
     {
-        throw_if(! $this->client->getId(), InvalidArgumentException::class, 'ClientAction ID is required.');
+        throw_if(! $this->client->getId(), InvalidArgumentException::class, 'Client ID is required.');
 
         $request = Http::provider()->get('/clients/'.$this->client->getId());
 
