@@ -4,7 +4,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
-Invoicing Integration is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
+Invoicing Integration is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API, so you can issue compliant documents without re-learning each vendor's HTTP contract.
 
 > **Supported provider (today):** Cegid Vendus. The package architecture allows more providers to be added without changing your application code.
 
@@ -15,9 +15,6 @@ Invoicing Integration is a Laravel package that aggregates invoicing software pr
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Quick Start](#quick-start)
-- [Common Workflows](#common-workflows)
-- [Client Directory & Search](#client-directory--search)
-- [Architecture Overview](#architecture-overview)
 - [Testing & Quality](#testing--quality)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -41,8 +38,6 @@ Always consult with legal and accounting professionals when implementing invoici
 
 - PHP 8.2+
 - Laravel 11.x or 12.x (`illuminate/contracts: ^11.0 || ^12.0`)
-- Composer 2.x
-- An active Cegid Vendus account with API access (for credentials and payment method IDs)
 
 ## Installation
 
@@ -147,57 +142,6 @@ Key rules:
 - At least one item is required for FT/FR/FS/NC documents
 - Payments are required for FR, FS, RG, and NC types
 - Tax exemptions require `ItemTax::EXEMPT` plus a valid `TaxExemptionReason`
-
-## Common Workflows
-
-- [Getting Started](docs/getting-started.md)
-- [Creating an Invoice](docs/invoices/creating-an-invoice.md)
-- [Creating a Receipt (RG)](docs/invoices/creating-a-RG-for-an-invoice.md)
-- [Creating a Credit Note (NC)](docs/invoices/creating-a-nc-invoice.md)
-- [Configuring Tax Exemptions](docs/invoices/tax-exemption.md)
-- [Output Formats & Storage](docs/invoices/outputting-invoice.md)
-- [Using Invoice Data](docs/invoices/using-invoice-data.md)
-- [Finding Clients (pagination, filters)](docs/clients/finding-clients.md)
-
-## Client Directory & Search
-
-Use `Client::find()` to page through provider clients without leaving Laravel:
-
-```php
-use CsarCrr\InvoicingIntegration\Facades\Client;
-
-$clients = Client::find()
-    ->email('john@acme.example') // optional filter
-    ->execute();
-
-foreach ($clients->getList() as $client) {
-    logger()->info('Client', ['name' => $client->getName()]);
-}
-
-if ($clients->getTotalPages() > 1) {
-    $clients->next()->execute();
-}
-```
-
-- Automatic pagination uses provider headers (`X-Paginator-*`).
-- `next()`, `previous()`, and `page()` throw `NoMorePagesException` when out of bounds.
-- Filtering is provider-aware; today only `email()` is supported by Cegid Vendus.
-
-See [Finding Clients](docs/clients/finding-clients.md) for advanced usage.
-
-## Architecture Overview
-
-- `Invoice::create()` (see `src/Invoice.php`) resolves the configured provider via the
-  `IntegrationProvider` enum and returns a `CreateInvoice` builder.
-- Each provider implements the fluent builder contract. Currently,
-  `CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice\Create` handles
-  payload assembly, validation, and HTTP calls.
-- Traits under `src/Traits/Invoice/` encapsulate builder capabilities such as clients, payments,
-  transport, and notes.
-- Responses are normalized into value objects (`src/ValueObjects/*`) so your application code can
-  remain provider-agnostic.
-
-This separation keeps provider logic isolated while allowing the package to expose a consistent API.
 
 ## Testing & Quality
 
