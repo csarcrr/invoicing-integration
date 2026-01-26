@@ -18,7 +18,7 @@ it('returns an instance of CreateInvoice', function (Provider $provider) {
 it('returns an instance of CreateClient', function (Provider $provider) {
     config()->set('invoicing-integration.provider', $provider->value);
 
-    $client = ClientData::name('Alberto Albertino');
+    $client = ClientData::from(['name' => 'Alberto Albertino']);
 
     expect(Client::create($client))->toBeInstanceOf(CreateClient::class);
 })->with('providers');

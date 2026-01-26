@@ -51,10 +51,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             throw new Exception('The integration API request failed for an unknown reason.');
         });
 
-        $this->app->bind(ClientData::class, function () {
-            return new ClientData;
-        });
-
         $this->app->when([Invoice::class, ClientAction::class])
             ->needs(Provider::class)
             ->give(function () {

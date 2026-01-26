@@ -20,9 +20,11 @@ class Get implements GetClient
      */
     public function execute(): ClientData
     {
-        throw_if(! $this->client->getId(), InvalidArgumentException::class, 'Client ID is required.');
+        $client = $this->client->toArray();
 
-        $request = Http::provider()->get('/clients/'.$this->client->getId());
+        throw_if(empty($client['id']), InvalidArgumentException::class, 'Client ID is required.');
+
+        $request = Http::provider()->get('/clients/'.$client['id']);
 
         Http::handleUnwantedFailures($request);
 
@@ -36,17 +38,22 @@ class Get implements GetClient
      */
     protected function fill(array $data): void
     {
-        ! empty($data['name']) && $this->client->name($data['name']);
-        ! empty($data['email']) && $this->client->email($data['email']);
-        ! empty($data['address']) && $this->client->address($data['address']);
-        ! empty($data['phone']) && $this->client->phone($data['phone']);
-        ! empty($data['notes']) && $this->client->notes($data['notes']);
-        ! empty($data['postalcode']) && $this->client->postalCode($data['postalcode']);
-        ! empty($data['fiscal_id']) && $this->client->vat($data['fiscal_id']);
-        ! empty($data['city']) && $this->client->city($data['city']);
-        ! empty($data['country']) && $this->client->country($data['country']);
-        ! empty($data['irs_retention']) && $this->client->irsRetention($data['irs_retention'] === 'yes');
-        ! empty($data['send_email']) && $this->client->emailNotification($data['send_email'] === 'yes');
-        ! empty($data['default_pay_due']) && $this->client->defaultPayDue((int) $data['default_pay_due']);
+
+        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
+        ! empty($data['send_email']) && $data['send_email'] = $data['send_email'] === 'yes';
+
+        $this->client->additional($data);
+//        ! empty($data['name']) && $this->client->name($data['name']);
+//        ! empty($data['email']) && $this->client->email($data['email']);
+//        ! empty($data['address']) && $this->client->address($data['address']);
+//        ! empty($data['phone']) && $this->client->phone($data['phone']);
+//        ! empty($data['notes']) && $this->client->notes($data['notes']);
+//        ! empty($data['postalcode']) && $this->client->postalCode($data['postalcode']);
+//        ! empty($data['fiscal_id']) && $this->client->vat($data['fiscal_id']);
+//        ! empty($data['city']) && $this->client->city($data['city']);
+//        ! empty($data['country']) && $this->client->country($data['country']);
+//        ! empty($data['irs_retention']) && $this->client->irsRetention($data['irs_retention'] === 'yes');
+//        ! empty($data['send_email']) && $this->client->emailNotification($data['send_email'] === 'yes');
+//        ! empty($data['default_pay_due']) && $this->client->defaultPayDue((int) $data['default_pay_due']);
     }
 }

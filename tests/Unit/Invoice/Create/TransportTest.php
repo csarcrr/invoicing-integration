@@ -58,7 +58,7 @@ it('has a valid payload', function (Provider $provider, string $fixtureName) {
 
     $transport->vehicleLicensePlate('00-AB-00');
 
-    $invoice->client(ClientData::vat('PT123456789')->name('ClientAction Name'));
+    $invoice->client(ClientData::from(['name' => 'Client Name', 'vat' => 'PT123456789']));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 
@@ -108,7 +108,7 @@ it('fails when no load date is provided with transport', function (Provider $pro
         ->postalCode('4410-100')
         ->country('PT');
 
-    $invoice->client(ClientData::vat('PT123456789')->name('ClientAction Name'));
+    $invoice->client(ClientData::from(['vat' => 'PT123456789','name' => 'Client Name']));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 

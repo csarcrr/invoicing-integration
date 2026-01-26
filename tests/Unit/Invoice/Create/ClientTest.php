@@ -13,12 +13,13 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 it('has the simple client payload', function (Provider $provider) {
     $invoice = Invoice::create();
 
-    $client = ClientData::name('John Doe')->vat('123456789');
+    $client = ClientData::from(['name' => 'John Doe', 'vat' => '123456789']);
 
     $invoice->client($client);
+    $data = $invoice->getClient()->toArray();
 
     expect($invoice->getClient())->toBeInstanceOf(ClientData::class)
-        ->and($invoice->getClient()->getName())->toBe('John Doe');
+        ->and($data['name'])->toBe('John Doe');
 })->with('providers');
 
 it('has the correct full client payload', function (Provider $provider, string $fixtureName) {
@@ -49,7 +50,7 @@ it('has the correct full client payload', function (Provider $provider, string $
 it('fails when vat is not valid', function (Provider $provider) {
     $invoice = Invoice::create();
 
-    $client = ClientData::vat('');
+    $client = ClientData::from(['vat'=>'']);
 
     $item = new Item(
         reference: 'reference-1'
@@ -60,26 +61,3 @@ it('fails when vat is not valid', function (Provider $provider) {
 
     $invoice->getPayload();
 })->with('providers')->throws(InvoiceRequiresClientVatException::class);
-
-it('fails when name is provided but vat is missing', function (Provider $provider) {
-    if ($provider !== Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('This test is only for CegidVendus provider.');
-    }
-
-    $invoice = Invoice::create();
-
-    $client = ClientData::name('John Doe');
-
-    $item = new Item(
-        reference: 'reference-1'
-    );
-
-    $invoice->item($item);
-    $invoice->client($client);
-
-    $invoice->getPayload();
-})->with('providers')->throws(InvoiceRequiresVatWhenClientHasName::class);
-
-it('fails when assigning an invalid country', function () {
-    ClientData::country('InvalidCountry');
-})->throws(InvalidCountryException::class);

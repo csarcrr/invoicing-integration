@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
@@ -82,11 +83,11 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
     protected function updateResults(array $results): void
     {
         $this->list = collect($results)->map(function (array $item) {
-            $client = app(ClientData::class);
+            $data = [];
+            // todo: improve this since the response fields might be similar to the dto ones
+            ! empty($item['name']) && $data['name'] = $item['name'];
 
-            ! empty($item['name']) && $client->name($item['name']);
-
-            return $client;
+            return ClientData::from($data);
         })->values();
     }
 }

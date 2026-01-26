@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 it('can set the client id', function (Provider $provider) {
     Http::fake(mockResponse([], 200));
-    $client = ClientData::id(999999);
+    $client = ClientData::from(['id' => '999999']);
 
     Client::get($client)->execute();
 
@@ -21,7 +21,7 @@ it('can set the client id', function (Provider $provider) {
 })->with('providers');
 
 it('fails when no id is set', function (Provider $provider) {
-    $client = ClientData::getFacadeRoot();
+    $client = ClientData::from([]);
 
     Client::get($client)->execute();
 })->with('providers')->throws(InvalidArgumentException::class, 'Client ID is required.');
