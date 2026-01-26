@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use Illuminate\Support\Facades\Http;
 
 test('when creating request fails it handles errors properly', function (
-    IntegrationProvider $provider,
+    Provider $provider,
     string $fixtureName,
 ) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
@@ -24,7 +24,7 @@ test('when creating request fails it handles errors properly', function (
     ->throws(RequestFailedException::class);
 
 test('when auth in create fails it handles errors properly', function (
-    IntegrationProvider $provider,
+    Provider $provider,
     string $fixtureName,
 ) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
@@ -38,7 +38,7 @@ test('when auth in create fails it handles errors properly', function (
     ->throws(UnauthorizedException::class);
 
 test('when provider fails catastrophically it handles the errors properly', function (
-    IntegrationProvider $provider,
+    Provider $provider,
 ) {
     Http::fake(mockResponse([], 500));
 

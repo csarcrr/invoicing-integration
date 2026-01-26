@@ -31,9 +31,6 @@ class Item
 
     protected ?RelatedDocumentReference $relatedDocument = null;
 
-    /**
-     * @param  string  $reference  - avoids duplicate products in some providers
-     */
     public function __construct(
         protected null|int|string $reference = null,
         protected null|int|float $quantity = 1,
@@ -74,6 +71,9 @@ class Item
         return $this->taxExemptionReason;
     }
 
+    /**
+     * @throws ExemptionCanOnlyBeUsedWithExemptTaxException
+     */
     public function taxExemption(?TaxExemptionReason $taxExemptionReason = null): self
     {
         throw_if(
@@ -91,6 +91,9 @@ class Item
         return $this->taxExemptionLaw;
     }
 
+    /**
+     * @throws ExemptionLawCanOnlyBeUsedWithExemptionException
+     */
     public function taxExemptionLaw(string $taxExemptionLaw): self
     {
         throw_if(
@@ -149,6 +152,9 @@ class Item
         return $this;
     }
 
+    /**
+     * @throws UnsupportedQuantityException
+     */
     public function quantity(int|float $quantity): self
     {
         throw_if($quantity <= 0, UnsupportedQuantityException::class);

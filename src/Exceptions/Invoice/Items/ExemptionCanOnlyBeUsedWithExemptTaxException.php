@@ -8,5 +8,6 @@ use Exception;
 
 class ExemptionCanOnlyBeUsedWithExemptTaxException extends Exception
 {
+    /** @var string */
     protected $message = 'An exemption can only be assigned to an item with exempt tax.';
 }

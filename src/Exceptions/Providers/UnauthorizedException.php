@@ -8,5 +8,6 @@ use Exception;
 
 class UnauthorizedException extends Exception
 {
+    /** @var string */
     protected $message = 'Unauthorized: Access is denied due to invalid credentials.';
 }

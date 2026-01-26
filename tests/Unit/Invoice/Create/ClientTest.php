@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('has the simple client payload', function (IntegrationProvider $provider) {
+it('has the simple client payload', function (Provider $provider) {
     $invoice = Invoice::create();
 
     $client = ClientData::name('John Doe')->vat('123456789');
@@ -22,7 +22,7 @@ it('has the simple client payload', function (IntegrationProvider $provider) {
         ->and($invoice->getClient()->getName())->toBe('John Doe');
 })->with('providers');
 
-it('has the correct full client payload', function (IntegrationProvider $provider, string $fixtureName) {
+it('has the correct full client payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->client()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -45,7 +45,7 @@ it('has the correct full client payload', function (IntegrationProvider $provide
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['complete_client']);
 
-it('fails when vat is not valid', function (IntegrationProvider $provider) {
+it('fails when vat is not valid', function (Provider $provider) {
     $invoice = Invoice::create();
 
     $client = ClientData::vat('');
@@ -60,8 +60,8 @@ it('fails when vat is not valid', function (IntegrationProvider $provider) {
     $invoice->getPayload();
 })->with('providers')->throws(InvoiceRequiresClientVatException::class);
 
-it('fails when name is provided but vat is missing', function (IntegrationProvider $provider) {
-    if ($provider !== IntegrationProvider::CEGID_VENDUS) {
+it('fails when name is provided but vat is missing', function (Provider $provider) {
+    if ($provider !== Provider::CEGID_VENDUS) {
         $this->markTestSkipped('This test is only for CegidVendus provider.');
     }
 

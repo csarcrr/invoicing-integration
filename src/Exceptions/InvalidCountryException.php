@@ -8,5 +8,6 @@ use Exception;
 
 class InvalidCountryException extends Exception
 {
+    /** @var string */
     protected $message = 'The provided country is not valid.';
 }

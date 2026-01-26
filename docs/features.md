@@ -116,7 +116,7 @@ Features that are "shared" between multiple Invoicing types.
 | ------------- | --------- | ------------ |
 | Name          | ✅        | ✅           |
 | VAT           | ✅        | ✅           |
-| Adress        | ✅        | ✅           |
+| Address       | ✅        | ✅           |
 | City          | ✅        | ✅           |
 | Postal Code   | ✅        | ✅           |
 | Country       | ✅        | ✅           |

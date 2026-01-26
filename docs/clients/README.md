@@ -11,7 +11,7 @@ Manage clients in your invoicing provider using the Client API. Clients can be c
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Client;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
 
 // Create a new client

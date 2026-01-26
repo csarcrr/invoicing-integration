@@ -11,6 +11,9 @@ trait HasCountry
 {
     protected ?string $country = null;
 
+    /**
+     * @throws InvalidCountryException
+     */
     public function country(string $country): self
     {
         try {

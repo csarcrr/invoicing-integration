@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityExc
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-it('can assign an item with all properties', function (IntegrationProvider $provider, string $fixtureName) {
+it('can assign an item with all properties', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -29,7 +29,7 @@ it('can assign an item with all properties', function (IntegrationProvider $prov
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['item']);
 
-it('can assign multiple items', function (IntegrationProvider $provider, string $fixtureName) {
+it('can assign multiple items', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -39,7 +39,7 @@ it('can assign multiple items', function (IntegrationProvider $provider, string 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['multiple_items']);
 
-it('sets item types correctly', function (IntegrationProvider $provider, string $fixtureName, ItemType $type) {
+it('sets item types correctly', function (Provider $provider, string $fixtureName, ItemType $type) {
     $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -58,7 +58,7 @@ it('sets item types correctly', function (IntegrationProvider $provider, string 
     ['item_type_other', ItemType::Other],
 ]);
 
-it('sets tax types correctly', function (IntegrationProvider $provider, string $fixtureName, ItemTax $taxType) {
+it('sets tax types correctly', function (Provider $provider, string $fixtureName, ItemTax $taxType) {
     $data = fixtures()->request()->invoice()->item()->tax()->files($fixtureName);
 
     $invoice = Invoice::create();

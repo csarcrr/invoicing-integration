@@ -8,5 +8,6 @@ use Exception;
 
 class CreditNoteReasonIsMissingException extends Exception
 {
+    /** @var string */
     protected $message = 'Credit Note reason is required';
 }

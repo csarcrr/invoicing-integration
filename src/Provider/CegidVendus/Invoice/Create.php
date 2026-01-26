@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Invoice;
+namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
@@ -13,7 +13,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
-use CsarCrr\InvoicingIntegration\IntegrationProvider\Request;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
@@ -75,15 +74,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payments = collect();
     }
 
-    /**
-     * Request an invoice creation
-     */
     public function execute(): Invoice
     {
-        /** @phpstan-ignore-next-line */
         $response = Http::provider()->post('documents', $this->getPayload());
 
-        /** @phpstan-ignore-next-line */
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();
@@ -149,6 +143,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('type', $this->getType()->value);
     }
 
+    /**
+     * @throws Exception
+     */
     protected function buildDueDate(): void
     {
         if (! $this->getDueDate()) {
@@ -169,6 +166,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('output', $this->getOutputFormat()->vendus());
     }
 
+    /**
+     * @throws Exception
+     * @throws NeedsDateToSetLoadPointException
+     */
     protected function buildTransport(): void
     {
         if (! $this->getTransport()) {
@@ -176,7 +177,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
 
         if (! $this->getClient()) {
-            throw new Exception('Client information is required when transport details are provided.');
+            throw new Exception('ClientAction information is required when transport details are provided.');
         }
 
         throw_if(
@@ -225,6 +226,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('notes', $this->getNotes());
     }
 
+    /**
+     * @throws CreditNoteReasonIsMissingException
+     */
     protected function buildCreditNoteReason(): void
     {
         if ($this->getType() !== InvoiceType::CreditNote) {
@@ -248,6 +252,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function buildPayments(): void
     {
         if ($this->getPayments()->isEmpty()) {
@@ -268,6 +275,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('payments', $payments);
     }
 
+    /**
+     * @throws MissingRelatedDocumentException
+     */
     protected function buildItems(): void
     {
         if ($this->getType() === InvoiceType::Receipt) {
@@ -340,6 +350,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payload->put('items', $items);
     }
 
+    /**
+     * @throws InvoiceRequiresClientVatException
+     * @throws InvoiceRequiresVatWhenClientHasName
+     */
     protected function buildClient(): void
     {
         if (! $this->getClient()) {

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\ClientData;
@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
-it('assigns a transport to the invoice', function (IntegrationProvider $provider) {
+it('assigns a transport to the invoice', function (Provider $provider) {
     $invoice = Invoice::create();
     $transport = new TransportDetails;
 
@@ -34,7 +34,7 @@ it('assigns a transport to the invoice', function (IntegrationProvider $provider
     expect($invoice->getTransport()->destination()->getAddress())->toBe('Rua dos Paninhos, 521');
 })->with('providers');
 
-it('has a valid payload', function (IntegrationProvider $provider, string $fixtureName) {
+it('has a valid payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -58,14 +58,14 @@ it('has a valid payload', function (IntegrationProvider $provider, string $fixtu
 
     $transport->vehicleLicensePlate('00-AB-00');
 
-    $invoice->client(ClientData::vat('PT123456789')->name('Client Name'));
+    $invoice->client(ClientData::vat('PT123456789')->name('ClientAction Name'));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['transport']);
 
-it('fails when no client is provided with transport', function (IntegrationProvider $provider) {
+it('fails when no client is provided with transport', function (Provider $provider) {
     $invoice = Invoice::create();
     $transport = new TransportDetails;
 
@@ -89,10 +89,10 @@ it('fails when no client is provided with transport', function (IntegrationProvi
 })->with('providers')
     ->throws(
         Exception::class,
-        'Client information is required when transport details are provided.'
+        'ClientAction information is required when transport details are provided.'
     );
 
-it('fails when no load date is provided with transport', function (IntegrationProvider $provider) {
+it('fails when no load date is provided with transport', function (Provider $provider) {
     $invoice = Invoice::create();
     $transport = new TransportDetails;
 
@@ -108,14 +108,14 @@ it('fails when no load date is provided with transport', function (IntegrationPr
         ->postalCode('4410-100')
         ->country('PT');
 
-    $invoice->client(ClientData::vat('PT123456789')->name('Client Name'));
+    $invoice->client(ClientData::vat('PT123456789')->name('ClientAction Name'));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 
     $invoice->getPayload();
 })->with('providers')->throws(NeedsDateToSetLoadPointException::class);
 
-it('fails when setting an invalid country', function (IntegrationProvider $provider) {
+it('fails when setting an invalid country', function (Provider $provider) {
     $invoice = Invoice::create();
     $transport = new TransportDetails;
 

@@ -8,5 +8,6 @@ use Exception;
 
 class ExemptionLawCanOnlyBeUsedWithExemptionException extends Exception
 {
+    /** @var string */
     protected $message = 'An exemption law can only be assigned when an exemption is set.';
 }

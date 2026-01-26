@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\IntegrationProvider\CegidVendus\Client;
+namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
@@ -15,13 +15,15 @@ class Get implements GetClient
 {
     public function __construct(protected ClientDataObject $client) {}
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function execute(): ClientDataObject
     {
         throw_if(! $this->client->getId(), InvalidArgumentException::class, 'Client ID is required.');
 
-        /** @phpstan-ignore-next-line */
         $request = Http::provider()->get('/clients/'.$this->client->getId());
-        /** @phpstan-ignore-next-line */
+
         Http::handleUnwantedFailures($request);
 
         $this->fill($request->json());
@@ -29,7 +31,9 @@ class Get implements GetClient
         return $this->client;
     }
 
-    /** @param array<string, mixed> $data */
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function fill(array $data): void
     {
         ! empty($data['name']) && $this->client->name($data['name']);

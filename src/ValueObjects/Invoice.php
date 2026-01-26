@@ -33,6 +33,9 @@ class Invoice implements HasData
         return $this;
     }
 
+    /**
+     * @throws InvoiceWithoutOutputException
+     */
     public function getOutput(): Output
     {
         throw_if(is_null($this->output), InvoiceWithoutOutputException::class);

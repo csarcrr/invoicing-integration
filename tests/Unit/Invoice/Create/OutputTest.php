@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\InvoiceWithoutOutputException;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
-it('has pdf has the default output', function (IntegrationProvider $provider) {
+it('has pdf has the default output', function (Provider $provider) {
     $invoice = Invoice::create();
 
     expect($invoice->getOutputFormat())->toBe(OutputFormat::PDF_BASE64);
 })->with('providers');
 
-it('has the correct payload to request a pdf response', function (IntegrationProvider $provider, string $fixtureName) {
+it('has the correct payload to request a pdf response', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->output()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -26,7 +26,7 @@ it('has the correct payload to request a pdf response', function (IntegrationPro
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['has_pdf']);
 
-it('has the correct payload to request a escpos response', function (IntegrationProvider $provider, string $fixtureName) {
+it('has the correct payload to request a escpos response', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->output()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -36,7 +36,7 @@ it('has the correct payload to request a escpos response', function (Integration
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['has_escpos']);
 
-it('can save the output to pdf', function (IntegrationProvider $provider, string $fixtureName) {
+it('can save the output to pdf', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
@@ -51,7 +51,7 @@ it('can save the output to pdf', function (IntegrationProvider $provider, string
     Storage::disk('local')->assertExists($path);
 })->with('providers', ['output_with_pdf']);
 
-it('can output escpos', function (IntegrationProvider $provider, string $fixtureName) {
+it('can output escpos', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
@@ -66,7 +66,7 @@ it('can output escpos', function (IntegrationProvider $provider, string $fixture
     Storage::disk('local')->assertExists($path);
 })->with('providers', ['output_with_escpos']);
 
-it('can save the output under a custom name and path', function (IntegrationProvider $provider, string $fixtureName) {
+it('can save the output under a custom name and path', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();
@@ -82,7 +82,7 @@ it('can save the output under a custom name and path', function (IntegrationProv
 })->with('providers', ['output_with_pdf']);
 
 it('is able to sanitize the path and filename when saving', function (
-    IntegrationProvider $provider,
+    Provider $provider,
     string $fixtureName,
     string $invalidPath,
     string $expectedPath
@@ -121,7 +121,7 @@ it('is able to sanitize the path and filename when saving', function (
         ['CamelCaseFileName', 'camelcasefilename.pdf'],
     ]);
 
-it('outputs null when there is no invoice output provided', function (IntegrationProvider $provider, string $fixtureName) {
+it('outputs null when there is no invoice output provided', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create();

@@ -103,6 +103,9 @@ class TransportDetails
         return $this->data[$this->type]['country'];
     }
 
+    /**
+     * @throws InvalidCountryException
+     */
     public function country(string $country): self
     {
         try {

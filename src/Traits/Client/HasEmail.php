@@ -10,6 +10,9 @@ trait HasEmail
 {
     protected ?string $email = null;
 
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function email(string $email): self
     {
         Validator::make(['email' => $email], [

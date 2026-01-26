@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Enums\IntegrationProvider;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
@@ -20,10 +20,10 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         Http::macro('provider', function () {
-            $provider = IntegrationProvider::from(config('invoicing-integration.provider'));
+            $provider = Provider::from(config('invoicing-integration.provider'));
 
             return match ($provider) {
-                IntegrationProvider::CEGID_VENDUS => CegidVendus::setupHttpConfiguration()
+                Provider::CEGID_VENDUS => CegidVendus::setupHttpConfiguration()
             };
         });
 
@@ -50,10 +50,10 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             throw new Exception('The integration API request failed for an unknown reason.');
         });
 
-        $this->app->when([Invoice::class, Client::class])
-            ->needs(IntegrationProvider::class)
+        $this->app->when([Invoice::class, ClientAction::class])
+            ->needs(Provider::class)
             ->give(function () {
-                return IntegrationProvider::from(config('invoicing-integration.provider'));
+                return Provider::from(config('invoicing-integration.provider'));
             });
     }
 

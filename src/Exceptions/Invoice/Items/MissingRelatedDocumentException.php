@@ -8,5 +8,6 @@ use Exception;
 
 class MissingRelatedDocumentException extends Exception
 {
+    /** @var string */
     protected $message = 'A related document is missing for the item.';
 }

@@ -8,5 +8,6 @@ use Exception;
 
 class FailedReachingProviderException extends Exception
 {
+    /** @var string */
     protected $message = 'Failed to reach the provider: The request could not be completed.';
 }
