@@ -352,33 +352,27 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     /**
      * @throws InvoiceRequiresClientVatException
-     * @throws InvoiceRequiresVatWhenClientHasName
      */
     protected function buildClient(): void
     {
-        if (! $this->getClient()) {
+        $client = $this->getClient()->toArray();
+
+        if (empty($client)) {
             return;
         }
 
         throw_if(
-            ! is_null($this->getClient()->vat) &&
-                empty($this->getClient()->vat),
+            ! is_null($client['vat']) && empty($client['vat']),
             InvoiceRequiresClientVatException::class
         );
 
-        throw_if(
-            $this->getClient()->name &&
-                ! $this->getClient()->vat,
-            InvoiceRequiresVatWhenClientHasName::class
-        );
+        $client['irs_retention'] = $client['irsRetention'] ? 'yes' : 'no';
+        $client['email_notification'] = $client['email_notification'] ? 'yes' : 'no';
+        $client['vat'] && $client['fiscal_id'] = $client['vat'];
+        $client['postal_code'] && $client['postalcode'] = $client['postal_code'];
 
-        $data = $this->client->except('vat', 'postalCode')->toArray();
+        unset($client['vat'], $client['postal_code']);
 
-        $data['irs_retention'] = $this->client->irsRetention ? 'yes' : 'no';
-        $data['email_notification'] = $this->client->emailNotification ? 'yes' : 'no';
-        $this->client->vat && $data['fiscal_id'] = $this->client->vat;
-        $this->client->postalCode && $data['postalcode'] = $this->client->postalCode;
-
-        $this->payload->put('client', $data);
+        $this->payload->put('client', $client);
     }
 }
