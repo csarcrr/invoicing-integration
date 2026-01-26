@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
@@ -13,12 +13,12 @@ use function throw_if;
 
 class Get implements GetClient
 {
-    public function __construct(protected ClientDataObject $client) {}
+    public function __construct(protected ClientData $client) {}
 
     /**
      * @throws InvalidArgumentException
      */
-    public function execute(): ClientDataObject
+    public function execute(): ClientData
     {
         throw_if(! $this->client->getId(), InvalidArgumentException::class, 'Client ID is required.');
 

@@ -8,7 +8,7 @@ trait HasEmailNotification
 {
     protected bool $emailNotification = false;
 
-    public function emailNotification(bool $emailNotification): self
+    protected function emailNotification(bool $emailNotification): self
     {
         $this->emailNotification = $emailNotification;
 

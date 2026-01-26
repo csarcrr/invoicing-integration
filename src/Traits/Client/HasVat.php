@@ -8,7 +8,7 @@ trait HasVat
 {
     protected string|int|null $vat = null;
 
-    public function vat(string|int $vat): self
+    protected function vat(string|int $vat): self
     {
         $this->vat = $vat;
 

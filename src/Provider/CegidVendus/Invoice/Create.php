@@ -361,29 +361,23 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
 
         throw_if(
-            ! is_null($this->getClient()->getVat()) &&
-                empty($this->getClient()->getVat()),
+            ! is_null($this->getClient()->vat) &&
+                empty($this->getClient()->vat),
             InvoiceRequiresClientVatException::class
         );
 
         throw_if(
-            $this->getClient()->getName() &&
-                ! $this->getClient()->getVat(),
+            $this->getClient()->name &&
+                ! $this->getClient()->vat,
             InvoiceRequiresVatWhenClientHasName::class
         );
 
-        $this->getClient()->getId() && $data['id'] = $this->getClient()->getId();
-        $this->getClient()->getName() && $data['name'] = $this->getClient()->getName();
-        $this->getClient()->getVat() && $data['fiscal_id'] = $this->getClient()->getVat();
-        $this->getClient()->getAddress() && $data['address'] = $this->getClient()->getAddress();
-        $this->getClient()->getCity() && $data['city'] = $this->getClient()->getCity();
-        $this->getClient()->getPostalCode() && $data['postalcode'] = $this->getClient()->getPostalCode();
-        $this->getClient()->getCountry() && $data['country'] = $this->getClient()->getCountry();
-        $this->getClient()->getEmail() && $data['email'] = $this->getClient()->getEmail();
-        $this->getClient()->getPhone() && $data['phone'] = $this->getClient()->getPhone();
+        $data = $this->client->except('vat', 'postalCode')->toArray();
 
-        $retention = $this->getClient()->getIrsRetention();
-        $data['irs_retention'] = $retention ? 'yes' : 'no';
+        $data['irs_retention'] = $this->client->irsRetention ? 'yes' : 'no';
+        $data['email_notification'] = $this->client->emailNotification ? 'yes' : 'no';
+        $this->client->vat && $data['fiscal_id'] = $this->client->vat;
+        $this->client->postalCode && $data['postalcode'] = $this->client->postalCode;
 
         $this->payload->put('client', $data);
     }

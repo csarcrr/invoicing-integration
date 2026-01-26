@@ -13,7 +13,7 @@ trait HasEmail
     /**
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function email(string $email): self
+    protected function email(string $email): self
     {
         Validator::make(['email' => $email], [
             'email' => 'required|email',

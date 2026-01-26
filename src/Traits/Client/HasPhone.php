@@ -8,7 +8,7 @@ trait HasPhone
 {
     protected ?string $phone = null;
 
-    public function phone(string $phone): self
+    protected function phone(string $phone): self
     {
         $this->phone = $phone;
 

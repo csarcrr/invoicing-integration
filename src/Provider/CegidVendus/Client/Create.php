@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -15,12 +15,12 @@ class Create implements CreateClient, ShouldHavePayload
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    public function __construct(protected ClientDataObject $client)
+    public function __construct(protected ClientData $client)
     {
         $this->payload = collect();
     }
 
-    public function execute(): ClientDataObject
+    public function execute(): ClientData
     {
         $response = Http::provider()->post('/clients', $this->getPayload());
 
@@ -28,7 +28,7 @@ class Create implements CreateClient, ShouldHavePayload
 
         $data = $response->json();
 
-        $this->client->id($data['id']);
+        $this->client->additional(['id' => $data['id']]);
 
         return $this->client;
     }
@@ -53,49 +53,49 @@ class Create implements CreateClient, ShouldHavePayload
 
     protected function buildName(): void
     {
-        $this->client->getName() && $this->payload->put('name', $this->client->getName());
+        $this->client->name && $this->payload->put('name', $this->client->name);
     }
 
     protected function buildEmail(): void
     {
-        $this->client->getEmail() && $this->payload->put('email', $this->client->getEmail());
+        $this->client->email && $this->payload->put('email', $this->client->email);
     }
 
     protected function buildCompleteAddress(): void
     {
-        $this->client->getAddress() && $this->payload->put('address', $this->client->getAddress());
-        $this->client->getCity() && $this->payload->put('city', $this->client->getCity());
-        $this->client->getPostalCode() && $this->payload->put('postalcode', $this->client->getPostalCode());
-        $this->client->getCountry() && $this->payload->put('country', $this->client->getCountry());
+        $this->client->address && $this->payload->put('address', $this->client->address);
+        $this->client->city && $this->payload->put('city', $this->client->city);
+        $this->client->postalCode && $this->payload->put('postalcode', $this->client->postalCode);
+        $this->client->country && $this->payload->put('country', $this->client->country);
     }
 
     protected function buildVat(): void
     {
-        $this->client->getVat() && $this->payload->put('fiscal_id', $this->client->getVat());
+        $this->client->vat && $this->payload->put('fiscal_id', $this->client->vat);
     }
 
     protected function buildNotes(): void
     {
-        $this->client->getNotes() && $this->payload->put('notes', $this->client->getNotes());
+        $this->client->notes && $this->payload->put('notes', $this->client->notes);
     }
 
     protected function buildIrsRetention(): void
     {
-        $this->client->getIrsRetention() ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
+        $this->client->irsRetention ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
     }
 
     protected function buildEmailNotification(): void
     {
-        $this->client->getEmailNotification() ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
+        $this->client->emailNotification ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
     }
 
     protected function buildContacts(): void
     {
-        $this->client->getPhone() && $this->payload->put('phone', $this->client->getPhone());
+        $this->client->phone && $this->payload->put('phone', $this->client->phone);
     }
 
     protected function buildDefaultPayDue(): void
     {
-        $this->client->getDefaultPayDue() && $this->payload->put('default_pay_due', $this->client->getDefaultPayDue());
+        $this->client->defaultPayDue && $this->payload->put('default_pay_due', $this->client->defaultPayDue);
     }
 }

@@ -8,7 +8,7 @@ trait HasAddress
 {
     protected ?string $address = null;
 
-    public function address(string $address): self
+    protected function address(string $address): self
     {
         $this->address = $address;
 

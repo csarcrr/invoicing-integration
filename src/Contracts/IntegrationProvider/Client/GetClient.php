@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 interface GetClient
 {
-    public function execute(): ClientDataObject;
+    public function execute(): ClientData;
 }

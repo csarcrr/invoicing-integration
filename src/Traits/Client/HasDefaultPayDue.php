@@ -8,7 +8,7 @@ trait HasDefaultPayDue
 {
     protected ?int $defaultPayDue = null;
 
-    public function defaultPayDue(int $defaultPayDue): self
+    protected function defaultPayDue(int $defaultPayDue): self
     {
         $this->defaultPayDue = $defaultPayDue;
 

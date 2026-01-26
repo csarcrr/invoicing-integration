@@ -8,6 +8,7 @@
         "phone": "220123123",
         "email": "john.doe@mail.com",
         "country": "PT",
-        "irs_retention": "yes"
+        "irs_retention": "yes",
+        "email_notification": "yes"
     }
 }

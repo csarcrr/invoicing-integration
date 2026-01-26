@@ -8,7 +8,7 @@ trait HasCity
 {
     protected ?string $city = null;
 
-    public function city(string $city): self
+    protected function city(string $city): self
     {
         $this->city = $city;
 

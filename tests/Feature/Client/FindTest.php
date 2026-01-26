@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -22,7 +21,7 @@ test('getting list of clients returns expected instances', function (Provider $p
     $results = Client::find()->execute();
 
     expect($results->getList())->toBeInstanceOf(Collection::class)
-        ->and($results->getList()->first())->toBeInstanceOf(ClientDataObject::class);
+        ->and($results->getList()->first())->toBeInstanceOf(ClientData::class);
 })->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {

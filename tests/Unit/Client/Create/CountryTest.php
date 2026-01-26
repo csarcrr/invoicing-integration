@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 it('fails when country is invalid', function (Provider $provider, string $invalidCountry) {
     ClientData::country($invalidCountry);

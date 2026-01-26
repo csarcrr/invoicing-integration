@@ -8,12 +8,12 @@ use CsarCrr\InvoicingIntegration\ClientAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static CreateClient create(ClientDataObject $client)
- * @method static GetClient get(ClientDataObject $client)
+ * @method static CreateClient create(ClientData $client)
+ * @method static GetClient get(ClientData $client)
  * @method static FindClient find()
  *
  * @see \CsarCrr\InvoicingIntegration\ClientAction

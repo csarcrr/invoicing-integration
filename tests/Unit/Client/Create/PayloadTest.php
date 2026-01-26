@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 it('builds the correct payload with all parameters', function (Provider $provider) {
     $data = fixtures()->request()->client()->files('client_full');

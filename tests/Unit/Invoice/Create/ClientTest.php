@@ -6,9 +6,8 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 it('has the simple client payload', function (Provider $provider) {
@@ -18,7 +17,7 @@ it('has the simple client payload', function (Provider $provider) {
 
     $invoice->client($client);
 
-    expect($invoice->getClient())->toBeInstanceOf(ClientDataObject::class)
+    expect($invoice->getClient())->toBeInstanceOf(ClientData::class)
         ->and($invoice->getClient()->getName())->toBe('John Doe');
 })->with('providers');
 
@@ -27,15 +26,17 @@ it('has the correct full client payload', function (Provider $provider, string $
 
     $invoice = Invoice::create();
 
-    $client = ClientData::name('John Doe')
-        ->vat('123456789')
-        ->address('Rua das Flores 125')
-        ->city('Porto')
-        ->postalCode('4410-000')
-        ->country('PT')
-        ->email('john.doe@mail.com')
-        ->phone('220123123')
-        ->irsRetention(true);
+    $client = ClientData::from([
+        'name'         => 'John Doe',
+        'vat'          => '123456789',
+        'address'      => 'Rua das Flores 125',
+        'city'         => 'Porto',
+        'postalCode'   => '4410-000',
+        'country'      => 'PT',
+        'email'        => 'john.doe@mail.com',
+        'phone'        => '220123123',
+        'irsRetention' => true,
+    ]);
 
     $item = new Item(reference: 'reference-1');
 

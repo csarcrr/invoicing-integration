@@ -27,7 +27,7 @@ This creates an **FT (Invoice)** document for a final consumer.
 For non-final-consumer invoices, add client information:
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $client = ClientData::name('John Doe')
     ->vat('123456789')
@@ -174,7 +174,7 @@ For invoices with transport information:
 ```php
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $transport = new TransportDetails;
 
@@ -212,7 +212,7 @@ $invoice->transport($transport);
 
 ```php
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Validation\ValidationException;
 
 it('throws error when email is invalid', function (Provider $provider, string $invalidEmail) {

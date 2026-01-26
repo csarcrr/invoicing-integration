@@ -12,7 +12,7 @@ Manage clients in your invoicing provider using the Client API. Clients can be c
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 // Create a new client
 $clientData = ClientData::name('John Doe')

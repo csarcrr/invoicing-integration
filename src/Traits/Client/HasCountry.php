@@ -14,7 +14,7 @@ trait HasCountry
     /**
      * @throws InvalidCountryException
      */
-    public function country(string $country): self
+    protected function country(string $country): self
     {
         try {
             (new ISO3166)->alpha2(strtolower($country));

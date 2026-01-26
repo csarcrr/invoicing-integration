@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 it('ensures invalid name do not get set', function (Provider $provider, mixed $value, mixed $expected) {
     $client = ClientData::name($value);

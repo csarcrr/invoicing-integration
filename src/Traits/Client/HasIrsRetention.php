@@ -8,7 +8,7 @@ trait HasIrsRetention
 {
     protected bool $irsRetention = false;
 
-    public function irsRetention(bool $irsRetention): self
+    protected function irsRetention(bool $irsRetention): self
     {
         $this->irsRetention = $irsRetention;
 

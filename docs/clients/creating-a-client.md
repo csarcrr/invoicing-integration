@@ -6,7 +6,7 @@ Register a new client in your invoicing provider using `Client::create()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $clientData = ClientData::name('John Doe')
     ->vat('123456789');
@@ -58,7 +58,7 @@ $clientData = ClientData::name('John Doe')       // Client name
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 // Build client data
 $clientData = ClientData::name('Acme Corporation')
@@ -89,7 +89,7 @@ Once a client is created, you can use it when issuing invoices:
 
 ```php
 use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 // Create or retrieve client

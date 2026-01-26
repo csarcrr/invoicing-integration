@@ -10,7 +10,7 @@ trait HasName
 {
     protected ?string $name = null;
 
-    public function name(string $name): self
+    protected function name(string $name): self
     {
         $name = Str::of($name)->ascii()->squish()->toString();
 

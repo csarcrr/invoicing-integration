@@ -8,11 +8,8 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
-use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
-use CsarCrr\InvoicingIntegration\Services\ProviderConfigurationService;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -55,10 +52,8 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         });
 
         $this->app->bind(ClientData::class, function () {
-            return new ClientDataObject();
+            return new ClientData;
         });
-
-//        $this->app->singleton(ProviderConfiguration::class);
 
         $this->app->when([Invoice::class, ClientAction::class])
             ->needs(Provider::class)

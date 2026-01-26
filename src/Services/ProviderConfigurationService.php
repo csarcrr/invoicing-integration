@@ -27,7 +27,6 @@ class ProviderConfigurationService
     }
 
     /**
-     *
      * @return array<string, mixed>
      */
     public function getConfig(): array

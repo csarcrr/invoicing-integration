@@ -11,9 +11,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
-
-use function app;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 class ClientAction
 {
@@ -21,14 +19,14 @@ class ClientAction
         protected Provider $provider
     ) {}
 
-    public function create(ValueObjects\ClientDataObject $client): CreateClient
+    public function create(ValueObjects\ClientData $client): CreateClient
     {
         return match ($this->provider) {
             Provider::CEGID_VENDUS => new Create($client),
         };
     }
 
-    public function get(ClientDataObject $client): GetClient
+    public function get(ClientData $client): GetClient
     {
         return match ($this->provider) {
             Provider::CEGID_VENDUS => new Get($client),

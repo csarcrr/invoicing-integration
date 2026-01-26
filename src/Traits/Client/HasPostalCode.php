@@ -8,7 +8,7 @@ trait HasPostalCode
 {
     protected ?string $postalCode = null;
 
-    public function postalCode(string $postalCode): self
+    protected function postalCode(string $postalCode): self
     {
         $this->postalCode = $postalCode;
 
