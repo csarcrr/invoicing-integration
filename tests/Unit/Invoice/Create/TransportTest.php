@@ -108,7 +108,7 @@ it('fails when no load date is provided with transport', function (Provider $pro
         ->postalCode('4410-100')
         ->country('PT');
 
-    $invoice->client(ClientData::from(['vat' => 'PT123456789','name' => 'Client Name']));
+    $invoice->client(ClientData::from(['vat' => 'PT123456789', 'name' => 'Client Name']));
     $invoice->item(new Item(reference: 'reference-1'));
     $invoice->transport($transport);
 

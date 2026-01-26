@@ -8,7 +8,7 @@ trait HasCallStatic
 {
     public static function __callStatic(string $method, array $arguments): static
     {
-        return (new static())->$method(...$arguments);
+        return (new static)->$method(...$arguments);
     }
 
     public function __call(string $method, array $arguments): static

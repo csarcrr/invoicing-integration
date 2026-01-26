@@ -9,7 +9,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderExce
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;

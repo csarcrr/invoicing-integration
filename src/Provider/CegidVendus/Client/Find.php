@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;

@@ -28,7 +28,7 @@ class TestCase extends Orchestra
     {
         return [
             InvoicingIntegrationServiceProvider::class,
-            LaravelDataServiceProvider::class
+            LaravelDataServiceProvider::class,
         ];
     }
 

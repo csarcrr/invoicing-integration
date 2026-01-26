@@ -1,16 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Transformers;
 
 use Illuminate\Support\Str;
-use Spatie\LaravelData\Casts\Cast;
-use Spatie\LaravelData\Casts\Castable;
-use Spatie\LaravelData\Support\Creation\CreationContext;
 use Spatie\LaravelData\Support\DataProperty;
 use Spatie\LaravelData\Support\Transformation\TransformationContext;
 use Spatie\LaravelData\Transformers\Transformer;
-use function is_null;
 
 class Name implements Transformer
 {
@@ -18,7 +15,9 @@ class Name implements Transformer
     {
         $value = Str::of($value)->ascii()->squish()->toString();
 
-        if(empty($value)) return null;
+        if (empty($value)) {
+            return null;
+        }
 
         return $value;
     }
