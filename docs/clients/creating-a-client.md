@@ -13,7 +13,7 @@ $clientData = ClientData::name('John Doe')
 
 $client = Client::create($clientData)->execute();
 
-echo $client->getId(); // Provider-assigned ID (e.g., 12345)
+echo $client->getId(); // ProviderConfiguration-assigned ID (e.g., 12345)
 ```
 
 ## ClientData Properties
@@ -121,7 +121,7 @@ try {
 } catch (UnauthorizedException $e) {
     // Invalid API credentials
 } catch (RequestFailedException $e) {
-    // Provider rejected the request (e.g., duplicate client, invalid data)
+    // ProviderConfiguration rejected the request (e.g., duplicate client, invalid data)
 }
 ```
 

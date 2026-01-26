@@ -82,7 +82,7 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
     protected function updateResults(array $results): void
     {
         $this->list = collect($results)->map(function (array $item) {
-            $client = ClientData::getFacadeRoot();
+            $client = app(ClientData::class);
 
             ! empty($item['name']) && $client->name($item['name']);
 

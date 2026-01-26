@@ -21,29 +21,23 @@ class ClientAction
         protected Provider $provider
     ) {}
 
-    public static function create(ValueObjects\ClientDataObject $client): CreateClient
+    public function create(ValueObjects\ClientDataObject $client): CreateClient
     {
-        $class = app()->make(self::class);
-
-        return match ($class->provider) {
+        return match ($this->provider) {
             Provider::CEGID_VENDUS => new Create($client),
         };
     }
 
-    public static function get(ClientDataObject $client): GetClient
+    public function get(ClientDataObject $client): GetClient
     {
-        $class = app()->make(self::class);
-
-        return match ($class->provider) {
+        return match ($this->provider) {
             Provider::CEGID_VENDUS => new Get($client),
         };
     }
 
-    public static function find(): FindClient
+    public function find(): FindClient
     {
-        $class = app()->make(self::class);
-
-        return match ($class->provider) {
+        return match ($this->provider) {
             Provider::CEGID_VENDUS => new Find,
         };
     }

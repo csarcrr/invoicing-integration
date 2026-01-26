@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Invoice;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
@@ -15,7 +16,7 @@ define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 
 function fixtures(): Fixtures
 {
-    return Fixtures::build(Provider::current());
+    return Fixtures::build(ProviderConfiguration::getProvider());
 }
 function invoice(): CreateInvoice
 {
@@ -28,7 +29,7 @@ function client(): Provider
 {
     mockConfiguration(Provider::CEGID_VENDUS);
 
-    return Provider::current();
+    return ProviderConfiguration::getProvider();
 }
 
 dataset('providers', [
@@ -39,7 +40,7 @@ function cegidVendusProvider(): Provider
 {
     mockConfiguration(Provider::CEGID_VENDUS);
 
-    return Provider::current();
+    return ProviderConfiguration::getProvider();
 }
 
 uses(TestCase::class)->in('Unit', 'Feature');

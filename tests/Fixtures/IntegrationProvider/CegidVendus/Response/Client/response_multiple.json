@@ -1,0 +1,212 @@
+[
+    {
+        "id": 12001,
+        "name": "Marta Silva",
+        "fiscal_id": "215783920",
+        "address": "Rua do Limoeiro 45",
+        "postalcode": "4300-215",
+        "city": "Porto",
+        "phone": "220111333",
+        "notes": "Prefers invoices by email",
+        "email": "marta.silva@example.com",
+        "country": "PT",
+        "send_email": "yes",
+        "default_pay_due": 10,
+        "irs_retention": "no",
+        "external_reference": "VEN-2024-001",
+        "mobile": "919 321 444",
+        "website": "https://marta-silva.pt",
+        "price_group": {
+            "id": "GRP-001",
+            "title": "Retail",
+            "is_default": "no"
+        },
+        "status": "active",
+        "date": "2024-05-14",
+        "balance": {
+            "total": "120.00",
+            "on_time": "120.00",
+            "overdue": "0.00"
+        }
+    },
+    {
+        "id": 12002,
+        "name": "João Carvalho",
+        "fiscal_id": "190283746",
+        "address": "Av. da Republica 999",
+        "postalcode": "4430-203",
+        "city": "Vila Nova de Gaia",
+        "phone": "223890123",
+        "notes": "Requires PO before billing",
+        "email": "joao.carvalho@carv.pt",
+        "country": "PT",
+        "send_email": "no",
+        "default_pay_due": 30,
+        "irs_retention": "yes",
+        "external_reference": "GAIA-PO-77",
+        "mobile": "935 234 890",
+        "website": "https://carvalho-consulting.pt",
+        "price_group": {
+            "id": "GRP-010",
+            "title": "Enterprise",
+            "is_default": "yes"
+        },
+        "status": "active",
+        "date": "2024-05-10",
+        "balance": {
+            "total": "580.90",
+            "on_time": "320.40",
+            "overdue": "260.50"
+        }
+    },
+    {
+        "id": 12003,
+        "name": "Clara Monteiro",
+        "fiscal_id": "298111765",
+        "address": "Rua do Alecrim 12",
+        "postalcode": "1200-018",
+        "city": "Lisboa",
+        "phone": "211345678",
+        "notes": "Call before shipment",
+        "email": "clara@monteirodesigns.com",
+        "country": "PT",
+        "send_email": "yes",
+        "default_pay_due": 20,
+        "irs_retention": "no",
+        "external_reference": "LXB-CLARA-03",
+        "mobile": "927 456 222",
+        "website": "https://monteirodesigns.com",
+        "price_group": {
+            "id": "GRP-005",
+            "title": "Designers",
+            "is_default": "no"
+        },
+        "status": "inactive",
+        "date": "2024-04-02",
+        "balance": {
+            "total": "0.00",
+            "on_time": "0.00",
+            "overdue": "0.00"
+        }
+    },
+    {
+        "id": 12004,
+        "name": "Bruno Ramos",
+        "fiscal_id": "305667421",
+        "address": "Estrada da Beira 88",
+        "postalcode": "3020-123",
+        "city": "Coimbra",
+        "phone": "239567441",
+        "notes": "Send SMS for delivery",
+        "email": "bruno.ramos@ramos.pt",
+        "country": "PT",
+        "send_email": "yes",
+        "default_pay_due": 5,
+        "irs_retention": "no",
+        "external_reference": "CBR-INV-908",
+        "mobile": "932 550 210",
+        "website": "https://ramoslog.pt",
+        "price_group": {
+            "id": "GRP-020",
+            "title": "Logistics",
+            "is_default": "no"
+        },
+        "status": "active",
+        "date": "2024-05-01",
+        "balance": {
+            "total": "48.20",
+            "on_time": "32.00",
+            "overdue": "16.20"
+        }
+    },
+    {
+        "id": 12005,
+        "name": "Sofia Pires",
+        "fiscal_id": "276004512",
+        "address": "Rua da Figueira 5",
+        "postalcode": "7005-112",
+        "city": "Évora",
+        "phone": "266782134",
+        "notes": "Offers seasonal discounts",
+        "email": "sofia.pires@alentejofoods.pt",
+        "country": "PT",
+        "send_email": "yes",
+        "default_pay_due": 25,
+        "irs_retention": "no",
+        "external_reference": "EVR-FOOD-12",
+        "mobile": "965 730 010",
+        "website": "https://alentejofoods.pt",
+        "price_group": {
+            "id": "GRP-030",
+            "title": "Wholesale",
+            "is_default": "yes"
+        },
+        "status": "active",
+        "date": "2024-03-18",
+        "balance": {
+            "total": "920.00",
+            "on_time": "450.00",
+            "overdue": "470.00"
+        }
+    },
+    {
+        "id": 12006,
+        "name": "Luís Figueira",
+        "fiscal_id": "180993341",
+        "address": "Rua Padre Cruz 210",
+        "postalcode": "2410-048",
+        "city": "Leiria",
+        "phone": "244810900",
+        "notes": "Send invoice PDF and XML",
+        "email": "luis.figueira@figtech.pt",
+        "country": "PT",
+        "send_email": "yes",
+        "default_pay_due": 12,
+        "irs_retention": "yes",
+        "external_reference": "LEI-TECH-42",
+        "mobile": "968 660 678",
+        "website": "https://figtech.pt",
+        "price_group": {
+            "id": "GRP-014",
+            "title": "Technology",
+            "is_default": "no"
+        },
+        "status": "active",
+        "date": "2024-05-16",
+        "balance": {
+            "total": "210.75",
+            "on_time": "210.75",
+            "overdue": "0.00"
+        }
+    },
+    {
+        "id": 12007,
+        "name": "Helena Costa",
+        "fiscal_id": "250891667",
+        "address": "Largo do Toural 7",
+        "postalcode": "4810-225",
+        "city": "Guimarães",
+        "phone": "253421998",
+        "notes": "Has outstanding credit note",
+        "email": "helena.costa@costatelier.pt",
+        "country": "PT",
+        "send_email": "no",
+        "default_pay_due": 45,
+        "irs_retention": "no",
+        "external_reference": "GMR-ATELIER-55",
+        "mobile": "963 880 557",
+        "website": "https://costatelier.pt",
+        "price_group": {
+            "id": "GRP-040",
+            "title": "Studios",
+            "is_default": "no"
+        },
+        "status": "suspended",
+        "date": "2024-02-11",
+        "balance": {
+            "total": "150.30",
+            "on_time": "0.00",
+            "overdue": "150.30"
+        }
+    }
+]

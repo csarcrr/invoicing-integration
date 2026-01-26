@@ -21,7 +21,7 @@ $clientData = ClientData::name('John Doe')
 
 $client = Client::create($clientData)->execute();
 
-echo $client->getId(); // Provider-assigned ID
+echo $client->getId(); // ProviderConfiguration-assigned ID
 
 // Later, retrieve the client
 $existingClient = ClientData::id($client->getId());

@@ -162,7 +162,7 @@ $result = $invoice->execute();
 
 // Access invoice data
 $sequence = $result->getSequence();  // "FT 01P2025/1"
-$id = $result->getId();              // Provider's internal ID
+$id = $result->getId();              // ProviderConfiguration's internal ID
 
 // Save the document
 $output = $result->getOutput();
