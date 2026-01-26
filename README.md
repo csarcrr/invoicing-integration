@@ -4,7 +4,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
-Invoicing Integration is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
+Invoicing Integration is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API, so you can issue compliant documents without re-learning each vendor's HTTP contract.
 
 > **Supported provider (today):** Cegid Vendus. The package architecture allows more providers to be added without changing your application code.
 
