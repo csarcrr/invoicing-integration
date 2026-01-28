@@ -105,12 +105,12 @@ Issue an FT invoice with one item and a cash payment:
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = Invoice::create()
+$invoice = InvoiceAction::create()
     ->type(InvoiceType::Invoice);
 
 $item = (new Item())

@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClie
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 it('returns an instance of CreateInvoice', function (Provider $provider) {

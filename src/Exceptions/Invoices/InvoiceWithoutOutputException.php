@@ -9,5 +9,5 @@ use Exception;
 class InvoiceWithoutOutputException extends Exception
 {
     /** @var string */
-    protected $message = 'Invoice did not provide any output.';
+    protected $message = 'InvoiceAction did not provide any output.';
 }

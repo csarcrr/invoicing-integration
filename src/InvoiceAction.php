@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Create;
 use CsarCrr\InvoicingIntegration\Services\ProviderConfigurationService;
 
-final class Invoice
+final class InvoiceAction
 {
     protected string $action;
 

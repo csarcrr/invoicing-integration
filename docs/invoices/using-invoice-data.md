@@ -5,10 +5,10 @@ When you issue an invoice, you receive an `Invoice` value object containing the 
 ## Accessing Invoice Data
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-$invoice = Invoice::create();
+$invoice = InvoiceAction::create();
 $item = new Item();
 $item->reference('SKU-001');
 $invoice->item($item);
@@ -84,13 +84,13 @@ $path = $output->save('invoices/custom-invoice-name.pdf');
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 // Issue an invoice
-$invoice = Invoice::create();
+$invoice = InvoiceAction::create();
 $item = new Item();
 $item->reference('SKU-001');
 $item->price(1000);
@@ -104,7 +104,7 @@ $invoice->payment($payment);
 $result = $invoice->execute();
 
 // Log the result
-logger()->info('Invoice issued', [
+logger()->info('InvoiceAction issued', [
     'sequence' => $result->getSequence(),
     'id' => $result->getId(),
 ]);

@@ -361,20 +361,20 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             return;
         }
 
-        $client = $client->toArray();
-
         throw_if(
-            ! is_null($client['vat']) && empty($client['vat']),
+            empty($client->vat),
             InvoiceRequiresClientVatException::class
         );
 
-        $client['irs_retention'] = $client['irs_retention'] ? 'yes' : 'no';
-        $client['email_notification'] = $client['email_notification'] ? 'yes' : 'no';
-        !empty($client['vat']) && $client['fiscal_id'] = $client['vat'];
-        !empty($client['postal_code']) && $client['postalcode'] = $client['postal_code'];
+        $data = $client->toArray();
 
-        unset($client['vat'], $client['postal_code']);
+        $data['irs_retention'] = $client->irsRetention ? 'yes' : 'no';
+        $data['email_notification'] = $client->emailNotification ? 'yes' : 'no';
+        !empty($client->vat) && $data['fiscal_id'] = $client->vat;
+        !empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
 
-        $this->payload->put('client', $client);
+        unset($data['vat'], $data['postal_code']);
+
+        $this->payload->put('client', $data);
     }
 }

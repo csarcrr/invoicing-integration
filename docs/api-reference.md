@@ -69,7 +69,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 Entry point for creating invoices.
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 ```
 
 | Method              | Return Type     | Description                            |

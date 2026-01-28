@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -17,19 +17,6 @@ define('FIXTURES_PATH', __DIR__.'/Fixtures/');
 function fixtures(): Fixtures
 {
     return Fixtures::build(ProviderConfiguration::getProvider());
-}
-function invoice(): CreateInvoice
-{
-    mockConfiguration(Provider::CEGID_VENDUS);
-
-    return Invoice::create();
-}
-
-function client(): Provider
-{
-    mockConfiguration(Provider::CEGID_VENDUS);
-
-    return ProviderConfiguration::getProvider();
 }
 
 dataset('providers', [

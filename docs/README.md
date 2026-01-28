@@ -48,12 +48,12 @@ Always consult with legal and accounting professionals when implementing invoici
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
-$invoice = Invoice::create();
+$invoice = InvoiceAction::create();
 
 $item = new Item();
 $item->reference('SKU-001');

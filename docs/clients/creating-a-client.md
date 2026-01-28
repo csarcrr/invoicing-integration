@@ -88,7 +88,7 @@ echo "Client created with ID: {$clientId}";
 Once a client is created, you can use it when issuing invoices:
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
@@ -99,7 +99,7 @@ $clientData = ClientData::name('Acme Corporation')
 $client = Client::create($clientData)->execute();
 
 // Use client in invoice
-$invoice = Invoice::create();
+$invoice = InvoiceAction::create();
 $invoice->client($client);
 
 $item = (new Item())->reference('SKU-001')->price(1000);

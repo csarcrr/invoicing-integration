@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 it('applies a note to the invoice', function (Provider $provider, string $fixtureName) {

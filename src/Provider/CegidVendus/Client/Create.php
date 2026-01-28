@@ -28,7 +28,7 @@ class Create implements CreateClient, ShouldHavePayload
 
         $data = $response->json();
 
-        $this->client->additional(['id' => $data['id']]);
+        $this->client->additional($data);
 
         return $this->client;
     }

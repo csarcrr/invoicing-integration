@@ -5,12 +5,12 @@ Issue a receipt (RG/Recibo) for a previously created invoice. RG documents confi
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = Invoice::create();
+$invoice = InvoiceAction::create();
 
 // Set document type to Receipt
 $invoice->type(InvoiceType::Receipt);
@@ -68,12 +68,12 @@ $result = $invoice->execute();
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = Invoice::create();
+$invoice = InvoiceAction::create();
 
 // Configure as receipt
 $invoice->type(InvoiceType::Receipt);
