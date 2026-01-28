@@ -66,11 +66,11 @@ return [
 ## 5. Your First Invoice
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 // Create a simple invoice (final consumer, no client details)
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 // Add an item (price in cents)
 $item = new Item();
@@ -88,7 +88,8 @@ echo $result->getSequence(); // e.g., "FT 01P2025/1"
 
 ## Understanding the API
 
-The package uses a fluent builder pattern. All invoice operations start with `Invoice::create()`:
+The package uses a fluent builder pattern. All invoice operations start with the
+`Invoice` facade:
 
 ```php
 $invoice = Invoice::create();
@@ -98,7 +99,7 @@ $invoice
     ->client($client)      // Optional: client details
     ->item($item)          // Required: at least one item
     ->payment($payment)    // Required for FR, FS, RG, NC types
-    ->type($invoiceType)   // Optional: defaults to FT (InvoiceAction)
+    ->type($invoiceType)   // Optional: defaults to FT
     ->notes('...')         // Optional: invoice notes
     ->dueDate($date);      // Optional: only for FT type
 

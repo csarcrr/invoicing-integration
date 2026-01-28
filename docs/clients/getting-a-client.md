@@ -88,7 +88,7 @@ You can use a retrieved client when creating invoices:
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
@@ -97,7 +97,7 @@ $clientData = ClientData::id(12345);
 $client = Client::get($clientData)->execute();
 
 // Use client in invoice
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 $invoice->client($client);
 
 $item = (new Item())->reference('SKU-001')->price(1000);

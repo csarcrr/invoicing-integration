@@ -15,11 +15,38 @@ Invoicing Integration is a Laravel package that aggregates invoicing software pr
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Quick Start](#quick-start)
+- [Architecture Overview](#architecture-overview)
 - [Testing & Quality](#testing--quality)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
 - [Security](#security)
 - [License](#license)
+
+## Architecture Overview
+
+```mermaid
+graph TD
+    A[Application Code] -->|Facades| B[Invoice / Client / ProviderConfiguration]
+    B -->|resolves| C[Laravel Container]
+    C --> D[InvoiceAction & ClientAction]
+    D --> E[ProviderConfigurationService]
+    E --> F[Provider-Specific Handlers]
+    F --> G[Cegid Vendus REST API]
+```
+
+- [`InvoiceAction`](src/InvoiceAction.php) is a thin resolver: it inspects the
+  active provider (via `ProviderConfigurationService`) and returns the
+  appropriate provider-specific `CreateInvoice` implementation. The `Invoice`
+  facade simply proxies calls to this action, so your application only interacts
+  with a fluent builder API.
+- [`ClientAction`](src/ClientAction.php) behaves the same way for client
+  operations (create, get, find) and is surfaced through the `Client` facade.
+- `ProviderConfigurationService` centralizes provider settings and is exposed via
+  the `ProviderConfiguration` facade for read access.
+- Prefer the facades (`Invoice`, `Client`, `ProviderConfiguration`) in
+  application code. Resolve the action classes directly only when you need
+  explicit dependency injection (e.g., in queued jobs, console commands, or
+  feature tests).
 
 ## Important Legal Disclaimer
 
@@ -98,6 +125,16 @@ return [
 - `mode` accepts `normal` (fiscal documents) or `tests` (training mode)
 - Payment IDs must match the numeric identifiers you copy from the Cegid Vendus UI ([guide](docs/providers/cegid-vendus/configuration.md))
 
+If you need direct access to the resolved provider configuration at run time,
+use the `ProviderConfiguration` facade:
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
+
+$activeProvider = ProviderConfiguration::getProvider();
+$config = ProviderConfiguration::getConfig();
+```
+
 ## Quick Start
 
 Issue an FT invoice with one item and a cash payment:
@@ -105,12 +142,12 @@ Issue an FT invoice with one item and a cash payment:
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = InvoiceAction::create()
+$invoice = Invoice::create()
     ->type(InvoiceType::Invoice);
 
 $item = (new Item())
@@ -136,6 +173,10 @@ $result = $invoice
 $sequence = $result->getSequence();
 $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
 ```
+
+> Prefer the `Invoice` facade for day-to-day usage. If you need to resolve the
+> underlying action for dependency injection (e.g., in jobs), bind
+> `CsarCrr\InvoicingIntegration\InvoiceAction` from the container.
 
 Key rules:
 

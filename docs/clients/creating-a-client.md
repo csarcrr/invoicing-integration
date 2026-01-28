@@ -13,7 +13,7 @@ $clientData = ClientData::name('John Doe')
 
 $client = Client::create($clientData)->execute();
 
-echo $client->getId(); // ProviderConfiguration-assigned ID (e.g., 12345)
+echo $client->getId(); // Provider-assigned ID (e.g., 12345)
 ```
 
 ## ClientData Properties
@@ -88,7 +88,7 @@ echo "Client created with ID: {$clientId}";
 Once a client is created, you can use it when issuing invoices:
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
@@ -99,7 +99,7 @@ $clientData = ClientData::name('Acme Corporation')
 $client = Client::create($clientData)->execute();
 
 // Use client in invoice
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 $invoice->client($client);
 
 $item = (new Item())->reference('SKU-001')->price(1000);
@@ -121,7 +121,7 @@ try {
 } catch (UnauthorizedException $e) {
     // Invalid API credentials
 } catch (RequestFailedException $e) {
-    // ProviderConfiguration rejected the request (e.g., duplicate client, invalid data)
+    // Provider rejected the request (e.g., duplicate client, invalid data)
 }
 ```
 

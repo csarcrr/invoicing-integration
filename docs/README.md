@@ -48,12 +48,12 @@ Always consult with legal and accounting professionals when implementing invoici
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 $item = new Item();
 $item->reference('SKU-001');
@@ -71,6 +71,11 @@ $result = $invoice->execute();
 // Save the PDF
 $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
 ```
+
+> Prefer the `Invoice` facade for day-to-day usage. Resolve
+> `CsarCrr\InvoicingIntegration\InvoiceAction` from the container only when you
+> need to inject the action class directly (for example, in queued jobs or
+> service constructors).
 
 ## What's New
 

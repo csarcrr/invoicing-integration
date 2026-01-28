@@ -7,10 +7,10 @@ Retrieve and store generated invoice documents in PDF or ESC/POS format.
 By default, invoices are returned with PDF output:
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 $item = new Item();
 $item->reference('SKU-001');
@@ -35,10 +35,10 @@ Choose the output format before issuing the invoice:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 $item = new Item();
 $item->reference('SKU-001');
@@ -93,10 +93,10 @@ Generate ESC/POS data for direct printing to thermal printers:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 $item = new Item();
 $item->reference('SKU-001');
@@ -120,9 +120,9 @@ Check the current output format setting:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 $format = $invoice->getOutputFormat(); // Returns OutputFormat enum
 
 if ($format === OutputFormat::PDF_BASE64) {
@@ -137,11 +137,11 @@ if ($format === OutputFormat::PDF_BASE64) {
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 // Configure invoice
 $item = new Item();
@@ -168,7 +168,7 @@ $id = $result->getId();              // ProviderConfiguration's internal ID
 $output = $result->getOutput();
 $path = $output->save("invoices/{$sequence}.pdf");
 
-echo "InvoiceAction {$sequence} saved to: {$path}";
+echo "Invoice {$sequence} saved to: {$path}";
 ```
 
 ---

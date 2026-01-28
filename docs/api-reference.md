@@ -69,12 +69,19 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 Entry point for creating invoices.
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 ```
 
 | Method              | Return Type     | Description                            |
 | ------------------- | --------------- | -------------------------------------- |
 | `Invoice::create()` | `CreateInvoice` | Creates a new invoice builder instance |
+
+> **Facade vs. Action:** The `Invoice` facade resolves the underlying
+> `InvoiceAction` class from the service container. Prefer the facade for day-to-day
+> usage. Resolve `InvoiceAction` directly only when you need to inject the class
+> (e.g., in constructors) or swap the implementation during testing. The facade is
+> now the canonical entry point; there is no standalone `Invoice` class you need to
+> instantiate manually.
 
 ## CreateInvoice Contract
 

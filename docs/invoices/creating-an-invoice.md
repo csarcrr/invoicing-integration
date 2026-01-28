@@ -7,10 +7,10 @@ Create and send invoices using the Invoicing Integration package with a fluent A
 The simplest invoice requires only an item:
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 $item = new Item();
 $item->reference('SKU-001');
@@ -211,14 +211,14 @@ $invoice->transport($transport);
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 // Set client
 $client = ClientData::name('John Doe')

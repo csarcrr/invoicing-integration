@@ -5,13 +5,13 @@ Issue a credit note (NC / Nota de Crédito) to refund or correct a previously is
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 // Set document type to Credit Note
 $invoice->type(InvoiceType::CreditNote);
@@ -84,13 +84,13 @@ If you attempt to issue a credit note without a reason, a `CreditNoteReasonIsMis
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
-$invoice = InvoiceAction::create();
+$invoice = Invoice::create();
 
 // Configure as credit note
 $invoice->type(InvoiceType::CreditNote);
