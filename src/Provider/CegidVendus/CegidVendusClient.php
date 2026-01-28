@@ -21,7 +21,8 @@ class CegidVendusClient
     ];
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
+     * @throws \Throwable
      */
     protected function updateClientData(array $data): void
     {
