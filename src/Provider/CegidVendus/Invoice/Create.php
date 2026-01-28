@@ -10,7 +10,6 @@ use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
@@ -370,8 +369,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
         $data['irs_retention'] = $client->irsRetention ? 'yes' : 'no';
         $data['email_notification'] = $client->emailNotification ? 'yes' : 'no';
-        !empty($client->vat) && $data['fiscal_id'] = $client->vat;
-        !empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
+        ! empty($client->vat) && $data['fiscal_id'] = $client->vat;
+        ! empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
 
         unset($data['vat'], $data['postal_code']);
 
