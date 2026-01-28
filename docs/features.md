@@ -18,7 +18,7 @@ Features for managing clients independently of invoices.
 | Get Client    | ✅        | ✅           |
 | Update Client | ❌        | ❌           |
 | Delete Client | ❌        | ❌           |
-| List Clients  | ❌        | ❌           |
+| List Clients  | ✅        | ✅           |
 
 # Invoicing
 

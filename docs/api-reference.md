@@ -178,6 +178,10 @@ ClientData::name('John Doe')->vat('123456789')
 | `getIrsRetention()`      | `?bool`     |
 | `getEmailNotification()` | `?bool`     |
 | `getDefaultPayDue()`     | `?int`      |
+| `getAdditionalData()`    | `array`     |
+
+`toArray()` includes both declared properties and any values stored in
+`getAdditionalData()`, mirroring the provider payload.
 
 ---
 

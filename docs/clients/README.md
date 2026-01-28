@@ -30,6 +30,22 @@ $fetched = Client::get($existingClient)->execute();
 echo $fetched->getName(); // "John Doe"
 ```
 
+### Provider-Specific Properties
+
+Some providers (like Cegid Vendus) return fields that are not explicitly mapped
+on `ClientData` (e.g., `price_group`, `status`, `balance`). Because the value
+object is powered by `spatie/laravel-data`, these attributes are retained in the
+`additional` bag and also appear automatically when you call `toArray()`:
+
+```php
+$extra = $fetched->getAdditionalData();
+
+$status = $extra['status'] ?? null;
+$priceGroup = $extra['price_group']['name'] ?? null;
+```
+
+Use this to inspect provider metadata without polluting the public API surface.
+
 ## When to Use Client Management
 
 **Create clients when:**
