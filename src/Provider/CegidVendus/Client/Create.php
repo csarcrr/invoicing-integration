@@ -96,6 +96,6 @@ class Create implements CreateClient, ShouldHavePayload
 
     protected function buildDefaultPayDue(): void
     {
-        $this->client->defaultPayDue && $this->payload->put('default_pay_due', $this->client->defaultPayDue);
+        $this->client->defaultPayDue && $this->payload->put('default_pay_due', (string) $this->client->defaultPayDue);
     }
 }
