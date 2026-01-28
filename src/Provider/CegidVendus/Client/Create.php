@@ -6,17 +6,18 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
-class Create implements CreateClient, ShouldHavePayload
+class Create extends CegidVendusClient implements CreateClient, ShouldHavePayload
 {
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    public function __construct(protected ClientData $client)
+    public function __construct(protected ?ClientData $client)
     {
         $this->payload = collect();
     }
@@ -28,6 +29,7 @@ class Create implements CreateClient, ShouldHavePayload
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();
+
         $this->updateClientData($data);
 
         return $this->client;
@@ -96,17 +98,6 @@ class Create implements CreateClient, ShouldHavePayload
 
     protected function buildDefaultPayDue(): void
     {
-        !($this->client->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->client->defaultPayDue);
-    }
-
-    private function updateClientData($data): void
-    {
-        !empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
-        !empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
-        !empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
-        !empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
-        !empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
-
-        $this->client = $this->client->from($data);
+        ! ($this->client->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->client->defaultPayDue);
     }
 }

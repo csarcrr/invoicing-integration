@@ -7,16 +7,17 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Optional;
 
-class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
+class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
 {
-    use HasEmail;
     use HasPaginator;
 
     /** @var Collection<string, mixed> */
@@ -25,8 +26,9 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
     /** @var Collection<int, mixed> */
     protected Collection $list;
 
-    public function __construct()
+    public function __construct(protected ?ClientData $client = null)
     {
+        $this->client = ClientData::from([]);
         $this->payload = collect();
     }
 
@@ -68,7 +70,7 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
 
     private function buildEmail(): void
     {
-        $this->email && $this->payload->put('email', $this->email);
+        !($this->client->email instanceof Optional) && $this->payload->put('email', $this->client->email);
     }
 
     protected function updatePaginationDetails(Response $results): void

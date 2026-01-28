@@ -9,11 +9,12 @@ test('a client get request is successful', function (Provider $provider, string 
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['id' => 999999]);
-    $data = Client::get($client)->execute()->toArray();
 
-    expect($data['name'])->not->toBeNull()
-        ->and($data['email'])->not->toBeNull()
-        ->and($data['irs_retention'])->toBeTrue();
+    $data = Client::get($client)->execute();
+
+    expect($data->name)->toBeString()
+        ->and($data->email)->toBeString()
+        ->and($data->irsRetention)->toBeTrue();
 
     Http::assertSentCount(1);
 })->with('providers', ['response']);
