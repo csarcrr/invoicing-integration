@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Optional;
 
 class Create implements CreateClient, ShouldHavePayload
 {
@@ -27,8 +28,7 @@ class Create implements CreateClient, ShouldHavePayload
         Http::handleUnwantedFailures($response);
 
         $data = $response->json();
-
-        $this->client->additional($data);
+        $this->updateClientData($data);
 
         return $this->client;
     }
@@ -96,6 +96,17 @@ class Create implements CreateClient, ShouldHavePayload
 
     protected function buildDefaultPayDue(): void
     {
-        $this->client->defaultPayDue && $this->payload->put('default_pay_due', (string) $this->client->defaultPayDue);
+        !($this->client->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->client->defaultPayDue);
+    }
+
+    private function updateClientData($data): void
+    {
+        !empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
+        !empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
+        !empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
+        !empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
+        !empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
+
+        $this->client = $this->client->from($data);
     }
 }
