@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Http\Client\Response;
@@ -70,7 +69,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
 
     private function buildEmail(): void
     {
-        !($this->client->email instanceof Optional) && $this->payload->put('email', $this->client->email);
+        ! ($this->client->email instanceof Optional) && $this->payload->put('email', $this->client->email);
     }
 
     protected function updatePaginationDetails(Response $results): void
