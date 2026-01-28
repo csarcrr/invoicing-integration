@@ -11,18 +11,14 @@ use CsarCrr\InvoicingIntegration\Services\ProviderConfigurationService;
 
 final class InvoiceAction
 {
-    protected string $action;
-
     public function __construct(
         protected ProviderConfigurationService $providerConfiguration
     ) {}
 
-    public static function create(): CreateInvoice
+    public function create(): CreateInvoice
     {
-        $class = app()->make(self::class);
-
-        return match ($class->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => new Create($class->providerConfiguration->getConfig()),
+        return match ($this->providerConfiguration->getProvider()) {
+            Provider::CEGID_VENDUS => new Create($this->providerConfiguration->getConfig()),
         };
     }
 }
