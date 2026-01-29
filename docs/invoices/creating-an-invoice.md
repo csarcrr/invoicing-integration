@@ -29,15 +29,17 @@ For non-final-consumer invoices, add client information:
 ```php
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-$client = ClientData::name('John Doe')
-    ->vat('123456789')
-    ->address('Rua das Flores 125')
-    ->city('Porto')
-    ->postalCode('4410-000')
-    ->country('PT')
-    ->email('john.doe@mail.com')
-    ->phone('220123123')
-    ->irsRetention(true); // Enable IRS retention
+$client = ClientData::from([
+    'name' => 'John Doe',
+    'vat' => '123456789',
+    'address' => 'Rua das Flores 125',
+    'city' => 'Porto',
+    'postalCode' => '4410-000',
+    'country' => 'PT',
+    'email' => 'john.doe@mail.com',
+    'phone' => '220123123',
+    'irsRetention' => true, // Enable IRS retention
+]);
 
 $invoice->client($client);
 ```
@@ -197,7 +199,10 @@ $transport->destination()
 $transport->vehicleLicensePlate('00-AB-00');
 
 // Transport requires client information
-$client = ClientData::vat('PT123456789')->name('Client Name');
+$client = ClientData::from([
+    'name' => 'Client Name',
+    'vat' => 'PT123456789',
+]);
 $invoice->client($client);
 $invoice->transport($transport);
 ```
@@ -221,12 +226,14 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 $invoice = Invoice::create();
 
 // Set client
-$client = ClientData::name('John Doe')
-    ->vat('123456789')
-    ->address('Rua das Flores 125')
-    ->city('Porto')
-    ->postalCode('4410-000')
-    ->country('PT');
+$client = ClientData::from([
+    'name' => 'John Doe',
+    'vat' => '123456789',
+    'address' => 'Rua das Flores 125',
+    'city' => 'Porto',
+    'postalCode' => '4410-000',
+    'country' => 'PT',
+]);
 $invoice->client($client);
 
 // Add items

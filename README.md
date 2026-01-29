@@ -133,9 +133,11 @@ $payment = (new Payment())
     ->method(PaymentMethod::MONEY)
     ->amount(10000);
 
-$client = ClientData::name('John Doe')
-    ->vat('PT123456789')
-    ->email('john@example.com');
+$client = ClientData::from([
+    'name' => 'John Doe',
+    'vat' => 'PT123456789',
+    'email' => 'john@example.com',
+]);
 
 $result = $invoice
     ->client($client)
@@ -146,6 +148,10 @@ $result = $invoice
 $sequence = $result->getSequence();
 $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
 ```
+
+> `ClientData` extends `spatie/laravel-data`'s `Data` object. Instantiate it with
+> `ClientData::from([...])` (array or DTO) so validation and transformers run
+> before the HTTP request is sent.
 
 > Prefer the `Invoice` facade for day-to-day usage. If you need to resolve the
 > underlying action for dependency injection (e.g., in jobs), bind

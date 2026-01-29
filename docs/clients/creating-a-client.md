@@ -8,8 +8,10 @@ Register a new client in your invoicing provider using `Client::create()`.
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-$clientData = ClientData::name('John Doe')
-    ->vat('123456789');
+$clientData = ClientData::from([
+    'name' => 'John Doe',
+    'vat' => '123456789',
+]);
 
 $client = Client::create($clientData)->execute();
 
@@ -21,18 +23,20 @@ echo $client->getId(); // Provider-assigned ID (e.g., 12345)
 The `ClientData` facade supports the following properties:
 
 ```php
-$clientData = ClientData::name('John Doe')       // Client name
-    ->vat('123456789')              // Tax identification number
-    ->email('john@example.com')     // Email address (validated)
-    ->phone('220123456')            // Phone number
-    ->address('Rua das Flores 125') // Street address
-    ->city('Porto')                 // City
-    ->postalCode('4410-000')        // Postal code
-    ->country('PT')                 // ISO 2-letter country code
-    ->notes('VIP customer')         // Internal notes
-    ->irsRetention(true)            // Enable IRS retention (Portugal)
-    ->emailNotification(true)       // Send email notifications
-    ->defaultPayDue(30);            // Default payment due days
+$clientData = ClientData::from([
+    'name' => 'John Doe',          // Client name
+    'vat' => '123456789',          // Tax identification number
+    'email' => 'john@example.com', // Email address (validated)
+    'phone' => '220123456',        // Phone number
+    'address' => 'Rua das Flores 125',
+    'city' => 'Porto',
+    'postalCode' => '4410-000',
+    'country' => 'PT',
+    'notes' => 'VIP customer',
+    'irsRetention' => true,
+    'emailNotification' => true,
+    'defaultPayDue' => 30,
+]);
 ```
 
 ### Available Fields
@@ -61,17 +65,19 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 // Build client data
-$clientData = ClientData::name('Acme Corporation')
-    ->vat('PT501234567')
-    ->email('billing@acme.example.com')
-    ->phone('210000000')
-    ->address('Avenida da Liberdade, 100')
-    ->city('Lisboa')
-    ->postalCode('1250-096')
-    ->country('PT')
-    ->irsRetention(false)
-    ->emailNotification(true)
-    ->defaultPayDue(30);
+$clientData = ClientData::from([
+    'name' => 'Acme Corporation',
+    'vat' => 'PT501234567',
+    'email' => 'billing@acme.example.com',
+    'phone' => '210000000',
+    'address' => 'Avenida da Liberdade, 100',
+    'city' => 'Lisboa',
+    'postalCode' => '1250-096',
+    'country' => 'PT',
+    'irsRetention' => false,
+    'emailNotification' => true,
+    'defaultPayDue' => 30,
+]);
 
 // Create client in provider
 $client = Client::create($clientData)->execute();
@@ -93,8 +99,10 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 
 // Create or retrieve client
-$clientData = ClientData::name('Acme Corporation')
-    ->vat('PT501234567');
+$clientData = ClientData::from([
+    'name' => 'Acme Corporation',
+    'vat' => 'PT501234567',
+]);
 
 $client = Client::create($clientData)->execute();
 

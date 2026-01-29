@@ -52,6 +52,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $invoice = Invoice::create();
 
@@ -66,6 +67,14 @@ $payment->method(PaymentMethod::CREDIT_CARD);
 $payment->amount(2000);
 $invoice->payment($payment);
 
+// Optional client data (validated via spatie/laravel-data)
+$client = ClientData::from([
+    'name' => 'John Doe',
+    'vat' => 'PT123456789',
+]);
+
+$invoice->client($client);
+
 $result = $invoice->execute();
 
 // Save the PDF
@@ -76,6 +85,11 @@ $result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
 > `CsarCrr\InvoicingIntegration\InvoiceAction` from the container only when you
 > need to inject the action class directly (for example, in queued jobs or
 > service constructors).
+
+> Because `ClientData` and other value objects extend
+> `spatie/laravel-data\Data`, always instantiate them via `::from([...])` (or
+> dependency injection) so transformers, defaults, and validation attributes are
+> applied consistently.
 
 ## What's New
 

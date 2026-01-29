@@ -86,6 +86,10 @@ $result = $invoice->execute();
 echo $result->getSequence(); // e.g., "FT 01P2025/1"
 ```
 
+When you need to pass structured data (clients, payments, etc.), prefer the
+`::from()` named constructor provided by `spatie/laravel-data` so every field is
+validated and transformed before the request reaches the provider.
+
 ## Understanding the API
 
 The package uses a fluent builder pattern. All invoice operations start with the

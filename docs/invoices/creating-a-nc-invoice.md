@@ -10,11 +10,18 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $invoice = Invoice::create();
 
 // Set document type to Credit Note
 $invoice->type(InvoiceType::CreditNote);
+
+// Assign the customer (if needed)
+$invoice->client(ClientData::from([
+    'name' => 'John Doe',
+    'vat' => 'PT123456789',
+]));
 
 // Create item with reference to original invoice line
 $item = new Item();

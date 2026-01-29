@@ -140,13 +140,18 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 **Usage:**
 
 ```php
-ClientData::name('John Doe')->vat('123456789')
+ClientData::from([
+    'name' => 'John Doe',
+    'vat' => '123456789',
+    'email' => 'john@example.com',
+]);
 ```
 
 **Methods (fluent, return self):**
 
 | Method                                  | Parameter         | Description              | Throws |
 | --------------------------------------- | ----------------- | ------------------------ | ------ |
+| `from(array $attributes)`               | Attribute array   | Factory helper           | -      |
 | `id(int $id)`                           | Provider ID       | Set provider-assigned ID | -      |
 | `name(string $name)`                    | Name string       | Set client name          | -      |
 | `vat(string $vat)`                      | VAT/Fiscal ID     | Set tax identification   | -      |
@@ -181,7 +186,10 @@ ClientData::name('John Doe')->vat('123456789')
 | `getAdditionalData()`    | `array`     |
 
 `toArray()` includes both declared properties and any values stored in
-`getAdditionalData()`, mirroring the provider payload.
+`getAdditionalData()`, mirroring the provider payload. Because `ClientData`
+extends `Spatie\LaravelData\Data`, calling `from()` (or resolving it via
+dependency injection) guarantees field transformers, validation attributes, and
+default values run before the payload is sent to a provider.
 
 ---
 
