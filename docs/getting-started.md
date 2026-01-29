@@ -84,7 +84,7 @@ $invoice->item($item);
 $result = $invoice->execute();
 
 // Get the invoice sequence number
-echo $result->getSequence(); // e.g., "FT 01P2025/1"
+echo $result->sequence; // e.g., "FT 01P2025/1"
 ```
 
 When you need to pass structured data (clients, payments, etc.), prefer the

@@ -175,8 +175,8 @@ $invoice->outputFormat(OutputFormat::PDF_BASE64);
 $result = $invoice->execute();
 
 // Access invoice data
-$sequence = $result->getSequence();  // "FT 01P2025/1"
-$id = $result->getId();              // ProviderConfiguration's internal ID
+$sequence = $result->sequence;  // "FT 01P2025/1"
+$id = $result->id;              // Provider's internal ID
 
 // Save the document if provided by the provider
 if ($result->output) {

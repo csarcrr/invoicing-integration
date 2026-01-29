@@ -15,10 +15,10 @@ $invoice->item($item);
 $result = $invoice->execute();
 
 // Get the invoice sequence number (provider's reference)
-$sequence = $result->getSequence(); // e.g., "FT 01P2025/1"
+$sequence = $result->sequence; // e.g., "FT 01P2025/1"
 
 // Get the internal ID (provider's database ID)
-$id = $result->getId(); // e.g., 12345678
+$id = $result->id; // e.g., 12345678
 
 // Get the output object (PDF or ESC/POS data, may be null)
 $output = $result->output;
@@ -26,11 +26,11 @@ $output = $result->output;
 
 ## Available Methods
 
-| Accessor        | Return Type | Description                                        |
-| --------------- | ----------- | -------------------------------------------------- |
-| `getSequence()` | `string`    | The invoice sequence number (e.g., "FT 01P2025/1") |
-| `getId()`       | `int`       | The provider's internal ID                         |
-| `output`        | `?Output`   | Output object, or `null` when no file is provided  |
+| Property   | Type      | Description                                        |
+| ---------- | --------- | -------------------------------------------------- |
+| `sequence` | `string`  | The invoice sequence number (e.g., "FT 01P2025/1") |
+| `id`       | `int`     | The provider's internal ID                         |
+| `output`   | `?Output` | Output object, or `null` when no file is provided  |
 
 ## Working with the Sequence
 
@@ -39,7 +39,7 @@ The sequence number is the official invoice identifier used in Portugal:
 ```php
 $result = $invoice->execute();
 
-$sequence = $result->getSequence();
+$sequence = $result->sequence;
 // Format: "{TYPE} {SERIES}/{NUMBER}"
 // Examples: "FT 01P2025/1", "FR 01P2025/5", "NC 01P2025/2"
 
@@ -55,7 +55,7 @@ The provider's internal ID is useful for API operations like creating receipts o
 ```php
 $result = $invoice->execute();
 
-$id = $result->getId();
+$id = $result->id;
 
 // Use this ID when creating a receipt for this invoice
 $receipt = Invoice::create();
@@ -107,14 +107,14 @@ $result = $invoice->execute();
 
 // Log the result
 logger()->info('Invoice issued', [
-    'sequence' => $result->getSequence(),
-    'id' => $result->getId(),
+    'sequence' => $result->sequence,
+    'id' => $result->id,
 ]);
 
 // Save to your database
 $invoiceRecord = new YourInvoiceModel();
-$invoiceRecord->provider_id = $result->getId();
-$invoiceRecord->sequence = $result->getSequence();
+$invoiceRecord->provider_id = $result->id;
+$invoiceRecord->sequence = $result->sequence;
 $invoiceRecord->save();
 
 // Save the PDF when available
@@ -132,7 +132,7 @@ if ($result->output) {
 // Return to user
 return response()->json([
     'success' => true,
-    'invoice_number' => $result->getSequence(),
+    'invoice_number' => $result->sequence,
     'pdf_url' => $pdfPath ? Storage::url($pdfPath) : null,
 ]);
 ```
@@ -146,8 +146,8 @@ function processInvoiceResult($result): array
 {
     // This works regardless of which provider was used
     return [
-        'sequence' => $result->getSequence(),
-        'id' => $result->getId(),
+        'sequence' => $result->sequence,
+        'id' => $result->id,
         'filename' => $result->output?->fileName(),
     ];
 }

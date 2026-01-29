@@ -306,16 +306,16 @@ use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
 
 Returned by `execute()` method after issuing.
 
-**Methods:**
+**Properties:**
 
-| Accessor         | Return Type | Description                             | Notes                                   |
-| ---------------- | ----------- | --------------------------------------- | --------------------------------------- |
-| `getId()`        | `int`       | Provider's internal ID                  | -                                       |
-| `getSequence()`  | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                                       |
-| `getTotal()`     | `int`       | Total amount in cents (gross)           | -                                       |
-| `getTotalNet()`  | `int`       | Net total amount in cents               | -                                       |
-| `getAtcudHash()` | `?string`   | ATCUD hash (Portugal AT code)           | -                                       |
-| `output`         | `?Output`   | Output object for PDF/ESC/POS           | `null` when the provider omits the file |
+| Property    | Type      | Description                             | Notes                                   |
+| ----------- | --------- | --------------------------------------- | --------------------------------------- |
+| `id`        | `int`     | Provider's internal ID                  | -                                       |
+| `sequence`  | `string`  | Invoice sequence (e.g., "FT 01P2025/1") | -                                       |
+| `total`     | `int`     | Total amount in cents (gross)           | -                                       |
+| `totalNet`  | `int`     | Net total amount in cents               | -                                       |
+| `atcudHash` | `?string` | ATCUD hash (Portugal AT code)           | -                                       |
+| `output`    | `?Output` | Output object for PDF/ESC/POS           | `null` when the provider omits the file |
 
 ---
 

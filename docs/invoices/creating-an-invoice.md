@@ -262,7 +262,7 @@ $invoice->notes('Thank you for your purchase.');
 $result = $invoice->execute();
 
 // Access the result
-echo $result->getSequence();  // "FR 01P2025/1"
+echo $result->sequence;  // "FR 01P2025/1"
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName());
 }

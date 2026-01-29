@@ -27,7 +27,7 @@ $invoice->payment($payment);
 // Issue the receipt
 $result = $invoice->execute();
 
-echo $result->getSequence(); // e.g., "RG 01P2025/1"
+echo $result->sequence; // e.g., "RG 01P2025/1"
 ```
 
 ## Multiple Payment Methods

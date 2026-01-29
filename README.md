@@ -146,7 +146,7 @@ $result = $invoice
     ->payment($payment)
     ->execute();
 
-$sequence = $result->getSequence();
+$sequence = $result->sequence;
 
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName());

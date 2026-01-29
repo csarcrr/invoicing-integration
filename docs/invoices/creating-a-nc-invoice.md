@@ -131,7 +131,7 @@ $invoice->creditNoteReason('Product damaged during shipping');
 // Issue
 $result = $invoice->execute();
 
-echo $result->getSequence(); // e.g., "NC 01P2025/1"
+echo $result->sequence; // e.g., "NC 01P2025/1"
 
 // Save credit note PDF if provided by the provider
 if ($result->output) {
