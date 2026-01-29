@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class Create extends CegidVendusClient implements CreateClient, ShouldHavePayload
@@ -17,7 +18,7 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    public function __construct(protected ?ClientData $client)
+    public function __construct(protected ?Data $client)
     {
         $this->payload = collect();
     }

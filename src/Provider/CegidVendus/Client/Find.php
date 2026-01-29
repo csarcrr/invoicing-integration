@@ -13,6 +13,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
@@ -25,7 +26,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     /** @var Collection<int, mixed> */
     protected Collection $list;
 
-    public function __construct(protected ?ClientData $client = null)
+    public function __construct(protected ?Data $client = null)
     {
         $this->client = ClientData::from([]);
         $this->payload = collect();

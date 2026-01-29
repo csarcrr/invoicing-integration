@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
 
 use AllowDynamicProperties;
+use CsarCrr\InvoicingIntegration\Contracts\ValueObjects\HasClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Exception;
 
+use Spatie\LaravelData\Data;
 use function collect;
 use function throw_if;
 
 #[AllowDynamicProperties]
 class CegidVendusClient
 {
-    protected ?ClientData $client = null;
+    protected ?Data $client = null;
 
     protected array $supportedProperties = [
         'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention',

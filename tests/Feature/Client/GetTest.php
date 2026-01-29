@@ -26,5 +26,7 @@ test('supported properties are not filled in additional data', function (Provide
 
     $data = Client::get($client)->execute();
 
-    dd($data);
-})->with('providers', ['response'])->only();
+    expect($data->getAdditionalData())
+        ->not->toHaveKey('postalCode')
+        ->not->toHaveKey('postal_code');
+})->with('providers', ['response']);

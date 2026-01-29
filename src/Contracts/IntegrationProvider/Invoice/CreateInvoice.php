@@ -13,6 +13,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Item;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Illuminate\Support\Collection;
+use Spatie\LaravelData\Data;
 
 interface CreateInvoice
 {
@@ -38,7 +39,7 @@ interface CreateInvoice
 
     public function notes(string $notes): self;
 
-    public function getClient(): ?ClientData;
+    public function getClient(): ?Data;
 
     /**
      * @return Collection<int, Item>

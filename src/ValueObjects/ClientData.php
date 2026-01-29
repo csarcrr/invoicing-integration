@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
+use CsarCrr\InvoicingIntegration\Contracts\ValueObjects\HasClientData;
 use CsarCrr\InvoicingIntegration\Transformers\Name;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Rule;

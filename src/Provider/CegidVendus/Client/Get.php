@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
+use CsarCrr\InvoicingIntegration\Contracts\ValueObjects\HasClientData;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
+use Spatie\LaravelData\Data;
 use function throw_if;
 
 class Get extends CegidVendusClient implements GetClient
 {
-    public function __construct(protected ?ClientData $client) {}
+    public function __construct(protected ?Data $client) {}
 
     /**
      * @throws InvalidArgumentException|\Throwable

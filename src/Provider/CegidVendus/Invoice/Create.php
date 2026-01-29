@@ -350,7 +350,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     }
 
     /**
-     * @throws InvoiceRequiresClientVatException
+     * @throws InvoiceRequiresClientVatException|\Throwable
      */
     protected function buildClient(): void
     {

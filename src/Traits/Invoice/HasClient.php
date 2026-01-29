@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use Spatie\LaravelData\Data;
 
 trait HasClient
 {
-    protected ?ClientData $client = null;
+    protected ?Data $client = null;
 
-    public function client(ClientData $client): self
+    public function client(Data $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getClient(): ?ClientData
+    public function getClient(): ?Data
     {
         return $this->client;
     }
