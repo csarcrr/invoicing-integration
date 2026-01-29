@@ -6,14 +6,15 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 it('has the default type as FT', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['default_type']);
@@ -22,15 +23,15 @@ it('has the correct payload for invoices', function (Provider $provider, string 
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
+    $attributes = ['reference' => 'reference-1'];
 
     if ($type === InvoiceType::CreditNote) {
-        $item->relatedDocument('related-document-1', 1);
+        $attributes['relatedDocument'] = new RelatedDocumentReference('related-document-1', 1);
         $invoice->creditNoteReason('Reason for credit note');
     }
 
     $invoice->payment(new Payment(PaymentMethod::CREDIT_CARD, amount: 1000));
-    $invoice->item($item);
+    $invoice->item(ItemData::from($attributes));
     $invoice->type($type);
 
     expect($invoice->getPayload())->toMatchArray($data);

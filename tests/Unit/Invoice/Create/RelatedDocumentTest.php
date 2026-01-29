@@ -6,15 +6,16 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 it('can add related document to invoice', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create();
     $invoice->type($type);
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
     $invoice->relatedDocument(99999999);
 
@@ -30,8 +31,10 @@ it('can add related document to a NC', function (Provider $provider, string $fix
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
-    $item->relatedDocument('FT 01P2025/1', 1);
+    $item = ItemData::from([
+        'reference' => 'reference-1',
+        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    ]);
 
     $invoice->type(InvoiceType::CreditNote);
     $invoice->item($item);

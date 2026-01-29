@@ -6,11 +6,11 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 it('fails when no reason is provided on the item', function (Provider $provider) {
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
 
     $invoice->type(InvoiceType::CreditNote);
     $invoice->item($item);

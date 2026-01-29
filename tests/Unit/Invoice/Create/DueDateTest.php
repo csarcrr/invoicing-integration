@@ -7,14 +7,14 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
 it('assigns the correct due date payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->dueDate(Carbon::now()->setDay(31)->setMonth(12)->setYear(2025));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -25,7 +25,7 @@ it('fails setting a due date in a type different than FT', function (Provider $p
     $invoice->type(InvoiceType::InvoiceReceipt);
 
     $invoice->payment(new Payment(method: PaymentMethod::CREDIT_CARD, amount: 1000));
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->dueDate(Carbon::now()->setDay(31)->setMonth(12)->setYear(2025));
 
     $invoice->getPayload();

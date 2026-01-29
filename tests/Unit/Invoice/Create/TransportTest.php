@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 
 it('assigns a transport to the invoice', function (Provider $provider) {
@@ -59,7 +59,7 @@ it('has a valid payload', function (Provider $provider, string $fixtureName) {
     $transport->vehicleLicensePlate('00-AB-00');
 
     $invoice->client(ClientData::from(['name' => 'Client Name', 'vat' => 'PT123456789']));
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->transport($transport);
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -82,7 +82,7 @@ it('fails when no client is provided with transport', function (Provider $provid
         ->postalCode('4410-100')
         ->country('PT');
 
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->transport($transport);
 
     $invoice->getPayload();
@@ -109,7 +109,7 @@ it('fails when no load date is provided with transport', function (Provider $pro
         ->country('PT');
 
     $invoice->client(ClientData::from(['vat' => 'PT123456789', 'name' => 'Client Name']));
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->transport($transport);
 
     $invoice->getPayload();
@@ -132,7 +132,7 @@ it('fails when setting an invalid country', function (Provider $provider) {
         ->postalCode('4410-100')
         ->country('XX');
 
-    $invoice->item(new Item(reference: 'reference-1'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->transport($transport);
 
     $invoice->getPayload();

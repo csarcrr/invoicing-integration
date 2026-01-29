@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 it('has the simple client payload', function (Provider $provider) {
     $invoice = Invoice::create();
@@ -37,7 +37,7 @@ it('has the correct full client payload', function (Provider $provider, string $
         'irsRetention' => true,
     ]);
 
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
 
     $invoice->client($client);
     $invoice->item($item);
@@ -50,9 +50,7 @@ it('fails when vat is not valid', function (Provider $provider) {
 
     $client = ClientData::from(['vat' => '']);
 
-    $item = new Item(
-        reference: 'reference-1'
-    );
+    $item = ItemData::from(['reference' => 'reference-1']);
 
     $invoice->item($item);
     $invoice->client($client);

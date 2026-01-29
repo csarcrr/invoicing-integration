@@ -10,19 +10,20 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsed
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 it('can assign an item with all properties', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item;
-    $item->reference('reference-1')
-        ->quantity(2)
-        ->price(1000)
-        ->note('This is a test item')
-        ->percentageDiscount(10)
-        ->amountDiscount(50);
+    $item = ItemData::from([
+        'reference' => 'reference-1',
+        'quantity' => 2,
+        'price' => 1000,
+        'note' => 'This is a test item',
+        'percentageDiscount' => 10,
+        'amountDiscount' => 50,
+    ]);
 
     $invoice->item($item);
 
@@ -33,8 +34,8 @@ it('can assign multiple items', function (Provider $provider, string $fixtureNam
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $invoice->item(new Item('reference-1'));
-    $invoice->item(new Item('reference-2'));
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
+    $invoice->item(ItemData::from(['reference' => 'reference-2']));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['multiple_items']);
@@ -43,9 +44,10 @@ it('sets item types correctly', function (Provider $provider, string $fixtureNam
     $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
-
-    $item->type($type);
+    $item = ItemData::from([
+        'reference' => 'reference-1',
+        'type' => $type,
+    ]);
 
     $invoice->item($item);
 
@@ -62,16 +64,17 @@ it('sets tax types correctly', function (Provider $provider, string $fixtureName
     $data = fixtures()->request()->invoice()->item()->tax()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
-
-    $item->tax($taxType);
+    $attributes = [
+        'reference' => 'reference-1',
+        'tax' => $taxType,
+    ];
 
     if ($taxType === ItemTax::EXEMPT) {
-        $item->taxExemption(TaxExemptionReason::M04);
-        $item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+        $attributes['taxExemptionReason'] = TaxExemptionReason::M04;
+        $attributes['taxExemptionLaw'] = TaxExemptionReason::M04->laws()[0];
     }
 
-    $invoice->item($item);
+    $invoice->item(ItemData::from($attributes));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers')->with([
@@ -83,26 +86,30 @@ it('sets tax types correctly', function (Provider $provider, string $fixtureName
 ]);
 
 it('has the item always with the default quantity of one', function () {
-    $item = new Item('reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
 
-    expect($item->getQuantity())->toBe(1);
+    expect($item->quantity)->toBe(1);
 });
 
 it('fails when unsupported quantities are provided', function (mixed $invalidQuantity) {
-    $item = new Item('reference-1');
-    $item->quantity($invalidQuantity);
-
-    expect($item->getQuantity())->toBe(1);
+    ItemData::from([
+        'reference' => 'reference-1',
+        'quantity' => $invalidQuantity,
+    ]);
 })->with([-1, 0])->throws(UnsupportedQuantityException::class);
 
 it('fails when attempting to use tax exemption with non-exempt tax', function () {
-    $item = new Item('reference-1');
-    $item->tax(ItemTax::NORMAL);
-    $item->taxExemption(TaxExemptionReason::M04);
+    ItemData::from([
+        'reference' => 'reference-1',
+        'tax' => ItemTax::NORMAL,
+        'taxExemptionReason' => TaxExemptionReason::M04,
+    ]);
 })->throws(ExemptionCanOnlyBeUsedWithExemptTaxException::class);
 
 it('fails when attempting to set tax exemption law without exemption reason', function () {
-    $item = new Item('reference-1');
-    $item->tax(ItemTax::EXEMPT);
-    $item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+    ItemData::from([
+        'reference' => 'reference-1',
+        'tax' => ItemTax::EXEMPT,
+        'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    ]);
 })->throws(ExemptionLawCanOnlyBeUsedWithExemptionException::class);

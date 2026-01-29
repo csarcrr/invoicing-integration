@@ -7,12 +7,12 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
 it('can assign a payment', function (Provider $provider) {
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
 
     $payment = new Payment(amount: 500, method: PaymentMethod::CREDIT_CARD);
 
@@ -24,7 +24,7 @@ it('can assign a payment', function (Provider $provider) {
 
 it('can assign multiple payments', function (Provider $provider) {
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
 
     $payment1 = new Payment(amount: 300, method: PaymentMethod::CREDIT_CARD);
     $payment2 = new Payment(amount: 200, method: PaymentMethod::MONEY);
@@ -40,7 +40,7 @@ it('has expected payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
     $payment = new Payment(amount: 500, method: PaymentMethod::CREDIT_CARD);
 
     $invoice->item($item);
@@ -53,7 +53,7 @@ it('has expected payload with multiple payments', function (Provider $provider, 
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
 
     $payment = new Payment;
     $payment->method(PaymentMethod::CREDIT_CARD);
@@ -82,7 +82,7 @@ it('throws error when configuration is not set', function () {
     ]);
 
     $invoice = CegidVendus::invoice(Action::CREATE);
-    $item = new Item(reference: 'reference-1');
+    $item = ItemData::from(['reference' => 'reference-1']);
     $payment = new Payment(amount: 500, method: PaymentMethod::CREDIT_CARD);
 
     $invoice->item($item);

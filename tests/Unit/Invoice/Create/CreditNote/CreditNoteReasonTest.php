@@ -7,15 +7,18 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 it('can apply a credit note reason', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
-    $item->relatedDocument('FT 01P2025/1', 1);
+    $item = ItemData::from([
+        'reference' => 'reference-1',
+        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    ]);
 
     $invoice->type(InvoiceType::CreditNote);
     $invoice->item($item);
@@ -27,8 +30,10 @@ it('can apply a credit note reason', function (Provider $provider, string $fixtu
 
 it('fails when reason is not applied', function (Provider $provider) {
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
-    $item->relatedDocument('FT 01P2025/1', 1);
+    $item = ItemData::from([
+        'reference' => 'reference-1',
+        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    ]);
 
     $invoice->type(InvoiceType::CreditNote);
     $invoice->item($item);
@@ -41,8 +46,10 @@ it('results in nothing when applying reason to an invoice', function (Provider $
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $item = new Item(reference: 'reference-1');
-    $item->relatedDocument('FT 01P2025/1', 1);
+    $item = ItemData::from([
+        'reference' => 'reference-1',
+        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    ]);
 
     $invoice->item($item);
     $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
