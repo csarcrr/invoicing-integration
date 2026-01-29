@@ -66,9 +66,8 @@ These exceptions are thrown before the request is sent to the provider, during l
 
 ## Output Exceptions
 
-| Exception                       | When Thrown                                     |
-| ------------------------------- | ----------------------------------------------- |
-| `InvoiceWithoutOutputException` | Calling `getOutput()` when no output is present |
+| Exception | When Thrown |
+| --------- | ----------- |
 
 ---
 

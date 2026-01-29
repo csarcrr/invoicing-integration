@@ -78,8 +78,10 @@ $invoice->client($client);
 
 $result = $invoice->execute();
 
-// Save the PDF
-$result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
+// Save the PDF if available
+if ($result->output) {
+    $result->output->save('invoices/' . $result->output->fileName());
+}
 ```
 
 > Prefer the `Invoice` facade for day-to-day usage. Resolve

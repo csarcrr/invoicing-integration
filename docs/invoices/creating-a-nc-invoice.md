@@ -133,8 +133,10 @@ $result = $invoice->execute();
 
 echo $result->getSequence(); // e.g., "NC 01P2025/1"
 
-// Save credit note PDF
-$result->getOutput()->save('credit-notes/' . $result->getOutput()->fileName());
+// Save credit note PDF if provided by the provider
+if ($result->output) {
+    $result->output->save('credit-notes/' . $result->output->fileName());
+}
 ```
 
 ## Multiple Items

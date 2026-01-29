@@ -147,7 +147,10 @@ $result = $invoice
     ->execute();
 
 $sequence = $result->getSequence();
-$result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
+
+if ($result->output) {
+    $result->output->save('invoices/' . $result->output->fileName());
+}
 ```
 
 > `ClientData` extends `spatie/laravel-data`'s `Data` object. Instantiate it with

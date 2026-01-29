@@ -308,14 +308,14 @@ Returned by `execute()` method after issuing.
 
 **Methods:**
 
-| Method           | Return Type | Description                             | Throws                          |
-| ---------------- | ----------- | --------------------------------------- | ------------------------------- |
-| `getId()`        | `int`       | Provider's internal ID                  | -                               |
-| `getSequence()`  | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                               |
-| `getTotal()`     | `int`       | Total amount in cents (gross)           | -                               |
-| `getTotalNet()`  | `int`       | Net total amount in cents               | -                               |
-| `getAtcudHash()` | `?string`   | ATCUD hash (Portugal AT code)           | -                               |
-| `getOutput()`    | `Output`    | Output object for PDF/ESC/POS           | `InvoiceWithoutOutputException` |
+| Accessor         | Return Type | Description                             | Notes                                   |
+| ---------------- | ----------- | --------------------------------------- | --------------------------------------- |
+| `getId()`        | `int`       | Provider's internal ID                  | -                                       |
+| `getSequence()`  | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                                       |
+| `getTotal()`     | `int`       | Total amount in cents (gross)           | -                                       |
+| `getTotalNet()`  | `int`       | Net total amount in cents               | -                                       |
+| `getAtcudHash()` | `?string`   | ATCUD hash (Portugal AT code)           | -                                       |
+| `output`         | `?Output`   | Output object for PDF/ESC/POS           | `null` when the provider omits the file |
 
 ---
 
@@ -463,18 +463,17 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 ### Validation Exceptions
 
-| Exception                                         | When Thrown                                     |
-| ------------------------------------------------- | ----------------------------------------------- |
-| `InvoiceRequiresClientVatException`               | Client provided with empty VAT                  |
-| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                      |
-| `CreditNoteReasonIsMissingException`              | NC type without credit note reason              |
-| `NeedsDateToSetLoadPointException`                | Transport without origin date                   |
-| `InvalidCountryException`                         | Invalid ISO country code                        |
-| `InvoiceWithoutOutputException`                   | Calling `getOutput()` when no output is present |
-| `UnsupportedQuantityException`                    | Item quantity is zero or negative               |
-| `MissingRelatedDocumentException`                 | Credit note item without related document       |
-| `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption set without `ItemTax::EXEMPT`     |
-| `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason      |
+| Exception                                         | When Thrown                                 |
+| ------------------------------------------------- | ------------------------------------------- |
+| `InvoiceRequiresClientVatException`               | Client provided with empty VAT              |
+| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                  |
+| `CreditNoteReasonIsMissingException`              | NC type without credit note reason          |
+| `NeedsDateToSetLoadPointException`                | Transport without origin date               |
+| `InvalidCountryException`                         | Invalid ISO country code                    |
+| `UnsupportedQuantityException`                    | Item quantity is zero or negative           |
+| `MissingRelatedDocumentException`                 | Credit note item without related document   |
+| `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption set without `ItemTax::EXEMPT` |
+| `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason  |
 
 ### Provider Exceptions
 

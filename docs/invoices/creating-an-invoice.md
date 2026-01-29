@@ -263,7 +263,9 @@ $result = $invoice->execute();
 
 // Access the result
 echo $result->getSequence();  // "FR 01P2025/1"
-$result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
+if ($result->output) {
+    $result->output->save('invoices/' . $result->output->fileName());
+}
 ```
 
 ---

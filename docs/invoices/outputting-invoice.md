@@ -17,8 +17,13 @@ $invoice->item($item);
 
 $result = $invoice->execute();
 
-// Get the output object
-$output = $result->getOutput();
+// Get the output object (may be null)
+$output = $result->output;
+
+if (! $output) {
+    // Handle scenarios where the provider does not return the file
+    return;
+}
 
 // Get the generated filename
 $filename = $output->fileName(); // e.g., "ft_01p2025_1.pdf"
@@ -64,26 +69,35 @@ The `save()` method stores the output file and returns the full path:
 
 ```php
 $result = $invoice->execute();
-$output = $result->getOutput();
+$output = $result->output;
 
-// Save with custom path
-$path = $output->save('invoices/2025/' . $output->fileName());
+if ($output) {
+    // Save with custom path
+    $path = $output->save('invoices/2025/' . $output->fileName());
 
-// Save with custom filename
-$path = $output->save('invoices/my-custom-name.pdf');
+    // Save with custom filename
+    $path = $output->save('invoices/my-custom-name.pdf');
+}
 ```
 
 The file is saved to Laravel's local storage disk by default.
 
 ## Handling Missing Output
 
-Some providers may not return output data in certain scenarios. Calling `getOutput()` on an invoice without output throws an `InvoiceWithoutOutputException`.
+Some providers may not return output data in certain scenarios. When that happens the `$result->output` property is `null`.
+
+Always guard your file operations:
 
 ```php
-use CsarCrr\InvoicingIntegration\Exceptions\Invoices\InvoiceWithoutOutputException;
-```
+$output = $result->output;
 
-This exception is thrown when the provider response does not include PDF or ESC/POS data, allowing you to handle this case according to your application's requirements.
+if (! $output) {
+    // Notify your team or fall back to the provider portal.
+    return;
+}
+
+$output->save('invoices/fallback.pdf');
+```
 
 ## ESC/POS for Thermal Printers
 
@@ -102,11 +116,13 @@ $invoice->outputFormat(OutputFormat::ESCPOS);
 
 $result = $invoice->execute();
 
-// Save ESC/POS data to file
-$path = $result->getOutput()->save('print-jobs/' . $result->getOutput()->fileName());
+if ($result->output) {
+    // Save ESC/POS data to file
+    $path = $result->output->save('print-jobs/' . $result->output->fileName());
 
-// Or get the raw ESC/POS data
-// (implementation depends on how you handle the output)
+    // Or get the raw ESC/POS data
+    // (implementation depends on how you handle the output)
+}
 ```
 
 > **Note:** ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
@@ -162,11 +178,11 @@ $result = $invoice->execute();
 $sequence = $result->getSequence();  // "FT 01P2025/1"
 $id = $result->getId();              // ProviderConfiguration's internal ID
 
-// Save the document
-$output = $result->getOutput();
-$path = $output->save("invoices/{$sequence}.pdf");
-
-echo "Invoice {$sequence} saved to: {$path}";
+// Save the document if provided by the provider
+if ($result->output) {
+    $path = $result->output->save("invoices/{$sequence}.pdf");
+    echo "Invoice {$sequence} saved to: {$path}";
+}
 ```
 
 ---
@@ -175,8 +191,8 @@ echo "Invoice {$sequence} saved to: {$path}";
 
 - Default output is PDF (base64 encoded)
 - Use `outputFormat()` to select PDF or ESC/POS before issuing
-- Use `getOutput()->save($path)` to store the document
-- Use `getOutput()->fileName()` for the auto-generated filename
+- Use `$result->output?->save($path)` to store the document
+- Use `$result->output?->fileName()` for the auto-generated filename
 - Check provider [Features](../features.md) for format support
 
 ---

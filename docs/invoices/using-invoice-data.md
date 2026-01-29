@@ -20,17 +20,17 @@ $sequence = $result->getSequence(); // e.g., "FT 01P2025/1"
 // Get the internal ID (provider's database ID)
 $id = $result->getId(); // e.g., 12345678
 
-// Get the output object (PDF or ESC/POS data)
-$output = $result->getOutput();
+// Get the output object (PDF or ESC/POS data, may be null)
+$output = $result->output;
 ```
 
 ## Available Methods
 
-| Method          | Return Type | Description                                        |
+| Accessor        | Return Type | Description                                        |
 | --------------- | ----------- | -------------------------------------------------- |
 | `getSequence()` | `string`    | The invoice sequence number (e.g., "FT 01P2025/1") |
 | `getId()`       | `int`       | The provider's internal ID                         |
-| `getOutput()`   | `Output`    | The output object for accessing PDF/ESC/POS data   |
+| `output`        | `?Output`   | Output object, or `null` when no file is provided  |
 
 ## Working with the Sequence
 
@@ -70,15 +70,17 @@ The output object provides access to the generated document:
 
 ```php
 $result = $invoice->execute();
-$output = $result->getOutput();
+$output = $result->output;
 
-$path = $output->save(); // saves under "invoices/ft_01P2026.pdf depending on the sequence format of each provider
+if ($output) {
+    $path = $output->save(); // saves under "invoices/ft_01P2026.pdf" depending on the provider
 
-// Or save with a custom name
-$path = $output->save('invoices/custom-invoice-name.pdf');
+    // Or save with a custom name
+    $path = $output->save('invoices/custom-invoice-name.pdf');
+}
 ```
 
-> **Note:** If the provider doesn't return output data, `getOutput()` throws an `InvoiceWithoutOutputException`. See [Output Formats](outputting-invoice.md#handling-missing-output) for handling this case.
+> **Note:** `$result->output` is `null` whenever the provider doesn't return files. Handle that case before calling `save()`.
 
 ## Complete Example
 
@@ -115,19 +117,23 @@ $invoiceRecord->provider_id = $result->getId();
 $invoiceRecord->sequence = $result->getSequence();
 $invoiceRecord->save();
 
-// Save the PDF
-$pdfPath = $result->getOutput()->save(
-    'invoices/' . $result->getOutput()->fileName()
-);
+// Save the PDF when available
+$pdfPath = null;
 
-$invoiceRecord->pdf_path = $pdfPath;
-$invoiceRecord->save();
+if ($result->output) {
+    $pdfPath = $result->output->save(
+        'invoices/' . $result->output->fileName()
+    );
+
+    $invoiceRecord->pdf_path = $pdfPath;
+    $invoiceRecord->save();
+}
 
 // Return to user
 return response()->json([
     'success' => true,
     'invoice_number' => $result->getSequence(),
-    'pdf_url' => Storage::url($pdfPath),
+    'pdf_url' => $pdfPath ? Storage::url($pdfPath) : null,
 ]);
 ```
 
@@ -142,7 +148,7 @@ function processInvoiceResult($result): array
     return [
         'sequence' => $result->getSequence(),
         'id' => $result->getId(),
-        'filename' => $result->getOutput()->fileName(),
+        'filename' => $result->output?->fileName(),
     ];
 }
 ```

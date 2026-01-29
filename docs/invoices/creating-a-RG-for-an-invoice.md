@@ -94,7 +94,9 @@ $invoice->notes('Payment received. Thank you!');
 $result = $invoice->execute();
 
 // Save receipt PDF
-$result->getOutput()->save('receipts/' . $result->getOutput()->fileName());
+if ($result->output) {
+    $result->output->save('receipts/' . $result->output->fileName());
+}
 ```
 
 ---
