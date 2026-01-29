@@ -18,7 +18,7 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    public function __construct(protected ?Data $client)
+    public function __construct(protected ?ClientData $client)
     {
         $this->payload = collect();
     }

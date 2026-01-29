@@ -9,16 +9,16 @@ use Spatie\LaravelData\Data;
 
 trait HasClient
 {
-    protected ?Data $client = null;
+    protected ?ClientData $client = null;
 
-    public function client(Data $client): self
+    public function client(ClientData $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getClient(): ?Data
+    public function getClient(): ?ClientData
     {
         return $this->client;
     }

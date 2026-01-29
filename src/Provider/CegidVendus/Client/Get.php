@@ -16,7 +16,7 @@ use function throw_if;
 
 class Get extends CegidVendusClient implements GetClient
 {
-    public function __construct(protected ?Data $client) {}
+    public function __construct(protected ?ClientData $client) {}
 
     /**
      * @throws InvalidArgumentException|\Throwable

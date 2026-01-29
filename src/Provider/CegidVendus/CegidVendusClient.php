@@ -16,7 +16,7 @@ use function throw_if;
 #[AllowDynamicProperties]
 class CegidVendusClient
 {
-    protected ?Data $client = null;
+    protected ?ClientData $client = null;
 
     protected array $supportedProperties = [
         'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention',

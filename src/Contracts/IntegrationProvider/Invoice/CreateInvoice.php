@@ -39,7 +39,7 @@ interface CreateInvoice
 
     public function notes(string $notes): self;
 
-    public function getClient(): ?Data;
+    public function getClient(): ?ClientData;
 
     /**
      * @return Collection<int, Item>

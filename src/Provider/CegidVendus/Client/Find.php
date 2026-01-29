@@ -26,7 +26,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     /** @var Collection<int, mixed> */
     protected Collection $list;
 
-    public function __construct(protected ?Data $client = null)
+    public function __construct(protected ?ClientData $client = null)
     {
         $this->client = ClientData::from([]);
         $this->payload = collect();
