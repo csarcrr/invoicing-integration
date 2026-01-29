@@ -8,8 +8,8 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
 use Illuminate\Support\Collection;
@@ -17,11 +17,11 @@ use Spatie\LaravelData\Data;
 
 interface CreateInvoice
 {
-    public function execute(): Invoice;
+    public function execute(): InvoiceData;
 
     public function client(ClientData $client): self;
 
-    public function item(Item $item): self;
+    public function item(ItemData $item): self;
 
     public function payment(Payment $payments): self;
 
@@ -42,7 +42,7 @@ interface CreateInvoice
     public function getClient(): ?ClientData;
 
     /**
-     * @return Collection<int, Item>
+     * @return Collection<int, ItemData>
      */
     public function getItems(): Collection;
 

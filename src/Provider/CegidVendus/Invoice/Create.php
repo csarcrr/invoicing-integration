@@ -23,8 +23,8 @@ use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
-use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Exception;
@@ -73,7 +73,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payments = collect();
     }
 
-    public function execute(): Invoice
+    public function execute(): InvoiceData
     {
         $response = Http::provider()->post('documents', $this->getPayload());
 
@@ -81,39 +81,22 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
         $data = $response->json();
 
-        $invoice = new Invoice;
+        $output = isset($data['output'])
+            ? new Output(
+                format: $this->getOutputFormat(),
+                content: $data['output'],
+                fileName: $data['number'] ?? ''
+            )
+            : null;
 
-        if (isset($data['id'])) {
-            $invoice->id($data['id']);
-        }
-
-        if (isset($data['number'])) {
-            $invoice->sequence($data['number']);
-        }
-
-        if (isset($data['amount_gross'])) {
-            $invoice->total((int) ((float) $data['amount_gross'] * 100));
-        }
-
-        if (isset($data['amount_net'])) {
-            $invoice->totalNet((int) ((float) $data['amount_net'] * 100));
-        }
-
-        if (isset($data['atcud'])) {
-            $invoice->atcudHash($data['atcud']);
-        }
-
-        if (isset($data['output'])) {
-            $invoice->output(
-                new Output(
-                    format: $this->getOutputFormat(),
-                    content: $data['output'],
-                    fileName: $data['number']
-                )
-            );
-        }
-
-        return $invoice;
+        return InvoiceData::from([
+            'id' => (int) ($data['id'] ?? 0),
+            'sequence' => (string) ($data['number'] ?? ''),
+            'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
+            'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
+            'atcudHash' => $data['atcud'] ?? null,
+            'output' => $output,
+        ]);
     }
 
     /**
@@ -284,58 +267,58 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         }
 
         /** @var Collection<int, array<string, mixed>> $items */
-        $items = $this->getItems()->map(function (Item $item): array {
+        $items = $this->getItems()->map(function (ItemData $item): array {
             $data = [];
 
-            if ($item->getReference()) {
-                $data['reference'] = $item->getReference();
+            if ($item->reference) {
+                $data['reference'] = $item->reference;
             }
 
-            if ($item->getPrice()) {
-                $data['gross_price'] = $item->getPrice() / 100;
+            if ($item->price) {
+                $data['gross_price'] = $item->price / 100;
             }
 
-            if ($item->getQuantity()) {
-                $data['qty'] = $item->getQuantity();
+            if ($item->quantity) {
+                $data['qty'] = $item->quantity;
             }
 
-            if ($item->getNote()) {
-                $data['note'] = $item->getNote();
+            if ($item->note) {
+                $data['note'] = $item->note;
             }
 
-            if ($item->getType()) {
-                $data['type_id'] = $item->getType()->vendus();
+            if ($item->type) {
+                $data['type_id'] = $item->type->vendus();
             }
 
-            if ($item->getPercentageDiscount()) {
-                $data['discount_percent'] = $item->getPercentageDiscount();
+            if ($item->percentageDiscount) {
+                $data['discount_percent'] = $item->percentageDiscount;
             }
 
-            if ($item->getAmountDiscount()) {
-                $data['discount_amount'] = $item->getAmountDiscount() / 100;
+            if ($item->amountDiscount) {
+                $data['discount_amount'] = $item->amountDiscount / 100;
             }
 
-            if ($item->getTax()) {
-                $data['tax_id'] = $item->getTax()->vendus();
+            if ($item->tax) {
+                $data['tax_id'] = $item->tax->vendus();
             }
 
-            if ($item->getTaxExemption()) {
-                $data['tax_exemption'] = $item->getTaxExemption()->value;
+            if ($item->taxExemptionReason) {
+                $data['tax_exemption'] = $item->taxExemptionReason->value;
 
-                if ($item->getTaxExemptionLaw()) {
-                    $data['tax_exemption_law'] = $item->getTaxExemptionLaw();
+                if ($item->taxExemptionLaw) {
+                    $data['tax_exemption_law'] = $item->taxExemptionLaw;
                 }
             }
 
             if ($this->getType() === InvoiceType::CreditNote) {
                 throw_if(
-                    ! $item->getRelatedDocument(),
+                    ! $item->relatedDocument,
                     MissingRelatedDocumentException::class
                 );
 
                 $data['reference_document'] = [
-                    'document_number' => $item->getRelatedDocument()->getDocumentId(),
-                    'document_row' => $item->getRelatedDocument()->getRow(),
+                    'document_number' => $item->relatedDocument->getDocumentId(),
+                    'document_row' => $item->relatedDocument->getRow(),
                 ];
             }
 

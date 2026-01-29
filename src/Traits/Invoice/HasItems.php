@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use Illuminate\Support\Collection;
 
 trait HasItems
 {
     /**
-     * @var Collection<int, Item>
+     * @var Collection<int, ItemData>
      */
     protected Collection $items;
 
-    public function item(Item $items): self
+    public function item(ItemData $items): self
     {
         $this->items->push($items);
 
@@ -22,7 +22,7 @@ trait HasItems
     }
 
     /**
-     * @return Collection<int, Item>
+     * @return Collection<int, ItemData>
      */
     public function getItems(): Collection
     {
