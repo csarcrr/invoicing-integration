@@ -196,46 +196,39 @@ default values run before the payload is sent to a provider.
 ### Item
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 ```
 
-**Constructor:**
+**Instantiation:**
 
 ```php
-new Item()
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'quantity' => 2,
+    'price' => 1500,
+    'note' => 'Consulting hours',
+    'tax' => ItemTax::EXEMPT,
+    'taxExemptionReason' => TaxExemptionReason::M04,
+    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+]);
 ```
 
-**Methods (fluent, return self):**
+**Properties:**
 
-| Method                                     | Parameter             | Description                      | Throws                                            |
-| ------------------------------------------ | --------------------- | -------------------------------- | ------------------------------------------------- |
-| `reference(int\|string $reference)`        | Product SKU/code      | Set product reference            | -                                                 |
-| `quantity(int\|float $quantity)`           | Quantity              | Set quantity (default: 1)        | `UnsupportedQuantityException`                    |
-| `price(int $price)`                        | Price in cents        | Set unit price                   | -                                                 |
-| `note(string $note)`                       | Description           | Set item description             | -                                                 |
-| `type(ItemType $type)`                     | ItemType enum         | Set item type (default: Product) | -                                                 |
-| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                     | -                                                 |
-| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason             | `ExemptionCanOnlyBeUsedWithExemptTaxException`    |
-| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law                | `ExemptionLawCanOnlyBeUsedWithExemptionException` |
-| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount               | -                                                 |
-| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount          | -                                                 |
-| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC)    | -                                                 |
-
-**Getter Methods:**
-
-| Method                    | Return Type                 |
-| ------------------------- | --------------------------- |
-| `getReference()`          | `int\|string`               |
-| `getQuantity()`           | `int\|float`                |
-| `getPrice()`              | `?int`                      |
-| `getNote()`               | `?string`                   |
-| `getTax()`                | `?ItemTax`                  |
-| `getTaxExemption()`       | `?TaxExemptionReason`       |
-| `getTaxExemptionLaw()`    | `?string`                   |
-| `getAmountDiscount()`     | `?int`                      |
-| `getPercentageDiscount()` | `?int`                      |
-| `getRelatedDocument()`    | `?RelatedDocumentReference` |
-| `getType()`               | `?ItemType`                 |
+| Property             | Type                        | Description                                        | Validation / Notes                                                        |
+| -------------------- | --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `reference`          | `null\|int\|string`         | Product SKU or code                                | -                                                                         |
+| `quantity`           | `null\|int\|float`          | Quantity (defaults to `1`)                         | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
+| `price`              | `?int`                      | Unit price in cents                                | -                                                                         |
+| `note`               | `?string`                   | Optional line description                          | -                                                                         |
+| `type`               | `?ItemType`                 | Item classification (default: `ItemType::Product`) | -                                                                         |
+| `tax`                | `?ItemTax`                  | VAT rate                                           | Required for `taxExemptionReason`                                         |
+| `taxExemptionReason` | `?TaxExemptionReason`       | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
+| `taxExemptionLaw`    | `?string`                   | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
+| `amountDiscount`     | `?int`                      | Fixed discount in cents                            | -                                                                         |
+| `percentageDiscount` | `?int`                      | Percentage discount                                | -                                                                         |
+| `relatedDocument`    | `?RelatedDocumentReference` | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
 
 ---
 
@@ -308,7 +301,7 @@ new TransportDetails()
 ### Invoice (Response)
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
+use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
 ```
 
 Returned by `execute()` method after issuing.

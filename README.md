@@ -117,17 +117,18 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
 $invoice = Invoice::create()
     ->type(InvoiceType::Invoice);
 
-$item = (new Item())
-    ->reference('SKU-001')
-    ->note('Consulting hours')
-    ->price(10000)      // cents (100.00 €)
-    ->quantity(1);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'note' => 'Consulting hours',
+    'price' => 10000,      // cents (100.00 €)
+    'quantity' => 1,
+]);
 
 $payment = (new Payment())
     ->method(PaymentMethod::MONEY)

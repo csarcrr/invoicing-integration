@@ -13,25 +13,26 @@ how to configure exemptions with the fluent builder and lists every supported
 ```php
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
-$item = (new Item())
-    ->reference('CONSULTING')
-    ->price(5000)
-    ->tax(ItemTax::EXEMPT)
-    ->taxExemption(TaxExemptionReason::M04)
-    ->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+$item = ItemData::from([
+    'reference' => 'CONSULTING',
+    'price' => 5000,
+    'tax' => ItemTax::EXEMPT,
+    'taxExemptionReason' => TaxExemptionReason::M04,
+    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+]);
 
 $invoice->item($item);
 ```
 
 1. Set the item tax rate to `ItemTax::EXEMPT`.
-2. Call `taxExemption()` with the correct `TaxExemptionReason`.
-3. Optionally include the specific legal article via `taxExemptionLaw()` (recommended for audit
+2. Provide the `taxExemptionReason` property with the desired `TaxExemptionReason`.
+3. Optionally include the specific legal article via the `taxExemptionLaw` property (recommended for audit
    trails and AT requirements).
 
-> `taxExemption()` throws an `ExemptionCanOnlyBeUsedWithExemptTaxException` if the item tax rate is
-> not `EXEMPT`. Likewise, `taxExemptionLaw()` requires an exemption reason first.
+> Setting `taxExemptionReason` throws an `ExemptionCanOnlyBeUsedWithExemptTaxException` if the item tax rate is
+> not `EXEMPT`. Likewise, defining `taxExemptionLaw` requires an exemption reason first.
 
 ## Exemption Codes Cheat Sheet
 
@@ -83,11 +84,11 @@ articles exist.
 
 ## Validating Inputs
 
-- Calling `taxExemption()` without first setting `ItemTax::EXEMPT` raises an
+- Providing `taxExemptionReason` without first setting `tax` to `ItemTax::EXEMPT` raises an
   `ExemptionCanOnlyBeUsedWithExemptTaxException`.
-- `taxExemptionLaw()` without `taxExemption()` raises an
+- Providing `taxExemptionLaw` without `taxExemptionReason` raises an
   `ExemptionLawCanOnlyBeUsedWithExemptionException`.
-- Credit notes must still reference the original document line via `relatedDocument()`.
+- Credit notes must still reference the original document line via the `relatedDocument` property.
 
 Use these exceptions to surface meaningful error messages in your UI or job logs.
 

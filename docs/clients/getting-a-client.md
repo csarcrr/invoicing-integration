@@ -90,7 +90,7 @@ You can use a retrieved client when creating invoices:
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 // Retrieve existing client
 $clientData = ClientData::from(['id' => 12345]);
@@ -100,7 +100,10 @@ $client = Client::get($clientData)->execute();
 $invoice = Invoice::create();
 $invoice->client($client);
 
-$item = (new Item())->reference('SKU-001')->price(1000);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,
+]);
 $invoice->item($item);
 
 $result = $invoice->execute();

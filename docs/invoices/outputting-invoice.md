@@ -8,12 +8,11 @@ By default, invoices are returned with PDF output:
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = new Item();
-$item->reference('SKU-001');
+$item = ItemData::from(['reference' => 'SKU-001']);
 $invoice->item($item);
 
 $result = $invoice->execute();
@@ -36,12 +35,11 @@ Choose the output format before issuing the invoice:
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = new Item();
-$item->reference('SKU-001');
+$item = ItemData::from(['reference' => 'SKU-001']);
 $invoice->item($item);
 
 // Request PDF output (default)
@@ -94,12 +92,11 @@ Generate ESC/POS data for direct printing to thermal printers:
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = new Item();
-$item->reference('SKU-001');
+$item = ItemData::from(['reference' => 'SKU-001']);
 $invoice->item($item);
 $invoice->outputFormat(OutputFormat::ESCPOS);
 
@@ -138,15 +135,16 @@ if ($format === OutputFormat::PDF_BASE64) {
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 
 $invoice = Invoice::create();
 
 // Configure invoice
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,
+]);
 $invoice->item($item);
 
 $payment = new Payment();

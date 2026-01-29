@@ -6,11 +6,10 @@ When you issue an invoice, you receive an `Invoice` value object containing the 
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
-$item = new Item();
-$item->reference('SKU-001');
+$item = ItemData::from(['reference' => 'SKU-001']);
 $invoice->item($item);
 
 $result = $invoice->execute();
@@ -85,15 +84,16 @@ $path = $output->save('invoices/custom-invoice-name.pdf');
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 // Issue an invoice
 $invoice = Invoice::create();
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,
+]);
 $invoice->item($item);
 
 $payment = new Payment();

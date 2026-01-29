@@ -8,9 +8,10 @@ Issue a credit note (NC / Nota de Crédito) to refund or correct a previously is
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 $invoice = Invoice::create();
 
@@ -24,10 +25,11 @@ $invoice->client(ClientData::from([
 ]));
 
 // Create item with reference to original invoice line
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(500); // Amount to credit in cents
-$item->relatedDocument('FT 01P2025/1', 1); // Original invoice sequence, line number
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 500, // Amount to credit in cents
+    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1), // Original invoice sequence, line number
+]);
 
 $invoice->item($item);
 
@@ -61,10 +63,11 @@ Credit notes have specific requirements that differ from regular invoices:
 Each item in a credit note must reference the original invoice and line number:
 
 ```php
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(500);
-$item->relatedDocument('FT 01P2025/1', 1); // Document sequence, line number
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 500,
+    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+]);
 ```
 
 The `lineNumber` is the row position in the original invoice:
@@ -94,8 +97,9 @@ If you attempt to issue a credit note without a reason, a `CreditNoteReasonIsMis
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 $invoice = Invoice::create();
 
@@ -103,11 +107,12 @@ $invoice = Invoice::create();
 $invoice->type(InvoiceType::CreditNote);
 
 // Create the item being credited
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1500);  // Credit amount in cents (15.00)
-$item->quantity(1);
-$item->relatedDocument('FT 01P2025/1', 1);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1500,  // Credit amount in cents (15.00)
+    'quantity' => 1,
+    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+]);
 
 $invoice->item($item);
 
@@ -141,17 +146,19 @@ $invoice = Invoice::create();
 $invoice->type(InvoiceType::CreditNote);
 
 // First item (line 1 of original invoice)
-$item1 = new Item();
-$item1->reference('SKU-001');
-$item1->price(500);
-$item1->relatedDocument('FT 01P2025/1', 1);
+$item1 = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 500,
+    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+]);
 $invoice->item($item1);
 
 // Second item (line 2 of original invoice)
-$item2 = new Item();
-$item2->reference('SKU-002');
-$item2->price(300);
-$item2->relatedDocument('FT 01P2025/1', 2);
+$item2 = ItemData::from([
+    'reference' => 'SKU-002',
+    'price' => 300,
+    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 2),
+]);
 $invoice->item($item2);
 
 $payment = new Payment();

@@ -8,13 +8,14 @@ The simplest invoice requires only an item:
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000); // Price in cents (10.00)
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000, // Price in cents (10.00)
+]);
 $invoice->item($item);
 
 $result = $invoice->execute();
@@ -55,15 +56,16 @@ $invoice->client($client);
 Items support various properties:
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000)              // Price in cents
-    ->quantity(2)               // Quantity (default: 1, accepts int or float)
-    ->note('Product description')
-    ->percentageDiscount(10)    // 10% discount
-    ->amountDiscount(50);       // 0.50 discount in cents
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,              // Price in cents
+    'quantity' => 2,              // Quantity (default: 1, accepts int or float)
+    'note' => 'Product description',
+    'percentageDiscount' => 10,   // 10% discount
+    'amountDiscount' => 50,       // 0.50 discount in cents
+]);
 
 $invoice->item($item);
 ```
@@ -73,12 +75,10 @@ $invoice->item($item);
 ### Multiple Items
 
 ```php
-$itemA = new Item();
-$itemA->reference('SKU-001');
+$itemA = ItemData::from(['reference' => 'SKU-001']);
 $invoice->item($itemA);
 
-$itemB = new Item();
-$itemB->reference('SKU-002');
+$itemB = ItemData::from(['reference' => 'SKU-002']);
 $invoice->item($itemB);
 ```
 
@@ -88,11 +88,12 @@ $invoice->item($itemB);
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 
-$item = new Item();
-$item->reference('SKU-001');
-$item->tax(ItemTax::EXEMPT);
-$item->taxExemption(TaxExemptionReason::M04);
-$item->taxExemptionLaw(TaxExemptionReason::M04->laws()[0]);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'tax' => ItemTax::EXEMPT,
+    'taxExemptionReason' => TaxExemptionReason::M04,
+    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+]);
 
 $invoice->item($item);
 ```
@@ -218,7 +219,7 @@ $invoice->transport($transport);
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
@@ -237,11 +238,12 @@ $client = ClientData::from([
 $invoice->client($client);
 
 // Add items
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1500);
-$item->quantity(2);
-$item->note('Product A');
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1500,
+    'quantity' => 2,
+    'note' => 'Product A',
+]);
 $invoice->item($item);
 
 // Add payment (required for FR type)

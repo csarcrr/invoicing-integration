@@ -49,17 +49,18 @@ Always consult with legal and accounting professionals when implementing invoici
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $invoice = Invoice::create();
 
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000);
-$item->quantity(2);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,
+    'quantity' => 2,
+]);
 $invoice->item($item);
 
 $payment = new Payment();

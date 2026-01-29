@@ -96,7 +96,7 @@ Once a client is created, you can use it when issuing invoices:
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 // Create or retrieve client
 $clientData = ClientData::from([
@@ -110,7 +110,10 @@ $client = Client::create($clientData)->execute();
 $invoice = Invoice::create();
 $invoice->client($client);
 
-$item = (new Item())->reference('SKU-001')->price(1000);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,
+]);
 $invoice->item($item);
 
 $result = $invoice->execute();

@@ -67,16 +67,17 @@ return [
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 // Create a simple invoice (final consumer, no client details)
 $invoice = Invoice::create();
 
 // Add an item (price in cents)
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000);
-$item->quantity(1);
+$item = ItemData::from([
+    'reference' => 'SKU-001',
+    'price' => 1000,
+    'quantity' => 1,
+]);
 $invoice->item($item);
 
 // Issue the invoice
