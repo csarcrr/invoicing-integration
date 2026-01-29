@@ -43,9 +43,9 @@ it('can save the output to pdf', function (Provider $provider, string $fixtureNa
     $invoice->item(ItemData::from(['reference' => 'item-1']));
     $data = $invoice->execute();
 
-    $path = "invoices/{$data->getOutput()->fileName()}";
+    $path = "invoices/{$data->output->fileName()}";
 
-    $output = $data->getOutput()->save($path);
+    $output = $data->output->save($path);
 
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($path);
@@ -58,9 +58,9 @@ it('can output escpos', function (Provider $provider, string $fixtureName) {
     $invoice->item(ItemData::from(['reference' => 'item-1']));
     $data = $invoice->execute();
 
-    $path = "invoices/{$data->getOutput()->fileName()}";
+    $path = "invoices/{$data->output->fileName()}";
 
-    $output = $data->getOutput()->save($path);
+    $output = $data->output->save($path);
 
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($path);
@@ -75,7 +75,7 @@ it('can save the output under a custom name and path', function (Provider $provi
 
     $path = 'invoices/custom-name.pdf';
 
-    $output = $data->getOutput()->save($path);
+    $output = $data->output->save($path);
 
     expect($output)->toBeString();
     Storage::disk('local')->assertExists($output);
@@ -93,7 +93,7 @@ it('is able to sanitize the path and filename when saving', function (
     $invoice->item(ItemData::from(['reference' => 'item-1']));
     $data = $invoice->execute();
 
-    $savePath = $data->getOutput()->save($invalidPath);
+    $savePath = $data->output->save($invalidPath);
 
     expect($savePath)->toBeString()->toBe($expectedPath);
     Storage::disk('local')->assertExists($savePath);
@@ -128,6 +128,5 @@ it('outputs null when there is no invoice output provided', function (Provider $
     $invoice->item(ItemData::from(['reference' => 'item-1']));
     $data = $invoice->execute();
 
-    $data->getOutput();
-})->with('providers', ['output_with_no_output'])
-    ->throws(InvoiceWithoutOutputException::class);
+    expect($data->output)->toBeNull();
+})->with('providers', ['output_with_no_output']);

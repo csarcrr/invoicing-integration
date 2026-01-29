@@ -23,16 +23,6 @@ class InvoiceData extends Data
         return $this->atcudHash;
     }
 
-    /**
-     * @throws InvoiceWithoutOutputException
-     */
-    public function getOutput(): Output
-    {
-        throw_if(is_null($this->output), InvoiceWithoutOutputException::class);
-
-        return $this->output;
-    }
-
     public function getSequence(): string
     {
         return $this->sequence;
