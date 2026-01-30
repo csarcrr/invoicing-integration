@@ -152,7 +152,7 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 
 $invoice = Invoice::create();
 
@@ -163,9 +163,10 @@ $item = ItemData::from([
 ]);
 $invoice->item($item);
 
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(1000);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 1000,
+]);
 $invoice->payment($payment);
 
 // Set output format

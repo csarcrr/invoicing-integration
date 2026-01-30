@@ -8,7 +8,7 @@ Issue a receipt (RG/Recibo) for a previously created invoice. RG documents confi
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 
 $invoice = Invoice::create();
 
@@ -19,9 +19,10 @@ $invoice->type(InvoiceType::Receipt);
 $invoice->relatedDocument(99999999);
 
 // Add payment details (required for RG)
-$payment = new Payment();
-$payment->method(PaymentMethod::MONEY);
-$payment->amount(10000); // 100.00
+$payment = PaymentData::from([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 10000, // 100.00
+]);
 $invoice->payment($payment);
 
 // Issue the receipt
@@ -40,14 +41,16 @@ $invoice->type(InvoiceType::Receipt);
 $invoice->relatedDocument(99999999);
 
 // Split payment: 50.00 cash + 50.00 MB
-$cash = new Payment();
-$cash->method(PaymentMethod::MONEY);
-$cash->amount(5000);
+$cash = PaymentData::from([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 5000,
+]);
 $invoice->payment($cash);
 
-$mb = new Payment();
-$mb->method(PaymentMethod::MB);
-$mb->amount(5000);
+$mb = PaymentData::from([
+    'method' => PaymentMethod::MB,
+    'amount' => 5000,
+]);
 $invoice->payment($mb);
 
 $result = $invoice->execute();
@@ -71,7 +74,7 @@ $result = $invoice->execute();
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 
 $invoice = Invoice::create();
 
@@ -82,9 +85,10 @@ $invoice->type(InvoiceType::Receipt);
 $invoice->relatedDocument(99999999); // Use the provider's invoice ID
 
 // Add payment(s)
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(15000); // 150.00
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 15000, // 150.00
+]);
 $invoice->payment($payment);
 
 // Optional: add notes

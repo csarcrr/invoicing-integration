@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 it('has the default type as FT', function (Provider $provider, string $fixtureName) {
@@ -30,7 +30,10 @@ it('has the correct payload for invoices', function (Provider $provider, string 
         $invoice->creditNoteReason('Reason for credit note');
     }
 
-    $invoice->payment(new Payment(PaymentMethod::CREDIT_CARD, amount: 1000));
+    $invoice->payment(PaymentData::from([
+        'method' => PaymentMethod::CREDIT_CARD,
+        'amount' => 1000,
+    ]));
     $invoice->item(ItemData::from($attributes));
     $invoice->type($type);
 

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use Illuminate\Support\Collection;
 
 trait HasPayments
 {
     /**
-     * @var Collection<int, Payment>
+     * @var Collection<int, PaymentData>
      */
     protected Collection $payments;
 
-    public function payment(Payment $payment): self
+    public function payment(PaymentData $payment): self
     {
         $this->payments->push($payment);
 
@@ -22,7 +22,7 @@ trait HasPayments
     }
 
     /**
-     * @return Collection<int, Payment>
+     * @return Collection<int, PaymentData>
      */
     public function getPayments(): Collection
     {

@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
@@ -34,9 +34,10 @@ $item = ItemData::from([
 $invoice->item($item);
 
 // Add payment (required for NC)
-$payment = new Payment();
-$payment->method(PaymentMethod::MB);
-$payment->amount(500);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::MB,
+    'amount' => 500,
+]);
 $invoice->payment($payment);
 
 // Provide reason for credit note (required)
@@ -98,7 +99,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 $invoice = Invoice::create();
@@ -117,9 +118,10 @@ $item = ItemData::from([
 $invoice->item($item);
 
 // Add payment
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(1500);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 1500,
+]);
 $invoice->payment($payment);
 
 // Link to original invoice
@@ -163,9 +165,10 @@ $item2 = ItemData::from([
 ]);
 $invoice->item($item2);
 
-$payment = new Payment();
-$payment->method(PaymentMethod::MB);
-$payment->amount(800);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::MB,
+    'amount' => 800,
+]);
 $invoice->payment($payment);
 $invoice->relatedDocument('FT 01P2025/1', 1);
 $invoice->creditNoteReason('Order cancelled by customer');

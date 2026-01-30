@@ -50,7 +50,7 @@ Always consult with legal and accounting professionals when implementing invoici
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
@@ -63,9 +63,10 @@ $item = ItemData::from([
 ]);
 $invoice->item($item);
 
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(2000);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 2000,
+]);
 $invoice->payment($payment);
 
 // Optional client data (validated via spatie/laravel-data)
@@ -89,7 +90,7 @@ if ($result->output) {
 > need to inject the action class directly (for example, in queued jobs or
 > service constructors).
 
-> Because `ClientData` and other value objects extend
+> Because `ClientData`, `PaymentData`, and other value objects extend
 > `spatie/laravel-data\Data`, always instantiate them via `::from([...])` (or
 > dependency injection) so transformers, defaults, and validation attributes are
 > applied consistently.

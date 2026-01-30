@@ -118,7 +118,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 
 $invoice = Invoice::create()
     ->type(InvoiceType::Invoice);
@@ -130,9 +130,10 @@ $item = ItemData::from([
     'quantity' => 1,
 ]);
 
-$payment = (new Payment())
-    ->method(PaymentMethod::MONEY)
-    ->amount(10000);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 10000,
+]);
 
 $client = ClientData::from([
     'name' => 'John Doe',
@@ -153,8 +154,8 @@ if ($result->output) {
 }
 ```
 
-> `ClientData` extends `spatie/laravel-data`'s `Data` object. Instantiate it with
-> `ClientData::from([...])` (array or DTO) so validation and transformers run
+> `ClientData` and `PaymentData` extend `spatie/laravel-data`'s `Data` object.
+> Instantiate them with `::from([...])` so validation and transformers run
 > before the HTTP request is sent.
 
 > Prefer the `Invoice` facade for day-to-day usage. If you need to resolve the

@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
 
 it('can apply a credit note reason', function (Provider $provider, string $fixtureName) {
@@ -22,7 +22,10 @@ it('can apply a credit note reason', function (Provider $provider, string $fixtu
 
     $invoice->type(InvoiceType::CreditNote);
     $invoice->item($item);
-    $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
+    $invoice->payment(PaymentData::from([
+        'amount' => 1000,
+        'method' => PaymentMethod::CREDIT_CARD,
+    ]));
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -37,7 +40,10 @@ it('fails when reason is not applied', function (Provider $provider) {
 
     $invoice->type(InvoiceType::CreditNote);
     $invoice->item($item);
-    $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
+    $invoice->payment(PaymentData::from([
+        'amount' => 1000,
+        'method' => PaymentMethod::CREDIT_CARD,
+    ]));
 
     $invoice->getPayload();
 })->with('providers')->throws(CreditNoteReasonIsMissingException::class);
@@ -52,7 +58,10 @@ it('results in nothing when applying reason to an invoice', function (Provider $
     ]);
 
     $invoice->item($item);
-    $invoice->payment(new Payment(amount: 1000, method: PaymentMethod::CREDIT_CARD));
+    $invoice->payment(PaymentData::from([
+        'amount' => 1000,
+        'method' => PaymentMethod::CREDIT_CARD,
+    ]));
     $invoice->creditNoteReason('Product damaged');
 
     expect($invoice->getPayload())->toMatchArray($data);

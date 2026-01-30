@@ -26,7 +26,7 @@ use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
 use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -243,13 +243,17 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             return;
         }
 
-        $payments = $this->getPayments()->map(function (Payment $payment) {
-            $id = $this->getConfig()->get('payments')[$payment->getMethod()->value] ?? null;
+        $payments = $this->getPayments()->map(function (PaymentData $payment) {
+            $method = $payment->method;
+
+            throw_if(! $method, Exception::class, 'Payment method not configured.');
+
+            $id = $this->getConfig()->get('payments')[$method->value] ?? null;
 
             throw_if(! $id, Exception::class, 'Payment method not configured.');
 
             return [
-                'amount' => (float) ($payment->getAmount() / 100),
+                'amount' => (float) (($payment->amount ?? 0) / 100),
                 'id' => $id,
             ];
         });

@@ -106,26 +106,29 @@ $invoice->item($item);
 Payments are **required** for certain document types (FR, FS, RG, NC):
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(2000);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 2000,
+]);
 $invoice->payment($payment);
 ```
 
 ### Multiple Payments
 
 ```php
-$firstPayment = new Payment();
-$firstPayment->method(PaymentMethod::CREDIT_CARD);
-$firstPayment->amount(1000);
+$firstPayment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 1000,
+]);
 $invoice->payment($firstPayment);
 
-$secondPayment = new Payment();
-$secondPayment->method(PaymentMethod::MONEY);
-$secondPayment->amount(1000);
+$secondPayment = PaymentData::from([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 1000,
+]);
 $invoice->payment($secondPayment);
 ```
 
@@ -220,7 +223,7 @@ $invoice->transport($transport);
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
@@ -247,9 +250,10 @@ $item = ItemData::from([
 $invoice->item($item);
 
 // Add payment (required for FR type)
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(3000);
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 3000,
+]);
 $invoice->payment($payment);
 
 // Set document type

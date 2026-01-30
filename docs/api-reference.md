@@ -97,7 +97,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 | ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ | ------ |
 | `client(ClientData $client)`                   | ClientData object                  | Set client details (optional for final consumer) | -      |
 | `item(Item $item)`                             | Item object                        | Add an item to the invoice                       | -      |
-| `payment(Payment $payment)`                    | Payment object                     | Add a payment to the invoice                     | -      |
+| `payment(PaymentData $payment)`                | PaymentData object                 | Add a payment to the invoice                     | -      |
 | `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            | -      |
 | `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  | -      |
 | `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           | -      |
@@ -232,31 +232,31 @@ $item = ItemData::from([
 
 ---
 
-### Payment
+### PaymentData
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 ```
 
-**Constructor:**
+**Instantiation:**
 
 ```php
-new Payment()
+$payment = PaymentData::from([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 5000,
+]);
 ```
 
-**Methods (fluent, return self):**
+**Properties:**
 
-| Method                          | Parameter          | Description        | Throws |
-| ------------------------------- | ------------------ | ------------------ | ------ |
-| `method(PaymentMethod $method)` | PaymentMethod enum | Set payment method | -      |
-| `amount(int $amount)`           | Amount in cents    | Set payment amount | -      |
+| Property | Type             | Description               |
+| -------- | ---------------- | ------------------------- |
+| `method` | `?PaymentMethod` | Payment method enum value |
+| `amount` | `?int`           | Payment amount (in cents) |
 
-**Getter Methods:**
-
-| Method        | Return Type      |
-| ------------- | ---------------- |
-| `getMethod()` | `?PaymentMethod` |
-| `getAmount()` | `?int`           |
+`PaymentData` extends `Spatie\LaravelData\Data`, so you can provide plain
+arrays or DTOs to `::from()` and let transformers/validation prepare the payload
+before the HTTP request is issued.
 
 ---
 
