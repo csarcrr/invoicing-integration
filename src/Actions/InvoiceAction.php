@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Actions;
 
+use CsarCrr\InvoicingIntegration\Configuration\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Create;
-use CsarCrr\InvoicingIntegration\Services\ProviderConfigurationService;
 
 final class InvoiceAction
 {
     public function __construct(
-        protected ProviderConfigurationService $providerConfiguration
+        protected ProviderConfiguration $providerConfiguration
     ) {}
 
     public function create(): CreateInvoice

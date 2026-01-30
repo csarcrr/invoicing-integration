@@ -6,10 +6,12 @@ namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Actions\ClientAction;
 use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
+use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use Exception;
 use Illuminate\Http\Client\Response;
@@ -22,11 +24,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         Http::macro('provider', function () {
-            $provider = Provider::from(config('invoicing-integration.provider'));
-
-            return match ($provider) {
-                Provider::CEGID_VENDUS => CegidVendus::setupHttpConfiguration()
-            };
+            return HttpConfiguration::get();
         });
 
         Http::macro('handleUnwantedFailures', function (Response $response) {
@@ -55,7 +53,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
         $this->app->when([InvoiceAction::class, ClientAction::class])
             ->needs(Provider::class)
             ->give(function () {
-                return Provider::from(config('invoicing-integration.provider'));
+                return ProviderConfiguration::getProvider();
             });
     }
 

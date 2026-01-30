@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Services;
+namespace CsarCrr\InvoicingIntegration\Configuration;
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 
-class ProviderConfigurationService
+class ProviderConfiguration
 {
     protected Provider $provider;
 
