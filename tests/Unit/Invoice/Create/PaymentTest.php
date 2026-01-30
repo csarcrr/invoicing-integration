@@ -84,26 +84,19 @@ it('has expected payload with multiple payments', function (Provider $provider, 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['payment_multiple']);
 
-it('throws error when configuration is not set', function () {
-    config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value.'.config', [
-        'payments' => [
+it('throws error when configuration is not set', function (Provider $provider) {
+    config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value.'.payments', [
             PaymentMethod::CREDIT_CARD->value => null,
             PaymentMethod::MONEY->value => null,
             PaymentMethod::MB->value => null,
             PaymentMethod::MONEY_TRANSFER->value => null,
             PaymentMethod::CURRENT_ACCOUNT->value => null,
-        ],
     ]);
 
-    $invoice = CegidVendus::invoice(Action::CREATE);
-    $item = ItemData::from(['reference' => 'reference-1']);
-    $payment = PaymentData::from([
-        'amount' => 500,
-        'method' => PaymentMethod::CREDIT_CARD,
-    ]);
+    $invoice = Invoice::create();
 
-    $invoice->item($item);
-    $invoice->payment($payment);
+    $invoice->item(ItemData::from(['reference' => 'reference-1']));
+    $invoice->payment(PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,]));
 
     $invoice->getPayload();
-})->throws(Exception::class, 'Payment method not configured.');
+})->with('providers')->throws(Exception::class, 'Payment method not configured.');
