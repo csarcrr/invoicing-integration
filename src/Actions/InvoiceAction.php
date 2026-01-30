@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration;
+namespace CsarCrr\InvoicingIntegration\Actions;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Provider;

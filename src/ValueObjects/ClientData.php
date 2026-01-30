@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
-use CsarCrr\InvoicingIntegration\Contracts\ValueObjects\HasClientData;
+use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
+use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Transformers\Name;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Rule;
@@ -13,8 +14,10 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Optional;
 
-class ClientData extends Data
+class ClientData extends Data implements DataNeedsValidation
 {
+    use HasMakeValidation;
+
     public function __construct(
         #[WithTransformer(Name::class)]
         public Optional|null|string $name,

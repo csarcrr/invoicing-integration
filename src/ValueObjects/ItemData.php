@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\ValueObjects;
 
+use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
+use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use Spatie\LaravelData\Data;
 
-class ItemData extends Data
+class ItemData extends Data implements DataNeedsValidation
 {
+    use HasMakeValidation;
+
     public function __construct(
         public null|int|string $reference = null,
         public null|int|float $quantity = 1,

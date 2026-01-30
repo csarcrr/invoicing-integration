@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Facades;
 
+use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
-use CsarCrr\InvoicingIntegration\InvoiceAction;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static CreateInvoice create()
  *
- * @see \CsarCrr\InvoicingIntegration\InvoiceAction
+ * @see \CsarCrr\InvoicingIntegration\Actions\InvoiceAction
  */
 class Invoice extends Facade
 {

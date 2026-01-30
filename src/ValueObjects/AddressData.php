@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\ValueObjects;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
+use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use Illuminate\Support\Optional;
 use League\ISO3166\ISO3166;
 use Spatie\LaravelData\Attributes\MergeValidationRules;
@@ -19,6 +20,8 @@ use Closure;
 #[MergeValidationRules]
 class AddressData extends Data implements DataNeedsValidation
 {
+    use HasMakeValidation;
+
     public function __construct (
         public ?string $address = null,
         public ?string $city = null,
@@ -28,10 +31,6 @@ class AddressData extends Data implements DataNeedsValidation
         public ?Carbon $time = null,
     ) {
 
-    }
-
-    public static function make(array $data): self {
-        return AddressData::validateAndCreate($data);
     }
 
     public static function rules(): array

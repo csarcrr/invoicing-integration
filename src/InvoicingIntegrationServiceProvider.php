@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
+use CsarCrr\InvoicingIntegration\Actions\ClientAction;
+use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;

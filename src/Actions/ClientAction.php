@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration;
+namespace CsarCrr\InvoicingIntegration\Actions;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
@@ -11,6 +11,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
+use CsarCrr\InvoicingIntegration\ValueObjects;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 class ClientAction
