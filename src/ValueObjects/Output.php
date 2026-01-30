@@ -17,7 +17,6 @@ class Output
         protected string $content,
         protected ?string $fileName = null
     ) {
-        $this->format = $format;
         $this->setFileName($fileName);
     }
 
@@ -33,9 +32,7 @@ class Output
 
     protected function sanitizePath(string $path): string
     {
-        // $path = preg_replace('/[\x00-\x1F]|\\\\x[0-1][0-9A-Fa-f]/', '', $path);
-
-        $path = Str::of($path)
+        return Str::of($path)
             ->ltrim('/\\')
             ->squish()
             ->replaceMatches('/[\x00-\x1F]|\\\\x[0-1][0-9A-Fa-f]/', '')
@@ -45,8 +42,6 @@ class Output
             ->snake()
             ->ascii()
             ->toString();
-
-        return $path;
     }
 
     public function get(): string

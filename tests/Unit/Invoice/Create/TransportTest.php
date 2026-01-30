@@ -4,59 +4,71 @@ declare(strict_types=1);
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\InvalidCountryException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
+use Illuminate\Validation\ValidationException;
 
 it('assigns a transport to the invoice', function (Provider $provider) {
     $invoice = Invoice::create();
-    $transport = new TransportDetails;
 
-    $transport->origin()
-        ->address('Rua das Flores, 125')
-        ->city('Porto')
-        ->postalCode('4410-200')
-        ->country('PT');
+    $origin = AddressData::make([
+        'address' => 'Rua das Flores, 125',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'PT',
+    ]);
 
-    $transport->destination()
-        ->address('Rua dos Paninhos, 521')
-        ->city('Porto')
-        ->postalCode('4410-100')
-        ->country('PT');
+    $destination = AddressData::make([
+        'address' => 'Rua dos Paninhos, 525',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'PT'
+    ]);
+
+    $transport = TransportData::make([
+        'origin' => $origin,
+        'destination' => $destination,
+    ]);
 
     $invoice->transport($transport);
 
-    expect($invoice->getTransport())->toBeInstanceOf(TransportDetails::class);
-    expect($invoice->getTransport()->origin()->getAddress())->toBe('Rua das Flores, 125');
-    expect($invoice->getTransport()->destination()->getAddress())->toBe('Rua dos Paninhos, 521');
+    expect($invoice->getTransport())->toBeInstanceOf(TransportData::class)
+        ->and($invoice->getTransport()->origin->address)->toBe('Rua das Flores, 125')
+        ->and($invoice->getTransport()->destination->address)->toBe('Rua dos Paninhos, 525');
 })->with('providers');
 
 it('has a valid payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();
-    $transport = new TransportDetails;
 
-    $transport->origin()
-        ->date(Carbon::now()->setDay(12)->setMonth(12)->setYear(2025))
-        ->time(Carbon::now()->setHour(10)->setMinute(5))
-        ->address('Rua das Flores, 125')
-        ->city('Porto')
-        ->postalCode('4410-200')
-        ->country('PT');
+    $origin = AddressData::make([
+        'date' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025),
+        'time' => Carbon::now()->setHour(10)->setMinute(5),
+        'address' => 'Rua das Flores, 125',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'PT'
+    ]);
 
-    $transport->destination()
-        ->date(Carbon::now()->setDay(13)->setMonth(12)->setYear(2025))
-        ->time(Carbon::now()->setHour(10)->setMinute(5))
-        ->address('Rua dos Paninhos, 521')
-        ->city('Porto')
-        ->postalCode('4410-100')
-        ->country('PT');
+    $destination = AddressData::make([
+        'date' => Carbon::now()->setDay(13)->setMonth(12)->setYear(2025),
+        'time' => Carbon::now()->setHour(10)->setMinute(5),
+        'address' => 'Rua dos Paninhos, 521',
+        'city' => 'Porto',
+        'postalCode' => '4410-100',
+        'country' => 'PT'
+    ]);
 
-    $transport->vehicleLicensePlate('00-AB-00');
+    $transport = TransportData::make([
+        'origin' => $origin,
+        'destination' => $destination,
+        'vehicleLicensePlate' => '00-AB-00'
+    ]);
 
     $invoice->client(ClientData::from(['name' => 'Client Name', 'vat' => 'PT123456789']));
     $invoice->item(ItemData::from(['reference' => 'reference-1']));
@@ -67,20 +79,26 @@ it('has a valid payload', function (Provider $provider, string $fixtureName) {
 
 it('fails when no client is provided with transport', function (Provider $provider) {
     $invoice = Invoice::create();
-    $transport = new TransportDetails;
 
-    $transport->origin()
-        ->date(Carbon::now())
-        ->address('Rua das Flores, 125')
-        ->city('Porto')
-        ->postalCode('4410-200')
-        ->country('PT');
+    $origin = AddressData::make([
+        'address' => 'Rua das Flores, 125',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'PT',
+    ]);
 
-    $transport->destination()
-        ->address('Rua dos Paninhos, 521')
-        ->city('Porto')
-        ->postalCode('4410-100')
-        ->country('PT');
+    $destination = AddressData::make([
+        'address' => 'Rua dos Paninhos, 521',
+        'city' => 'Porto',
+        'postalCode' => '4410-100',
+        'country' => 'PT'
+    ]);
+
+    $transport = TransportData::make([
+        'origin' => $origin,
+        'destination' => $destination,
+        'vehicleLicensePlate' => '00-AB-00'
+    ]);
 
     $invoice->item(ItemData::from(['reference' => 'reference-1']));
     $invoice->transport($transport);
@@ -94,19 +112,25 @@ it('fails when no client is provided with transport', function (Provider $provid
 
 it('fails when no load date is provided with transport', function (Provider $provider) {
     $invoice = Invoice::create();
-    $transport = new TransportDetails;
+    $origin = AddressData::make([
+        'address' => 'Rua das Flores, 125',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'PT',
+    ]);
 
-    $transport->origin()
-        ->address('Rua das Flores, 125')
-        ->city('Porto')
-        ->postalCode('4410-200')
-        ->country('PT');
+    $destination = AddressData::make([
+        'address' => 'Rua dos Paninhos, 521',
+        'city' => 'Porto',
+        'postalCode' => '4410-100',
+        'country' => 'PT'
+    ]);
 
-    $transport->destination()
-        ->address('Rua dos Paninhos, 521')
-        ->city('Porto')
-        ->postalCode('4410-100')
-        ->country('PT');
+    $transport = TransportData::make([
+        'origin' => $origin,
+        'destination' => $destination,
+        'vehicleLicensePlate' => '00-AB-00'
+    ]);
 
     $invoice->client(ClientData::from(['vat' => 'PT123456789', 'name' => 'Client Name']));
     $invoice->item(ItemData::from(['reference' => 'reference-1']));
@@ -115,25 +139,30 @@ it('fails when no load date is provided with transport', function (Provider $pro
     $invoice->getPayload();
 })->with('providers')->throws(NeedsDateToSetLoadPointException::class);
 
-it('fails when setting an invalid country', function (Provider $provider) {
-    $invoice = Invoice::create();
-    $transport = new TransportDetails;
+it('ensure invalid country throws error', function (Provider $provider) {
+    $origin = AddressData::make([
+        'address' => 'Rua das Flores, 125',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'XX',
+        'date' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025),
+        'time' => Carbon::now()->setHour(10)->setMinute(5),
+    ]);
 
-    $transport->origin()
-        ->date(Carbon::now())
-        ->address('Rua das Flores, 125')
-        ->city('Porto')
-        ->postalCode('4410-200')
-        ->country('XX');
+    $destination = AddressData::make([
+        'address' => 'Rua dos Paninhos, 521',
+        'city' => 'Porto',
+        'postalCode' => '4410-100',
+        'country' => 'YY',
+        'date' => Carbon::now()->setDay(13)->setMonth(12)->setYear(2025),
+        'time' => Carbon::now()->setHour(10)->setMinute(5),
+    ]);
 
-    $transport->destination()
-        ->address('Rua dos Paninhos, 521')
-        ->city('Porto')
-        ->postalCode('4410-100')
-        ->country('XX');
+    $destination->toArray();
 
-    $invoice->item(ItemData::from(['reference' => 'reference-1']));
-    $invoice->transport($transport);
-
-    $invoice->getPayload();
-})->with('providers')->throws(InvalidCountryException::class);
+    $transport = TransportData::make([
+        'origin' => $origin,
+        'destination' => $destination,
+    ]);
+})->with('providers')
+    ->throws(ValidationException::class);

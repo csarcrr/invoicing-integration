@@ -267,7 +267,7 @@ before the HTTP request is issued.
 ### TransportDetails
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
 ```
 
 **Constructor:**

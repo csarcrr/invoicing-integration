@@ -179,10 +179,10 @@ For invoices with transport information:
 
 ```php
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-$transport = new TransportDetails;
+$transport = new AddressData;
 
 $transport->origin()
     ->date(Carbon::now())

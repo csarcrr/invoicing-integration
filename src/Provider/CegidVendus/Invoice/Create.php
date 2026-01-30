@@ -103,6 +103,10 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
      * Get the payload to send to the provider
      *
      * @return Collection<string, mixed>
+     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException
+     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function getPayload(): Collection
     {
@@ -162,38 +166,35 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             throw new Exception('ClientAction information is required when transport details are provided.');
         }
 
-        throw_if(
-            is_null($this->getTransport()->origin()->getDate()),
-            NeedsDateToSetLoadPointException::class
-        );
+        throw_if(is_null($this->getTransport()->origin->date), NeedsDateToSetLoadPointException::class);
 
         $data = [];
 
         $data['loadpoint'] = [
-            'date' => $this->getTransport()->origin()->getDate()->toDateString(),
-            'time' => $this->getTransport()->origin()->getTime()->format('H:i'),
-            'address' => $this->getTransport()->origin()->getAddress(),
-            'postalcode' => $this->getTransport()->origin()->getPostalCode(),
-            'city' => $this->getTransport()->origin()->getCity(),
-            'country' => $this->getTransport()->origin()->getCountry(),
+            'date' => $this->getTransport()->origin->date->toDateString(),
+            'time' => $this->getTransport()->origin->time->format('H:i'),
+            'address' => $this->getTransport()->origin->address,
+            'postalcode' => $this->getTransport()->origin->postalCode,
+            'city' => $this->getTransport()->origin->city,
+            'country' => $this->getTransport()->origin->country,
         ];
 
         $landpointData = [
-            'address' => $this->getTransport()->destination()->getAddress(),
-            'postalcode' => $this->getTransport()->destination()->getPostalCode(),
-            'city' => $this->getTransport()->destination()->getCity(),
-            'country' => $this->getTransport()->destination()->getCountry(),
+            'address' => $this->getTransport()->destination->address,
+            'postalcode' => $this->getTransport()->destination->postalCode,
+            'city' => $this->getTransport()->destination->city,
+            'country' => $this->getTransport()->destination->country,
         ];
 
-        if ($this->getTransport()->destination()->getDate()) {
-            $landpointData['date'] = $this->getTransport()->destination()->getDate()->toDateString();
-            $landpointData['time'] = $this->getTransport()->destination()->getTime()->format('H:i');
+        if ($this->getTransport()->destination->date) {
+            $landpointData['date'] = $this->getTransport()->destination->date->toDateString();
+            $landpointData['time'] = $this->getTransport()->destination->time->format('H:i');
         }
 
         $data['landpoint'] = $landpointData;
 
-        if ($this->getTransport()->getVehicleLicensePlate()) {
-            $data['vehicle_id'] = $this->getTransport()->getVehicleLicensePlate();
+        if ($this->getTransport()->vehicleLicensePlate) {
+            $data['vehicle_id'] = $this->getTransport()->vehicleLicensePlate;
         }
 
         $this->payload->put('movement_of_goods', $data);

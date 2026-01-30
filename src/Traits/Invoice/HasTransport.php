@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
 
 trait HasTransport
 {
-    protected ?TransportDetails $transport = null;
+    protected ?TransportData $transport = null;
 
-    public function transport(TransportDetails $transport): self
+    public function transport(TransportData $transport): self
     {
         $this->transport = $transport;
 
         return $this;
     }
 
-    public function getTransport(): ?TransportDetails
+    public function getTransport(): ?TransportData
     {
         return $this->transport;
     }

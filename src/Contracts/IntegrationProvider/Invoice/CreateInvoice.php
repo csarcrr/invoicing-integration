@@ -11,8 +11,10 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
+use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
 use Illuminate\Support\Collection;
+use Symfony\Component\Mailer\Transport;
 
 interface CreateInvoice
 {
@@ -24,7 +26,7 @@ interface CreateInvoice
 
     public function payment(PaymentData $payments): self;
 
-    public function transport(TransportDetails $transport): self;
+    public function transport(TransportData $transport): self;
 
     public function type(InvoiceType $type): self;
 
@@ -50,7 +52,7 @@ interface CreateInvoice
      */
     public function getPayments(): Collection;
 
-    public function getTransport(): ?TransportDetails;
+    public function getTransport(): ?TransportData;
 
     public function getOutputFormat(): OutputFormat;
 
