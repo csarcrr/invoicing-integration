@@ -8,7 +8,7 @@ Register a new client in your invoicing provider using `Client::create()`.
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-$clientData = ClientData::from([
+$clientData = ClientData::make([
     'name' => 'John Doe',
     'vat' => '123456789',
 ]);
@@ -23,7 +23,7 @@ echo $client->getId(); // Provider-assigned ID (e.g., 12345)
 The `ClientData` facade supports the following properties:
 
 ```php
-$clientData = ClientData::from([
+$clientData = ClientData::make([
     'name' => 'John Doe',          // Client name
     'vat' => '123456789',          // Tax identification number
     'email' => 'john@example.com', // Email address (validated)
@@ -65,7 +65,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 // Build client data
-$clientData = ClientData::from([
+$clientData = ClientData::make([
     'name' => 'Acme Corporation',
     'vat' => 'PT501234567',
     'email' => 'billing@acme.example.com',
@@ -99,7 +99,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 // Create or retrieve client
-$clientData = ClientData::from([
+$clientData = ClientData::make([
     'name' => 'Acme Corporation',
     'vat' => 'PT501234567',
 ]);
@@ -110,7 +110,7 @@ $client = Client::create($clientData)->execute();
 $invoice = Invoice::create();
 $invoice->client($client);
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1000,
 ]);

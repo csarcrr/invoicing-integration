@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1000, // Price in cents (10.00)
 ]);
@@ -30,7 +30,7 @@ For non-final-consumer invoices, add client information:
 ```php
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
-$client = ClientData::from([
+$client = ClientData::make([
     'name' => 'John Doe',
     'vat' => '123456789',
     'address' => 'Rua das Flores 125',
@@ -58,7 +58,7 @@ Items support various properties:
 ```php
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1000,              // Price in cents
     'quantity' => 2,              // Quantity (default: 1, accepts int or float)
@@ -75,10 +75,10 @@ $invoice->item($item);
 ### Multiple Items
 
 ```php
-$itemA = ItemData::from(['reference' => 'SKU-001']);
+$itemA = ItemData::make(['reference' => 'SKU-001']);
 $invoice->item($itemA);
 
-$itemB = ItemData::from(['reference' => 'SKU-002']);
+$itemB = ItemData::make(['reference' => 'SKU-002']);
 $invoice->item($itemB);
 ```
 
@@ -88,7 +88,7 @@ $invoice->item($itemB);
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'tax' => ItemTax::EXEMPT,
     'taxExemptionReason' => TaxExemptionReason::M04,
@@ -109,7 +109,7 @@ Payments are **required** for certain document types (FR, FS, RG, NC):
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 2000,
 ]);
@@ -119,13 +119,13 @@ $invoice->payment($payment);
 ### Multiple Payments
 
 ```php
-$firstPayment = PaymentData::from([
+$firstPayment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 1000,
 ]);
 $invoice->payment($firstPayment);
 
-$secondPayment = PaymentData::from([
+$secondPayment = PaymentData::make([
     'method' => PaymentMethod::MONEY,
     'amount' => 1000,
 ]);
@@ -203,7 +203,7 @@ $transport->destination()
 $transport->vehicleLicensePlate('00-AB-00');
 
 // Transport requires client information
-$client = ClientData::from([
+$client = ClientData::make([
     'name' => 'Client Name',
     'vat' => 'PT123456789',
 ]);
@@ -230,7 +230,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 $invoice = Invoice::create();
 
 // Set client
-$client = ClientData::from([
+$client = ClientData::make([
     'name' => 'John Doe',
     'vat' => '123456789',
     'address' => 'Rua das Flores 125',
@@ -241,7 +241,7 @@ $client = ClientData::from([
 $invoice->client($client);
 
 // Add items
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1500,
     'quantity' => 2,
@@ -250,7 +250,7 @@ $item = ItemData::from([
 $invoice->item($item);
 
 // Add payment (required for FR type)
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 3000,
 ]);

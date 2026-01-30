@@ -15,7 +15,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 // Create a new client (hydrated through spatie/laravel-data)
-$clientData = ClientData::from([
+$clientData = ClientData::make([
     'name' => 'John Doe',
     'vat' => '123456789',
     'email' => 'john@example.com',
@@ -26,7 +26,7 @@ $client = Client::create($clientData)->execute();
 echo $client->getId(); // Provider-assigned ID
 
 // Later, retrieve the client
-$existingClient = ClientData::from(['id' => $client->getId()]);
+$existingClient = ClientData::make(['id' => $client->getId()]);
 $fetched = Client::get($existingClient)->execute();
 
 echo $fetched->getName(); // "John Doe"
@@ -37,7 +37,7 @@ echo $fetched->getName(); // "John Doe"
 Some providers (like Cegid Vendus) return fields that are not explicitly mapped
 on `ClientData` (e.g., `price_group`, `status`, `balance`). Because the value
 object is powered by `spatie/laravel-data`, you can hydrate it via
-`ClientData::from()` and any unmapped attributes are retained in the
+`ClientData::make()` and any unmapped attributes are retained in the
 `additional` bag. They also appear automatically when you call `toArray()`:
 
 ```php

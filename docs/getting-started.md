@@ -73,7 +73,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 $invoice = Invoice::create();
 
 // Add an item (price in cents)
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1000,
     'quantity' => 1,
@@ -88,7 +88,7 @@ echo $result->sequence; // e.g., "FT 01P2025/1"
 ```
 
 When you need to pass structured data (clients, payments, etc.), prefer the
-`::from()` named constructor provided by `spatie/laravel-data` so every field is
+`::make()` named constructor provided by `spatie/laravel-data` so every field is
 validated and transformed before the request reaches the provider.
 
 ## Understanding the API

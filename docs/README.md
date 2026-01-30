@@ -56,21 +56,21 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 $invoice = Invoice::create();
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1000,
     'quantity' => 2,
 ]);
 $invoice->item($item);
 
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 2000,
 ]);
 $invoice->payment($payment);
 
 // Optional client data (validated via spatie/laravel-data)
-$client = ClientData::from([
+$client = ClientData::make([
     'name' => 'John Doe',
     'vat' => 'PT123456789',
 ]);
@@ -91,7 +91,7 @@ if ($result->output) {
 > service constructors).
 
 > Because `ClientData`, `PaymentData`, and other value objects extend
-> `spatie/laravel-data\Data`, always instantiate them via `::from([...])` (or
+> `spatie/laravel-data\Data`, always instantiate them via `::make([...])` (or
 > dependency injection) so transformers, defaults, and validation attributes are
 > applied consistently.
 

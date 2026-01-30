@@ -19,16 +19,16 @@ $invoice = Invoice::create();
 $invoice->type(InvoiceType::CreditNote);
 
 // Assign the customer (if needed)
-$invoice->client(ClientData::from([
+$invoice->client(ClientData::make([
     'name' => 'John Doe',
     'vat' => 'PT123456789',
 ]));
 
 // Create item with reference to original invoice line
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 500, // Amount to credit in cents
-    'relatedDocument' => RelatedDocumentReferenceData::from([
+    'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 1,
     ]), // Original invoice sequence, line number
@@ -37,7 +37,7 @@ $item = ItemData::from([
 $invoice->item($item);
 
 // Add payment (required for NC)
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::MB,
     'amount' => 500,
 ]);
@@ -67,10 +67,10 @@ Credit notes have specific requirements that differ from regular invoices:
 Each item in a credit note must reference the original invoice and line number:
 
 ```php
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 500,
-    'relatedDocument' => RelatedDocumentReferenceData::from([
+    'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 1,
     ]),
@@ -114,11 +114,11 @@ $invoice = Invoice::create();
 $invoice->type(InvoiceType::CreditNote);
 
 // Create the item being credited
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1500,  // Credit amount in cents (15.00)
     'quantity' => 1,
-    'relatedDocument' => RelatedDocumentReferenceData::from([
+    'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 1,
     ]),
@@ -127,7 +127,7 @@ $item = ItemData::from([
 $invoice->item($item);
 
 // Add payment
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 1500,
 ]);
@@ -159,10 +159,10 @@ $invoice = Invoice::create();
 $invoice->type(InvoiceType::CreditNote);
 
 // First item (line 1 of original invoice)
-$item1 = ItemData::from([
+$item1 = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 500,
-    'relatedDocument' => RelatedDocumentReferenceData::from([
+    'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 1,
     ]),
@@ -170,17 +170,17 @@ $item1 = ItemData::from([
 $invoice->item($item1);
 
 // Second item (line 2 of original invoice)
-$item2 = ItemData::from([
+$item2 = ItemData::make([
     'reference' => 'SKU-002',
     'price' => 300,
-    'relatedDocument' => RelatedDocumentReferenceData::from([
+    'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 2,
     ]),
 ]);
 $invoice->item($item2);
 
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::MB,
     'amount' => 800,
 ]);

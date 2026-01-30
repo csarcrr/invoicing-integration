@@ -98,7 +98,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 | `client(ClientData $client)`                   | ClientData object                  | Set client details (optional for final consumer) | -      |
 | `item(Item $item)`                             | Item object                        | Add an item to the invoice                       | -      |
 | `payment(PaymentData $payment)`                | PaymentData object                 | Add a payment to the invoice                     | -      |
-| `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            | -      |
+| `transport(TransportData $transport)`          | TransportData object               | Set transport details                            | -      |
 | `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  | -      |
 | `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           | -      |
 | `outputFormat(OutputFormat $format)`           | OutputFormat enum                  | Set output format (PDF or ESC/POS)               | -      |
@@ -119,7 +119,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 | `getClient()`           | `?ClientData`       | Get the current client           |
 | `getItems()`            | `Collection`        | Get all items                    |
 | `getPayments()`         | `Collection`        | Get all payments                 |
-| `getTransport()`        | `?TransportDetails` | Get transport details            |
+| `getTransport()`        | `?TransportData`    | Get transport details            |
 | `getType()`             | `InvoiceType`       | Get document type                |
 | `getOutputFormat()`     | `OutputFormat`      | Get output format                |
 | `getRelatedDocument()`  | `int\|string\|null` | Get related document reference   |
@@ -131,6 +131,10 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 ## Value Objects
 
+All value objects extend `spatie/laravel-data` and expose a `::make()` factory. Use
+`::make([...])` (or resolve them via dependency injection) whenever you need
+validation, transformers, and default values to run before issuing requests.
+
 ### ClientData
 
 ```php
@@ -140,7 +144,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 **Usage:**
 
 ```php
-ClientData::from([
+ClientData::make([
     'name' => 'John Doe',
     'vat' => '123456789',
     'email' => 'john@example.com',
@@ -151,7 +155,7 @@ ClientData::from([
 
 | Method                                  | Parameter         | Description              | Throws |
 | --------------------------------------- | ----------------- | ------------------------ | ------ |
-| `from(array $attributes)`               | Attribute array   | Factory helper           | -      |
+| `make(array $attributes)`               | Attribute array   | Factory helper           | -      |
 | `id(int $id)`                           | Provider ID       | Set provider-assigned ID | -      |
 | `name(string $name)`                    | Name string       | Set client name          | -      |
 | `vat(string $vat)`                      | VAT/Fiscal ID     | Set tax identification   | -      |
@@ -187,7 +191,7 @@ ClientData::from([
 
 `toArray()` includes both declared properties and any values stored in
 `getAdditionalData()`, mirroring the provider payload. Because `ClientData`
-extends `Spatie\LaravelData\Data`, calling `from()` (or resolving it via
+extends `Spatie\LaravelData\Data`, calling `make()` (or resolving it via
 dependency injection) guarantees field transformers, validation attributes, and
 default values run before the payload is sent to a provider.
 
@@ -203,7 +207,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 **Instantiation:**
 
 ```php
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'quantity' => 2,
     'price' => 1500,
@@ -211,7 +215,7 @@ $item = ItemData::from([
     'tax' => ItemTax::EXEMPT,
     'taxExemptionReason' => TaxExemptionReason::M04,
     'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
-    'relatedDocument' => RelatedDocumentReferenceData::from([
+    'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 1,
     ]),
@@ -245,7 +249,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 **Instantiation:**
 
 ```php
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 5000,
 ]);
@@ -259,46 +263,61 @@ $payment = PaymentData::from([
 | `amount` | `?int`           | Payment amount (in cents) |
 
 `PaymentData` extends `Spatie\LaravelData\Data`, so you can provide plain
-arrays or DTOs to `::from()` and let transformers/validation prepare the payload
+arrays or DTOs to `::make()` and let transformers/validation prepare the payload
 before the HTTP request is issued.
 
 ---
 
-### TransportDetails
+### TransportData
 
 ```php
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
+use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
+
+$origin = AddressData::make([
+    'date' => Carbon::parse('2025-01-10'),
+    'time' => Carbon::parse('2025-01-10 10:00'),
+    'address' => 'Rua das Flores, 125',
+    'city' => 'Porto',
+    'postalCode' => '4410-200',
+    'country' => 'PT',
+]);
+
+$destination = AddressData::make([
+    'date' => Carbon::parse('2025-01-11'),
+    'time' => Carbon::parse('2025-01-11 14:00'),
+    'address' => 'Rua dos Paninhos, 521',
+    'city' => 'Lisboa',
+    'postalCode' => '1000-100',
+    'country' => 'PT',
+]);
+
+$transport = TransportData::make([
+    'origin' => $origin->toArray(),
+    'destination' => $destination->toArray(),
+    'vehicleLicensePlate' => '00-AB-00',
+]);
 ```
 
-**Constructor:**
+**TransportData Properties:**
 
-```php
-new TransportDetails()
-```
+| Property              | Type          | Description                                          |
+| --------------------- | ------------- | ---------------------------------------------------- |
+| `origin`              | `AddressData` | Load/location details (date, time, address, country) |
+| `destination`         | `AddressData` | Delivery/unload details                              |
+| `vehicleLicensePlate` | `?string`     | Truck/license plate identifier                       |
 
-**Context Methods:**
+**AddressData Fields:**
 
-| Method          | Return Type | Description                         |
-| --------------- | ----------- | ----------------------------------- |
-| `origin()`      | `self`      | Set context to origin location      |
-| `destination()` | `self`      | Set context to destination location |
-
-**Location Methods (call after origin() or destination()):**
-
-| Method                           | Parameter         | Description     | Throws |
-| -------------------------------- | ----------------- | --------------- | ------ |
-| `address(string $address)`       | Address string    | Set address     | -      |
-| `city(string $city)`             | City name         | Set city        | -      |
-| `postalCode(string $postalCode)` | Postal code       | Set postal code | -      |
-| `country(string $country)`       | ISO 2-letter code | Set country     | -      |
-| `date(Carbon $date)`             | Carbon date       | Set date        | -      |
-| `time(Carbon $time)`             | Carbon time       | Set time        | -      |
-
-**Other Methods:**
-
-| Method                               | Parameter     | Description       | Throws |
-| ------------------------------------ | ------------- | ----------------- | ------ |
-| `vehicleLicensePlate(string $plate)` | License plate | Set vehicle plate | -      |
+| Field        | Type      | Description                         |
+| ------------ | --------- | ----------------------------------- |
+| `address`    | `?string` | Street and house number             |
+| `city`       | `?string` | City                                |
+| `postalCode` | `?string` | Postal code                         |
+| `country`    | `string`  | ISO 3166-1 alpha-2 code (validated) |
+| `date`       | `?Carbon` | Optional load/unload date           |
+| `time`       | `?Carbon` | Optional load/unload time           |
 
 ---
 

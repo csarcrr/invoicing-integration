@@ -19,7 +19,7 @@ $invoice->type(InvoiceType::Receipt);
 $invoice->relatedDocument(99999999);
 
 // Add payment details (required for RG)
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::MONEY,
     'amount' => 10000, // 100.00
 ]);
@@ -41,13 +41,13 @@ $invoice->type(InvoiceType::Receipt);
 $invoice->relatedDocument(99999999);
 
 // Split payment: 50.00 cash + 50.00 MB
-$cash = PaymentData::from([
+$cash = PaymentData::make([
     'method' => PaymentMethod::MONEY,
     'amount' => 5000,
 ]);
 $invoice->payment($cash);
 
-$mb = PaymentData::from([
+$mb = PaymentData::make([
     'method' => PaymentMethod::MB,
     'amount' => 5000,
 ]);
@@ -85,7 +85,7 @@ $invoice->type(InvoiceType::Receipt);
 $invoice->relatedDocument(99999999); // Use the provider's invoice ID
 
 // Add payment(s)
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 15000, // 150.00
 ]);

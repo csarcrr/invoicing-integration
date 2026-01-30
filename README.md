@@ -123,19 +123,19 @@ use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 $invoice = Invoice::create()
     ->type(InvoiceType::Invoice);
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'note' => 'Consulting hours',
     'price' => 10000,      // cents (100.00 €)
     'quantity' => 1,
 ]);
 
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::MONEY,
     'amount' => 10000,
 ]);
 
-$client = ClientData::from([
+$client = ClientData::make([
     'name' => 'John Doe',
     'vat' => 'PT123456789',
     'email' => 'john@example.com',
@@ -155,7 +155,7 @@ if ($result->output) {
 ```
 
 > `ClientData` and `PaymentData` extend `spatie/laravel-data`'s `Data` object.
-> Instantiate them with `::from([...])` so validation and transformers run
+> Instantiate them with `::make([...])` so validation and transformers run
 > before the HTTP request is sent.
 
 > Prefer the `Invoice` facade for day-to-day usage. If you need to resolve the

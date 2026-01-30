@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = ItemData::from(['reference' => 'SKU-001']);
+$item = ItemData::make(['reference' => 'SKU-001']);
 $invoice->item($item);
 
 $result = $invoice->execute();
@@ -44,7 +44,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = ItemData::from(['reference' => 'SKU-001']);
+$item = ItemData::make(['reference' => 'SKU-001']);
 $invoice->item($item);
 
 // Request PDF output (default)
@@ -110,7 +110,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
 $invoice = Invoice::create();
 
-$item = ItemData::from(['reference' => 'SKU-001']);
+$item = ItemData::make(['reference' => 'SKU-001']);
 $invoice->item($item);
 $invoice->outputFormat(OutputFormat::ESCPOS);
 
@@ -157,13 +157,13 @@ use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 $invoice = Invoice::create();
 
 // Configure invoice
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'SKU-001',
     'price' => 1000,
 ]);
 $invoice->item($item);
 
-$payment = PaymentData::from([
+$payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
     'amount' => 1000,
 ]);

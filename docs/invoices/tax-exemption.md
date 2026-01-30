@@ -15,7 +15,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 
-$item = ItemData::from([
+$item = ItemData::make([
     'reference' => 'CONSULTING',
     'price' => 5000,
     'tax' => ItemTax::EXEMPT,
