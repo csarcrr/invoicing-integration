@@ -13,7 +13,6 @@ use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload

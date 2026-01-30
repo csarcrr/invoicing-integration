@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Traits\Invoice;
 
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use Spatie\LaravelData\Data;
 
 trait HasClient
 {

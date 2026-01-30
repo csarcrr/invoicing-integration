@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Traits;
 
-use AllowDynamicProperties;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
 use Spatie\LaravelData\Data;
+
 use function collect;
 
 /**
@@ -14,7 +14,8 @@ use function collect;
  */
 trait HasMakeValidation
 {
-    public static function make(array $data): self {
+    public static function make(array $data): self
+    {
         $normalizedData = collect($data)->map(function (mixed $item) {
             return $item instanceof Data ? $item->toArray() : $item;
         });

@@ -26,7 +26,7 @@ it('assigns a transport to the invoice', function (Provider $provider) {
         'address' => 'Rua dos Paninhos, 525',
         'city' => 'Porto',
         'postalCode' => '4410-200',
-        'country' => 'PT'
+        'country' => 'PT',
     ]);
 
     $transport = TransportData::make([
@@ -52,7 +52,7 @@ it('has a valid payload', function (Provider $provider, string $fixtureName) {
         'address' => 'Rua das Flores, 125',
         'city' => 'Porto',
         'postalCode' => '4410-200',
-        'country' => 'PT'
+        'country' => 'PT',
     ]);
 
     $destination = AddressData::make([
@@ -61,13 +61,13 @@ it('has a valid payload', function (Provider $provider, string $fixtureName) {
         'address' => 'Rua dos Paninhos, 521',
         'city' => 'Porto',
         'postalCode' => '4410-100',
-        'country' => 'PT'
+        'country' => 'PT',
     ]);
 
     $transport = TransportData::make([
         'origin' => $origin,
         'destination' => $destination,
-        'vehicleLicensePlate' => '00-AB-00'
+        'vehicleLicensePlate' => '00-AB-00',
     ]);
 
     $invoice->client(ClientData::from(['name' => 'Client Name', 'vat' => 'PT123456789']));
@@ -91,13 +91,13 @@ it('fails when no client is provided with transport', function (Provider $provid
         'address' => 'Rua dos Paninhos, 521',
         'city' => 'Porto',
         'postalCode' => '4410-100',
-        'country' => 'PT'
+        'country' => 'PT',
     ]);
 
     $transport = TransportData::make([
         'origin' => $origin,
         'destination' => $destination,
-        'vehicleLicensePlate' => '00-AB-00'
+        'vehicleLicensePlate' => '00-AB-00',
     ]);
 
     $invoice->item(ItemData::from(['reference' => 'reference-1']));
@@ -123,13 +123,13 @@ it('fails when no load date is provided with transport', function (Provider $pro
         'address' => 'Rua dos Paninhos, 521',
         'city' => 'Porto',
         'postalCode' => '4410-100',
-        'country' => 'PT'
+        'country' => 'PT',
     ]);
 
     $transport = TransportData::make([
         'origin' => $origin,
         'destination' => $destination,
-        'vehicleLicensePlate' => '00-AB-00'
+        'vehicleLicensePlate' => '00-AB-00',
     ]);
 
     $invoice->client(ClientData::from(['vat' => 'PT123456789', 'name' => 'Client Name']));

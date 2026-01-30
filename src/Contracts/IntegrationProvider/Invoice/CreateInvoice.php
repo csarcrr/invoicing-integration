@@ -12,9 +12,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
-use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
 use Illuminate\Support\Collection;
-use Symfony\Component\Mailer\Transport;
 
 interface CreateInvoice
 {

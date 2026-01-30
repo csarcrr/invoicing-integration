@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
 
 use AllowDynamicProperties;
-use CsarCrr\InvoicingIntegration\Contracts\ValueObjects\HasClientData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Exception;
 
-use Spatie\LaravelData\Data;
 use function collect;
 use function throw_if;
 
@@ -23,7 +21,8 @@ class CegidVendusClient
     ];
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
+     *
      * @throws \Throwable
      */
     protected function updateClientData(array $data): void

@@ -103,6 +103,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
      * Get the payload to send to the provider
      *
      * @return Collection<string, mixed>
+     *
      * @throws \CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException
      * @throws \CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException
      * @throws \Exception

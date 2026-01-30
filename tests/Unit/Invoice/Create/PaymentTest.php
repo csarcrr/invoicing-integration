@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\Enums\Action;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 
@@ -86,17 +84,17 @@ it('has expected payload with multiple payments', function (Provider $provider, 
 
 it('throws error when configuration is not set', function (Provider $provider) {
     config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value.'.payments', [
-            PaymentMethod::CREDIT_CARD->value => null,
-            PaymentMethod::MONEY->value => null,
-            PaymentMethod::MB->value => null,
-            PaymentMethod::MONEY_TRANSFER->value => null,
-            PaymentMethod::CURRENT_ACCOUNT->value => null,
+        PaymentMethod::CREDIT_CARD->value => null,
+        PaymentMethod::MONEY->value => null,
+        PaymentMethod::MB->value => null,
+        PaymentMethod::MONEY_TRANSFER->value => null,
+        PaymentMethod::CURRENT_ACCOUNT->value => null,
     ]);
 
     $invoice = Invoice::create();
 
     $invoice->item(ItemData::from(['reference' => 'reference-1']));
-    $invoice->payment(PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,]));
+    $invoice->payment(PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]));
 
     $invoice->getPayload();
 })->with('providers')->throws(Exception::class, 'Payment method not configured.');

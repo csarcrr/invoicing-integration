@@ -10,7 +10,6 @@ use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class Create extends CegidVendusClient implements CreateClient, ShouldHavePayload
