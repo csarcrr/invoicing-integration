@@ -28,6 +28,9 @@ class AddressData extends Data implements DataNeedsValidation
         public ?Carbon $time = null,
     ) {}
 
+    /**
+     * @return array<string, array<int, Closure>>
+     */
     public static function rules(): array
     {
         return [

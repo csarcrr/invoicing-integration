@@ -8,20 +8,17 @@ use Spatie\LaravelData\Data;
 
 use function collect;
 
-/**
- * @method static validateAndCreate(array $data)
- * @method static validate(\Illuminate\Support\Collection $map)
- */
 trait HasMakeValidation
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function make(array $data): self
     {
-        $normalizedData = collect($data)->map(function (mixed $item) {
-            return $item instanceof Data ? $item->toArray() : $item;
-        });
+        $normalizedData = collect($data)
+            ->map(fn (mixed $item) => $item instanceof Data ? $item->toArray() : $item)
+            ->all();
 
-        self::validate($normalizedData);
-
-        return self::from($data);
+        return static::validateAndCreate($normalizedData);
     }
 }

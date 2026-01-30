@@ -16,6 +16,9 @@ class CegidVendusClient
 {
     protected ?ClientData $client = null;
 
+    /**
+     * @var list<string>
+     */
     protected array $supportedProperties = [
         'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention',
     ];
