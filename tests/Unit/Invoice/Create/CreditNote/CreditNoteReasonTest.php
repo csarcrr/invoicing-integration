@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReason
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 
 it('can apply a credit note reason', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
@@ -17,7 +17,10 @@ it('can apply a credit note reason', function (Provider $provider, string $fixtu
     $invoice = Invoice::create();
     $item = ItemData::from([
         'reference' => 'reference-1',
-        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+        'relatedDocument' => RelatedDocumentReferenceData::from([
+            'documentId' => 'FT 01P2025/1',
+            'row' => 1,
+        ]),
     ]);
 
     $invoice->type(InvoiceType::CreditNote);
@@ -35,7 +38,10 @@ it('fails when reason is not applied', function (Provider $provider) {
     $invoice = Invoice::create();
     $item = ItemData::from([
         'reference' => 'reference-1',
-        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+        'relatedDocument' => RelatedDocumentReferenceData::from([
+            'documentId' => 'FT 01P2025/1',
+            'row' => 1,
+        ]),
     ]);
 
     $invoice->type(InvoiceType::CreditNote);
@@ -54,7 +60,10 @@ it('results in nothing when applying reason to an invoice', function (Provider $
     $invoice = Invoice::create();
     $item = ItemData::from([
         'reference' => 'reference-1',
-        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+        'relatedDocument' => RelatedDocumentReferenceData::from([
+            'documentId' => 'FT 01P2025/1',
+            'row' => 1,
+        ]),
     ]);
 
     $invoice->item($item);

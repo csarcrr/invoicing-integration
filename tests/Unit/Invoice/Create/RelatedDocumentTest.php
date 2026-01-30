@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 
 it('can add related document to invoice', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
@@ -36,7 +36,10 @@ it('can add related document to a NC', function (Provider $provider, string $fix
     $invoice = Invoice::create();
     $item = ItemData::from([
         'reference' => 'reference-1',
-        'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+        'relatedDocument' => RelatedDocumentReferenceData::from([
+            'documentId' => 'FT 01P2025/1',
+            'row' => 1,
+        ]),
     ]);
 
     $invoice->type(InvoiceType::CreditNote);

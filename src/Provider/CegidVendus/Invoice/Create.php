@@ -321,8 +321,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
                 );
 
                 $data['reference_document'] = [
-                    'document_number' => $item->relatedDocument->getDocumentId(),
-                    'document_row' => $item->relatedDocument->getRow(),
+                    'document_number' => $item->relatedDocument->documentId,
+                    'document_row' => $item->relatedDocument->row,
                 ];
             }
 

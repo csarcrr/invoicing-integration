@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 
 it('has the default type as FT', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
@@ -26,7 +26,10 @@ it('has the correct payload for invoices', function (Provider $provider, string 
     $attributes = ['reference' => 'reference-1'];
 
     if ($type === InvoiceType::CreditNote) {
-        $attributes['relatedDocument'] = new RelatedDocumentReference('related-document-1', 1);
+        $attributes['relatedDocument'] = RelatedDocumentReferenceData::from([
+            'documentId' => 'related-document-1',
+            'row' => 1,
+        ]);
         $invoice->creditNoteReason('Reason for credit note');
     }
 

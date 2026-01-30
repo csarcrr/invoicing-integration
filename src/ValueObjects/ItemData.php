@@ -25,7 +25,7 @@ class ItemData extends Data
         public ?ItemTax $tax = null,
         public ?TaxExemptionReason $taxExemptionReason = null,
         public ?string $taxExemptionLaw = null,
-        public ?RelatedDocumentReference $relatedDocument = null,
+        public ?RelatedDocumentReferenceData $relatedDocument = null,
     ) {
         $this->ensureValidQuantity();
         $this->ensureTaxExemptionConsistency();

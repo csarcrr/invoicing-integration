@@ -197,6 +197,7 @@ default values run before the payload is sent to a provider.
 
 ```php
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 ```
 
 **Instantiation:**
@@ -210,25 +211,28 @@ $item = ItemData::from([
     'tax' => ItemTax::EXEMPT,
     'taxExemptionReason' => TaxExemptionReason::M04,
     'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
-    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    'relatedDocument' => RelatedDocumentReferenceData::from([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 1,
+    ]),
 ]);
 ```
 
 **Properties:**
 
-| Property             | Type                        | Description                                        | Validation / Notes                                                        |
-| -------------------- | --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
-| `reference`          | `null\|int\|string`         | Product SKU or code                                | -                                                                         |
-| `quantity`           | `null\|int\|float`          | Quantity (defaults to `1`)                         | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
-| `price`              | `?int`                      | Unit price in cents                                | -                                                                         |
-| `note`               | `?string`                   | Optional line description                          | -                                                                         |
-| `type`               | `?ItemType`                 | Item classification (default: `ItemType::Product`) | -                                                                         |
-| `tax`                | `?ItemTax`                  | VAT rate                                           | Required for `taxExemptionReason`                                         |
-| `taxExemptionReason` | `?TaxExemptionReason`       | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
-| `taxExemptionLaw`    | `?string`                   | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
-| `amountDiscount`     | `?int`                      | Fixed discount in cents                            | -                                                                         |
-| `percentageDiscount` | `?int`                      | Percentage discount                                | -                                                                         |
-| `relatedDocument`    | `?RelatedDocumentReference` | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
+| Property             | Type                            | Description                                        | Validation / Notes                                                        |
+| -------------------- | ------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `reference`          | `null\|int\|string`             | Product SKU or code                                | -                                                                         |
+| `quantity`           | `null\|int\|float`              | Quantity (defaults to `1`)                         | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
+| `price`              | `?int`                          | Unit price in cents                                | -                                                                         |
+| `note`               | `?string`                       | Optional line description                          | -                                                                         |
+| `type`               | `?ItemType`                     | Item classification (default: `ItemType::Product`) | -                                                                         |
+| `tax`                | `?ItemTax`                      | VAT rate                                           | Required for `taxExemptionReason`                                         |
+| `taxExemptionReason` | `?TaxExemptionReason`           | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
+| `taxExemptionLaw`    | `?string`                       | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
+| `amountDiscount`     | `?int`                          | Fixed discount in cents                            | -                                                                         |
+| `percentageDiscount` | `?int`                          | Percentage discount                                | -                                                                         |
+| `relatedDocument`    | `?RelatedDocumentReferenceData` | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
 
 ---
 

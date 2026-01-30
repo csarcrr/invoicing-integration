@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
 use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 
 $invoice = Invoice::create();
 
@@ -28,7 +28,10 @@ $invoice->client(ClientData::from([
 $item = ItemData::from([
     'reference' => 'SKU-001',
     'price' => 500, // Amount to credit in cents
-    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1), // Original invoice sequence, line number
+    'relatedDocument' => RelatedDocumentReferenceData::from([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 1,
+    ]), // Original invoice sequence, line number
 ]);
 
 $invoice->item($item);
@@ -67,7 +70,10 @@ Each item in a credit note must reference the original invoice and line number:
 $item = ItemData::from([
     'reference' => 'SKU-001',
     'price' => 500,
-    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    'relatedDocument' => RelatedDocumentReferenceData::from([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 1,
+    ]),
 ]);
 ```
 
@@ -100,7 +106,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReference;
+use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
 
 $invoice = Invoice::create();
 
@@ -112,7 +118,10 @@ $item = ItemData::from([
     'reference' => 'SKU-001',
     'price' => 1500,  // Credit amount in cents (15.00)
     'quantity' => 1,
-    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    'relatedDocument' => RelatedDocumentReferenceData::from([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 1,
+    ]),
 ]);
 
 $invoice->item($item);
@@ -153,7 +162,10 @@ $invoice->type(InvoiceType::CreditNote);
 $item1 = ItemData::from([
     'reference' => 'SKU-001',
     'price' => 500,
-    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 1),
+    'relatedDocument' => RelatedDocumentReferenceData::from([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 1,
+    ]),
 ]);
 $invoice->item($item1);
 
@@ -161,7 +173,10 @@ $invoice->item($item1);
 $item2 = ItemData::from([
     'reference' => 'SKU-002',
     'price' => 300,
-    'relatedDocument' => new RelatedDocumentReference('FT 01P2025/1', 2),
+    'relatedDocument' => RelatedDocumentReferenceData::from([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 2,
+    ]),
 ]);
 $invoice->item($item2);
 
