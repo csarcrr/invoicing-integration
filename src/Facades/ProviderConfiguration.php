@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Facades;
 
+use CsarCrr\InvoicingIntegration\Configuration\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Services\ProviderConfigurationService;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<string, mixed> getConfig()
  * @method static mixed get(string $key, mixed $default = null)
  *
- * @see \CsarCrr\InvoicingIntegration\Services\ProviderConfigurationService
+ * @see \CsarCrr\InvoicingIntegration\Configuration\ProviderConfiguration
  */
 class ProviderConfiguration extends Facade
 {
     public static function getFacadeAccessor(): string
     {
-        return ProviderConfigurationService::class;
+        return ProviderConfiguration::class;
     }
 }
