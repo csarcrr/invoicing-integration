@@ -36,7 +36,7 @@ test('automagically injects provider pagination details into the request', funct
     Http::assertSent(function (Request $request) use ($provider) {
         return match ($provider) {
             Provider::CEGID_VENDUS => Str::contains($request->url(), 'page=1'),
-            default => throw new Exception('ProviderConfiguration not supported.')
+            default => throw new Exception('ProviderConfigurationService not supported.')
         };
     });
 })->with('providers', ['response']);

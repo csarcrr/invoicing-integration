@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Configuration;
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 
-class ProviderConfiguration
+class ProviderConfigurationService
 {
     protected Provider $provider;
 
