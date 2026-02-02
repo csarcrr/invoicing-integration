@@ -10,10 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class HttpConfiguration
 {
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     public static function get(): Factory|PendingRequest
     {
@@ -22,12 +19,12 @@ class HttpConfiguration
         };
     }
 
-    private static function cegidVendus(): Factory|PendingRequest
+    private static function cegidVendus(): PendingRequest
     {
         $config = ProviderConfiguration::getConfig();
 
         return Http::withHeaders([
-            'Authorization' => 'Bearer ' . $config['key'],
+            'Authorization' => 'Bearer '.$config['key'],
         ])
             ->baseUrl('https://www.vendus.pt/ws/v1.1/')
             ->timeout(30)

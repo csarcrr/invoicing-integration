@@ -12,7 +12,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderExce
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
