@@ -6,8 +6,8 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;

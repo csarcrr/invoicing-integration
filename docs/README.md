@@ -48,11 +48,7 @@ Always consult with legal and accounting professionals when implementing invoici
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 

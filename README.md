@@ -113,12 +113,7 @@ $config = ProviderConfiguration::getConfig();
 Issue an FT invoice with one item and a cash payment:
 
 ```php
-use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\InvoiceType;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create()
     ->type(InvoiceType::Invoice);

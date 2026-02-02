@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\ValueObjects;
+namespace CsarCrr\InvoicingIntegration\Data;
 
 use Carbon\Carbon;
 use Closure;
@@ -29,7 +29,7 @@ class AddressData extends Data implements DataNeedsValidation
     ) {}
 
     /**
-     * @return array<string, array<int, Closure>>
+     * @return Closure
      */
     public static function rules(): array
     {

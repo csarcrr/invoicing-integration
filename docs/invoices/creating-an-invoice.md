@@ -7,8 +7,7 @@ Create and send invoices using the Invoicing Integration package with a fluent A
 The simplest invoice requires only an item:
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 
@@ -28,7 +27,7 @@ This creates an **FT (Invoice)** document for a final consumer.
 For non-final-consumer invoices, add client information:
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 $client = ClientData::make([
     'name' => 'John Doe',
@@ -56,7 +55,7 @@ $invoice->client($client);
 Items support various properties:
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
 
 $item = ItemData::make([
     'reference' => 'SKU-001',
@@ -106,8 +105,7 @@ $invoice->item($item);
 Payments are **required** for certain document types (FR, FS, RG, NC):
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 $payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
@@ -178,9 +176,7 @@ $invoice->notes('This is a note for the invoice.');
 For invoices with transport information:
 
 ```php
-use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use Carbon\Carbon;use CsarCrr\InvoicingIntegration\Data\AddressData;use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 $transport = new AddressData;
 
@@ -220,12 +216,7 @@ $invoice->transport($transport);
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\InvoiceType;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 

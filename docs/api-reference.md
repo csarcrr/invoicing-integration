@@ -138,7 +138,7 @@ validation, transformers, and default values to run before issuing requests.
 ### ClientData
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+
 ```
 
 **Usage:**
@@ -200,8 +200,8 @@ default values run before the payload is sent to a provider.
 ### Item
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\RelatedDocumentReferenceData;
+
+
 ```
 
 **Instantiation:**
@@ -243,7 +243,7 @@ $item = ItemData::make([
 ### PaymentData
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
+
 ```
 
 **Instantiation:**
@@ -271,9 +271,7 @@ before the HTTP request is issued.
 ### TransportData
 
 ```php
-use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
+use Carbon\Carbon;use CsarCrr\InvoicingIntegration\Data\AddressData;use CsarCrr\InvoicingIntegration\Data\TransportData;
 
 $origin = AddressData::make([
     'date' => Carbon::parse('2025-01-10'),
@@ -324,7 +322,7 @@ $transport = TransportData::make([
 ### Invoice (Response)
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\InvoiceData;
+
 ```
 
 Returned by `execute()` method after issuing.

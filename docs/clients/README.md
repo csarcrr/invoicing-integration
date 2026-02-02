@@ -11,8 +11,7 @@ Manage clients in your invoicing provider using the Client API. Clients can be c
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Create a new client (hydrated through spatie/laravel-data)
 $clientData = ClientData::make([

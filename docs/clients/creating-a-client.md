@@ -5,8 +5,7 @@ Register a new client in your invoicing provider using `Client::create()`.
 ## Basic Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Facades\Client;
 
 $clientData = ClientData::make([
     'name' => 'John Doe',
@@ -61,8 +60,7 @@ $clientData = ClientData::make([
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Build client data
 $clientData = ClientData::make([
@@ -94,9 +92,7 @@ echo "Client created with ID: {$clientId}";
 Once a client is created, you can use it when issuing invoices:
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Create or retrieve client
 $clientData = ClientData::make([

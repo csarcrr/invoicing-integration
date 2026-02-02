@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;

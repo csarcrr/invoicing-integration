@@ -8,7 +8,7 @@ use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
-class HttpConfiguration
+final class HttpConfiguration
 {
     public function __construct() {}
 

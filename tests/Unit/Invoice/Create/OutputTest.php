@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 

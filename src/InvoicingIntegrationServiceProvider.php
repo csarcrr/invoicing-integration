@@ -17,10 +17,32 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use function collect;
+use function implode;
+use function in_array;
+use function throw_if;
 
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
     public function bootingPackage(): void
+    {
+        $this->setupHttpMacros();
+
+        $this->app->when([InvoiceAction::class, ClientAction::class])
+            ->needs(Provider::class)
+            ->give(function () {
+                return ProviderConfiguration::getProvider();
+            });
+    }
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('invoicing-integration')
+            ->hasConfigFile('invoicing-integration');
+    }
+
+    private function setupHttpMacros(): void
     {
         Http::macro('provider', function () {
             return HttpConfiguration::get();
@@ -48,18 +70,5 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
             throw new Exception('The integration API request failed for an unknown reason.');
         });
-
-        $this->app->when([InvoiceAction::class, ClientAction::class])
-            ->needs(Provider::class)
-            ->give(function () {
-                return ProviderConfiguration::getProvider();
-            });
-    }
-
-    public function configurePackage(Package $package): void
-    {
-        $package
-            ->name('invoicing-integration')
-            ->hasConfigFile('invoicing-integration');
     }
 }

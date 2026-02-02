@@ -7,8 +7,7 @@ Retrieve and store generated invoice documents in PDF or ESC/POS format.
 By default, invoices are returned with PDF output:
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 
@@ -38,9 +37,7 @@ echo $path; // Full path to saved file
 Choose the output format before issuing the invoice:
 
 ```php
-use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Enums\OutputFormat;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 
@@ -104,9 +101,7 @@ $output->save('invoices/fallback.pdf');
 Generate ESC/POS data for direct printing to thermal printers:
 
 ```php
-use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Enums\OutputFormat;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 
@@ -148,11 +143,7 @@ if ($format === OutputFormat::PDF_BASE64) {
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\OutputFormat;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 

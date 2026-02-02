@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Data\AddressData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\TransportData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\AddressData;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportData;
 use Illuminate\Validation\ValidationException;
 
 it('assigns a transport to the invoice', function (Provider $provider) {

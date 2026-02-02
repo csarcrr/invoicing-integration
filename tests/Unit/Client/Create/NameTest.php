@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 
 it('ensures invalid name do not get set', function (Provider $provider, mixed $value, mixed $expected) {
     $client = ClientData::from(['name' => $value])->toArray();

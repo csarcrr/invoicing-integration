@@ -1,9 +1,9 @@
 <?php
 
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
 use Illuminate\Support\Facades\Http;
 
 test('create client request is successful', function (Provider $provider, string $createFixture, $responseFixture) {

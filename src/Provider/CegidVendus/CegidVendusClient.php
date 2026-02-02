@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
 
 use AllowDynamicProperties;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Exception;
-
 use function collect;
 use function throw_if;
 

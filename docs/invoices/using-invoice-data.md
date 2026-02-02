@@ -5,8 +5,7 @@ When you issue an invoice, you receive an `Invoice` value object containing the 
 ## Accessing Invoice Data
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 $item = ItemData::make(['reference' => 'SKU-001']);
@@ -85,10 +84,7 @@ if ($output) {
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
-use CsarCrr\InvoicingIntegration\ValueObjects\PaymentData;
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Issue an invoice
 $invoice = Invoice::create();

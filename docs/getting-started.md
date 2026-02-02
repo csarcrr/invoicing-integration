@@ -66,8 +66,7 @@ return [
 ## 5. Your First Invoice
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Create a simple invoice (final consumer, no client details)
 $invoice = Invoice::create();

@@ -1,6 +1,6 @@
 <?php
 
-namespace CsarCrr\InvoicingIntegration\ValueObjects;
+namespace CsarCrr\InvoicingIntegration\Data;
 
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;

@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Actions\ClientAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Illuminate\Support\Facades\Facade;
 
 /**

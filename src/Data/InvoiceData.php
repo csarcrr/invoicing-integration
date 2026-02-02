@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\ValueObjects;
+namespace CsarCrr\InvoicingIntegration\Data;
 
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
+use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use Spatie\LaravelData\Data;
 
 class InvoiceData extends Data implements DataNeedsValidation
