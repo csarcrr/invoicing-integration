@@ -229,11 +229,15 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     protected function buildRelatedDocument(): void
     {
-        if ($this->getType() !== InvoiceType::CreditNote) {
-            $this->payload->put('related_document_id', (int) $this->getRelatedDocument());
-
-            return;
+        if ($this->getType() === InvoiceType::CreditNote) {
+            return ;
         }
+
+        if(!$this->getRelatedDocument()) {
+            return ;
+        }
+
+        $this->payload->put('related_document_id', (int) $this->getRelatedDocument());
     }
 
     /**
