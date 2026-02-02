@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Spatie\LaravelData\Data;
+
 arch()->preset()->php();
 
 arch('it will not use debugging functions')
@@ -21,3 +23,33 @@ arch('strict types')
     ->expect('CsarCrr\InvoicingIntegration\Actions')
     ->expect('CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider')
     ->toUseStrictTypes();
+
+arch('final classes')
+    ->expect('CsarCrr\InvoicingIntegration\Configuration')
+    ->expect('CsarCrr\InvoicingIntegration\Actions')
+    ->toBeFinal();
+
+arch('contracts')
+    ->expect('CsarCrr\InvoicingIntegration\Contracts')
+    ->toBeInterfaces();
+
+arch('enums')
+    ->expect('CsarCrr\InvoicingIntegration\Enums')
+    ->toBeEnums();
+
+arch('traits')
+    ->expect('CsarCrr\InvoicingIntegration\Traits')
+    ->toBeTraits();
+
+arch('data')
+    ->expect('CsarCrr\InvoicingIntegration\Data')
+    ->toBeClasses()
+    ->toExtend(Data::class);
+
+arch('ValueObjects')
+    ->expect('CsarCrr\InvoicingIntegration\ValueObjects')
+    ->toBeClasses()
+    ->toExtendNothing();
+
+
+
