@@ -15,7 +15,7 @@ it('assigns the correct due date payload', function (Provider $provider, string 
 
     $invoice = Invoice::create();
     $invoice->item(ItemData::from(['reference' => 'reference-1']));
-    $invoice->dueDate(Carbon::now()->setDay(31)->setMonth(12)->setYear(2025));
+    $invoice->dueDate(Carbon::createFromFormat('Y-m-d', '2025-12-31'));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['due_date']);
