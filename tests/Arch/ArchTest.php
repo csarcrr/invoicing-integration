@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Facade;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Transformers\Transformer;
 
 arch()->preset()->php();
 
@@ -29,6 +31,11 @@ arch('final classes')
     ->expect('CsarCrr\InvoicingIntegration\Actions')
     ->toBeFinal();
 
+arch('facades')
+    ->expect('CsarCrr\InvoicingIntegration\Facades')
+    ->toExtend(Facade::class)
+    ->not->toBeUsedIn('CsarCrr\InvoiceIntegration\*\*');
+
 arch('contracts')
     ->expect('CsarCrr\InvoicingIntegration\Contracts')
     ->toBeInterfaces();
@@ -49,7 +56,13 @@ arch('data')
 arch('ValueObjects')
     ->expect('CsarCrr\InvoicingIntegration\ValueObjects')
     ->toBeClasses()
-    ->toExtendNothing();
+    ->toExtendNothing()
+    ->toBeUsedIn('CsarCrr\InvoicingIntegration\Provider');
+
+arch('transformers')
+    ->expect('CsarCrr\InvoicingIntegration\Transformers')
+    ->toBeClasses()
+    ->toExtend(Transformer::class);
 
 
 
