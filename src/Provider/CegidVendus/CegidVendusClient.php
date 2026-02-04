@@ -8,6 +8,7 @@ use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Exception;
 use Illuminate\Support\Collection;
+
 use function collect;
 use function in_array;
 use function throw_if;
@@ -21,11 +22,11 @@ class CegidVendusClient
      * @var list<string>
      */
     protected array $supportedProperties = [
-        'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention', 'date'
+        'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention', 'date',
     ];
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      *
      * @throws \Throwable
      */
@@ -35,11 +36,11 @@ class CegidVendusClient
 
         $additionalProperties = collect($data)->except($this->supportedProperties)->toArray();
 
-        !empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
-        !empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
-        !empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
-        !empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
-        !empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
+        ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
+        ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
+        ! empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
+        ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
+        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
 
         $this->client = $this->client->from($data);
         $this->client->additional($additionalProperties);
@@ -48,7 +49,7 @@ class CegidVendusClient
     protected function getClientAllowedProperties(): Collection
     {
         return collect($this->client->toArray())->filter(
-                fn(mixed $value, string $key) => in_array($key, $this->supportedProperties)
-            );
+            fn (mixed $value, string $key) => in_array($key, $this->supportedProperties)
+        );
     }
 }

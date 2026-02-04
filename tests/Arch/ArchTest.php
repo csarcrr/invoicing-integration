@@ -63,6 +63,3 @@ arch('transformers')
     ->expect('CsarCrr\InvoicingIntegration\Transformers')
     ->toBeClasses()
     ->toExtend(Transformer::class);
-
-
-

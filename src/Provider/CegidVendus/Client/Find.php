@@ -14,7 +14,7 @@ use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use function array_key_exists;
+
 use function collect;
 
 class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
@@ -63,7 +63,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     {
         $this->buildPagination();
 
-        $this->getClientAllowedProperties()->each(fn(mixed $item, string $key) => $this->payload->put($key, $item));
+        $this->getClientAllowedProperties()->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
 
         $this->buildVat();
         $this->buildExternalReference();

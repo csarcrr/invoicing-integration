@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
+
 use function is_int;
 use function throw_if;
 
@@ -21,7 +22,7 @@ class Get extends CegidVendusClient implements GetClient
      */
     public function execute(): ClientData
     {
-        throw_if(!is_int($this->client->id), InvalidArgumentException::class, 'Client ID is required.');
+        throw_if(! is_int($this->client->id), InvalidArgumentException::class, 'Client ID is required.');
 
         $request = Http::provider()->get('/clients/'.$this->client->id);
 
