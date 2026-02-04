@@ -199,10 +199,10 @@ $client = Client::create(
         'vat' => 'PT123456789',
         'email' => 'billing@acme.test',
     ])
-)->execute();
+)->execute()->getClient();
 
 // Retrieve it later
-$fetched = Client::get(ClientData::make(['id' => $client->id]))->execute();
+$fetched = Client::get(ClientData::make(['id' => $client->id]))->execute()->getClient();
 
 // Search with pagination helpers
 $filters = ClientData::make(['email' => 'billing@acme.test']);

@@ -21,11 +21,11 @@ $clientData = ClientData::make([
     'email' => 'john@example.com',
 ]);
 
-$client = Client::create($clientData)->execute();
+$client = Client::create($clientData)->execute()->getClient();
 
 // Later, retrieve the client
 $existingClient = ClientData::make(['id' => $client->id]);
-$fetched = Client::get($existingClient)->execute();
+$fetched = Client::get($existingClient)->execute()->getClient();
 
 // Paginate with filters
 $filters = ClientData::make(['email' => 'acme.test']);

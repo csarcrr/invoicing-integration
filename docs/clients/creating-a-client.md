@@ -12,7 +12,7 @@ $clientData = ClientData::make([
     'vat' => '123456789',
 ]);
 
-$client = Client::create($clientData)->execute();
+$client = Client::create($clientData)->execute()->getClient();
 
 $clientId = $client->id; // Provider-assigned ID (e.g., 12345)
 ```
@@ -88,7 +88,7 @@ $clientData = ClientData::make([
 ]);
 
 // Create client in provider
-$client = Client::create($clientData)->execute();
+$client = Client::create($clientData)->execute()->getClient();
 
 // The client now has an ID assigned by the provider
 $clientId = $client->id;
@@ -125,7 +125,7 @@ $clientData = ClientData::make([
     'vat' => 'PT501234567',
 ]);
 
-$client = Client::create($clientData)->execute();
+$client = Client::create($clientData)->execute()->getClient();
 
 // Use client in invoice
 $invoice = Invoice::create();
@@ -149,7 +149,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $client = Client::create($clientData)->execute();
+    $client = Client::create($clientData)->execute()->getClient();
 } catch (UnauthorizedException $e) {
     // Invalid API credentials
 } catch (RequestFailedException $e) {
