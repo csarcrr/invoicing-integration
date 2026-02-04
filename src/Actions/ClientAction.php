@@ -34,10 +34,10 @@ final class ClientAction
         };
     }
 
-    public function find(): FindClient
+    public function find(?ClientData $client = null): FindClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Find,
+            Provider::CEGID_VENDUS => new Find($client),
         };
     }
 }

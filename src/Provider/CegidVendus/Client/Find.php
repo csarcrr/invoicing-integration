@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
@@ -13,7 +14,8 @@ use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Spatie\LaravelData\Optional;
+use function array_key_exists;
+use function collect;
 
 class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
 {
@@ -27,15 +29,15 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
 
     public function __construct(protected ?ClientData $client = null)
     {
-        $this->client = ClientData::from([]);
+        if (! $client) {
+            $this->client = ClientData::from([]);
+        }
+
         $this->payload = collect();
     }
 
     public function execute(): self
     {
-        $this->buildPagination();
-        $this->buildEmail();
-
         $request = Http::provider()->get('/clients', $this->getPayload());
 
         Http::handleUnwantedFailures($request);
@@ -59,6 +61,14 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
      */
     public function getPayload(): Collection
     {
+        $this->buildPagination();
+
+        $this->getClientAllowedProperties()->each(fn(mixed $item, string $key) => $this->payload->put($key, $item));
+
+        $this->buildVat();
+        $this->buildExternalReference();
+        $this->buildStatus();
+
         return $this->payload;
     }
 
@@ -69,7 +79,37 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
 
     private function buildEmail(): void
     {
-        ! ($this->client->email instanceof Optional) && $this->payload->put('email', $this->client->email);
+        is_string($this->client->email) && $this->payload->put('email', $this->client->email);
+    }
+
+    private function buildVat(): void
+    {
+        (is_string($this->client->vat) || is_int($this->client->vat)) && $this->payload->put('fiscal_id', $this->client->vat);
+    }
+
+    private function buildName(): void
+    {
+        is_string($this->client->name) && $this->payload->put('name', $this->client->name);
+    }
+
+    private function buildExternalReference(): void
+    {
+        is_string($this->client->externalReference) && $this->payload->put('external_reference', $this->client->externalReference);
+    }
+
+    private function buildStatus(): void
+    {
+        is_string($this->client->status) && $this->payload->put('status', $this->client->status);
+    }
+
+    private function buildId(): void
+    {
+        is_int($this->client->id) && $this->payload->put('id', $this->client->id);
+    }
+
+    private function buildDate(): void
+    {
+        $this->client->date instanceof Carbon && $this->payload->put('date', $this->client->date->toDateString());
     }
 
     protected function updatePaginationDetails(Response $results): void
