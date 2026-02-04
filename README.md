@@ -205,7 +205,8 @@ $client = Client::create(
 $fetched = Client::get(ClientData::make(['id' => $client->id]))->execute();
 
 // Search with pagination helpers
-$results = Client::find()->email('acme.test')->execute();
+$filters = ClientData::make(['email' => 'billing@acme.test']);
+$results = Client::find($filters)->execute();
 ```
 
 See [docs/clients/README.md](docs/clients/README.md) for pagination and filtering options.

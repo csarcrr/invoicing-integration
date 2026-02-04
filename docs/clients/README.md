@@ -26,6 +26,10 @@ $client = Client::create($clientData)->execute();
 // Later, retrieve the client
 $existingClient = ClientData::make(['id' => $client->id]);
 $fetched = Client::get($existingClient)->execute();
+
+// Paginate with filters
+$filters = ClientData::make(['email' => 'acme.test']);
+$results = Client::find($filters)->execute();
 ```
 
 Example client payload (`$fetched->toArray()`):

@@ -10,11 +10,11 @@ Entry point for client management operations.
 use CsarCrr\InvoicingIntegration\Facades\Client;
 ```
 
-| Method                               | Return Type    | Description                           |
-| ------------------------------------ | -------------- | ------------------------------------- |
-| `Client::create(ClientData $client)` | `CreateClient` | Creates a new client builder instance |
-| `Client::get(ClientData $client)`    | `GetClient`    | Creates a client retrieval instance   |
-| `Client::find()`                     | `FindClient`   | Lists/paginates provider clients      |
+| Method                                      | Return Type    | Description                           |
+| ------------------------------------------- | -------------- | ------------------------------------- |
+| `Client::create(ClientData $client)`        | `CreateClient` | Creates a new client builder instance |
+| `Client::get(ClientData $client)`           | `GetClient`    | Creates a client retrieval instance   |
+| `Client::find(?ClientData $filters = null)` | `FindClient`   | Lists/paginates provider clients      |
 
 ## CreateClient Contract
 
@@ -58,6 +58,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
 | `getTotalPages()`  | `int`        | Total pages reported by provider              |
+| `getClient()`      | `ClientData` | Current filter DTO (email, VAT, status, etc.) |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
 > outside the available range.

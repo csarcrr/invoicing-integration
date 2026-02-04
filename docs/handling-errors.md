@@ -55,7 +55,6 @@ These exceptions are thrown before the request is sent to the provider, during l
 | Exception                                         | When Thrown                                 |
 | ------------------------------------------------- | ------------------------------------------- |
 | `InvoiceRequiresClientVatException`               | Client provided with empty VAT              |
-| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                  |
 | `CreditNoteReasonIsMissingException`              | NC type without credit note reason          |
 | `NeedsDateToSetLoadPointException`                | Transport without origin date               |
 | `InvalidCountryException`                         | Invalid ISO country code                    |
