@@ -23,15 +23,11 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 $results = Client::find()->execute();
 
 foreach ($results->getList() as $client) {
-    printf(
-        "%s <%s>\n",
-        $client->name,
-        $client->email ?? 'no-email'
-    );
+    // do stuff
 }
 ```
 
-- `getList()` returns a `Collection` of `ClientDataObject` instances populated by
+- `getList()` returns a `Collection` of `ClientData` instances populated by
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
@@ -58,8 +54,7 @@ the `HasPaginator` trait.
 $results = Client::find()->execute();
 
 while ($results->getCurrentPage() < $results->getTotalPages()) {
-    // Process current page
-    syncClients($results->getList());
+    // do stuff
 
     // Move to the next provider page
     $results->next()->execute();
@@ -83,7 +78,7 @@ try {
 
     do {
         foreach ($clients->getList() as $client) {
-            importClient($client);
+            // do stuff
         }
 
         if ($clients->getCurrentPage() < $clients->getTotalPages()) {
