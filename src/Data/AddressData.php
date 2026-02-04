@@ -29,7 +29,7 @@ class AddressData extends Data implements DataNeedsValidation
     ) {}
 
     /**
-     * @return Closure
+     * @return array<string, array<int, Closure(string, mixed, Closure): void>>
      */
     public static function rules(): array
     {

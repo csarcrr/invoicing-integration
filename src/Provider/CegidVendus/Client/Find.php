@@ -77,19 +77,9 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
         $this->payload->put('page', $this->getCurrentPage());
     }
 
-    private function buildEmail(): void
-    {
-        is_string($this->client->email) && $this->payload->put('email', $this->client->email);
-    }
-
     private function buildVat(): void
     {
         (is_string($this->client->vat) || is_int($this->client->vat)) && $this->payload->put('fiscal_id', $this->client->vat);
-    }
-
-    private function buildName(): void
-    {
-        is_string($this->client->name) && $this->payload->put('name', $this->client->name);
     }
 
     private function buildExternalReference(): void
@@ -100,16 +90,6 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     private function buildStatus(): void
     {
         is_string($this->client->status) && $this->payload->put('status', $this->client->status);
-    }
-
-    private function buildId(): void
-    {
-        is_int($this->client->id) && $this->payload->put('id', $this->client->id);
-    }
-
-    private function buildDate(): void
-    {
-        $this->client->date instanceof Carbon && $this->payload->put('date', $this->client->date->toDateString());
     }
 
     protected function updatePaginationDetails(Response $results): void

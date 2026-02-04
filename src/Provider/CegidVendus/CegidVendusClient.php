@@ -46,6 +46,9 @@ class CegidVendusClient
         $this->client->additional($additionalProperties);
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     protected function getClientAllowedProperties(): Collection
     {
         return collect($this->client->toArray())->filter(

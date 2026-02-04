@@ -4,7 +4,6 @@ namespace CsarCrr\InvoicingIntegration\Configuration;
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
-use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -12,7 +11,7 @@ final class HttpConfiguration
 {
     public function __construct() {}
 
-    public static function get(): Factory|PendingRequest
+    public static function get(): PendingRequest
     {
         return match (ProviderConfiguration::getProvider()) {
             Provider::CEGID_VENDUS => self::cegidVendus(),
