@@ -8,5 +8,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 interface GetClient
 {
-    public function execute(): ClientData;
+    public function execute(): self;
+
+    public function getClient(): ClientData;
 }

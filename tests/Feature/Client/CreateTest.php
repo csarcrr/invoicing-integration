@@ -10,7 +10,7 @@ test('create client request is successful', function (Provider $provider, string
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789]);
-    $data = Client::create($client)->execute();
+    $data = Client::create($client)->execute()->getClient();
 
     expect($data->id)->toBeInt()->and($data->name)->toBeString()->and($data->vat)->toBeInt();
 

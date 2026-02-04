@@ -10,7 +10,7 @@ test('a client get request is successful', function (Provider $provider, string 
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute();
+    $data = Client::get($client)->execute()->getClient();
 
     expect($data->name)->toBeString()
         ->and($data->email)->toBeString()
@@ -24,7 +24,7 @@ test('supported properties are not filled in additional data', function (Provide
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute();
+    $data = Client::get($client)->execute()->getClient();
 
     expect($data->getAdditionalData())
         ->not->toHaveKey('postalCode')

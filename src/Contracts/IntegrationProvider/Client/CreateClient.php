@@ -9,10 +9,12 @@ use Illuminate\Support\Collection;
 
 interface CreateClient
 {
-    public function execute(): ClientData;
+    public function execute(): self;
 
     /**
      * @return Collection<string, mixed>
      */
     public function getPayload(): Collection;
+
+    public function getClient(): ClientData;
 }

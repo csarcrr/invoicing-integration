@@ -10,7 +10,9 @@ use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Transformers\Name;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Rule;
+use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Attributes\WithTransformer;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Optional;
@@ -41,12 +43,13 @@ class ClientData extends Data implements DataNeedsValidation
         public Optional|string $externalReference,
         public Optional|string $status,
 
-        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'Y-m-d')]
-        public Optional|Carbon $date,
-
         #[MapName(SnakeCaseMapper::class)]
         public Optional|bool $emailNotification = true,
         #[MapName(SnakeCaseMapper::class)]
         public Optional|bool $irsRetention = false,
+
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'Y-m-d')]
+        public Carbon|Optional $date,
     ) {}
 }

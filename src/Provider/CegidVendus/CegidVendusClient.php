@@ -25,6 +25,10 @@ class CegidVendusClient
         'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention', 'date',
     ];
 
+    public function getClient(): ClientData {
+        return $this->client;
+    }
+
     /**
      * @param  array<string, mixed>  $data
      *

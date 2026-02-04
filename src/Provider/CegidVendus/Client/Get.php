@@ -20,7 +20,7 @@ class Get extends CegidVendusClient implements GetClient
     /**
      * @throws InvalidArgumentException|\Throwable
      */
-    public function execute(): ClientData
+    public function execute(): self
     {
         throw_if(! is_int($this->client->id), InvalidArgumentException::class, 'Client ID is required.');
 
@@ -30,6 +30,6 @@ class Get extends CegidVendusClient implements GetClient
 
         $this->updateClientData($request->json());
 
-        return $this->client;
+        return $this;
     }
 }

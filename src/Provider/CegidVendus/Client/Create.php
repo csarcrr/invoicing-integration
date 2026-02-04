@@ -22,7 +22,7 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
         $this->payload = collect();
     }
 
-    public function execute(): ClientData
+    public function execute(): self
     {
         $response = Http::provider()->post('/clients', $this->getPayload());
 
@@ -32,7 +32,7 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
 
         $this->updateClientData($data);
 
-        return $this->client;
+        return $this;
     }
 
     /**

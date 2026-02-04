@@ -19,4 +19,4 @@ it('it builds the correct payload', function (Provider $provider, string $fixtur
     ]));
 
     expect($data->getPayload())->toMatchArray($payload);
-})->with('providers', ['search'])->only();
+})->with('providers', ['search']);
