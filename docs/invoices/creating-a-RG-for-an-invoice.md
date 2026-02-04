@@ -25,7 +25,18 @@ $invoice->payment($payment);
 // Issue the receipt
 $result = $invoice->execute();
 
-echo $result->sequence; // e.g., "RG 01P2025/1"
+// $result->sequence contains the receipt number (see JSON example below)
+```
+
+Sample receipt payload:
+
+```json
+{
+    "id": 789,
+    "sequence": "RG 01P2025/1",
+    "total": 10000,
+    "totalNet": 8130
+}
 ```
 
 ## Multiple Payment Methods

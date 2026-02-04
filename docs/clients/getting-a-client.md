@@ -13,10 +13,19 @@ $clientData = ClientData::make(['id' => 12345]);
 // Fetch the client from the provider
 $client = Client::get($clientData)->execute();
 
-// Access client properties
-echo $client->getName();    // "John Doe"
-echo $client->getEmail();   // "john@example.com"
-echo $client->getVat();     // "123456789"
+// Access client data via public properties or $client->toArray()
+$payload = $client->toArray();
+```
+
+Example payload:
+
+```json
+{
+    "id": 12345,
+    "name": "John Doe",
+    "vat": "PT123456789",
+    "email": "john@example.com"
+}
 ```
 
 ## Requirements
@@ -41,20 +50,20 @@ After calling `execute()`, the `ClientData` object is populated with all availab
 $clientData = ClientData::make(['id' => 12345]);
 $client = Client::get($clientData)->execute();
 
-// All properties are now available
-$client->getId();               // 12345
-$client->getName();             // Client name
-$client->getVat();              // Tax ID / Fiscal ID
-$client->getEmail();            // Email address
-$client->getPhone();            // Phone number
-$client->getAddress();          // Street address
-$client->getCity();             // City
-$client->getPostalCode();       // Postal code
-$client->getCountry();          // Country code
-$client->getNotes();            // Internal notes
-$client->getIrsRetention();     // IRS retention flag
-$client->getEmailNotification();// Email notification flag
-$client->getDefaultPayDue();    // Default payment due days
+// All properties are now available via public attributes
+$client->id;               // 12345
+$client->name;             // Client name
+$client->vat;              // Tax ID / Fiscal ID
+$client->email;            // Email address
+$client->phone;            // Phone number
+$client->address;          // Street address
+$client->city;             // City
+$client->postalCode;       // Postal code
+$client->country;          // Country code
+$client->notes;            // Internal notes
+$client->irsRetention;     // IRS retention flag (bool)
+$client->emailNotification;// Email notification flag (bool)
+$client->defaultPayDue;    // Default payment due days
 ```
 
 > **Note:** Properties not set in the provider will return `null`.
@@ -71,13 +80,21 @@ $storedClientId = 12345;
 $clientData = ClientData::make(['id' => $storedClientId]);
 $client = Client::get($clientData)->execute();
 
-// Display client information
-echo "Name: " . $client->getName() . "\n";
-echo "VAT: " . $client->getVat() . "\n";
-echo "Email: " . $client->getEmail() . "\n";
-echo "Address: " . $client->getAddress() . "\n";
-echo "City: " . $client->getCity() . "\n";
-echo "Country: " . $client->getCountry() . "\n";
+// $client now holds the hydrated ClientData instance (see JSON example below)
+```
+
+Example provider payload (`$client->toArray()`):
+
+```json
+{
+    "id": 12345,
+    "name": "John Doe",
+    "vat": "PT123456789",
+    "email": "john@example.com",
+    "address": "Av. da Liberdade, 1",
+    "city": "Lisbon",
+    "country": "PT"
+}
 ```
 
 ## Using Retrieved Clients with Invoices

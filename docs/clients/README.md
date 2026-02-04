@@ -11,7 +11,8 @@ Manage clients in your invoicing provider using the Client API. Clients can be c
 ## Quick Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Facades\Client;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Create a new client (hydrated through spatie/laravel-data)
 $clientData = ClientData::make([
@@ -22,14 +23,25 @@ $clientData = ClientData::make([
 
 $client = Client::create($clientData)->execute();
 
-echo $client->getId(); // Provider-assigned ID
-
 // Later, retrieve the client
-$existingClient = ClientData::make(['id' => $client->getId()]);
+$existingClient = ClientData::make(['id' => $client->id]);
 $fetched = Client::get($existingClient)->execute();
-
-echo $fetched->getName(); // "John Doe"
 ```
+
+Example client payload (`$fetched->toArray()`):
+
+```json
+{
+    "id": 98765,
+    "name": "John Doe",
+    "vat": "PT123456789",
+    "email": "john@example.com"
+}
+```
+
+> `ClientData` and the other DTOs expose **typed public properties**. Access
+> values directly via `$client->name`, `$client->vat`, etc. instead of calling
+> getters.
 
 ### Provider-Specific Properties
 
@@ -40,13 +52,15 @@ object is powered by `spatie/laravel-data`, you can hydrate it via
 `additional` bag. They also appear automatically when you call `toArray()`:
 
 ```php
-$extra = $fetched->getAdditionalData();
+$payload = $fetched->toArray();
 
-$status = $extra['status'] ?? null;
-$priceGroup = $extra['price_group']['name'] ?? null;
+$status = $payload['status'] ?? null;
+$priceGroup = $payload['price_group']['name'] ?? null;
 ```
 
-Use this to inspect provider metadata without polluting the public API surface.
+Use `toArray()` to inspect provider metadata without polluting the public API
+surface. Anything not mapped to a public property remains available in the
+generated array.
 
 ## When to Use Client Management
 

@@ -131,11 +131,21 @@ $invoice->creditNoteReason('Product damaged during shipping');
 // Issue
 $result = $invoice->execute();
 
-echo $result->sequence; // e.g., "NC 01P2025/1"
-
 // Save credit note PDF if provided by the provider
 if ($result->output) {
     $result->output->save('credit-notes/' . $result->output->fileName());
+}
+```
+
+Example credit-note payload:
+
+```json
+{
+    "id": 222,
+    "sequence": "NC 01P2025/1",
+    "total": -1500,
+    "totalNet": -1219,
+    "atcudHash": "NC 01P2025/1 XYZ999"
 }
 ```
 

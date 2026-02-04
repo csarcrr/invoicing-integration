@@ -29,7 +29,16 @@ $filename = $output->fileName(); // e.g., "ft_01p2025_1.pdf"
 
 // Save to storage
 $path = $output->save('invoices/' . $filename);
-echo $path; // Full path to saved file
+```
+
+Example saved file info:
+
+```json
+{
+    "fileName": "ft_01p2025_1.pdf",
+    "relativePath": "invoices/ft_01p2025_1.pdf",
+    "absolutePath": "storage/app/invoices/ft_01p2025_1.pdf"
+}
 ```
 
 ## Selecting Output Format
@@ -173,7 +182,22 @@ $id = $result->id;              // Provider's internal ID
 // Save the document if provided by the provider
 if ($result->output) {
     $path = $result->output->save("invoices/{$sequence}.pdf");
-    echo "Invoice {$sequence} saved to: {$path}";
+}
+```
+
+Example result plus output metadata:
+
+```json
+{
+    "invoice": {
+        "id": 321,
+        "sequence": "FT 01P2025/1"
+    },
+    "output": {
+        "fileName": "ft_01p2025_1.pdf",
+        "relativePath": "invoices/ft_01p2025_1.pdf",
+        "storagePath": "storage/app/invoices/ft_01p2025_1.pdf"
+    }
 }
 ```
 

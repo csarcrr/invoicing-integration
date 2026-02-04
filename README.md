@@ -210,6 +210,9 @@ $results = Client::find()->email('acme.test')->execute();
 
 See [docs/clients/README.md](docs/clients/README.md) for pagination and filtering options.
 
+> All DTOs expose public typed properties. Access values via `$client->name`,
+> `$invoice->sequence`, etc.—legacy getter methods no longer exist.
+
 ### Common validation rules
 
 - Receipts (RG) are the only document without items

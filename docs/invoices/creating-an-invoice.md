@@ -256,10 +256,24 @@ $invoice->notes('Thank you for your purchase.');
 // Issue the invoice
 $result = $invoice->execute();
 
-// Access the result
-echo $result->sequence;  // "FR 01P2025/1"
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName());
+}
+```
+
+Example invoice result (`$result->toArray()`):
+
+```json
+{
+    "id": 9876,
+    "sequence": "FR 01P2025/1",
+    "total": 3000,
+    "totalNet": 2439,
+    "atcudHash": "FR 01P2025/1 ABC123",
+    "output": {
+        "format": "pdf_base64",
+        "fileName": "fr_01p2025_1.pdf"
+    }
 }
 ```
 

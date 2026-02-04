@@ -14,7 +14,17 @@ $clientData = ClientData::make([
 
 $client = Client::create($clientData)->execute();
 
-echo $client->getId(); // Provider-assigned ID (e.g., 12345)
+$clientId = $client->id; // Provider-assigned ID (e.g., 12345)
+```
+
+Example response (`$client->toArray()`):
+
+```json
+{
+    "id": 12345,
+    "name": "John Doe",
+    "vat": "PT123456789"
+}
 ```
 
 ## ClientData Properties
@@ -81,10 +91,25 @@ $clientData = ClientData::make([
 $client = Client::create($clientData)->execute();
 
 // The client now has an ID assigned by the provider
-$clientId = $client->getId();
+$clientId = $client->id;
+```
 
-// Store this ID for future use (e.g., in your database)
-echo "Client created with ID: {$clientId}";
+Example provider payload:
+
+```json
+{
+    "id": 54321,
+    "name": "Acme Corporation",
+    "vat": "PT501234567",
+    "email": "billing@acme.example.com",
+    "phone": "210000000",
+    "address": "Avenida da Liberdade, 100",
+    "city": "Lisboa",
+    "postalCode": "1250-096",
+    "country": "PT",
+    "defaultPayDue": 30,
+    "emailNotification": true
+}
 ```
 
 ## Using Created Clients with Invoices

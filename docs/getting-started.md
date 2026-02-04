@@ -82,8 +82,19 @@ $invoice->item($item);
 // Issue the invoice
 $result = $invoice->execute();
 
-// Get the invoice sequence number
-echo $result->sequence; // e.g., "FT 01P2025/1"
+// $result is an instance of InvoiceData (see JSON example below)
+```
+
+Sample invoice response:
+
+```json
+{
+    "id": 4567,
+    "sequence": "FT 01P2025/1",
+    "total": 1000,
+    "totalNet": 813,
+    "atcudHash": null
+}
 ```
 
 When you need to pass structured data (clients, payments, etc.), prefer the

@@ -51,7 +51,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 | Method             | Return Type  | Description                                   |
 | ------------------ | ------------ | --------------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request              |
-| `getList()`        | `Collection` | Collection of `ClientDataObject` results      |
+| `getList()`        | `Collection` | `Collection<ClientData>` results              |
 | `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
 | `next()`           | `self`       | Move to the next page                         |
 | `previous()`       | `self`       | Go back one page                              |
@@ -129,17 +129,15 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInv
 
 ---
 
-## Value Objects
+## Value Objects & DTOs
 
-All value objects extend `spatie/laravel-data` and expose a `::make()` factory. Use
-`::make([...])` (or resolve them via dependency injection) whenever you need
-validation, transformers, and default values to run before issuing requests.
+All DTOs extend `spatie/laravel-data\Data`, expose a `::make()` factory, and rely
+on **public typed properties** rather than getters. Access values with
+`$dto->property` and rely on `Optional`-typed attributes to differentiate between
+`null` and "not provided" states. Always call `::make([...])` (or resolve from the
+container) so validation rules and transformers run before the HTTP request.
 
 ### ClientData
-
-```php
-
-```
 
 **Usage:**
 
@@ -151,58 +149,34 @@ ClientData::make([
 ]);
 ```
 
-**Methods (fluent, return self):**
+**Public Properties:**
 
-| Method                                  | Parameter         | Description              | Throws |
-| --------------------------------------- | ----------------- | ------------------------ | ------ |
-| `make(array $attributes)`               | Attribute array   | Factory helper           | -      |
-| `id(int $id)`                           | Provider ID       | Set provider-assigned ID | -      |
-| `name(string $name)`                    | Name string       | Set client name          | -      |
-| `vat(string $vat)`                      | VAT/Fiscal ID     | Set tax identification   | -      |
-| `address(string $address)`              | Address string    | Set street address       | -      |
-| `city(string $city)`                    | City name         | Set city                 | -      |
-| `postalCode(string $postalCode)`        | Postal code       | Set postal code          | -      |
-| `country(string $country)`              | ISO 2-letter code | Set country              | -      |
-| `email(string $email)`                  | Email address     | Set email (validated)    | -      |
-| `phone(string $phone)`                  | Phone number      | Set phone                | -      |
-| `notes(string $notes)`                  | Notes text        | Set internal notes       | -      |
-| `irsRetention(bool $retention)`         | Boolean           | Enable IRS retention     | -      |
-| `emailNotification(bool $notification)` | Boolean           | Enable email alerts      | -      |
-| `defaultPayDue(int $days)`              | Days              | Set default payment due  | -      |
+| Property            | Type               | Description                         |
+| ------------------- | ------------------ | ----------------------------------- |
+| `id`                | `Optional<int>`    | Provider-assigned identifier        |
+| `name`              | `Optional<string>` | Client name (auto-trimmed)          |
+| `vat`               | `Optional<string>` | VAT / fiscal ID                     |
+| `email`             | `Optional<string>` | Email (validated)                   |
+| `country`           | `Optional<string>` | ISO 3166-1 alpha-2 code             |
+| `city`              | `Optional<string>` | City name                           |
+| `address`           | `Optional<string>` | Street address                      |
+| `postalCode`        | `Optional<string>` | Postal/ZIP code                     |
+| `phone`             | `Optional<string>` | Phone number                        |
+| `notes`             | `Optional<string>` | Internal notes                      |
+| `defaultPayDue`     | `Optional<int>`    | Default payment due (days)          |
+| `externalReference` | `Optional<string>` | Provider-specific reference         |
+| `status`            | `Optional<string>` | Provider status                     |
+| `emailNotification` | `Optional<bool>`   | Whether to send documents via email |
+| `irsRetention`      | `Optional<bool>`   | IRS withholding flag                |
+| `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`)    |
 
-**Getter Methods:**
-
-| Method                   | Return Type |
-| ------------------------ | ----------- |
-| `getId()`                | `?int`      |
-| `getName()`              | `?string`   |
-| `getVat()`               | `?string`   |
-| `getAddress()`           | `?string`   |
-| `getCity()`              | `?string`   |
-| `getPostalCode()`        | `?string`   |
-| `getCountry()`           | `?string`   |
-| `getEmail()`             | `?string`   |
-| `getPhone()`             | `?string`   |
-| `getNotes()`             | `?string`   |
-| `getIrsRetention()`      | `?bool`     |
-| `getEmailNotification()` | `?bool`     |
-| `getDefaultPayDue()`     | `?int`      |
-| `getAdditionalData()`    | `array`     |
-
-`toArray()` includes both declared properties and any values stored in
-`getAdditionalData()`, mirroring the provider payload. Because `ClientData`
-extends `Spatie\LaravelData\Data`, calling `make()` (or resolving it via
-dependency injection) guarantees field transformers, validation attributes, and
-default values run before the payload is sent to a provider.
+> Access DTO values directly: `$client->name`, `$client->vat`, etc. Use
+> `$client->toArray()` when you need a payload-friendly structure (includes
+> provider-specific metadata stored on the DTO).
 
 ---
 
 ### Item
-
-```php
-
-
-```
 
 **Instantiation:**
 

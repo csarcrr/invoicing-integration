@@ -24,8 +24,8 @@ $results = Client::find()->execute();
 foreach ($results->getList() as $client) {
     printf(
         "%s <%s>\n",
-        $client->getName(),
-        $client->getEmail() ?? 'no-email'
+        $client->name,
+        $client->email ?? 'no-email'
     );
 }
 ```
