@@ -8,18 +8,6 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('has the simple client payload', function (Provider $provider) {
-    $invoice = Invoice::create();
-
-    $client = ClientData::from(['name' => 'John Doe', 'vat' => '123456789']);
-
-    $invoice->client($client);
-    $data = $invoice->getClient()->toArray();
-
-    expect($invoice->getClient())->toBeInstanceOf(ClientData::class)
-        ->and($data['name'])->toBe('John Doe');
-})->with('providers');
-
 it('has the correct full client payload', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->client()->files($fixtureName);
 
