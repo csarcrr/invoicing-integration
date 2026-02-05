@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeU
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('can assign an item with all properties', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with all item properties', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -30,7 +30,7 @@ it('can assign an item with all properties', function (Provider $provider, strin
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['item']);
 
-it('can assign multiple items', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with multiple items', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -40,7 +40,7 @@ it('can assign multiple items', function (Provider $provider, string $fixtureNam
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['multiple_items']);
 
-it('sets item types correctly', function (Provider $provider, string $fixtureName, ItemType $type) {
+it('transforms to provider payload with correct item type', function (Provider $provider, string $fixtureName, ItemType $type) {
     $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -60,7 +60,7 @@ it('sets item types correctly', function (Provider $provider, string $fixtureNam
     ['item_type_other', ItemType::Other],
 ]);
 
-it('sets tax types correctly', function (Provider $provider, string $fixtureName, ItemTax $taxType) {
+it('transforms to provider payload with correct tax type', function (Provider $provider, string $fixtureName, ItemTax $taxType) {
     $data = fixtures()->request()->invoice()->item()->tax()->files($fixtureName);
 
     $invoice = Invoice::create();

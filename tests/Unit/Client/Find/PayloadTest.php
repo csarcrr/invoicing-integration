@@ -5,7 +5,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
-it('it builds the correct payload', function (Provider $provider, string $fixture) {
+it('transforms client search filters to provider payload', function (Provider $provider, string $fixture) {
     $payload = fixtures()->request()->client()->files($fixture);
 
     $data = Client::find(ClientData::from([

@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('applies a note to the invoice', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with invoice notes', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();

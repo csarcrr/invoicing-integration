@@ -43,7 +43,7 @@ it('can assign multiple payments', function (Provider $provider) {
     expect($invoice->getPayments())->toHaveCount(2);
 })->with('providers');
 
-it('has expected payload', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with single payment', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -59,7 +59,7 @@ it('has expected payload', function (Provider $provider, string $fixtureName) {
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['payment']);
 
-it('has expected payload with multiple payments', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with multiple payments', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
 
     $invoice = Invoice::create();

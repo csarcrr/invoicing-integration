@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('can apply a credit note reason', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with credit note reason', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -54,7 +54,7 @@ it('fails when reason is not applied', function (Provider $provider) {
     $invoice->getPayload();
 })->with('providers')->throws(CreditNoteReasonIsMissingException::class);
 
-it('results in nothing when applying reason to an invoice', function (Provider $provider, string $fixtureName) {
+it('ignores credit note reason when invoice type is not credit note', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create();

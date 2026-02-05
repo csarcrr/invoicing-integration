@@ -13,7 +13,7 @@ it('has pdf has the default output', function (Provider $provider) {
     expect($invoice->getOutputFormat())->toBe(OutputFormat::PDF_BASE64);
 })->with('providers');
 
-it('has the correct payload to request a pdf response', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with pdf output format', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->output()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -23,7 +23,7 @@ it('has the correct payload to request a pdf response', function (Provider $prov
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['has_pdf']);
 
-it('has the correct payload to request a escpos response', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with escpos output format', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->output()->files($fixtureName);
 
     $invoice = Invoice::create();

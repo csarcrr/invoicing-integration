@@ -6,7 +6,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
-it('builds the correct payload with all parameters', function (Provider $provider) {
+it('transforms to provider payload with all client fields', function (Provider $provider) {
     $data = fixtures()->request()->client()->files('client_full');
 
     $client = ClientData::from([

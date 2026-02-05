@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('assigns the correct due date payload', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with due date', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();

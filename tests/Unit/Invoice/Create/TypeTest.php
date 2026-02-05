@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('has the default type as FT', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with default invoice type', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -19,7 +19,7 @@ it('has the default type as FT', function (Provider $provider, string $fixtureNa
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['default_type']);
 
-it('has the correct payload for invoices', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+it('transforms to provider payload with correct invoice type', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $invoice = Invoice::create();

@@ -41,7 +41,7 @@ it('assigns a transport to the invoice', function (Provider $provider) {
         ->and($invoice->getTransport()->destination->address)->toBe('Rua dos Paninhos, 525');
 })->with('providers');
 
-it('has a valid payload', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with transport details', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
     $invoice = Invoice::create();

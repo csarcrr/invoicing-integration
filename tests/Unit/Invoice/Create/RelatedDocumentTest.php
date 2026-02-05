@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('can add related document to invoice', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+it('transforms to provider payload with related document', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create();
@@ -30,7 +30,7 @@ it('can add related document to invoice', function (Provider $provider, string $
     ['normal_related_document', InvoiceType::Receipt],
 ]);
 
-it('can add related document to a NC', function (Provider $provider, string $fixtureName) {
+it('transforms to provider payload with credit note related document', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create();
