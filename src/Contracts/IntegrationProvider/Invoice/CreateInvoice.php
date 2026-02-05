@@ -16,7 +16,9 @@ use Illuminate\Support\Collection;
 
 interface CreateInvoice
 {
-    public function execute(): InvoiceData;
+    public function execute(): self;
+
+    public function getInvoice(): InvoiceData;
 
     public function client(ClientData $client): self;
 

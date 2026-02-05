@@ -45,6 +45,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     use HasTransport;
     use HasType;
 
+    protected InvoiceData $invoice;
+
     /**
      * @var Collection<string, mixed>
      */
@@ -73,7 +75,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payments = collect();
     }
 
-    public function execute(): InvoiceData
+    public function execute(): self
     {
         $response = Http::provider()->post('documents', $this->getPayload());
 
@@ -89,7 +91,7 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             )
             : null;
 
-        return InvoiceData::from([
+        $this->invoice = InvoiceData::from([
             'id' => (int) ($data['id'] ?? 0),
             'sequence' => (string) ($data['number'] ?? ''),
             'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
@@ -97,6 +99,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             'atcudHash' => $data['atcud'] ?? null,
             'output' => $output,
         ]);
+
+        return $this;
     }
 
     /**
@@ -125,13 +129,18 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         return $this->payload;
     }
 
+    public function getInvoice(): InvoiceData
+    {
+        return $this->invoice;
+    }
+
     protected function buildType(): void
     {
         $this->payload->put('type', $this->getType()->value);
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|\Throwable
      */
     protected function buildDueDate(): void
     {
