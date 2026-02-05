@@ -40,7 +40,7 @@ it('can save the output to pdf', function (Provider $provider, string $fixtureNa
 
     $invoice = Invoice::create();
     $invoice->item(ItemData::from(['reference' => 'item-1']));
-    $data = $invoice->execute();
+    $data = $invoice->execute()->getInvoice();
 
     $path = "invoices/{$data->output->fileName()}";
 
@@ -55,7 +55,7 @@ it('can output escpos', function (Provider $provider, string $fixtureName) {
 
     $invoice = Invoice::create();
     $invoice->item(ItemData::from(['reference' => 'item-1']));
-    $data = $invoice->execute();
+    $data = $invoice->execute()->getInvoice();
 
     $path = "invoices/{$data->output->fileName()}";
 
@@ -70,7 +70,7 @@ it('can save the output under a custom name and path', function (Provider $provi
 
     $invoice = Invoice::create();
     $invoice->item(ItemData::from(['reference' => 'item-1']));
-    $data = $invoice->execute();
+    $data = $invoice->execute()->getInvoice();
 
     $path = 'invoices/custom-name.pdf';
 
@@ -90,7 +90,7 @@ it('is able to sanitize the path and filename when saving', function (
 
     $invoice = Invoice::create();
     $invoice->item(ItemData::from(['reference' => 'item-1']));
-    $data = $invoice->execute();
+    $data = $invoice->execute()->getInvoice();
 
     $savePath = $data->output->save($invalidPath);
 
@@ -125,7 +125,7 @@ it('outputs null when there is no invoice output provided', function (Provider $
 
     $invoice = Invoice::create();
     $invoice->item(ItemData::from(['reference' => 'item-1']));
-    $data = $invoice->execute();
+    $data = $invoice->execute()->getInvoice();
 
     expect($data->output)->toBeNull();
 })->with('providers', ['output_with_no_output']);
