@@ -2,7 +2,7 @@
 
 Need to check if a feature is supported before you start coding? This page provides a quick reference matrix showing what's implemented across different providers and document types.
 
-The columns compare the **Invoicing** interface (the package's abstract API) with each concrete provider implementation (currently **Cegid Vendus**). If a feature shows ✅ for both, you're good to go!
+The columns show what's implemented for each provider: **Cegid Vendus**, **Moloni**, and **Invoice Express**.
 
 **Document types at a glance:**
 
@@ -24,13 +24,13 @@ The columns compare the **Invoicing** interface (the package's abstract API) wit
 
 Features for managing clients independently of invoices.
 
-|               | Invoicing | Cegid Vendus |
-| ------------- | --------- | ------------ |
-| Create Client | ✅        | ✅           |
-| Get Client    | ✅        | ✅           |
-| Update Client | ❌        | ❌           |
-| Delete Client | ❌        | ❌           |
-| List Clients  | ✅        | ✅           |
+|               | Cegid Vendus | Moloni | Invoice Express |
+| ------------- | ------------ | ------ | --------------- |
+| Create Client | ✅           | ❌     | ❌              |
+| Get Client    | ✅           | ❌     | ❌              |
+| Update Client | ❌           | ❌     | ❌              |
+| Delete Client | ❌           | ❌     | ❌              |
+| List Clients  | ✅           | ❌     | ❌              |
 
 # Invoicing
 
@@ -42,69 +42,69 @@ Features that apply when issuing an Invoicing.
   <thead>
     <tr>
       <th rowspan="2">Feature</th>
-      <th colspan="2">FT</th>
-      <th colspan="2">FR</th>
-      <th colspan="2">RG</th>
-      <th colspan="2">FS</th>
-      <th colspan="2">NC</th>
+      <th colspan="3">FT</th>
+      <th colspan="3">FR</th>
+      <th colspan="3">RG</th>
+      <th colspan="3">FS</th>
+      <th colspan="3">NC</th>
     </tr>
     <tr>
-      <th>Invoicing</th><th>Cegid Vendus</th>
-      <th>Invoicing</th><th>Cegid Vendus</th>
-      <th>Invoicing</th><th>Cegid Vendus</th>
-      <th>Invoicing</th><th>Cegid Vendus</th>
-      <th>Invoicing</th><th>Cegid Vendus</th>
+      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
       <td><a href="/#/features?id=client">Client</a></td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=item">Item</a></td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>⛔</td><td>⛔</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=payment">Payment</a></td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
     </tr>
     <tr>
       <td>Due Date</td>
-      <td>✅</td><td>✅</td>
-      <td>⛔</td><td>⛔</td>
-      <td>⛔</td><td>⛔</td>
-      <td>⛔</td><td>⛔</td>
-      <td>⛔</td><td>⛔</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=transport">Transport</a></td>
-      <td>✅</td><td>❌</td>
-      <td>⛔</td><td>⛔</td>
-      <td>⛔</td><td>⛔</td>
-      <td>⛔</td><td>⛔</td>
-      <td>⛔</td><td>⛔</td>
+      <td>❌</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>⛔</td><td>❌</td><td>❌</td>
     </tr>
     <tr>
       <td>Related Document</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>✅</td><td>✅</td>
-      <td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>❌</td><td>❌</td><td>❌</td>
     </tr>
   </tbody>
 </table>
@@ -117,58 +117,58 @@ Features that are "shared" between multiple Invoicing types.
 
 #### Outputing
 
-|               | Invoicing | Cegid Vendus |
-| ------------- | --------- | ------------ |
-| Save as PDF   | ✅        | ✅           |
-| Obtain ESCPOS | ✅        | ✅           |
+|               | Cegid Vendus | Moloni | Invoice Express |
+| ------------- | ------------ | ------ | --------------- |
+| Save as PDF   | ✅           | ❌     | ❌              |
+| Obtain ESCPOS | ✅           | ❌     | ❌              |
 
 #### Client
 
-|               | Invoicing | Cegid Vendus |
-| ------------- | --------- | ------------ |
-| Name          | ✅        | ✅           |
-| VAT           | ✅        | ✅           |
-| Address       | ✅        | ✅           |
-| City          | ✅        | ✅           |
-| Postal Code   | ✅        | ✅           |
-| Country       | ✅        | ✅           |
-| E-mail        | ✅        | ✅           |
-| Phone         | ✅        | ✅           |
-| IRS Retention | ✅        | ✅           |
+|               | Cegid Vendus | Moloni | Invoice Express |
+| ------------- | ------------ | ------ | --------------- |
+| Name          | ✅           | ❌     | ❌              |
+| VAT           | ✅           | ❌     | ❌              |
+| Address       | ✅           | ❌     | ❌              |
+| City          | ✅           | ❌     | ❌              |
+| Postal Code   | ✅           | ❌     | ❌              |
+| Country       | ✅           | ❌     | ❌              |
+| E-mail        | ✅           | ❌     | ❌              |
+| Phone         | ✅           | ❌     | ❌              |
+| IRS Retention | ✅           | ❌     | ❌              |
 
 #### Item
 
-|                                 | Invoicing | Cegid Vendus |
-| ------------------------------- | --------- | ------------ |
-| Reference                       | ✅        | ✅           |
-| Item ID                         | ❌        | ❌           |
-| Description                     | ✅        | ✅           |
-| Price                           | ✅        | ✅           |
-| Tax                             | ✅        | ✅           |
-| Tax exempt with reason          | ✅        | ✅           |
-| Type                            | ✅        | ✅           |
-| Percentage Discount             | ✅        | ✅           |
-| Amount Discount                 | ✅        | ✅           |
-| Related Document (Credit Notes) | ✅        | ✅           |
+|                                 | Cegid Vendus | Moloni | Invoice Express |
+| ------------------------------- | ------------ | ------ | --------------- |
+| Reference                       | ✅           | ❌     | ❌              |
+| Item ID                         | ❌           | ❌     | ❌              |
+| Description                     | ✅           | ❌     | ❌              |
+| Price                           | ✅           | ❌     | ❌              |
+| Tax                             | ✅           | ❌     | ❌              |
+| Tax exempt with reason          | ✅           | ❌     | ❌              |
+| Type                            | ✅           | ❌     | ❌              |
+| Percentage Discount             | ✅           | ❌     | ❌              |
+| Amount Discount                 | ✅           | ❌     | ❌              |
+| Related Document (Credit Notes) | ✅           | ❌     | ❌              |
 
 #### Payment
 
-|                              | Invoicing | Cegid Vendus |
-| ---------------------------- | --------- | ------------ |
-| Amount                       | ✅        | ✅           |
-| Method (with integration ID) | ✅        | ✅           |
+|                              | Cegid Vendus | Moloni | Invoice Express |
+| ---------------------------- | ------------ | ------ | --------------- |
+| Amount                       | ✅           | ❌     | ❌              |
+| Method (with integration ID) | ✅           | ❌     | ❌              |
 
 #### Transport
 
 Only applies to certain types of documents - See "Transport" compatibility in each type.
 
-|                                                   | Invoicing | Cegid Vendus |
-| ------------------------------------------------- | --------- | ------------ |
-| Origin (address, postal_code, city, country)      | ✅        | ✅           |
-| Destination (address, postal_code, city, country) | ✅        | ✅           |
-| Global Invoicing Transport                        | ❌        | ❌           |
-| Choose integration store for stock movement       | ❌        | ❌           |
-| Vehicle License Plate                             | ✅        | ✅           |
+|                                                   | Cegid Vendus | Moloni | Invoice Express |
+| ------------------------------------------------- | ------------ | ------ | --------------- |
+| Origin (address, postal_code, city, country)      | ✅           | ❌     | ❌              |
+| Destination (address, postal_code, city, country) | ✅           | ❌     | ❌              |
+| Global Invoicing Transport                        | ❌           | ❌     | ❌              |
+| Choose integration store for stock movement       | ❌           | ❌     | ❌              |
+| Vehicle License Plate                             | ✅           | ❌     | ❌              |
 
 ---
 
