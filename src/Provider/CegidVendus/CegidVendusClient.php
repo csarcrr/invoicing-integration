@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
 
 use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Provider\Base;
 use Exception;
 use Illuminate\Support\Collection;
 
@@ -14,7 +15,7 @@ use function in_array;
 use function throw_if;
 
 #[AllowDynamicProperties]
-class CegidVendusClient
+class CegidVendusClient extends Base
 {
     protected ?ClientData $client = null;
 
@@ -39,7 +40,7 @@ class CegidVendusClient
     {
         throw_if(empty($this->client), Exception::class, 'Client not set');
 
-        $additionalProperties = collect($data)->except($this->supportedProperties)->toArray();
+        $this->fillAdditionalProperties($data);
 
         ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
         ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
@@ -48,6 +49,12 @@ class CegidVendusClient
         ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
 
         $this->client = $this->client->from($data);
+
+    }
+
+    protected function fillAdditionalProperties(array $data): void
+    {
+        $additionalProperties = collect($data)->except($this->supportedProperties)->toArray();
         $this->client->additional($additionalProperties);
     }
 

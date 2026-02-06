@@ -15,6 +15,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocument
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusInvoice;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
@@ -30,8 +31,9 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use function collect;
 
-class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
+class Create extends CegidVendusInvoice implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasClient;
     use HasConfig;
@@ -44,8 +46,6 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     use HasRelatedDocument;
     use HasTransport;
     use HasType;
-
-    protected InvoiceData $invoice;
 
     /**
      * @var Collection<string, mixed>
@@ -77,6 +77,11 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
         $this->payments = collect();
     }
 
+    /**
+     * @throws \Throwable
+     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException
+     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException
+     */
     public function execute(): self
     {
         $response = Http::provider()->post('documents', $this->getPayload());
@@ -104,6 +109,8 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             'payments' => collect($this->payments),
             'type' => $this->getType(),
         ]);
+
+        $this->fillAdditionalProperties($data);
 
         return $this;
     }

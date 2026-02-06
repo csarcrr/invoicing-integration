@@ -28,7 +28,9 @@ test('handles invoice response correctly', function (Provider $provider, string 
         ->and($invoice->items->first())->toBeInstanceOf(ItemData::class)
         ->and($invoice->payments)->toBeInstanceOf(Collection::class)
         ->and($invoice->payments->first())
-        ->toBeInstanceOf(PaymentData::class);
+        ->toBeInstanceOf(PaymentData::class)
+        ->and($invoice->getAdditionalData())->not->toBeEmpty();
+
 })->with('providers', ['full']);
 
 test('when creating request fails it handles errors properly', function (
