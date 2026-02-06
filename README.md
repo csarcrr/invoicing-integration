@@ -72,52 +72,7 @@ Publish the configuration file once the package is installed:
 php artisan vendor:publish --tag="invoicing-integration-config"
 ```
 
-## Configuration
-
-Set your provider and credentials in `.env`:
-
-```bash
-INVOICING_INTEGRATION_PROVIDER=CegidVendus
-
-# Cegid Vendus credentials
-CEGID_VENDUS_API_KEY=your-api-key
-CEGID_VENDUS_MODE=tests   # "tests" issues training documents, "normal" issues fiscal documents
-
-# Payment method IDs (from Cegid Vendus UI)
-CEGID_VENDUS_PAYMENT_MB_ID=123456
-CEGID_VENDUS_PAYMENT_CREDIT_CARD_ID=123457
-CEGID_VENDUS_PAYMENT_CURRENT_ACCOUNT_ID=123458
-CEGID_VENDUS_PAYMENT_MONEY_ID=123459
-CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID=123460
-```
-
-`config/invoicing-integration.php` mirrors those values:
-
-```php
-<?php
-
-use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-
-return [
-    'provider' => env('INVOICING_INTEGRATION_PROVIDER'),
-    'providers' => [
-        'CegidVendus' => [
-            'key' => env('CEGID_VENDUS_API_KEY'),
-            'mode' => env('CEGID_VENDUS_MODE'),
-            'payments' => [
-                PaymentMethod::MB->value => env('CEGID_VENDUS_PAYMENT_MB_ID'),
-                PaymentMethod::CREDIT_CARD->value => env('CEGID_VENDUS_PAYMENT_CREDIT_CARD_ID'),
-                PaymentMethod::CURRENT_ACCOUNT->value => env('CEGID_VENDUS_PAYMENT_CURRENT_ACCOUNT_ID'),
-                PaymentMethod::MONEY->value => env('CEGID_VENDUS_PAYMENT_MONEY_ID'),
-                PaymentMethod::MONEY_TRANSFER->value => env('CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID'),
-            ],
-        ],
-    ],
-];
-```
-
-- `mode` accepts `normal` (fiscal documents) or `tests` (training mode)
-- Payment IDs must match the numeric identifiers you copy from the Cegid Vendus UI ([guide](docs/providers/cegid-vendus/configuration.md))
+See the documentation section: Getting Started - 4. Configuration File for detailed configuration instructions.
 
 ### Runtime access to provider configuration
 
