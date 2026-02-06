@@ -23,3 +23,5 @@
 
 - **Providers**
     - [Cegid Vendus](providers/cegid-vendus/configuration.md)
+    - [Moloni](providers/moloni/configuration.md)
+    - [Invoice Express](providers/invoice-express/configuration.md)
