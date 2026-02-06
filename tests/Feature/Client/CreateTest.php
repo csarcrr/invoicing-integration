@@ -12,7 +12,9 @@ test('create client request is successful', function (Provider $provider, string
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789]);
     $data = Client::create($client)->execute()->getClient();
 
-    expect($data->id)->toBeInt()->and($data->name)->toBeString()->and($data->vat)->toBeInt();
+    expect($data->id)->toBeInt()
+        ->and($data->name)->toBeString()
+        ->and($data->vat)->toBeInt();
 
     Http::assertSentCount(1);
 })->with('providers', ['create'], ['response_simple']);

@@ -29,7 +29,7 @@ test('handles invoice response correctly', function (Provider $provider, string 
         ->and($invoice->payments)->toBeInstanceOf(Collection::class)
         ->and($invoice->payments->first())
         ->toBeInstanceOf(PaymentData::class);
-})->with('providers', ['full'])->only();
+})->with('providers', ['full']);
 
 test('when creating request fails it handles errors properly', function (
     Provider $provider,

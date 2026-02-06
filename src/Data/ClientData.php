@@ -44,9 +44,9 @@ class ClientData extends Data implements DataNeedsValidation
         public Optional|string $status,
 
         #[MapName(SnakeCaseMapper::class)]
-        public Optional|bool $emailNotification = true,
+        public Optional|bool $emailNotification,
         #[MapName(SnakeCaseMapper::class)]
-        public Optional|bool $irsRetention = false,
+        public Optional|bool $irsRetention,
 
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'Y-m-d')]
