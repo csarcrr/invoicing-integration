@@ -19,7 +19,7 @@ class ItemData extends Data implements DataNeedsValidation
     use HasMakeValidation;
 
     public function __construct(
-        public null|int|string $reference = null,
+        public mixed $reference = null,
         public null|int|float $quantity = 1,
         public ?int $price = null,
         public ?int $percentageDiscount = null,

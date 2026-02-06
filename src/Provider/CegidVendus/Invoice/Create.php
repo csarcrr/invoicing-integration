@@ -68,9 +68,11 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     public function __construct(array|Collection $config)
     {
         $this->config($config);
+
         $this->payload = collect([
             'type' => $this->getType()->value,
         ]);
+
         $this->items = collect();
         $this->payments = collect();
     }
@@ -98,6 +100,9 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
             'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
             'atcudHash' => $data['atcud'] ?? null,
             'output' => $output,
+            'items' => collect($this->items),
+            'payments' => collect($this->payments),
+            'type' => $this->getType(),
         ]);
 
         return $this;
