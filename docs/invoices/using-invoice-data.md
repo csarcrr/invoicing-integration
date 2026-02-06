@@ -5,13 +5,14 @@ When you issue an invoice, you receive an `Invoice` value object containing the 
 ## Accessing Invoice Data
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
 $item = ItemData::make(['reference' => 'SKU-001']);
 $invoice->item($item);
 
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 
 // Get the invoice sequence number (provider's reference)
 $sequence = $result->sequence; // e.g., "FT 01P2025/1"
@@ -36,7 +37,7 @@ $output = $result->output;
 The sequence number is the official invoice identifier used in Portugal:
 
 ```php
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 
 $sequence = $result->sequence;
 // Format: "{TYPE} {SERIES}/{NUMBER}"
@@ -52,7 +53,7 @@ $yourInvoiceRecord->save();
 The provider's internal ID is useful for API operations like creating receipts or credit notes:
 
 ```php
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 
 $id = $result->id;
 
@@ -68,7 +69,7 @@ $receipt->relatedDocument($id);
 The output object provides access to the generated document:
 
 ```php
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 $output = $result->output;
 
 if ($output) {
@@ -84,7 +85,10 @@ if ($output) {
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Issue an invoice
 $invoice = Invoice::create();
@@ -100,7 +104,7 @@ $payment = PaymentData::make([
 ]);
 $invoice->payment($payment);
 
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 
 // Log the result
 logger()->info('Invoice issued', [

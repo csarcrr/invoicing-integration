@@ -1,6 +1,6 @@
 # Invoicing Integration Documentation
 
-Welcome to the documentation for the Invoicing Integration package. This package provides a unified, fluent API for integrating with invoicing systems in Portugal.
+This package provides a unified, fluent API for integrating with invoicing systems in Portugal, making it easy to issue fiscally compliant documents from your Laravel application.
 
 **Supported Providers:** Cegid Vendus
 
@@ -16,6 +16,13 @@ It is **your responsibility** to:
 - Validate that your usage complies with tax laws and accounting standards
 
 Always consult with legal and accounting professionals when implementing invoicing solutions.
+
+## What You'll Learn
+
+- **Getting Started** - Install, configure, and issue your first invoice in minutes
+- **Invoices** - Create different document types (FT, FR, FS, RG, NC)
+- **Clients** - Manage customer records in your invoicing provider
+- **Output Formats** - Save invoices as PDFs or print them on thermal printers
 
 ## Table of Contents
 
@@ -47,41 +54,71 @@ Always consult with legal and accounting professionals when implementing invoici
 
 ## Quick Example
 
+Issue an invoice-receipt (FR):
+
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
+$invoice = Invoice::create()
+    ->type(InvoiceType::InvoiceReceipt);
 
-$item = ItemData::make([
-    'reference' => 'SKU-001',
-    'price' => 1000,
-    'quantity' => 2,
+// Add products
+$product = ItemData::make([
+    'reference' => 'LAPTOP-PRO-15',
+    'note' => 'Professional Laptop 15" - 16GB RAM',
+    'price' => 129900, // 1299.00 in cents
+    'quantity' => 1,
 ]);
-$invoice->item($item);
+$invoice->item($product);
 
+$shipping = ItemData::make([
+    'reference' => 'SHIPPING-EXPRESS',
+    'note' => 'Express Delivery (next business day)',
+    'price' => 999, // 9.99 in cents
+]);
+$invoice->item($shipping);
+
+// Add payment
 $payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 2000,
+    'amount' => 130899, // Total: 1308.99
 ]);
 $invoice->payment($payment);
 
-// Optional client data (validated via spatie/laravel-data)
+// Add customer details
 $client = ClientData::make([
-    'name' => 'John Doe',
-    'vat' => 'PT123456789',
+    'name' => 'Pedro Santos',
+    'vat' => 'PT234567890',
+    'email' => 'pedro.santos@email.pt',
+    'address' => 'Avenida da Liberdade, 150',
+    'city' => 'Lisboa',
+    'postalCode' => '1250-096',
+    'country' => 'PT',
 ]);
-
 $invoice->client($client);
 
-$result = $invoice->execute();
+// Issue the invoice
+$result = $invoice->execute()->getInvoice();
 
-// Save the PDF if available
+// Save the PDF
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName());
+}
+```
+
+Sample response:
+
+```json
+{
+    "id": 12345,
+    "sequence": "FR 01P2025/1",
+    "total": 130899,
+    "totalNet": 106422
 }
 ```
 
@@ -107,4 +144,4 @@ if ($result->output) {
 
 ---
 
-For more details, refer to the sidebar or the individual documentation files.
+Ready to get started? Head to [Getting Started](getting-started.md) for installation instructions.

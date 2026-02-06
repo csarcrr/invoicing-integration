@@ -4,9 +4,20 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/csarcrr/invoicing-integration/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/csarcrr/invoicing-integration/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/csarcrr/invoicing-integration.svg?style=flat-square)](https://packagist.org/packages/csarcrr/invoicing-integration)
 
-Invoicing Integration is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
+**Invoicing Integration** is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
 
 > **Supported provider (today):** Cegid Vendus. The package architecture allows more providers to be added without changing your application code.
+
+## Why Invoicing Integration?
+
+Issuing fiscally compliant invoices in Portugal can be challenging. Each provider has its own API, authentication flow, and data formats.
+
+This package solves that by giving you:
+
+- **One API for all providers** - Switch providers without rewriting your integration
+- **Fluent builders** - Intuitive, chainable methods that read like natural language
+- **Built-in validation** - Catch errors before they reach the provider
+- **Type safety** - Strongly typed DTOs powered by `spatie/laravel-data`
 
 ## Highlights
 
@@ -132,9 +143,7 @@ $config = ProviderConfiguration::getConfig();
 
 ## Usage
 
-### Issue your first invoice
-
-Issue an FT invoice with one item and a cash payment:
+### Creating an invoice
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
@@ -144,35 +153,63 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
+// Start building the invoice
 $invoice = Invoice::create()
-    ->type(InvoiceType::Invoice);
+    ->type(InvoiceType::InvoiceReceipt);
 
-$item = ItemData::make([
-    'reference' => 'SKU-001',
-    'note' => 'Consulting hours',
-    'price' => 10000, // cents (100.00 €)
+// Add products
+$headphones = ItemData::make([
+    'reference' => 'HEADPHONES-PRO',
+    'note' => 'Wireless Noise-Cancelling Headphones',
+    'price' => 14999,  // 149.99 in cents
     'quantity' => 1,
 ]);
+$invoice->item($headphones);
 
+$shipping = ItemData::make([
+    'reference' => 'SHIPPING-STD',
+    'note' => 'Standard Delivery (2-3 business days)',
+    'price' => 499,    // 4.99 in cents
+]);
+$invoice->item($shipping);
+
+// Record the payment
 $payment = PaymentData::make([
-    'method' => PaymentMethod::MONEY,
-    'amount' => 10000,
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 15498, // Total: 154.98
 ]);
+$invoice->payment($payment);
 
+// Attach customer billing details
 $client = ClientData::make([
-    'name' => 'John Doe',
+    'name' => 'Maria Silva',
     'vat' => 'PT123456789',
-    'email' => 'john@example.com',
+    'email' => 'maria.silva@email.pt',
+    'address' => 'Rua Augusta, 25',
+    'city' => 'Lisboa',
+    'postalCode' => '1100-053',
+    'country' => 'PT',
 ]);
+$invoice->client($client);
 
-$result = $invoice
-    ->client($client)
-    ->item($item)
-    ->payment($payment)
-    ->execute();
+// Issue the invoice
+$result = $invoice->execute()->getInvoice();
 
+// Save the PDF
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName());
+}
+```
+
+The result contains everything you need:
+
+```json
+{
+    "id": 4567,
+    "sequence": "FR 01P2025/1",
+    "total": 15498,
+    "totalNet": 12600,
+    "atcudHash": "FR 01P2025/1 ABC123"
 }
 ```
 
@@ -188,31 +225,37 @@ if ($result->output) {
 
 ### Manage clients via the facade
 
+You can register customers in the provider so they can be reused across orders:
+
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
-// Create a provider-side client record
+// Register a new customer
 $client = Client::create(
     ClientData::make([
-        'name' => 'Acme Lda',
-        'vat' => 'PT123456789',
-        'email' => 'billing@acme.test',
+        'name' => 'TechStore Portugal Lda',
+        'vat' => 'PT509876543',
+        'email' => 'invoices@techstore.pt',
+        'address' => 'Zona Industrial do Porto, Lote 15',
+        'city' => 'Porto',
+        'postalCode' => '4100-000',
+        'country' => 'PT',
     ])
 )->execute()->getClient();
 
-// Retrieve it later
+// Retrieve the customer later by their provider ID
 $fetched = Client::get(ClientData::make(['id' => $client->id]))->execute()->getClient();
 
-// Search with pagination helpers
-$filters = ClientData::make(['email' => 'billing@acme.test']);
+// Search for customers by email domain
+$filters = ClientData::make(['email' => 'techstore.pt']);
 $results = Client::find($filters)->execute();
 ```
 
 See [docs/clients/README.md](docs/clients/README.md) for pagination and filtering options.
 
 > All DTOs expose public typed properties. Access values via `$client->name`,
-> `$invoice->sequence`, etc.—legacy getter methods no longer exist.
+> `$invoice->sequence`, etc. - legacy getter methods no longer exist.
 
 ### Common validation rules
 
@@ -223,7 +266,7 @@ See [docs/clients/README.md](docs/clients/README.md) for pagination and filterin
 
 ## Quick Start
 
-The snippet above covers the most common scenario. For detailed workflows per document type, visit:
+For detailed workflows per document type, visit:
 
 - [Creating an Invoice](docs/invoices/creating-an-invoice.md)
 - [Creating a Receipt (RG)](docs/invoices/creating-a-RG-for-an-invoice.md)
@@ -234,9 +277,9 @@ The snippet above covers the most common scenario. For detailed workflows per do
 
 The `Http::handleUnwantedFailures()` macro maps HTTP status codes to package-specific exceptions:
 
-- `UnauthorizedException` → invalid or missing credentials (401)
-- `FailedReachingProviderException` → provider error/unreachable (500)
-- `RequestFailedException` → provider returned structured errors
+- `UnauthorizedException` - invalid or missing credentials (401)
+- `FailedReachingProviderException` - provider error/unreachable (500)
+- `RequestFailedException` - provider returned structured errors
 
 Refer to [docs/handling-errors.md](docs/handling-errors.md) for the full exception matrix and troubleshooting steps.
 

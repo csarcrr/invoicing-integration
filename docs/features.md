@@ -1,6 +1,18 @@
 # Features
 
-This page documents the supported features and their implementation status for each provider.
+Need to check if a feature is supported before you start coding? This page provides a quick reference matrix showing what's implemented across different providers and document types.
+
+The columns compare the **Invoicing** interface (the package's abstract API) with each concrete provider implementation (currently **Cegid Vendus**). If a feature shows ✅ for both, you're good to go!
+
+**Document types at a glance:**
+
+| Code | Name                                     | Use Case                                        |
+| ---- | ---------------------------------------- | ----------------------------------------------- |
+| FT   | Fatura (Invoice)                         | Standard invoice for sales on credit            |
+| FR   | Fatura-Recibo (Invoice-Receipt)          | Invoice + immediate payment confirmation        |
+| RG   | Recibo (Receipt)                         | Payment receipt for a previously issued invoice |
+| FS   | Fatura Simplificada (Simplified Invoice) | Quick invoices for small amounts (< €1000)      |
+| NC   | Nota de Crédito (Credit Note)            | Refunds, returns, or invoice corrections        |
 
 ### Legend
 

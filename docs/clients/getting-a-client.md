@@ -5,7 +5,8 @@ Retrieve an existing client from your invoicing provider using `Client::get()`.
 ## Basic Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Facades\Client;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Create a ClientData object with the known ID
 $clientData = ClientData::make(['id' => 12345]);
@@ -71,7 +72,8 @@ $client->defaultPayDue;    // Default payment due days
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Facades\Client;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Assume you stored the client ID from a previous create operation
 $storedClientId = 12345;
@@ -102,7 +104,10 @@ Example provider payload (`$client->toArray()`):
 You can use a retrieved client when creating invoices:
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Client;use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Retrieve existing client
 $clientData = ClientData::make(['id' => 12345]);
@@ -118,13 +123,16 @@ $item = ItemData::make([
 ]);
 $invoice->item($item);
 
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 ```
 
 ## Error Handling
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ClientData;use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;use CsarCrr\InvoicingIntegration\Facades\Client;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 
 try {
     $clientData = ClientData::make(['id' => 12345]);

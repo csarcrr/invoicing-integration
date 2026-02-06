@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide will help you install and configure the Invoicing Integration package in your Laravel project.
+This guide walks you through installation, configuration, and issuing your first invoice.
 
 ## 1. Install the Package
 
@@ -66,23 +66,34 @@ return [
 ## 5. Your First Invoice
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Create a simple invoice (final consumer, no client details)
-$invoice = Invoice::create();
+// Create a simple invoice (final consumer, no client details needed)
+$invoice = Invoice::create()
+    ->type(InvoiceType::InvoiceReceipt);
 
-// Add an item (price in cents)
+// Add the product
 $item = ItemData::make([
-    'reference' => 'SKU-001',
-    'price' => 1000,
-    'quantity' => 1,
+    'reference' => 'USB-CABLE-C',
+    'note' => 'USB-C Charging Cable 2m',
+    'price' => 1299, // 12.99 in cents
+    'quantity' => 2,
 ]);
 $invoice->item($item);
 
-// Issue the invoice
-$result = $invoice->execute();
+// Add the payment
+$payment = PaymentData::make([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 2598, // Total: 25.98
+]);
+$invoice->payment($payment);
 
-// $result is an instance of InvoiceData (see JSON example below)
+// Issue the invoice
+$result = $invoice->execute()->getInvoice();
 ```
 
 Sample invoice response:
@@ -90,9 +101,9 @@ Sample invoice response:
 ```json
 {
     "id": 4567,
-    "sequence": "FT 01P2025/1",
-    "total": 1000,
-    "totalNet": 813,
+    "sequence": "FR 01P2025/1",
+    "total": 2598,
+    "totalNet": 2112,
     "atcudHash": null
 }
 ```
@@ -111,16 +122,50 @@ $invoice = Invoice::create();
 
 // Chain methods to configure the invoice
 $invoice
-    ->client($client)      // Optional: client details
-    ->item($item)          // Required: at least one item
+    ->client($client)      // Optional: customer billing details
+    ->item($item)          // Required: at least one product or service
     ->payment($payment)    // Required for FR, FS, RG, NC types
     ->type($invoiceType)   // Optional: defaults to FT
-    ->notes('...')         // Optional: invoice notes
-    ->dueDate($date);      // Optional: only for FT type
+    ->notes('...')         // Optional: internal notes
+    ->dueDate($date);      // Optional: payment due date (FT only)
 
 // Issue the invoice
-$result = $invoice->execute();
+$result = $invoice->execute()->getInvoice();
 ```
+
+## Troubleshooting
+
+### 401 Unauthorized Error
+
+If you see an `UnauthorizedException`, check the following:
+
+- **API Key**: Verify `CEGID_VENDUS_API_KEY` in your `.env` is correct
+- **Trailing spaces**: Make sure there are no extra spaces in the API key value
+- **Account status**: Confirm your Cegid Vendus account is active
+
+### Invalid Payment Method Error
+
+If payments fail:
+
+- **Payment IDs**: Ensure all `CEGID_VENDUS_PAYMENT_*_ID` values are set and match the IDs from your Cegid Vendus dashboard
+- **Mode mismatch**: Payment IDs are different between `tests` and `normal` mode accounts
+
+### Provider Unreachable
+
+If you get a `FailedReachingProviderException`:
+
+- Check your internet connection
+- Verify the Cegid Vendus API is not experiencing downtime
+- Look for network/firewall issues that might block outgoing HTTPS requests
+
+## Next Steps
+
+Now that you've issued your first invoice, explore these common workflows:
+
+- **[Creating an Invoice](invoices/creating-an-invoice.md)** - Full invoice with customer details, multiple items, and discounts
+- **[Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)** - Issue receipts for existing invoices
+- **[Credit Notes (NC)](invoices/creating-a-nc-invoice.md)** - Handle refunds and returns
+- **[Managing Clients](clients/README.md)** - Register and reuse customers
 
 ---
 

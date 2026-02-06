@@ -1,108 +1,216 @@
 # Creating a Receipt (RG) for an Invoice
 
-Issue a receipt (RG/Recibo) for a previously created invoice. RG documents confirm payment and are standard in Portuguese invoicing systems.
+When you issue an FT invoice (deferred payment), the customer pays later. Once they pay, you need to issue a receipt (RG/Recibo) to confirm the payment. This is standard practice in Portuguese invoicing systems.
+
+## When to Use Receipts
+
+**Use RG when:**
+
+- You previously issued an FT invoice with a due date
+- The customer has now paid that invoice
+- You need to provide proof of payment
+
+**Don't use RG when:**
+
+- The customer paid at the time of purchase - use FR (Invoice-Receipt) instead
+- You're refunding money - use NC (Credit Note) instead
 
 ## Quick Example
 
+A customer just paid their outstanding invoice. Let's issue the receipt:
+
 ```php
-use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\InvoiceType;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
+// Create the receipt
+$receipt = Invoice::create()
+    ->type(InvoiceType::Receipt);
 
-// Set document type to Receipt
-$invoice->type(InvoiceType::Receipt);
+// Link it to the original invoice (use the provider's invoice ID)
+$receipt->relatedDocument(99999999);
 
-// Reference the original invoice (provider identifier or internal ID)
-$invoice->relatedDocument(99999999);
-
-// Add payment details (required for RG)
+// Record how they paid
 $payment = PaymentData::make([
-    'method' => PaymentMethod::MONEY,
-    'amount' => 10000, // 100.00
+    'method' => PaymentMethod::MONEY_TRANSFER,
+    'amount' => 89999, // 899.99 - full invoice amount
 ]);
-$invoice->payment($payment);
+$receipt->payment($payment);
 
 // Issue the receipt
-$result = $invoice->execute();
-
-// $result->sequence contains the receipt number (see JSON example below)
+$result = $receipt->execute()->getInvoice();
 ```
 
-Sample receipt payload:
+Sample receipt response:
 
 ```json
 {
     "id": 789,
     "sequence": "RG 01P2025/1",
-    "total": 10000,
-    "totalNet": 8130
+    "total": 89999,
+    "totalNet": 73170
 }
 ```
 
-## Multiple Payment Methods
+## The Invoice-to-Receipt Flow
 
-You can split the payment across multiple methods:
+Here's a complete example from invoice to receipt:
 
 ```php
-$invoice = Invoice::create();
-$invoice->type(InvoiceType::Receipt);
-$invoice->relatedDocument(99999999);
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Split payment: 50.00 cash + 50.00 MB
-$cash = PaymentData::make([
-    'method' => PaymentMethod::MONEY,
-    'amount' => 5000,
+// Step 1: Issue an FT invoice with 30-day payment terms
+$invoice = Invoice::create()
+    ->type(InvoiceType::Invoice);
+
+$client = ClientData::make([
+    'name' => 'TechStore Portugal Lda',
+    'vat' => 'PT509876543',
+    'email' => 'accounts@techstore.pt',
 ]);
-$invoice->payment($cash);
+$invoice->client($client);
 
-$mb = PaymentData::make([
-    'method' => PaymentMethod::MB,
-    'amount' => 5000,
+$product = ItemData::make([
+    'reference' => 'LAPTOP-BULK-ORDER',
+    'note' => 'Business Laptop - Bulk Order (10 units)',
+    'price' => 89999, // 899.99 each
+    'quantity' => 10,
 ]);
-$invoice->payment($mb);
+$invoice->item($product);
 
-$result = $invoice->execute();
+$invoice->dueDate(Carbon::now()->addDays(30));
+$invoice->notes('NET30 payment terms as agreed');
+
+$invoiceResult = $invoice->execute()->getInvoice();
+
+// Store the invoice ID for later
+$invoiceId = $invoiceResult->id;
 ```
 
-> **Important:** The total of all payments should match the invoice amount for the original invoice to be marked as "paid" by most providers.
+```php
+// Step 2: 30 days later, the customer pays via bank transfer
+$receipt = Invoice::create()
+    ->type(InvoiceType::Receipt);
+
+$receipt->relatedDocument($invoiceId);
+
+$payment = PaymentData::make([
+    'method' => PaymentMethod::MONEY_TRANSFER,
+    'amount' => 899990, // Full order total
+]);
+$receipt->payment($payment);
+
+$receiptResult = $receipt->execute()->getInvoice();
+
+// Save the receipt
+if ($receiptResult->output) {
+    $receiptResult->output->save('receipts/' . $receiptResult->output->fileName());
+}
+```
+
+## Partial Payments
+
+Sometimes customers pay invoices in installments. Issue separate receipts for each payment:
+
+```php
+// Customer pays first installment (50%)
+$receipt1 = Invoice::create()
+    ->type(InvoiceType::Receipt);
+
+$receipt1->relatedDocument($invoiceId);
+$receipt1->payment(PaymentData::make([
+    'method' => PaymentMethod::MONEY_TRANSFER,
+    'amount' => 449995, // First 50%
+]));
+$receipt1->notes('Installment 1 of 2');
+
+$receipt1->execute()->getInvoice();
+
+// Later: Customer pays final installment
+$receipt2 = Invoice::create()
+    ->type(InvoiceType::Receipt);
+
+$receipt2->relatedDocument($invoiceId);
+$receipt2->payment(PaymentData::make([
+    'method' => PaymentMethod::MONEY_TRANSFER,
+    'amount' => 449995, // Final 50%
+]));
+$receipt2->notes('Installment 2 of 2 - Final payment');
+
+$receipt2->execute()->getInvoice();
+```
+
+## Split Payment Methods
+
+Customers can pay a single receipt using multiple payment methods:
+
+```php
+$receipt = Invoice::create()
+    ->type(InvoiceType::Receipt);
+
+$receipt->relatedDocument($invoiceId);
+
+// Part of the payment in cash
+$cash = PaymentData::make([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 50000, // 500.00
+]);
+$receipt->payment($cash);
+
+// Rest via bank transfer
+$transfer = PaymentData::make([
+    'method' => PaymentMethod::MONEY_TRANSFER,
+    'amount' => 399990, // 3999.90
+]);
+$receipt->payment($transfer);
+
+$result = $receipt->execute()->getInvoice();
+```
 
 ## Requirements
 
-| Requirement      | Notes                                        |
-| ---------------- | -------------------------------------------- |
-| Document Type    | Must be `InvoiceType::Receipt`               |
-| Related Document | Required - reference to the original invoice |
-| Payment          | Required - at least one payment              |
-| Items            | **Not required** for receipts                |
-| Client           | **Not required** for receipts                |
+| Requirement      | Notes                                         |
+| ---------------- | --------------------------------------------- |
+| Document Type    | Must be `InvoiceType::Receipt`                |
+| Related Document | Required - the original invoice's provider ID |
+| Payment          | Required - at least one payment               |
+| Items            | **Not required** for receipts                 |
+| Client           | **Not required** for receipts                 |
 
 ## Complete Example
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\InvoiceType;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
-
-// Configure as receipt
-$invoice->type(InvoiceType::Receipt);
+// Issue receipt for paid invoice
+$receipt = Invoice::create()
+    ->type(InvoiceType::Receipt);
 
 // Link to the original invoice
-$invoice->relatedDocument(99999999); // Use the provider's invoice ID
+$receipt->relatedDocument(99999999);
 
-// Add payment(s)
+// Record the payment method and amount
 $payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 15000, // 150.00
+    'amount' => 25499, // 254.99
 ]);
-$invoice->payment($payment);
+$receipt->payment($payment);
 
-// Optional: add notes
-$invoice->notes('Payment received. Thank you!');
+// Add a thank you note
+$receipt->notes('Thank you for your prompt payment!');
 
-// Issue
-$result = $invoice->execute();
+// Issue the receipt
+$result = $receipt->execute()->getInvoice();
 
-// Save receipt PDF
+// Save the PDF
 if ($result->output) {
     $result->output->save('receipts/' . $result->output->fileName());
 }
@@ -112,10 +220,11 @@ if ($result->output) {
 
 **Tips:**
 
-- RG documents require the related invoice reference and payment(s)
+- RG documents require the original invoice reference and payment(s)
 - No items or client details are needed for receipts
 - Ensure payment method IDs are configured in your provider settings
-- The payment total should match the original invoice amount
+- For full payment, the total should match the original invoice amount
+- For partial payments, issue separate receipts for each installment
 
 ---
 

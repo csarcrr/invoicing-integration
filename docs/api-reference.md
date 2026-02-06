@@ -1,10 +1,10 @@
 # API Reference
 
-Complete reference for the Invoicing Integration package classes, methods, and enums.
+Complete reference for the Invoicing Integration package classes, methods, and enums. This page documents all public APIs you'll use when integrating invoicing into your Laravel application.
 
 ## Client
 
-Entry point for client management operations.
+Entry point for managing clients.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Client;
@@ -67,7 +67,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 
 ## Invoice
 
-Entry point for creating invoices.
+Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, and GT documents.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -217,9 +217,7 @@ $item = ItemData::make([
 
 ### PaymentData
 
-```php
-
-```
+Payment records for invoice settlements.
 
 **Instantiation:**
 
@@ -246,7 +244,9 @@ before the HTTP request is issued.
 ### TransportData
 
 ```php
-use Carbon\Carbon;use CsarCrr\InvoicingIntegration\Data\AddressData;use CsarCrr\InvoicingIntegration\Data\TransportData;
+use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Data\AddressData;
+use CsarCrr\InvoicingIntegration\Data\TransportData;
 
 $origin = AddressData::make([
     'date' => Carbon::parse('2025-01-10'),
@@ -296,11 +296,7 @@ $transport = TransportData::make([
 
 ### Invoice (Response)
 
-```php
-
-```
-
-Returned by `execute()` method after issuing.
+The value object returned after issuing an invoice. Contains the provider's response data.
 
 **Properties:**
 
@@ -337,7 +333,11 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 
 ## Enums
 
+Enums provide type-safe values for document types, payment methods, taxes, and output formats.
+
 ### InvoiceType
+
+Document types.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
@@ -354,6 +354,8 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 ### PaymentMethod
 
+Payment methods. Each method maps to a provider-specific ID configured in your `.env`.
+
 ```php
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 ```
@@ -368,6 +370,8 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 ### ItemType
 
+Classification for invoice line items - products, services, or tax entries.
+
 ```php
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 ```
@@ -381,6 +385,8 @@ use CsarCrr\InvoicingIntegration\Enums\ItemType;
 | `SpecialTax` | Special tax      |
 
 ### ItemTax
+
+VAT rates for invoice items. Use `EXEMPT` with a `TaxExemptionReason` for tax-free items.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
@@ -440,9 +446,11 @@ Portuguese tax exemption codes supported by this package:
 | M99  | 0: Artigo 2.º, n.º 2 do CIVA<br>1: Artigo 3.º, n.º 4 do CIVA<br>2: Artigo 3.º, n.º 6 do CIVA<br>3: Artigo 3.º, n.º 7 do CIVA<br>4: Artigo 4.º, n.º 5 do CIVA |
 
 To print the first legal reference, call `TaxExemptionReason::M04->laws()[0]`. When multiple entries
-are available, pick the index that matches your scenario (e.g., `laws()[1]` for `M10` Article 57.º).
+are available, pick the index that matches your use case (e.g., `laws()[1]` for `M10` Article 57.º).
 
 ### OutputFormat
+
+Output format for invoice documents - PDF for email/archive or ESC/POS for thermal printers.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
@@ -457,7 +465,11 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 ## Exceptions
 
+Exceptions are thrown for validation errors (before the request) and provider errors (after the request).
+
 ### Validation Exceptions
+
+These are thrown before the request is sent to the provider, during local validation.
 
 | Exception                                         | When Thrown                                 |
 | ------------------------------------------------- | ------------------------------------------- |
@@ -472,6 +484,8 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 | `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason  |
 
 ### Provider Exceptions
+
+These are thrown when communication with the provider fails or returns an error.
 
 | Exception                         | When Thrown                              |
 | --------------------------------- | ---------------------------------------- |

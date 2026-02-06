@@ -1,204 +1,226 @@
 # Output Formats
 
-Retrieve and store generated invoice documents in PDF or ESC/POS format.
+Invoices can be returned as PDF or ESC/POS data.
 
-## Default Output (PDF)
+## Saving the Invoice PDF
 
-By default, invoices are returned with PDF output:
-
-```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Facades\Invoice;
-
-$invoice = Invoice::create();
-
-$item = ItemData::make(['reference' => 'SKU-001']);
-$invoice->item($item);
-
-$result = $invoice->execute();
-
-// Get the output object (may be null)
-$output = $result->output;
-
-if (! $output) {
-    // Handle scenarios where the provider does not return the file
-    return;
-}
-
-// Get the generated filename
-$filename = $output->fileName(); // e.g., "ft_01p2025_1.pdf"
-
-// Save to storage
-$path = $output->save('invoices/' . $filename);
-```
-
-Example saved file info:
-
-```json
-{
-    "fileName": "ft_01p2025_1.pdf",
-    "relativePath": "invoices/ft_01p2025_1.pdf",
-    "absolutePath": "storage/app/invoices/ft_01p2025_1.pdf"
-}
-```
-
-## Selecting Output Format
-
-Choose the output format before issuing the invoice:
+The provider returns the document as base64-encoded PDF:
 
 ```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Enums\OutputFormat;use CsarCrr\InvoicingIntegration\Facades\Invoice;
-
-$invoice = Invoice::create();
-
-$item = ItemData::make(['reference' => 'SKU-001']);
-$invoice->item($item);
-
-// Request PDF output (default)
-$invoice->outputFormat(OutputFormat::PDF_BASE64);
-
-// Or request ESC/POS output for thermal printers
-$invoice->outputFormat(OutputFormat::ESCPOS);
-
-$result = $invoice->execute();
-```
-
-## Available Formats
-
-| Format  | Enum Value                 | Description                   |
-| ------- | -------------------------- | ----------------------------- |
-| PDF     | `OutputFormat::PDF_BASE64` | PDF document (base64 encoded) |
-| ESC/POS | `OutputFormat::ESCPOS`     | Thermal printer format        |
-
-## Saving Output
-
-The `save()` method stores the output file and returns the full path:
-
-```php
-$result = $invoice->execute();
-$output = $result->output;
-
-if ($output) {
-    // Save with custom path
-    $path = $output->save('invoices/2025/' . $output->fileName());
-
-    // Save with custom filename
-    $path = $output->save('invoices/my-custom-name.pdf');
-}
-```
-
-The file is saved to Laravel's local storage disk by default.
-
-## Handling Missing Output
-
-Some providers may not return output data in certain scenarios. When that happens the `$result->output` property is `null`.
-
-Always guard your file operations:
-
-```php
-$output = $result->output;
-
-if (! $output) {
-    // Notify your team or fall back to the provider portal.
-    return;
-}
-
-$output->save('invoices/fallback.pdf');
-```
-
-## ESC/POS for Thermal Printers
-
-Generate ESC/POS data for direct printing to thermal printers:
-
-```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Enums\OutputFormat;use CsarCrr\InvoicingIntegration\Facades\Invoice;
-
-$invoice = Invoice::create();
-
-$item = ItemData::make(['reference' => 'SKU-001']);
-$invoice->item($item);
-$invoice->outputFormat(OutputFormat::ESCPOS);
-
-$result = $invoice->execute();
-
-if ($result->output) {
-    // Save ESC/POS data to file
-    $path = $result->output->save('print-jobs/' . $result->output->fileName());
-
-    // Or get the raw ESC/POS data
-    // (implementation depends on how you handle the output)
-}
-```
-
-> **Note:** ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
-
-## Getting Output Format
-
-Check the current output format setting:
-
-```php
-use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoice = Invoice::create();
-$format = $invoice->getOutputFormat(); // Returns OutputFormat enum
 
-if ($format === OutputFormat::PDF_BASE64) {
-    // Handle PDF
-} else if ($format === OutputFormat::ESCPOS) {
-    // Handle thermal print
-}
-```
-
-## Complete Example
-
-```php
-use CsarCrr\InvoicingIntegration\Data\ItemData;use CsarCrr\InvoicingIntegration\Data\PaymentData;use CsarCrr\InvoicingIntegration\Enums\OutputFormat;use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;use CsarCrr\InvoicingIntegration\Facades\Invoice;
-
-$invoice = Invoice::create();
-
-// Configure invoice
 $item = ItemData::make([
-    'reference' => 'SKU-001',
-    'price' => 1000,
+    'reference' => 'LAPTOP-ULTRA-13',
+    'note' => 'UltraBook Pro 13"',
+    'price' => 129900,
 ]);
 $invoice->item($item);
 
 $payment = PaymentData::make([
     'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 1000,
+    'amount' => 129900,
 ]);
 $invoice->payment($payment);
 
-// Set output format
-$invoice->outputFormat(OutputFormat::PDF_BASE64);
+$result = $invoice->execute()->getInvoice();
 
-// Issue invoice
-$result = $invoice->execute();
-
-// Access invoice data
-$sequence = $result->sequence;  // "FT 01P2025/1"
-$id = $result->id;              // Provider's internal ID
-
-// Save the document if provided by the provider
+// Save the PDF
 if ($result->output) {
-    $path = $result->output->save("invoices/{$sequence}.pdf");
+    $path = $result->output->save('invoices/' . $result->output->fileName());
+    // $path = "storage/app/invoices/fr_01p2025_1.pdf"
 }
 ```
 
-Example result plus output metadata:
+The file is saved to Laravel's default storage disk (`storage/app/`).
 
-```json
-{
-    "invoice": {
-        "id": 321,
-        "sequence": "FT 01P2025/1"
-    },
-    "output": {
-        "fileName": "ft_01p2025_1.pdf",
-        "relativePath": "invoices/ft_01p2025_1.pdf",
-        "storagePath": "storage/app/invoices/ft_01p2025_1.pdf"
-    }
+## Choosing Output Format
+
+By default, invoices are returned as PDF. You can request ESC/POS format instead:
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+
+// Request PDF (default)
+$invoice->outputFormat(OutputFormat::PDF_BASE64);
+
+// Or request ESC/POS for thermal printers
+$invoice->outputFormat(OutputFormat::ESCPOS);
+```
+
+Set the format before calling `execute()`.
+
+## Available Formats
+
+| Format  | Enum Value                 | Use Case                        |
+| ------- | -------------------------- | ------------------------------- |
+| PDF     | `OutputFormat::PDF_BASE64` | Email, archive, customer portal |
+| ESC/POS | `OutputFormat::ESCPOS`     | Thermal receipt printers at POS |
+
+## Handling Missing Output
+
+Sometimes the provider might not return output data (rare, but possible). Always check before saving:
+
+```php
+$result = $invoice->execute()->getInvoice();
+
+if (! $result->output) {
+    // Log for investigation
+    Log::warning('Invoice issued without output', [
+        'sequence' => $result->sequence,
+        'id' => $result->id,
+    ]);
+
+    // Fall back to provider portal or retry later
+    return;
 }
+
+$result->output->save('invoices/' . $result->output->fileName());
+```
+
+## Custom File Paths
+
+Save with custom paths or filenames:
+
+```php
+$result = $invoice->execute()->getInvoice();
+$output = $result->output;
+
+if ($output) {
+    // Organize by year/month
+    $path = $output->save('invoices/2025/01/' . $output->fileName());
+
+    // Or use a custom name
+    $path = $output->save('invoices/order-12345.pdf');
+
+    // Or use the invoice sequence
+    $sanitized = str_replace(['/', ' '], '_', $result->sequence);
+    $path = $output->save("invoices/{$sanitized}.pdf");
+}
+```
+
+## Thermal Printer Integration (ESC/POS)
+
+Print receipts to thermal printers:
+
+```php
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+// Simple invoice
+$invoice = Invoice::create();
+
+$item = ItemData::make([
+    'reference' => 'USB-CABLE-C',
+    'note' => 'USB-C Cable 2m',
+    'price' => 1299,
+    'quantity' => 2,
+]);
+$invoice->item($item);
+
+$payment = PaymentData::make([
+    'method' => PaymentMethod::MONEY,
+    'amount' => 2598,
+]);
+$invoice->payment($payment);
+
+// Request ESC/POS format for the receipt printer
+$invoice->outputFormat(OutputFormat::ESCPOS);
+
+$result = $invoice->execute()->getInvoice();
+
+if ($result->output) {
+    // Save the ESC/POS data
+    $path = $result->output->save('print-queue/' . $result->output->fileName());
+
+    // Send to your print service
+    // PrintService::sendToPrinter($path);
+}
+```
+
+> **Note:** ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
+
+## Output Object Methods
+
+The output object provides these methods:
+
+| Method        | Returns        | Description                                        |
+| ------------- | -------------- | -------------------------------------------------- |
+| `fileName()`  | `?string`      | Auto-generated filename (e.g., `fr_01p2025_1.pdf`) |
+| `save($path)` | `string`       | Save to storage, returns full path                 |
+| `content()`   | `string`       | Raw output content (base64 for PDF)                |
+| `format()`    | `OutputFormat` | The output format enum                             |
+| `getPath()`   | `?string`      | Path after saving (null if not yet saved)          |
+
+## Complete Workflow Example
+
+Full example with PDF handling:
+
+```php
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+// Process the checkout
+$invoice = Invoice::create()
+    ->type(InvoiceType::InvoiceReceipt);
+
+$client = ClientData::make([
+    'name' => 'Maria Silva',
+    'vat' => 'PT123456789',
+    'email' => 'maria.silva@email.pt',
+]);
+$invoice->client($client);
+
+$item = ItemData::make([
+    'reference' => 'MONITOR-4K',
+    'note' => '27" 4K Monitor',
+    'price' => 44999,
+]);
+$invoice->item($item);
+
+$payment = PaymentData::make([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 44999,
+]);
+$invoice->payment($payment);
+
+$result = $invoice->execute()->getInvoice();
+
+// Store in your database
+$order = Order::find($orderId);
+$order->invoice_sequence = $result->sequence;
+$order->invoice_provider_id = $result->id;
+
+// Save and store the PDF path
+if ($result->output) {
+    $pdfPath = $result->output->save('invoices/' . $result->output->fileName());
+    $order->invoice_pdf_path = $pdfPath;
+
+    // Queue email to customer
+    SendInvoiceEmail::dispatch($order);
+}
+
+$order->save();
+
+// Return success to frontend
+return response()->json([
+    'success' => true,
+    'invoice_number' => $result->sequence,
+    'pdf_url' => $order->invoice_pdf_path
+        ? Storage::url($order->invoice_pdf_path)
+        : null,
+]);
 ```
 
 ---
@@ -209,6 +231,7 @@ Example result plus output metadata:
 - Use `outputFormat()` to select PDF or ESC/POS before issuing
 - Use `$result->output?->save($path)` to store the document
 - Use `$result->output?->fileName()` for the auto-generated filename
+- Always check `if ($result->output)` before saving
 - Check provider [Features](../features.md) for format support
 
 ---
