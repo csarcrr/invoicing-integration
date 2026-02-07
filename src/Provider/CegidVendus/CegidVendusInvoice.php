@@ -30,25 +30,4 @@ class CegidVendusInvoice extends Base
     {
         return $this->invoice;
     }
-
-    /**
-     * @param  array<string, mixed>  $data
-     *
-     * @throws \Throwable
-     */
-    protected function fillAdditionalProperties(array $data): void
-    {
-        $additionalProperties = collect($data)->except($this->supportedProperties)->toArray();
-        $this->invoice->additional($additionalProperties);
-    }
-
-    /**
-     * @return Collection<string, mixed>
-     */
-    protected function getClientAllowedProperties(): Collection
-    {
-        return collect($this->client->toArray())->filter(
-            fn (mixed $value, string $key) => in_array($key, $this->supportedProperties)
-        );
-    }
 }

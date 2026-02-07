@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Actions;
 
 use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Create;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\ShouldCreate;
 
 final class InvoiceAction
 {
@@ -15,10 +15,10 @@ final class InvoiceAction
         protected ProviderConfigurationService $providerConfiguration
     ) {}
 
-    public function create(): CreateInvoice
+    public function create(): ShouldCreateInvoice
     {
         return match ($this->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => new Create($this->providerConfiguration->getConfig()),
+            Provider::CEGID_VENDUS => new ShouldCreate($this->providerConfiguration->getConfig()),
         };
     }
 }

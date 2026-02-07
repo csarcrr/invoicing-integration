@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -33,7 +33,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use function collect;
 
-class Create extends CegidVendusInvoice implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
+class ShouldCreate extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasClient;
     use HasConfig;
@@ -110,7 +110,7 @@ class Create extends CegidVendusInvoice implements CreateInvoice, ShouldHaveConf
             'type' => $this->getType(),
         ]);
 
-        $this->fillAdditionalProperties($data);
+        $this->fillAdditionalProperties($data, $this->invoice);
 
         return $this;
     }

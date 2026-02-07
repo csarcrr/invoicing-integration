@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Provider\Base;
 use Exception;
 use Illuminate\Support\Collection;
 
+use Spatie\LaravelData\Data;
 use function collect;
 use function in_array;
 use function throw_if;
@@ -40,7 +41,7 @@ class CegidVendusClient extends Base
     {
         throw_if(empty($this->client), Exception::class, 'Client not set');
 
-        $this->fillAdditionalProperties($data);
+        $this->fillAdditionalProperties($data, $this->client);
 
         ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
         ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
@@ -50,12 +51,6 @@ class CegidVendusClient extends Base
 
         $this->client = $this->client->from($data);
 
-    }
-
-    protected function fillAdditionalProperties(array $data): void
-    {
-        $additionalProperties = collect($data)->except($this->supportedProperties)->toArray();
-        $this->client->additional($additionalProperties);
     }
 
     /**

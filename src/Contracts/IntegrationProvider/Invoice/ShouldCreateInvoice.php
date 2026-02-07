@@ -14,7 +14,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use Illuminate\Support\Collection;
 
-interface CreateInvoice
+interface ShouldCreateInvoice
 {
     public function execute(): self;
 

@@ -89,7 +89,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 The builder interface returned by `Invoice::create()`. All methods return `self` for chaining unless otherwise noted.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 ```
 
 ### Builder Methods
