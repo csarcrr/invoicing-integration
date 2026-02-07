@@ -33,7 +33,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use function collect;
 
-class ShouldCreate extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
+class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasClient;
     use HasConfig;
