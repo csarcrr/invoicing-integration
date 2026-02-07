@@ -14,9 +14,11 @@ trait HasItems
      */
     protected Collection $items;
 
-    public function item(ItemData $items): self
+    public function item(ItemData $item): self
     {
-        $this->items->push($items);
+        $this->invoice->from([
+            'items' => $item
+        ]);
 
         return $this;
     }

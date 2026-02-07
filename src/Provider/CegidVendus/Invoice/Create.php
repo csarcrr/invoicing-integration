@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -31,6 +32,7 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Optional;
 use function collect;
 
 class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
@@ -53,12 +55,10 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
     protected Collection $payload;
 
     /**
-     * @param  array<string, mixed>|Collection<string, mixed>  $config
+     * @param InvoiceData $invoice
      */
-    public function __construct(array|Collection $config)
+    public function __construct(protected InvoiceData $invoice)
     {
-        $this->config($config);
-
         $this->payload = collect([
             'type' => $this->getType()->value,
         ]);
@@ -69,8 +69,8 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     /**
      * @throws \Throwable
-     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException
-     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException
+     * @throws MissingRelatedDocumentException
+     * @throws NeedsDateToSetLoadPointException
      */
     public function execute(): self
     {
@@ -110,8 +110,8 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      *
      * @return Collection<string, mixed>
      *
-     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException
-     * @throws \CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException
+     * @throws MissingRelatedDocumentException
+     * @throws NeedsDateToSetLoadPointException
      * @throws \Exception
      * @throws \Throwable
      */
@@ -131,14 +131,9 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         return $this->payload;
     }
 
-    public function getInvoice(): InvoiceData
-    {
-        return $this->invoice;
-    }
-
     protected function buildType(): void
     {
-        $this->payload->put('type', $this->getType()->value);
+        $this->payload->put('type', $this->invoice->type->value);
     }
 
     /**
@@ -288,7 +283,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         }
 
         /** @var Collection<int, array<string, mixed>> $items */
-        $items = $this->getItems()->map(function (ItemData $item): array {
+        $items = $this->invoice->items->map(function (ItemData $item): array {
             $data = [];
 
             if ($item->reference) {
@@ -358,9 +353,9 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildClient(): void
     {
-        $client = $this->getClient();
+        $client = $this->invoice->client;
 
-        if (empty($client)) {
+        if (empty($client) || $client instanceof Optional) {
             return;
         }
 

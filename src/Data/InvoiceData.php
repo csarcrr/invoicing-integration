@@ -13,6 +13,10 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+
+/**
+ *
+ */
 class InvoiceData extends Data implements DataNeedsValidation
 {
     use HasMakeValidation;
@@ -27,6 +31,8 @@ class InvoiceData extends Data implements DataNeedsValidation
         public Optional|Collection $items,
         /** @var Collection<int, PaymentData> */
         public Optional|Collection $payments,
+
+        public Optional|ClientData $client,
 
         public ?string $atcudHash = null,
         public ?Output $output = null,

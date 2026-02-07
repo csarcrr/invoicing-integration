@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
@@ -15,8 +16,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 it('transforms to provider payload with all item properties', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
-    $invoice = Invoice::create();
-    $item = ItemData::from([
+    $item = ItemData::make([
         'reference' => 'reference-1',
         'quantity' => 2,
         'price' => 1000,
@@ -25,7 +25,9 @@ it('transforms to provider payload with all item properties', function (Provider
         'amountDiscount' => 50,
     ]);
 
-    $invoice->item($item);
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [$item]
+    ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['item']);
@@ -33,9 +35,12 @@ it('transforms to provider payload with all item properties', function (Provider
 it('transforms to provider payload with multiple items', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'reference-1']));
-    $invoice->item(ItemData::from(['reference' => 'reference-2']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [
+            ItemData::from(['reference' => 'reference-1']),
+            ItemData::from(['reference' => 'reference-2'])
+        ]
+    ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['multiple_items']);
@@ -43,13 +48,11 @@ it('transforms to provider payload with multiple items', function (Provider $pro
 it('transforms to provider payload with correct item type', function (Provider $provider, string $fixtureName, ItemType $type) {
     $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
-    $invoice = Invoice::create();
-    $item = ItemData::from([
-        'reference' => 'reference-1',
-        'type' => $type,
-    ]);
-
-    $invoice->item($item);
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [
+            ItemData::from(['reference' => 'reference-1', 'type' => $type,])
+        ]
+    ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers')->with([
@@ -63,7 +66,6 @@ it('transforms to provider payload with correct item type', function (Provider $
 it('transforms to provider payload with correct tax type', function (Provider $provider, string $fixtureName, ItemTax $taxType) {
     $data = fixtures()->request()->invoice()->item()->tax()->files($fixtureName);
 
-    $invoice = Invoice::create();
     $attributes = [
         'reference' => 'reference-1',
         'tax' => $taxType,
@@ -74,7 +76,11 @@ it('transforms to provider payload with correct tax type', function (Provider $p
         $attributes['taxExemptionLaw'] = TaxExemptionReason::M04->laws()[0];
     }
 
-    $invoice->item(ItemData::from($attributes));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [
+            ItemData::from($attributes)
+        ]
+    ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers')->with([

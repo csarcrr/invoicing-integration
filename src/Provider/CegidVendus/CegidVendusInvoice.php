@@ -19,7 +19,7 @@ use function throw_if;
 #[AllowDynamicProperties]
 class CegidVendusInvoice extends Base
 {
-    protected ?InvoiceData $invoice = null;
+    protected InvoiceData $invoice;
 
     /**
      * @var list<string>
