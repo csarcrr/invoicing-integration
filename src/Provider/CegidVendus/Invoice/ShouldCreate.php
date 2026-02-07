@@ -53,16 +53,6 @@ class ShouldCreate extends CegidVendusInvoice implements ShouldCreateInvoice, Sh
     protected Collection $payload;
 
     /**
-     * @var array<int, InvoiceType>
-     */
-    protected array $invoiceTypesThatRequirePayments = [
-        InvoiceType::Receipt,
-        InvoiceType::InvoiceReceipt,
-        InvoiceType::InvoiceSimple,
-        InvoiceType::CreditNote,
-    ];
-
-    /**
      * @param  array<string, mixed>|Collection<string, mixed>  $config
      */
     public function __construct(array|Collection $config)
