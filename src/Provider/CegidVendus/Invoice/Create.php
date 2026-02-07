@@ -251,11 +251,11 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildPayments(): void
     {
-        if ($this->getPayments()->isEmpty()) {
+        if (($this->invoice->payments instanceof Collection) === false) {
             return;
         }
 
-        $payments = $this->getPayments()->map(function (PaymentData $payment) {
+        $payments = $this->invoice->payments->map(function (PaymentData $payment) {
             $method = $payment->method;
 
             throw_if(! $method, Exception::class, 'Payment method not configured.');
