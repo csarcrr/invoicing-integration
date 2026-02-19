@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Data;
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
@@ -33,9 +34,11 @@ class InvoiceData extends Data implements DataNeedsValidation
         public Optional|Collection $payments,
 
         public Optional|ClientData $client,
+        public Optional|TransportData $transport,
 
         public ?string $atcudHash = null,
         public ?Output $output = null,
-        public InvoiceType $type = InvoiceType::Invoice
+        public InvoiceType $type = InvoiceType::Invoice,
+        public Optional|null|Carbon $dueDate = null
     ) {}
 }

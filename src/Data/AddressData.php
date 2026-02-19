@@ -24,8 +24,7 @@ class AddressData extends Data implements DataNeedsValidation
         public ?string $city = null,
         public ?string $postalCode = null,
         public Optional|string $country = 'PT',
-        public ?Carbon $date = null,
-        public ?Carbon $time = null,
+        public ?Carbon $dateTime = null,
     ) {}
 
     /**

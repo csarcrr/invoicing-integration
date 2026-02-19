@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
@@ -141,17 +142,17 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildDueDate(): void
     {
-        if (! $this->getDueDate()) {
+        if (!($this->invoice->dueDate instanceof Carbon)) {
             return;
         }
 
         throw_if(
-            $this->getType() !== InvoiceType::Invoice,
+            $this->invoice->type !== InvoiceType::Invoice,
             Exception::class,
             'Due date can only be set for FT document types.'
         );
 
-        $this->payload->put('due_date', $this->getDueDate()->toDateString());
+        $this->payload->put('due_date', $this->invoice->dueDate->toDateString());
     }
 
     protected function buildOutput(): void
@@ -165,43 +166,43 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildTransport(): void
     {
-        if (! $this->getTransport()) {
+        if ($this->invoice->transport instanceof Optional) {
             return;
         }
 
-        if (! $this->getClient()) {
-            throw new Exception('ClientAction information is required when transport details are provided.');
+        if ($this->invoice->client  instanceof Optional) {
+            throw new Exception('Client information is required when transport details are provided.');
         }
 
-        throw_if(is_null($this->getTransport()->origin->date), NeedsDateToSetLoadPointException::class);
+        throw_if(is_null($this->invoice->transport->origin->dateTime), NeedsDateToSetLoadPointException::class);
 
         $data = [];
 
         $data['loadpoint'] = [
-            'date' => $this->getTransport()->origin->date->toDateString(),
-            'time' => $this->getTransport()->origin->time->format('H:i'),
-            'address' => $this->getTransport()->origin->address,
-            'postalcode' => $this->getTransport()->origin->postalCode,
-            'city' => $this->getTransport()->origin->city,
-            'country' => $this->getTransport()->origin->country,
+            'date' => $this->invoice->transport->origin->dateTime->toDateString(),
+            'time' => $this->invoice->transport->origin->dateTime->format('H:i'),
+            'address' => $this->invoice->transport->origin->address,
+            'postalcode' => $this->invoice->transport->origin->postalCode,
+            'city' => $this->invoice->transport->origin->city,
+            'country' => $this->invoice->transport->origin->country,
         ];
 
         $landpointData = [
-            'address' => $this->getTransport()->destination->address,
-            'postalcode' => $this->getTransport()->destination->postalCode,
-            'city' => $this->getTransport()->destination->city,
-            'country' => $this->getTransport()->destination->country,
+            'address' => $this->invoice->transport->destination->address,
+            'postalcode' => $this->invoice->transport->destination->postalCode,
+            'city' => $this->invoice->transport->destination->city,
+            'country' => $this->invoice->transport->destination->country,
         ];
 
-        if ($this->getTransport()->destination->date) {
-            $landpointData['date'] = $this->getTransport()->destination->date->toDateString();
-            $landpointData['time'] = $this->getTransport()->destination->time->format('H:i');
+        if ($this->invoice->transport->destination->dateTime) {
+            $landpointData['date'] = $this->invoice->transport->destination->dateTime->toDateString();
+            $landpointData['time'] = $this->invoice->transport->destination->dateTime->format('H:i');
         }
 
         $data['landpoint'] = $landpointData;
 
-        if ($this->getTransport()->vehicleLicensePlate) {
-            $data['vehicle_id'] = $this->getTransport()->vehicleLicensePlate;
+        if ($this->invoice->transport->vehicleLicensePlate) {
+            $data['vehicle_id'] = $this->invoice->transport->vehicleLicensePlate;
         }
 
         $this->payload->put('movement_of_goods', $data);
@@ -218,6 +219,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     /**
      * @throws CreditNoteReasonIsMissingException
+     * @throws \Throwable
      */
     protected function buildCreditNoteReason(): void
     {
@@ -281,6 +283,8 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         if ($this->getType() === InvoiceType::Receipt) {
             return;
         }
+
+        throw_if($this->invoice->items instanceof Optional, Exception::class, 'Invoice items not set.');
 
         /** @var Collection<int, array<string, mixed>> $items */
         $items = $this->invoice->items->map(function (ItemData $item): array {

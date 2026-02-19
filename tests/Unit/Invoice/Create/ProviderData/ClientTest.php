@@ -27,13 +27,10 @@ it('transforms to provider payload with all client fields', function (Provider $
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => $client
         ])
     );
-
-    $item = ItemData::from(['reference' => 'reference-1']);
-
-    $invoice->item($item);
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['complete_client']);
@@ -41,13 +38,10 @@ it('transforms to provider payload with all client fields', function (Provider $
 it('fails when vat is not valid', function (Provider $provider) {
     $invoice = Invoice::create(
         InvoiceData::make([
+            'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => ClientData::from(['vat' => '']),
         ])
     );
-
-    $item = ItemData::from(['reference' => 'reference-1']);
-
-    $invoice->item($item);
 
     $invoice->getPayload();
 })->with('providers')->throws(InvoiceRequiresClientVatException::class);
