@@ -37,9 +37,14 @@ class InvoiceData extends Data implements DataNeedsValidation
         public Optional|TransportData $transport,
 
         public ?string $atcudHash = null,
-        public ?Output $output = null,
+        public ?OutputData $output = null,
         public InvoiceType $type = InvoiceType::Invoice,
         public Optional|null|Carbon $dueDate = null,
         public Optional|null|string $notes = null
-    ) {}
+    ) {
+        if(is_null($this->output)) {
+            $this->output = OutputData::make([]);
+        }
+
+    }
 }

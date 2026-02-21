@@ -157,7 +157,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     protected function buildOutput(): void
     {
-        $this->payload->put('output', $this->getOutputFormat()->vendus());
+        $this->payload->put('output', $this->invoice->output->format->vendus());
     }
 
     /**
