@@ -39,6 +39,7 @@ class InvoiceData extends Data implements DataNeedsValidation
         public ?string $atcudHash = null,
         public ?Output $output = null,
         public InvoiceType $type = InvoiceType::Invoice,
-        public Optional|null|Carbon $dueDate = null
+        public Optional|null|Carbon $dueDate = null,
+        public Optional|null|string $notes = null
     ) {}
 }
