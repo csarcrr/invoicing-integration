@@ -25,19 +25,24 @@ it('transforms to provider payload with correct invoice type', function (Provide
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $attributes = ['reference' => 'reference-1'];
+    $invoiceData = [
+        'payments' => [PaymentData::from(['method' => PaymentMethod::CREDIT_CARD, 'amount' => 1000,])],
+        'items' => [],
+        'type' => $type
+    ];
 
     if ($type === InvoiceType::CreditNote) {
         $attributes['relatedDocument'] = RelatedDocumentReferenceData::from([
             'documentId' => 'related-document-1',
             'row' => 1,
         ]);
+
+        $invoiceData['creditNoteReason'] = 'Broken product';
     }
 
-    $invoice = Invoice::create(InvoiceData::make([
-        'payments' => [PaymentData::from(['method' => PaymentMethod::CREDIT_CARD, 'amount' => 1000,])],
-        'items'=> [ItemData::from($attributes)],
-        'type' => $type
-    ]));
+    $invoiceData['items'][] = ItemData::from($attributes);
+
+    $invoice = Invoice::create(InvoiceData::make($invoiceData));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers')->with([
