@@ -37,10 +37,10 @@ class InvoiceData extends Data implements DataNeedsValidation
         public Optional|ClientData $client,
         public Optional|TransportData $transport,
 
-        public ?string $atcudHash = null,
-        public ?Output $output = null,
         public Optional|null|string $creditNoteReason = null,
         public Optional|null|string $relatedDocument = null,
+        public ?OutputData $output = null,
+        public Optional|null|string $notes = null,
         public InvoiceType $type = InvoiceType::Invoice,
         public Optional|Carbon $dueDate,
     ) {}
