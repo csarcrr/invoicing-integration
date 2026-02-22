@@ -90,10 +90,10 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
             : null;
 
         $this->invoice = InvoiceData::from([
-            'id' => (int) ($data['id'] ?? 0),
-            'sequence' => (string) ($data['number'] ?? ''),
-            'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
-            'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
+            'id' => (int)($data['id'] ?? 0),
+            'sequence' => (string)($data['number'] ?? ''),
+            'total' => (int)((float)($data['amount_gross'] ?? 0) * 100),
+            'totalNet' => (int)((float)($data['amount_net'] ?? 0) * 100),
             'atcudHash' => $data['atcud'] ?? null,
             'output' => $output,
             'items' => collect($this->items),
@@ -170,7 +170,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
             return;
         }
 
-        if ($this->invoice->client  instanceof Optional) {
+        if ($this->invoice->client instanceof Optional) {
             throw new Exception('Client information is required when transport details are provided.');
         }
 
@@ -210,7 +210,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     protected function buildNotes(): void
     {
-        if (! $this->getNotes()) {
+        if (!$this->getNotes()) {
             return;
         }
 
@@ -223,16 +223,16 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildCreditNoteReason(): void
     {
-        if ($this->getType() !== InvoiceType::CreditNote) {
+        if ($this->invoice->type !== InvoiceType::CreditNote) {
             return;
         }
 
         throw_if(
-            is_null($this->getCreditNoteReason()),
+            is_null($this->invoice->creditNoteReason),
             CreditNoteReasonIsMissingException::class
         );
 
-        $this->payload->put('notes', $this->getCreditNoteReason());
+        $this->payload->put('notes', $this->invoice->creditNoteReason);
     }
 
     protected function buildRelatedDocument(): void
@@ -241,11 +241,11 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
             return;
         }
 
-        if (! $this->getRelatedDocument()) {
+        if (!$this->invoice->relatedDocument) {
             return;
         }
 
-        $this->payload->put('related_document_id', (int) $this->getRelatedDocument());
+        $this->payload->put('related_document_id', (int)$this->invoice->relatedDocument);
     }
 
     /**
@@ -260,14 +260,14 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         $payments = $this->invoice->payments->map(function (PaymentData $payment) {
             $method = $payment->method;
 
-            throw_if(! $method, Exception::class, 'Payment method not configured.');
+            throw_if(!$method, Exception::class, 'Payment method not configured.');
 
             $id = $this->getConfig()->get('payments')[$method->value] ?? null;
 
-            throw_if(! $id, Exception::class, 'Payment method not configured.');
+            throw_if(!$id, Exception::class, 'Payment method not configured.');
 
             return [
-                'amount' => (float) (($payment->amount ?? 0) / 100),
+                'amount' => (float)(($payment->amount ?? 0) / 100),
                 'id' => $id,
             ];
         });
@@ -330,9 +330,9 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
                 }
             }
 
-            if ($this->getType() === InvoiceType::CreditNote) {
+            if ($this->invoice->type === InvoiceType::CreditNote) {
                 throw_if(
-                    ! $item->relatedDocument,
+                    !$item->relatedDocument,
                     MissingRelatedDocumentException::class
                 );
 
@@ -372,8 +372,8 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
         $data['irs_retention'] = $client->irsRetention ? 'yes' : 'no';
         $data['email_notification'] = $client->emailNotification ? 'yes' : 'no';
-        ! empty($client->vat) && $data['fiscal_id'] = $client->vat;
-        ! empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
+        !empty($client->vat) && $data['fiscal_id'] = $client->vat;
+        !empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
 
         unset($data['vat'], $data['postal_code']);
 

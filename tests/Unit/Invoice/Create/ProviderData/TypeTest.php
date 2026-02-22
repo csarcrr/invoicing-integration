@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Data\RelatedDocumentReferenceData;
@@ -13,8 +14,9 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 it('transforms to provider payload with default invoice type', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'reference-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1'])]
+    ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['default_type']);
@@ -22,7 +24,6 @@ it('transforms to provider payload with default invoice type', function (Provide
 it('transforms to provider payload with correct invoice type', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
-    $invoice = Invoice::create();
     $attributes = ['reference' => 'reference-1'];
 
     if ($type === InvoiceType::CreditNote) {
@@ -30,15 +31,13 @@ it('transforms to provider payload with correct invoice type', function (Provide
             'documentId' => 'related-document-1',
             'row' => 1,
         ]);
-        $invoice->creditNoteReason('Reason for credit note');
     }
 
-    $invoice->payment(PaymentData::from([
-        'method' => PaymentMethod::CREDIT_CARD,
-        'amount' => 1000,
+    $invoice = Invoice::create(InvoiceData::make([
+        'payments' => [PaymentData::from(['method' => PaymentMethod::CREDIT_CARD, 'amount' => 1000,])],
+        'items'=> [ItemData::from($attributes)],
+        'type' => $type
     ]));
-    $invoice->item(ItemData::from($attributes));
-    $invoice->type($type);
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers')->with([

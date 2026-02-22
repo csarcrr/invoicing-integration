@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use Illuminate\Support\Collection;
+use Spatie\LaravelData\Attributes\Validation\Sometimes;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -38,7 +39,9 @@ class InvoiceData extends Data implements DataNeedsValidation
 
         public ?string $atcudHash = null,
         public ?Output $output = null,
+        public Optional|null|string $creditNoteReason = null,
+        public Optional|null|string $relatedDocument = null,
         public InvoiceType $type = InvoiceType::Invoice,
-        public Optional|null|Carbon $dueDate = null
+        public Optional|Carbon $dueDate,
     ) {}
 }
