@@ -17,7 +17,7 @@ trait HasItems
     public function item(ItemData $item): self
     {
         $this->invoice->from([
-            'items' => $item
+            'items' => $item,
         ]);
 
         return $this;

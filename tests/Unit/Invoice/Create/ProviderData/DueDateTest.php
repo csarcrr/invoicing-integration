@@ -18,7 +18,7 @@ it('transforms to provider payload with due date', function (Provider $provider,
         InvoiceData::make([
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [
-                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,])
+                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
             ],
             'dueDate' => Carbon::createFromFormat('Y-m-d', '2025-12-31'),
         ])
@@ -32,7 +32,7 @@ it('fails setting a due date in a type different than FT', function (Provider $p
         'type' => InvoiceType::InvoiceSimple,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'payments' => [
-            PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,])
+            PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
         ],
         'dueDate' => now()->addDay(),
     ]));

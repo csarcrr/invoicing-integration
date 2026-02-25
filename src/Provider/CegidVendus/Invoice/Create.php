@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
@@ -20,20 +19,11 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReason
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusInvoice;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasItems;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasNotes;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasOutputFormat;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
+
 use function collect;
 
 class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
@@ -45,9 +35,6 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected Collection $payload;
 
-    /**
-     * @param InvoiceData $invoice
-     */
     public function __construct(protected InvoiceData $invoice)
     {
         $this->payload = collect([
@@ -74,14 +61,14 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         $output = OutputData::make([
             'format' => $this->invoice->output->format->value,
             'content' => $data['output'] ?? null,
-            'fileName' => $data['number'] ?? null
+            'fileName' => $data['number'] ?? null,
         ]);
 
         $this->invoice = InvoiceData::from([
-            'id' => (int)($data['id'] ?? 0),
-            'sequence' => (string)($data['number'] ?? ''),
-            'total' => (int)((float)($data['amount_gross'] ?? 0) * 100),
-            'totalNet' => (int)((float)($data['amount_net'] ?? 0) * 100),
+            'id' => (int) ($data['id'] ?? 0),
+            'sequence' => (string) ($data['number'] ?? ''),
+            'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
+            'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
             'atcudHash' => $data['atcud'] ?? null,
             'output' => $output,
             'items' => $this->invoice->items,
@@ -130,7 +117,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildDueDate(): void
     {
-        if (!($this->invoice->dueDate instanceof Carbon)) {
+        if (! ($this->invoice->dueDate instanceof Carbon)) {
             return;
         }
 
@@ -229,11 +216,11 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
             return;
         }
 
-        if (!$this->invoice->relatedDocument) {
+        if (! $this->invoice->relatedDocument) {
             return;
         }
 
-        $this->payload->put('related_document_id', (int)$this->invoice->relatedDocument);
+        $this->payload->put('related_document_id', (int) $this->invoice->relatedDocument);
     }
 
     /**
@@ -248,14 +235,14 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         $payments = $this->invoice->payments->map(function (PaymentData $payment) {
             $method = $payment->method;
 
-            throw_if(!$method, Exception::class, 'Payment method not configured.');
+            throw_if(! $method, Exception::class, 'Payment method not configured.');
 
             $id = $this->getConfig()->get('payments')[$method->value] ?? null;
 
-            throw_if(!$id, Exception::class, 'Payment method not configured.');
+            throw_if(! $id, Exception::class, 'Payment method not configured.');
 
             return [
-                'amount' => (float)(($payment->amount ?? 0) / 100),
+                'amount' => (float) (($payment->amount ?? 0) / 100),
                 'id' => $id,
             ];
         });
@@ -320,7 +307,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
             if ($this->invoice->type === InvoiceType::CreditNote) {
                 throw_if(
-                    !$item->relatedDocument,
+                    ! $item->relatedDocument,
                     MissingRelatedDocumentException::class
                 );
 
@@ -360,8 +347,8 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
         $data['irs_retention'] = $client->irsRetention ? 'yes' : 'no';
         $data['email_notification'] = $client->emailNotification ? 'yes' : 'no';
-        !empty($client->vat) && $data['fiscal_id'] = $client->vat;
-        !empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
+        ! empty($client->vat) && $data['fiscal_id'] = $client->vat;
+        ! empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
 
         unset($data['vat'], $data['postal_code']);
 

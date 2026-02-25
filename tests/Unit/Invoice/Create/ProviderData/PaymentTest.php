@@ -16,7 +16,7 @@ it('transforms to provider payload with single payment', function (Provider $pro
         InvoiceData::make([
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [
-                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,])
+                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
             ],
         ])
     );
@@ -31,9 +31,9 @@ it('transforms to provider payload with multiple payments', function (Provider $
         InvoiceData::make([
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [
-                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,]),
-                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::MONEY,])
-            ]
+                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
+                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::MONEY]),
+            ],
         ])
     );
 
@@ -41,7 +41,7 @@ it('transforms to provider payload with multiple payments', function (Provider $
 })->with('providers', ['payment_multiple']);
 
 it('throws error when configuration is not set', function (Provider $provider) {
-    config()->set('invoicing-integration.providers.' . Provider::CEGID_VENDUS->value . '.payments', [
+    config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value.'.payments', [
         PaymentMethod::CREDIT_CARD->value => null,
         PaymentMethod::MONEY->value => null,
         PaymentMethod::MB->value => null,
@@ -52,7 +52,7 @@ it('throws error when configuration is not set', function (Provider $provider) {
     $invoice = Invoice::create(
         InvoiceData::make([
             'items' => [ItemData::from(['reference' => 'reference-1'])],
-            'payments' => [PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD,])],
+            'payments' => [PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD])],
         ])
     );
 

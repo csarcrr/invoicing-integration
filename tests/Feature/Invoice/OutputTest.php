@@ -12,7 +12,7 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [ItemData::make(['reference' => 'item-1'])]
+        'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
     $data = $invoice->execute()->getInvoice();
@@ -29,7 +29,7 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [ItemData::make(['reference' => 'item-1'])]
+        'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
     $data = $invoice->execute()->getInvoice();
@@ -46,7 +46,7 @@ test('can save the output under a custom name and path', function (Provider $pro
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [ItemData::make(['reference' => 'item-1'])]
+        'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
     $data = $invoice->execute()->getInvoice();
@@ -68,7 +68,7 @@ test('is able to sanitize the path and filename when saving', function (
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [ItemData::make(['reference' => 'item-1'])]
+        'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
     $data = $invoice->execute()->getInvoice();
@@ -105,7 +105,7 @@ test('outputs null when there is no invoice output provided', function (Provider
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [ItemData::make(['reference' => 'item-1'])]
+        'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
     $data = $invoice->execute()->getInvoice();

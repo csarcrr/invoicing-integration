@@ -26,7 +26,7 @@ it('transforms to provider payload with all item properties', function (Provider
     ]);
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [$item]
+        'items' => [$item],
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -38,8 +38,8 @@ it('transforms to provider payload with multiple items', function (Provider $pro
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [
             ItemData::from(['reference' => 'reference-1']),
-            ItemData::from(['reference' => 'reference-2'])
-        ]
+            ItemData::from(['reference' => 'reference-2']),
+        ],
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -50,8 +50,8 @@ it('transforms to provider payload with correct item type', function (Provider $
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [
-            ItemData::from(['reference' => 'reference-1', 'type' => $type,])
-        ]
+            ItemData::from(['reference' => 'reference-1', 'type' => $type]),
+        ],
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -78,8 +78,8 @@ it('transforms to provider payload with correct tax type', function (Provider $p
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [
-            ItemData::from($attributes)
-        ]
+            ItemData::from($attributes),
+        ],
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);

@@ -10,7 +10,6 @@ use CsarCrr\InvoicingIntegration\Provider\Base;
 use Exception;
 use Illuminate\Support\Collection;
 
-use Spatie\LaravelData\Data;
 use function collect;
 use function in_array;
 use function throw_if;

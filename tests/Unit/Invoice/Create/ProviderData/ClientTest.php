@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use Illuminate\Validation\Rules\In;
 
 it('transforms to provider payload with all client fields', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->client()->files($fixtureName);
@@ -28,7 +27,7 @@ it('transforms to provider payload with all client fields', function (Provider $
     $invoice = Invoice::create(
         InvoiceData::make([
             'items' => [ItemData::from(['reference' => 'reference-1'])],
-            'client' => $client
+            'client' => $client,
         ])
     );
 

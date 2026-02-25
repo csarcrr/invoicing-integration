@@ -28,7 +28,7 @@ it('transforms to provider payload with credit note reason', function (Provider 
             'amount' => 1000,
             'method' => PaymentMethod::CREDIT_CARD,
         ])],
-        'creditNoteReason' => 'Product damaged'
+        'creditNoteReason' => 'Product damaged',
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -47,7 +47,7 @@ it('fails when reason is not applied', function (Provider $provider) {
         'payments' => [PaymentData::from([
             'amount' => 1000,
             'method' => PaymentMethod::CREDIT_CARD,
-        ])]
+        ])],
     ]));
 
     $invoice->getPayload();
@@ -68,7 +68,7 @@ it('ignores credit note reason when invoice type is not credit note', function (
             'amount' => 1000,
             'method' => PaymentMethod::CREDIT_CARD,
         ])],
-        'creditNoteReason' => 'Product damaged'
+        'creditNoteReason' => 'Product damaged',
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);

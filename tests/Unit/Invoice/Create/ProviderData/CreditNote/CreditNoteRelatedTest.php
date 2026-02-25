@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 it('fails when no reason is provided on the item', function (Provider $provider) {
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::CreditNote,
-        'items' => [ItemData::from(['reference' => 'reference-1'])]
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]));
 
     $invoice->getPayload();

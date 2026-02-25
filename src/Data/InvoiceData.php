@@ -13,9 +13,6 @@ use Spatie\LaravelData\Attributes\Validation\Sometimes;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
-/**
- *
- */
 class InvoiceData extends Data implements DataNeedsValidation
 {
     use HasMakeValidation;
@@ -42,7 +39,7 @@ class InvoiceData extends Data implements DataNeedsValidation
         #[Sometimes]
         public InvoiceType $type = InvoiceType::Invoice,
     ) {
-        if(is_null($this->output)) {
+        if (is_null($this->output)) {
             $this->output = OutputData::make([]);
         }
     }

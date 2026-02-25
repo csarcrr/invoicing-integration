@@ -20,7 +20,7 @@ it('transforms to provider payload with pdf output format', function (Provider $
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'item-1'])],
-        'output' => OutputData::make(['format' => OutputFormat::PDF_BASE64])
+        'output' => OutputData::make(['format' => OutputFormat::PDF_BASE64]),
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -31,7 +31,7 @@ it('transforms to provider payload with escpos output format', function (Provide
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'item-1'])],
-        'output' => OutputData::make(['format' => OutputFormat::ESCPOS])
+        'output' => OutputData::make(['format' => OutputFormat::ESCPOS]),
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);

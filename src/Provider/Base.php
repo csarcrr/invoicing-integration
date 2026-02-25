@@ -3,6 +3,7 @@
 namespace CsarCrr\InvoicingIntegration\Provider;
 
 use Spatie\LaravelData\Data;
+
 use function collect;
 
 abstract class Base
@@ -11,6 +12,7 @@ abstract class Base
 
     /**
      * Fills properties that are not supported.
+     *
      * @param  array<string, mixed>  $values
      *
      * @throws \Throwable

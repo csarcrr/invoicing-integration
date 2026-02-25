@@ -20,7 +20,7 @@ test('handles invoice response correctly', function (Provider $provider, string 
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [ItemData::make(['reference' => 'reference-1'])],
-        'payments' => [PaymentData::make(['method' => PaymentMethod::MB, 'amount' => 1000])]
+        'payments' => [PaymentData::make(['method' => PaymentMethod::MB, 'amount' => 1000])],
     ]));
 
     $invoice = $invoice->execute()->getInvoice();
@@ -36,7 +36,7 @@ test('handles invoice response correctly', function (Provider $provider, string 
 
 })->with('providers', ['full']);
 
-test('when creating request fails it handles errors properly', function (Provider $provider, string $fixtureName,) {
+test('when creating request fails it handles errors properly', function (Provider $provider, string $fixtureName) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
     Http::fake(mockResponse($payload, 400));
 
@@ -47,7 +47,7 @@ test('when creating request fails it handles errors properly', function (Provide
     $invoice->execute();
 })->with('providers', ['invoice_fail'])->throws(RequestFailedException::class);
 
-test('when auth in create fails it handles errors properly', function (Provider $provider, string $fixtureName,) {
+test('when auth in create fails it handles errors properly', function (Provider $provider, string $fixtureName) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
 
     Http::fake(mockResponse($payload, 401));

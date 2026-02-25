@@ -17,8 +17,8 @@ it('transforms to provider payload with related document', function (Provider $p
     $invoice = Invoice::create(InvoiceData::make([
         'type' => $type,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
-        'payments' => [PaymentData::from(['amount' => 1000, 'method' => PaymentMethod::CREDIT_CARD,])],
-        'relatedDocument' => '99999999'
+        'payments' => [PaymentData::from(['amount' => 1000, 'method' => PaymentMethod::CREDIT_CARD])],
+        'relatedDocument' => '99999999',
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -34,10 +34,10 @@ it('transforms to provider payload with credit note related document', function 
 
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::CreditNote,
-        'items' => [ItemData::from(['reference' => 'reference-1', 'relatedDocument' => RelatedDocumentReferenceData::from(['documentId' => 'FT 01P2025/1', 'row' => 1,]),])],
-        'payments' => [PaymentData::from(['amount' => 1000, 'method' => PaymentMethod::CREDIT_CARD,])],
+        'items' => [ItemData::from(['reference' => 'reference-1', 'relatedDocument' => RelatedDocumentReferenceData::from(['documentId' => 'FT 01P2025/1', 'row' => 1])])],
+        'payments' => [PaymentData::from(['amount' => 1000, 'method' => PaymentMethod::CREDIT_CARD])],
         'relatedDocument' => 'FT 01P2025/1',
-        'creditNoteReason' => 'Product damaged'
+        'creditNoteReason' => 'Product damaged',
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);

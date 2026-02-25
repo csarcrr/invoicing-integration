@@ -15,7 +15,7 @@ it('transforms to provider payload with default invoice type', function (Provide
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
-        'items' => [ItemData::from(['reference' => 'reference-1'])]
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
@@ -26,9 +26,9 @@ it('transforms to provider payload with correct invoice type', function (Provide
 
     $attributes = ['reference' => 'reference-1'];
     $invoiceData = [
-        'payments' => [PaymentData::from(['method' => PaymentMethod::CREDIT_CARD, 'amount' => 1000,])],
+        'payments' => [PaymentData::from(['method' => PaymentMethod::CREDIT_CARD, 'amount' => 1000])],
         'items' => [],
-        'type' => $type
+        'type' => $type,
     ];
 
     if ($type === InvoiceType::CreditNote) {
