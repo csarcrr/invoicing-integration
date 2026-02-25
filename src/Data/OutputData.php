@@ -50,15 +50,6 @@ class OutputData extends Data implements DataNeedsValidation
             ->toString();
     }
 
-    protected function setFileName(string $fileName): self
-    {
-        $fileName = Str::replace('/', '_', $fileName);
-
-        $this->fileName = Str::of(Str::lower($fileName))->slug('_').'.pdf';
-
-        return $this;
-    }
-
     protected function base64EncodedPdf(): string
     {
         $decoded = base64_decode($this->content);

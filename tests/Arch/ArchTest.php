@@ -13,7 +13,6 @@ arch('it will not use debugging functions')
     ->each->not->toBeUsed();
 
 arch('strict types')
-    ->expect('CsarCrr\InvoicingIntegration\ValueObjects')
     ->expect('CsarCrr\InvoicingIntegration\Enums')
     ->expect('CsarCrr\InvoicingIntegration\Facades')
     ->expect('CsarCrr\InvoicingIntegration\Provider')
@@ -21,8 +20,8 @@ arch('strict types')
     ->expect('CsarCrr\InvoicingIntegration\Services')
     ->expect('CsarCrr\InvoicingIntegration\Traits')
     ->expect('CsarCrr\InvoicingIntegration\Transformers')
-    ->expect('CsarCrr\InvoicingIntegration\ValueObjects')
     ->expect('CsarCrr\InvoicingIntegration\Actions')
+    ->expect('CsarCrr\InvoicingIntegration\Data')
     ->expect('CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider')
     ->toUseStrictTypes();
 
@@ -53,10 +52,10 @@ arch('data')
     ->toBeClasses()
     ->toExtend(Data::class);
 
-arch('ValueObjects')
-    ->expect('CsarCrr\InvoicingIntegration\ValueObjects')
+arch('Data Objects')
+    ->expect('CsarCrr\InvoicingIntegration\Data')
     ->toBeClasses()
-    ->toExtendNothing()
+    ->toExtend(Data::class)
     ->toBeUsedIn('CsarCrr\InvoicingIntegration\Provider');
 
 arch('transformers')

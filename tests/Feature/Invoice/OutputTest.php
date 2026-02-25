@@ -1,6 +1,8 @@
 <?php
 
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Support\Facades\Http;
@@ -9,38 +11,44 @@ use Illuminate\Support\Facades\Storage;
 test('can save the output to pdf', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'item-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'item-1'])]
+    ]));
+
     $data = $invoice->execute()->getInvoice();
 
-    $path = "invoices/{$data->output->fileName()}";
+    $path = "invoices/{$data->output->fileName}";
 
     $output = $data->output->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('local')->assertExists($output);
 })->with('providers', ['output_with_pdf']);
 
 test('can output escpos', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'item-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'item-1'])]
+    ]));
+
     $data = $invoice->execute()->getInvoice();
 
-    $path = "invoices/{$data->output->fileName()}";
+    $path = "invoices/{$data->output->fileName}";
 
     $output = $data->output->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('local')->assertExists($output);
 })->with('providers', ['output_with_escpos']);
 
 test('can save the output under a custom name and path', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'item-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'item-1'])]
+    ]));
+
     $data = $invoice->execute()->getInvoice();
 
     $path = 'invoices/custom-name.pdf';
@@ -59,8 +67,10 @@ test('is able to sanitize the path and filename when saving', function (
 ) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'item-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'item-1'])]
+    ]));
+
     $data = $invoice->execute()->getInvoice();
 
     $savePath = $data->output->save($invalidPath);
@@ -94,9 +104,11 @@ test('is able to sanitize the path and filename when saving', function (
 test('outputs null when there is no invoice output provided', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'item-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'item-1'])]
+    ]));
+
     $data = $invoice->execute()->getInvoice();
 
-    expect($data->output)->toBeNull();
+    expect($data->output)->toBeInstanceOf(OutputData::class)->and($data->output->content)->toBeNull();
 })->with('providers', ['output_with_no_output']);

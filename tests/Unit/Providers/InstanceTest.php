@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -12,7 +13,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 it('returns an instance of CreateInvoice', function (Provider $provider) {
     config()->set('invoicing-integration.provider', $provider->value);
 
-    expect(Invoice::create())->toBeInstanceOf(ShouldCreateInvoice::class);
+    expect(Invoice::create(InvoiceData::make([])))->toBeInstanceOf(ShouldCreateInvoice::class);
 })->with('providers');
 
 it('returns an instance of CreateClient', function (Provider $provider) {
