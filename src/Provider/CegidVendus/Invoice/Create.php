@@ -40,9 +40,6 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         $this->payload = collect([
             'type' => $this->invoice->type->value,
         ]);
-
-        $this->items = collect();
-        $this->payments = collect();
     }
 
     /**
