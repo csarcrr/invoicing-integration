@@ -22,6 +22,7 @@ it('transforms to provider payload with all client fields', function (Provider $
         'email' => 'john.doe@mail.com',
         'phone' => '220123123',
         'irsRetention' => true,
+        'emailNotification' => true,
     ]);
 
     $invoice = Invoice::create(
