@@ -86,50 +86,22 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 ## CreateInvoice Contract
 
-The builder interface returned by `Invoice::create()`. It mutates the
-`InvoiceData` instance you pass in, so DTOs remain your single source of truth.
-Use these helpers when you need to tweak data after instantiation (e.g., inside
-jobs). All methods return `self` for chaining unless otherwise noted.
+The contract returned by `Invoice::create()` focuses on executing the request
+and inspecting the resulting DTO. All configuration lives on `InvoiceData`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 ```
 
-### Builder Methods
+| Method         | Return Type   | Description                                                       |
+| -------------- | ------------- | ----------------------------------------------------------------- |
+| `execute()`    | `self`        | Issue the HTTP request using the data contained in `InvoiceData`  |
+| `getInvoice()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
+| `getPayload()` | `Collection`  | Inspect the payload that will be sent to the provider (debugging) |
 
-| Method                                         | Parameters                         | Description                                      | Throws |
-| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ | ------ |
-| `client(ClientData $client)`                   | ClientData object                  | Set client details (optional for final consumer) | -      |
-| `item(Item $item)`                             | Item object                        | Add an item to the invoice                       | -      |
-| `payment(PaymentData $payment)`                | PaymentData object                 | Add a payment to the invoice                     | -      |
-| `transport(TransportData $transport)`          | TransportData object               | Set transport details                            | -      |
-| `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  | -      |
-| `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           | -      |
-| `outputFormat(OutputFormat $format)`           | OutputFormat enum                  | Set output format (PDF or ESC/POS)               | -      |
-| `relatedDocument(int\|string $doc, ?int $row)` | Document ID/sequence, optional row | Link to related document                         | -      |
-| `creditNoteReason(string $reason)`             | Reason text                        | Set credit note reason (NC only)                 | -      |
-| `notes(string $notes)`                         | Notes text                         | Add notes to the invoice                         | -      |
-
-### Execution Method
-
-| Method      | Return Type             | Description                         |
-| ----------- | ----------------------- | ----------------------------------- |
-| `execute()` | `Invoice` (ValueObject) | Issue the invoice and return result |
-
-### Getter Methods
-
-| Method                  | Return Type         | Description                      |
-| ----------------------- | ------------------- | -------------------------------- |
-| `getClient()`           | `?ClientData`       | Get the current client           |
-| `getItems()`            | `Collection`        | Get all items                    |
-| `getPayments()`         | `Collection`        | Get all payments                 |
-| `getTransport()`        | `?TransportData`    | Get transport details            |
-| `getType()`             | `InvoiceType`       | Get document type                |
-| `getOutputFormat()`     | `OutputFormat`      | Get output format                |
-| `getRelatedDocument()`  | `int\|string\|null` | Get related document reference   |
-| `getCreditNoteReason()` | `?string`           | Get credit note reason           |
-| `getNotes()`            | `?string`           | Get invoice notes                |
-| `getPayload()`          | `Collection`        | Get the prepared request payload |
+> Need to change values after instantiating your DTO? Mutate the
+> `InvoiceData` instance (its properties are public) before passing it to
+> `Invoice::create()`, or create a new DTO via `InvoiceData::from([...])`.
 
 ---
 

@@ -139,25 +139,32 @@ $client = ClientData::make([
     'name' => 'TechStore',
     'vat' => 'PT509876543',
 ]);
-// Or for final consumer, just don't call ->client()
+// Or for final consumer, leave the 'client' field unset on InvoiceData
 ```
 
 ### Credit Note Validation
 
-| Exception                            | Meaning                            | How to Fix                         |
-| ------------------------------------ | ---------------------------------- | ---------------------------------- |
-| `CreditNoteReasonIsMissingException` | NC type without reason             | Call `->creditNoteReason('...')`   |
-| `MissingRelatedDocumentException`    | Credit note item without reference | Add `relatedDocument` to each item |
+| Exception                            | Meaning                            | How to Fix                                     |
+| ------------------------------------ | ---------------------------------- | ---------------------------------------------- |
+| `CreditNoteReasonIsMissingException` | NC type without reason             | Set `creditNoteReason` on `InvoiceData`        |
+| `MissingRelatedDocumentException`    | Credit note item without reference | Add `relatedDocument` to each credit note item |
 
 ```php
 // Wrong: missing reason
-$invoice->type(InvoiceType::CreditNote);
-$invoice->execute()->getInvoice();  // Throws CreditNoteReasonIsMissingException
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::CreditNote,
+]);
+
+Invoice::create($invoiceData)->execute()->getInvoice();
+// Throws CreditNoteReasonIsMissingException
 
 // Right: provide reason
-$invoice->type(InvoiceType::CreditNote);
-$invoice->creditNoteReason('Customer return - item defective');
-$invoice->execute()->getInvoice();
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::CreditNote,
+    'creditNoteReason' => 'Customer return - item defective',
+]);
+
+Invoice::create($invoiceData)->execute()->getInvoice();
 ```
 
 ### Item Validation

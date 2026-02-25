@@ -1,7 +1,7 @@
 # Working with Tax Exemptions
 
 Many Portuguese document types require you to explicitly state why VAT is exempt. This guide shows
-how to configure exemptions with the fluent builder and lists every supported
+how to configure exemptions when building your `InvoiceData` payload and lists every supported
 `TaxExemptionReason` code so that you never need to peek at the enum source.
 
 ## When to Use an Exemption

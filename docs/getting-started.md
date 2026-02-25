@@ -127,17 +127,14 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
 ]);
 
-$builder = Invoice::create($invoiceData);
-$result = $builder->execute()->getInvoice();
+$action = Invoice::create($invoiceData);
+$result = $action->execute()->getInvoice();
 ```
 
 Need to adjust the payload dynamically (e.g., append a payment when a queue job
-resumes)? Call the builder helpers—they mutate the same DTO instance:
-
-```php
-$builder->payment(PaymentData::make([...]))
-    ->notes('Thank you!');
-```
+resumes)? Mutate the `InvoiceData` instance directly (its properties are public,
+and collections inside it are regular Laravel collections) or create a new DTO
+via `InvoiceData::from([...])` before calling `Invoice::create()` again.
 
 ## Troubleshooting
 
