@@ -225,7 +225,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     protected function buildRelatedDocument(): void
     {
-        if ($this->getType() === InvoiceType::CreditNote) {
+        if ($this->invoice->type === InvoiceType::CreditNote) {
             return;
         }
 
@@ -268,7 +268,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
      */
     protected function buildItems(): void
     {
-        if ($this->getType() === InvoiceType::Receipt) {
+        if ($this->invoice->type === InvoiceType::Receipt) {
             return;
         }
 

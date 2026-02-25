@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 it('has pdf has the default output', function (Provider $provider) {
     $invoice = Invoice::create(InvoiceData::make([]));
 
-    expect($invoice->getOutputFormat())->toBe(OutputFormat::PDF_BASE64);
+    expect($invoice->getInvoice()->output->format)->toBe(OutputFormat::PDF_BASE64);
 })->with('providers');
 
 it('transforms to provider payload with pdf output format', function (Provider $provider, string $fixtureName) {
