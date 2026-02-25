@@ -14,6 +14,6 @@ it('fails when no reason is provided on the item', function (Provider $provider)
         'type' => InvoiceType::CreditNote,
         'items' => [ItemData::from(['reference' => 'reference-1'])]
     ]));
-    
+
     $invoice->getPayload();
 })->with('providers')->throws(MissingRelatedDocumentException::class);

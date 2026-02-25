@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
@@ -17,9 +18,11 @@ test('handles invoice response correctly', function (Provider $provider, string 
     $payload = fixtures()->response()->invoice()->files($fixture);
     Http::fake(mockResponse($payload));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::make(['reference' => 'reference-1']));
-    $invoice->payment(PaymentData::make(['method' => PaymentMethod::MB, 'amount' => 1000]));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+        'payments' => [PaymentData::make(['method' => PaymentMethod::MB, 'amount' => 1000])]
+    ]));
+
     $invoice = $invoice->execute()->getInvoice();
 
     expect($invoice->id)->toBeInt()
@@ -33,40 +36,36 @@ test('handles invoice response correctly', function (Provider $provider, string 
 
 })->with('providers', ['full']);
 
-test('when creating request fails it handles errors properly', function (
-    Provider $provider,
-    string $fixtureName,
-) {
+test('when creating request fails it handles errors properly', function (Provider $provider, string $fixtureName,) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
     Http::fake(mockResponse($payload, 400));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'reference-1']));
-    $invoice->execute();
-})->with('providers', ['invoice_fail'])
-    ->throws(RequestFailedException::class);
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]));
 
-test('when auth in create fails it handles errors properly', function (
-    Provider $provider,
-    string $fixtureName,
-) {
+    $invoice->execute();
+})->with('providers', ['invoice_fail'])->throws(RequestFailedException::class);
+
+test('when auth in create fails it handles errors properly', function (Provider $provider, string $fixtureName,) {
     $payload = fixtures()->response()->invoice()->files($fixtureName);
 
     Http::fake(mockResponse($payload, 401));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'reference-1']));
-    $invoice->execute();
-})->with('providers', ['invoice_auth'])
-    ->throws(UnauthorizedException::class);
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]));
 
-test('when provider fails catastrophically it handles the errors properly', function (
-    Provider $provider,
-) {
+    $invoice->execute();
+})->with('providers', ['invoice_auth'])->throws(UnauthorizedException::class);
+
+test('when provider fails catastrophically it handles the errors properly', function (Provider $provider) {
     Http::fake(mockResponse([], 500));
 
-    $invoice = Invoice::create();
-    $invoice->item(ItemData::from(['reference' => 'reference-1']));
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]));
+
     $invoice->execute();
 })->with('providers')
     ->throws(FailedReachingProviderException::class);

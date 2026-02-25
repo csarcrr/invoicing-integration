@@ -11,6 +11,7 @@ use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
@@ -81,13 +82,11 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
         $data = $response->json();
 
-        $output = isset($data['output'])
-            ? new Output(
-                format: $this->getOutputFormat(),
-                content: $data['output'],
-                fileName: $data['number'] ?? ''
-            )
-            : null;
+        $output = OutputData::make([
+            'format' => $this->invoice->output->format->value,
+            'content' => $data['output'] ?? null,
+            'fileName' => $data['number'] ?? null
+        ]);
 
         $this->invoice = InvoiceData::from([
             'id' => (int)($data['id'] ?? 0),
@@ -96,9 +95,9 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
             'totalNet' => (int)((float)($data['amount_net'] ?? 0) * 100),
             'atcudHash' => $data['atcud'] ?? null,
             'output' => $output,
-            'items' => collect($this->items),
-            'payments' => collect($this->payments),
-            'type' => $this->getType(),
+            'items' => $this->invoice->items,
+            'payments' => $this->invoice->payments,
+            'type' => $this->invoice->type,
         ]);
 
         $this->fillAdditionalProperties($data, $this->invoice);
