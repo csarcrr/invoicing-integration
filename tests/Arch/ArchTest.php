@@ -50,11 +50,6 @@ arch('traits')
 arch('data')
     ->expect('CsarCrr\InvoicingIntegration\Data')
     ->toBeClasses()
-    ->toExtend(Data::class);
-
-arch('Data Objects')
-    ->expect('CsarCrr\InvoicingIntegration\Data')
-    ->toBeClasses()
     ->toExtend(Data::class)
     ->toBeUsedIn('CsarCrr\InvoicingIntegration\Provider');
 

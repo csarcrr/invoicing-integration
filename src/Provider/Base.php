@@ -8,6 +8,9 @@ use function collect;
 
 abstract class Base
 {
+    /**
+     * @var list<string>
+     */
     protected array $supportedProperties = [];
 
     /**
