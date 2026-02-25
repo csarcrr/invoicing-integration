@@ -30,7 +30,6 @@ use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
 use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
-use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
