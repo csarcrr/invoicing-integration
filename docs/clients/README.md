@@ -71,7 +71,9 @@ Sample response (`$client->toArray()`):
 Once registered, use the client for all their orders:
 
 ```php
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -80,22 +82,20 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 $clientData = ClientData::make(['id' => $customer->provider_client_id]);
 $client = Client::get($clientData)->execute()->getClient();
 
-// Create the invoice
-$invoice = Invoice::create();
-$invoice->client($client);
-
-$item = ItemData::make([
-    'reference' => 'LAPTOP-PRO',
-    'note' => 'Business Laptops (50 units)',
-    'price' => 65000, // €650.00
-    'quantity' => 50,
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-PRO',
+            'note' => 'Business Laptops (50 units)',
+            'price' => 65000,
+            'quantity' => 50,
+        ]),
+    ],
+    'dueDate' => Carbon::now()->addDays(30),
 ]);
-$invoice->item($item);
 
-// Payment due in 30 days
-$invoice->dueDate(Carbon::now()->addDays(30));
-
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 ```
 
 ## Inline vs. Registered Clients
@@ -104,17 +104,23 @@ You don't have to register every customer. Here's when to use each approach:
 
 ```php
 // Option 1: Inline client (for one-time purchases)
-$invoice = Invoice::create();
-$invoice->client(ClientData::make([
-    'name' => 'Individual Buyer',
-    'vat' => 'PT123456789',
-]));
+$invoiceData = InvoiceData::make([
+    'client' => ClientData::make([
+        'name' => 'Individual Buyer',
+        'vat' => 'PT123456789',
+    ]),
+    'items' => [...],
+]);
+Invoice::create($invoiceData)->execute();
 // Client details are used once and not stored in the provider
 
 // Option 2: Registered client (for repeat customers)
 $client = Client::get(ClientData::make(['id' => $storedId]))->execute()->getClient();
-$invoice = Invoice::create();
-$invoice->client($client);
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    'items' => [...],
+]);
+Invoice::create($invoiceData)->execute();
 // Provider tracks all invoices for this client
 ```
 

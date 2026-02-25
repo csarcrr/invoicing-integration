@@ -105,6 +105,7 @@ You can use a retrieved client when creating invoices:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -114,16 +115,17 @@ $clientData = ClientData::make(['id' => 12345]);
 $client = Client::get($clientData)->execute()->getClient();
 
 // Use client in invoice
-$invoice = Invoice::create();
-$invoice->client($client);
-
-$item = ItemData::make([
-    'reference' => 'SKU-001',
-    'price' => 1000,
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    'items' => [
+        ItemData::make([
+            'reference' => 'SKU-001',
+            'price' => 1000,
+        ]),
+    ],
 ]);
-$invoice->item($item);
 
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 ```
 
 ## Error Handling

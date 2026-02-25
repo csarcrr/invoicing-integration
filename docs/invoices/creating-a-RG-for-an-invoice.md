@@ -20,27 +20,24 @@ When you issue an FT invoice (deferred payment), the customer pays later. Once t
 A customer just paid their outstanding invoice. Let's issue the receipt:
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Create the receipt
-$receipt = Invoice::create()
-    ->type(InvoiceType::Receipt);
-
-// Link it to the original invoice (use the provider's invoice ID)
-$receipt->relatedDocument(99999999);
-
-// Record how they paid
-$payment = PaymentData::make([
-    'method' => PaymentMethod::MONEY_TRANSFER,
-    'amount' => 89999, // 899.99 - full invoice amount
+$receiptData = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => 99999999,
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY_TRANSFER,
+            'amount' => 89999,
+        ]),
+    ],
 ]);
-$receipt->payment($payment);
 
-// Issue the receipt
-$result = $receipt->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->getInvoice();
 ```
 
 Sample receipt response:
@@ -59,55 +56,51 @@ Sample receipt response:
 Here's a complete example from invoice to receipt:
 
 ```php
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Step 1: Issue an FT invoice with 30-day payment terms
-$invoice = Invoice::create()
-    ->type(InvoiceType::Invoice);
-
-$client = ClientData::make([
-    'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
-    'email' => 'accounts@techstore.pt',
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
+    'client' => ClientData::make([
+        'name' => 'TechStore Portugal Lda',
+        'vat' => 'PT509876543',
+        'email' => 'accounts@techstore.pt',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-BULK-ORDER',
+            'note' => 'Business Laptop - Bulk Order (10 units)',
+            'price' => 89999,
+            'quantity' => 10,
+        ]),
+    ],
+    'dueDate' => Carbon::now()->addDays(30),
+    'notes' => 'NET30 payment terms as agreed',
 ]);
-$invoice->client($client);
 
-$product = ItemData::make([
-    'reference' => 'LAPTOP-BULK-ORDER',
-    'note' => 'Business Laptop - Bulk Order (10 units)',
-    'price' => 89999, // 899.99 each
-    'quantity' => 10,
-]);
-$invoice->item($product);
-
-$invoice->dueDate(Carbon::now()->addDays(30));
-$invoice->notes('NET30 payment terms as agreed');
-
-$invoiceResult = $invoice->execute()->getInvoice();
-
-// Store the invoice ID for later
+$invoiceResult = Invoice::create($invoiceData)->execute()->getInvoice();
 $invoiceId = $invoiceResult->id;
 ```
 
 ```php
 // Step 2: 30 days later, the customer pays via bank transfer
-$receipt = Invoice::create()
-    ->type(InvoiceType::Receipt);
-
-$receipt->relatedDocument($invoiceId);
-
-$payment = PaymentData::make([
-    'method' => PaymentMethod::MONEY_TRANSFER,
-    'amount' => 899990, // Full order total
+$receiptData = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => $invoiceId,
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY_TRANSFER,
+            'amount' => 899990,
+        ]),
+    ],
 ]);
-$receipt->payment($payment);
 
-$receiptResult = $receipt->execute()->getInvoice();
+$receiptResult = Invoice::create($receiptData)->execute()->getInvoice();
 
-// Save the receipt
 if ($receiptResult->output) {
     $receiptResult->output->save('receipts/' . $receiptResult->output->fileName());
 }
@@ -118,31 +111,31 @@ if ($receiptResult->output) {
 Sometimes customers pay invoices in installments. Issue separate receipts for each payment:
 
 ```php
-// Customer pays first installment (50%)
-$receipt1 = Invoice::create()
-    ->type(InvoiceType::Receipt);
+$receipt1 = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => $invoiceId,
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY_TRANSFER,
+            'amount' => 449995,
+        ]),
+    ],
+    'notes' => 'Installment 1 of 2',
+]);
+Invoice::create($receipt1)->execute();
 
-$receipt1->relatedDocument($invoiceId);
-$receipt1->payment(PaymentData::make([
-    'method' => PaymentMethod::MONEY_TRANSFER,
-    'amount' => 449995, // First 50%
-]));
-$receipt1->notes('Installment 1 of 2');
-
-$receipt1->execute()->getInvoice();
-
-// Later: Customer pays final installment
-$receipt2 = Invoice::create()
-    ->type(InvoiceType::Receipt);
-
-$receipt2->relatedDocument($invoiceId);
-$receipt2->payment(PaymentData::make([
-    'method' => PaymentMethod::MONEY_TRANSFER,
-    'amount' => 449995, // Final 50%
-]));
-$receipt2->notes('Installment 2 of 2 - Final payment');
-
-$receipt2->execute()->getInvoice();
+$receipt2 = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => $invoiceId,
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY_TRANSFER,
+            'amount' => 449995,
+        ]),
+    ],
+    'notes' => 'Installment 2 of 2 - Final payment',
+]);
+Invoice::create($receipt2)->execute();
 ```
 
 ## Split Payment Methods
@@ -150,26 +143,22 @@ $receipt2->execute()->getInvoice();
 Customers can pay a single receipt using multiple payment methods:
 
 ```php
-$receipt = Invoice::create()
-    ->type(InvoiceType::Receipt);
-
-$receipt->relatedDocument($invoiceId);
-
-// Part of the payment in cash
-$cash = PaymentData::make([
-    'method' => PaymentMethod::MONEY,
-    'amount' => 50000, // 500.00
+$receiptData = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => $invoiceId,
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY,
+            'amount' => 50000,
+        ]),
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY_TRANSFER,
+            'amount' => 399990,
+        ]),
+    ],
 ]);
-$receipt->payment($cash);
 
-// Rest via bank transfer
-$transfer = PaymentData::make([
-    'method' => PaymentMethod::MONEY_TRANSFER,
-    'amount' => 399990, // 3999.90
-]);
-$receipt->payment($transfer);
-
-$result = $receipt->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->getInvoice();
 ```
 
 ## Requirements
@@ -188,29 +177,23 @@ $result = $receipt->execute()->getInvoice();
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Issue receipt for paid invoice
-$receipt = Invoice::create()
-    ->type(InvoiceType::Receipt);
-
-// Link to the original invoice
-$receipt->relatedDocument(99999999);
-
-// Record the payment method and amount
-$payment = PaymentData::make([
-    'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 25499, // 254.99
+$receiptData = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => 99999999,
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 25499,
+        ]),
+    ],
+    'notes' => 'Thank you for your prompt payment!',
 ]);
-$receipt->payment($payment);
 
-// Add a thank you note
-$receipt->notes('Thank you for your prompt payment!');
+$result = Invoice::create($receiptData)->execute()->getInvoice();
 
-// Issue the receipt
-$result = $receipt->execute()->getInvoice();
-
-// Save the PDF
 if ($result->output) {
     $result->output->save('receipts/' . $result->output->fileName());
 }

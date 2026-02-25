@@ -68,34 +68,32 @@ return [
 ## 5. Your First Invoice
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Create a simple invoice (final consumer, no client details needed)
-$invoice = Invoice::create()
-    ->type(InvoiceType::InvoiceReceipt);
-
-// Add the product
-$item = ItemData::make([
-    'reference' => 'USB-CABLE-C',
-    'note' => 'USB-C Charging Cable 2m',
-    'price' => 1299, // 12.99 in cents
-    'quantity' => 2,
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'items' => [
+        ItemData::make([
+            'reference' => 'USB-CABLE-C',
+            'note' => 'USB-C Charging Cable 2m',
+            'price' => 1299,
+            'quantity' => 2,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY,
+            'amount' => 2598,
+        ]),
+    ],
 ]);
-$invoice->item($item);
 
-// Add the payment
-$payment = PaymentData::make([
-    'method' => PaymentMethod::MONEY,
-    'amount' => 2598, // Total: 25.98
-]);
-$invoice->payment($payment);
-
-// Issue the invoice
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 ```
 
 Sample invoice response:
@@ -116,23 +114,29 @@ validated and transformed before the request reaches the provider.
 
 ## Understanding the API
 
-The package uses a fluent builder pattern. All invoice operations start with the
+Invoice creation is DTO-first. Build an `InvoiceData` object and hand it to the
 `Invoice` facade:
 
 ```php
-$invoice = Invoice::create();
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 
-// Chain methods to configure the invoice
-$invoice
-    ->client($client)      // Optional: customer billing details
-    ->item($item)          // Required: at least one product or service
-    ->payment($payment)    // Required for FR, FS, RG, NC types
-    ->type($invoiceType)   // Optional: defaults to FT
-    ->notes('...')         // Optional: internal notes
-    ->dueDate($date);      // Optional: payment due date (FT only)
+$invoiceData = InvoiceData::make([
+    'items' => [...],
+    'payments' => [...],
+    'client' => $clientData ?? null,
+    'type' => InvoiceType::Invoice,
+]);
 
-// Issue the invoice
-$result = $invoice->execute()->getInvoice();
+$builder = Invoice::create($invoiceData);
+$result = $builder->execute()->getInvoice();
+```
+
+Need to adjust the payload dynamically (e.g., append a payment when a queue job
+resumes)? Call the builder helpers—they mutate the same DTO instance:
+
+```php
+$builder->payment(PaymentData::make([...]))
+    ->notes('Thank you!');
 ```
 
 ## Troubleshooting

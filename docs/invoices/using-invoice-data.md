@@ -5,14 +5,15 @@ When you issue an invoice, you receive an `Invoice` value object containing the 
 ## Accessing Invoice Data
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
-$item = ItemData::make(['reference' => 'SKU-001']);
-$invoice->item($item);
+$invoiceData = InvoiceData::make([
+    'items' => [ItemData::make(['reference' => 'SKU-001'])],
+]);
 
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 // Get the invoice sequence number (provider's reference)
 $sequence = $result->sequence; // e.g., "FT 01P2025/1"
@@ -37,7 +38,7 @@ $output = $result->output;
 The sequence number is the official invoice identifier used in Portugal:
 
 ```php
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 $sequence = $result->sequence;
 // Format: "{TYPE} {SERIES}/{NUMBER}"
@@ -53,15 +54,19 @@ $yourInvoiceRecord->save();
 The provider's internal ID is useful for API operations like creating receipts or credit notes:
 
 ```php
-$result = $invoice->execute()->getInvoice();
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 $id = $result->id;
 
-// Use this ID when creating a receipt for this invoice
-$receipt = Invoice::create();
-$receipt->type(InvoiceType::Receipt);
-$receipt->relatedDocument($id);
-// ...
+$receiptData = InvoiceData::make([
+    'type' => InvoiceType::Receipt,
+    'relatedDocument' => $id,
+    'payments' => [...],
+]);
+
+Invoice::create($receiptData)->execute();
 ```
 
 ## Working with Output
@@ -85,26 +90,28 @@ if ($output) {
 ## Complete Example
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Issue an invoice
-$invoice = Invoice::create();
-$item = ItemData::make([
-    'reference' => 'SKU-001',
-    'price' => 1000,
+$invoiceData = InvoiceData::make([
+    'items' => [
+        ItemData::make([
+            'reference' => 'SKU-001',
+            'price' => 1000,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 1000,
+        ]),
+    ],
 ]);
-$invoice->item($item);
 
-$payment = PaymentData::make([
-    'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 1000,
-]);
-$invoice->payment($payment);
-
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 // Log the result
 logger()->info('Invoice issued', [

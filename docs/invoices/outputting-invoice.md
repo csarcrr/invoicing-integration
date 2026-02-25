@@ -7,27 +7,29 @@ Invoices can be returned as PDF or ESC/POS data.
 The provider returns the document as base64-encoded PDF:
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
-
-$item = ItemData::make([
-    'reference' => 'LAPTOP-ULTRA-13',
-    'note' => 'UltraBook Pro 13"',
-    'price' => 129900,
+$invoiceData = InvoiceData::make([
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-ULTRA-13',
+            'note' => 'UltraBook Pro 13"',
+            'price' => 129900,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 129900,
+        ]),
+    ],
 ]);
-$invoice->item($item);
 
-$payment = PaymentData::make([
-    'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 129900,
-]);
-$invoice->payment($payment);
-
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 // Save the PDF
 if ($result->output) {
@@ -43,16 +45,22 @@ The file is saved to Laravel's default storage disk (`storage/app/`).
 By default, invoices are returned as PDF. You can request ESC/POS format instead:
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
-// Request PDF (default)
-$invoice->outputFormat(OutputFormat::PDF_BASE64);
+$invoiceData = InvoiceData::make([
+    // ...items, payments, etc.
+    'output' => OutputData::make([
+        'format' => OutputFormat::ESCPOS,
+    ]),
+]);
 
-// Or request ESC/POS for thermal printers
-$invoice->outputFormat(OutputFormat::ESCPOS);
+Invoice::create($invoiceData)->execute();
 ```
 
-Set the format before calling `execute()`.
+Set the format when building `InvoiceData` so the request payload already
+matches the provider requirements.
 
 ## Available Formats
 
@@ -108,33 +116,35 @@ if ($output) {
 Print receipts to thermal printers:
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Simple invoice
-$invoice = Invoice::create();
-
-$item = ItemData::make([
-    'reference' => 'USB-CABLE-C',
-    'note' => 'USB-C Cable 2m',
-    'price' => 1299,
-    'quantity' => 2,
+$invoiceData = InvoiceData::make([
+    'items' => [
+        ItemData::make([
+            'reference' => 'USB-CABLE-C',
+            'note' => 'USB-C Cable 2m',
+            'price' => 1299,
+            'quantity' => 2,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY,
+            'amount' => 2598,
+        ]),
+    ],
+    'output' => OutputData::make([
+        'format' => OutputFormat::ESCPOS,
+    ]),
 ]);
-$invoice->item($item);
 
-$payment = PaymentData::make([
-    'method' => PaymentMethod::MONEY,
-    'amount' => 2598,
-]);
-$invoice->payment($payment);
-
-// Request ESC/POS format for the receipt printer
-$invoice->outputFormat(OutputFormat::ESCPOS);
-
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 if ($result->output) {
     // Save the ESC/POS data
@@ -165,37 +175,36 @@ Full example with PDF handling:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Process the checkout
-$invoice = Invoice::create()
-    ->type(InvoiceType::InvoiceReceipt);
-
-$client = ClientData::make([
-    'name' => 'Maria Silva',
-    'vat' => 'PT123456789',
-    'email' => 'maria.silva@email.pt',
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'client' => ClientData::make([
+        'name' => 'Maria Silva',
+        'vat' => 'PT123456789',
+        'email' => 'maria.silva@email.pt',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'MONITOR-4K',
+            'note' => '27" 4K Monitor',
+            'price' => 44999,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 44999,
+        ]),
+    ],
 ]);
-$invoice->client($client);
 
-$item = ItemData::make([
-    'reference' => 'MONITOR-4K',
-    'note' => '27" 4K Monitor',
-    'price' => 44999,
-]);
-$invoice->item($item);
-
-$payment = PaymentData::make([
-    'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 44999,
-]);
-$invoice->payment($payment);
-
-$result = $invoice->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 // Store in your database
 $order = Order::find($orderId);

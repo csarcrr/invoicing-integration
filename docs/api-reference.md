@@ -73,9 +73,9 @@ Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, 
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 ```
 
-| Method              | Return Type     | Description                            |
-| ------------------- | --------------- | -------------------------------------- |
-| `Invoice::create()` | `CreateInvoice` | Creates a new invoice builder instance |
+| Method                                  | Return Type     | Description                                          |
+| --------------------------------------- | --------------- | ---------------------------------------------------- |
+| `Invoice::create(InvoiceData $invoice)` | `CreateInvoice` | Creates a builder seeded with the provided DTO state |
 
 > **Facade vs. Action:** The `Invoice` facade resolves the underlying
 > `InvoiceAction` class from the service container. Prefer the facade for day-to-day
@@ -86,7 +86,10 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 ## CreateInvoice Contract
 
-The builder interface returned by `Invoice::create()`. All methods return `self` for chaining unless otherwise noted.
+The builder interface returned by `Invoice::create()`. It mutates the
+`InvoiceData` instance you pass in, so DTOs remain your single source of truth.
+Use these helpers when you need to tweak data after instantiation (e.g., inside
+jobs). All methods return `self` for chaining unless otherwise noted.
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
@@ -137,6 +140,38 @@ on **public typed properties** rather than getters. Access values with
 `$dto->property` and rely on `Optional`-typed attributes to differentiate between
 `null` and "not provided" states. Always call `::make([...])` (or resolve from the
 container) so validation rules and transformers run before the HTTP request.
+
+### InvoiceData
+
+Entry point for invoice creation.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'client' => $clientData ?? null,
+    'items' => [$item1, $item2],
+    'payments' => [$payment],
+    'creditNoteReason' => null,
+]);
+```
+
+| Property           | Type                      | Description                                     |
+| ------------------ | ------------------------- | ----------------------------------------------- |
+| `type`             | `InvoiceType`             | Document type (defaults to `Invoice`)           |
+| `items`            | `Collection<ItemData>`    | Invoice lines; required except for receipts     |
+| `payments`         | `Collection<PaymentData>` | Payment records (required for FR, FS, RG, NC)   |
+| `client`           | `?ClientData`             | Customer information                            |
+| `transport`        | `?TransportData`          | Transport/movement of goods info                |
+| `creditNoteReason` | `?string`                 | Required for credit notes                       |
+| `relatedDocument`  | `?string`                 | Used for non-credit-note document relationships |
+| `notes`            | `?string`                 | Additional notes (printed on document)          |
+| `dueDate`          | `?Carbon`                 | Payment deadline (FT only)                      |
+| `output`           | `OutputData`              | Preferred output format (PDF default)           |
+
+> `InvoiceData` implements `DataNeedsValidation`, so misconfigured payloads throw
+> before any HTTP request runs.
 
 ### ClientData
 

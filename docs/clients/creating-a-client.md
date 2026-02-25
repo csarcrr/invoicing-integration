@@ -138,6 +138,7 @@ Once registered, use the client for all their invoices:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -145,22 +146,28 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 // Option 1: Create and immediately use
 $client = Client::create($clientData)->execute()->getClient();
 
-$invoice = Invoice::create();
-$invoice->client($client);
-$invoice->item(ItemData::make([
-    'reference' => 'LAPTOP-BULK',
-    'price' => 75000,
-    'quantity' => 20,
-]));
-$result = $invoice->execute()->getInvoice();
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-BULK',
+            'price' => 75000,
+            'quantity' => 20,
+        ]),
+    ],
+]);
+
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 // Option 2: Use stored client ID later
 $storedClientId = $customer->provider_client_id;
 $client = Client::get(ClientData::make(['id' => $storedClientId]))->execute()->getClient();
 
-$invoice = Invoice::create();
-$invoice->client($client);
-// ... add items, execute
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    // ... add items, payments, etc.
+]);
+Invoice::create($invoiceData)->execute();
 ```
 
 ## Handling Duplicate Clients

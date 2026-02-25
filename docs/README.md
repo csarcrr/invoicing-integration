@@ -58,54 +58,47 @@ Issue an invoice-receipt (FR):
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create()
-    ->type(InvoiceType::InvoiceReceipt);
-
-// Add products
-$product = ItemData::make([
-    'reference' => 'LAPTOP-PRO-15',
-    'note' => 'Professional Laptop 15" - 16GB RAM',
-    'price' => 129900, // 1299.00 in cents
-    'quantity' => 1,
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'client' => ClientData::make([
+        'name' => 'Pedro Santos',
+        'vat' => 'PT234567890',
+        'email' => 'pedro.santos@email.pt',
+        'address' => 'Avenida da Liberdade, 150',
+        'city' => 'Lisboa',
+        'postalCode' => '1250-096',
+        'country' => 'PT',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-PRO-15',
+            'note' => 'Professional Laptop 15" - 16GB RAM',
+            'price' => 129900, // in cents
+            'quantity' => 1,
+        ]),
+        ItemData::make([
+            'reference' => 'SHIPPING-EXPRESS',
+            'note' => 'Express Delivery (next business day)',
+            'price' => 999,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 130899,
+        ]),
+    ],
 ]);
-$invoice->item($product);
 
-$shipping = ItemData::make([
-    'reference' => 'SHIPPING-EXPRESS',
-    'note' => 'Express Delivery (next business day)',
-    'price' => 999, // 9.99 in cents
-]);
-$invoice->item($shipping);
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
-// Add payment
-$payment = PaymentData::make([
-    'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 130899, // Total: 1308.99
-]);
-$invoice->payment($payment);
-
-// Add customer details
-$client = ClientData::make([
-    'name' => 'Pedro Santos',
-    'vat' => 'PT234567890',
-    'email' => 'pedro.santos@email.pt',
-    'address' => 'Avenida da Liberdade, 150',
-    'city' => 'Lisboa',
-    'postalCode' => '1250-096',
-    'country' => 'PT',
-]);
-$invoice->client($client);
-
-// Issue the invoice
-$result = $invoice->execute()->getInvoice();
-
-// Save the PDF
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName());
 }
@@ -134,13 +127,13 @@ Sample response:
 
 ## What's New
 
-**January 2025** - Documentation updated to reflect the new fluent API. Key changes:
+**February 2026** - Invoice creation is now driven by `InvoiceData`. Highlights:
 
-- Entry point is now `Invoice::create()` returning a `CreateInvoice` contract
-- Methods use plain verbs: `client()`, `item()`, `payment()`, `type()`, `notes()`, `dueDate()`
-- Payments are **required** for FR, FS, RG, and NC document types
-- Output format selection via `outputFormat()` method
-- Enhanced validation for transport details, credit notes, and client data
+- `Invoice::create(InvoiceData $invoice)` is the canonical entry point
+- All tests and docs rely on DTO-first inputs for consistency
+- Builder helpers still exist for incremental adjustments but mutate the same DTO instance
+- Payments remain **required** for FR, FS, RG, and NC document types
+- Responses now hydrate `OutputData`, ensuring PDFs/ESC-POS files expose helper methods consistently
 
 ---
 

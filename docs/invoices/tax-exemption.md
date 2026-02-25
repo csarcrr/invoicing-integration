@@ -11,19 +11,22 @@ how to configure exemptions with the fluent builder and lists every supported
 ## Step-by-Step
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 
-$item = ItemData::make([
-    'reference' => 'CONSULTING',
-    'price' => 5000,
-    'tax' => ItemTax::EXEMPT,
-    'taxExemptionReason' => TaxExemptionReason::M04,
-    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+$invoiceData = InvoiceData::make([
+    'items' => [
+        ItemData::make([
+            'reference' => 'CONSULTING',
+            'price' => 5000,
+            'tax' => ItemTax::EXEMPT,
+            'taxExemptionReason' => TaxExemptionReason::M04,
+            'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+        ]),
+    ],
 ]);
-
-$invoice->item($item);
 ```
 
 1. Set the item tax rate to `ItemTax::EXEMPT`.

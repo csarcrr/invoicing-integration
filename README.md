@@ -22,6 +22,7 @@ This package solves that by giving you:
 ## Highlights
 
 - Fluent builders for all fiscal document types (FT, FR, FS, RG, NC, GT)
+- DTO-first workflows via `InvoiceData`, so requests/responses share the same typed object
 - First-class client management via the `Client` facade (create, get, find)
 - Strongly typed DTOs powered by `spatie/laravel-data`
 - Built-in PDF / ESC/POS outputs with secure file persistence helpers
@@ -100,59 +101,54 @@ $config = ProviderConfiguration::getConfig();
 
 ### Creating an invoice
 
+Every invoice now starts with a populated `InvoiceData` DTO. Pass the DTO to the
+`Invoice` facade and the package handles provider translation for you.
+
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Start building the invoice
-$invoice = Invoice::create()
-    ->type(InvoiceType::InvoiceReceipt);
-
-// Add products
-$headphones = ItemData::make([
-    'reference' => 'HEADPHONES-PRO',
-    'note' => 'Wireless Noise-Cancelling Headphones',
-    'price' => 14999,  // 149.99 in cents
-    'quantity' => 1,
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'client' => ClientData::make([
+        'name' => 'Maria Silva',
+        'vat' => 'PT123456789',
+        'email' => 'maria.silva@email.pt',
+        'address' => 'Rua Augusta, 25',
+        'city' => 'Lisboa',
+        'postalCode' => '1100-053',
+        'country' => 'PT',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'HEADPHONES-PRO',
+            'note' => 'Wireless Noise-Cancelling Headphones',
+            'price' => 14999, // 149.99 in cents
+            'quantity' => 1,
+        ]),
+        ItemData::make([
+            'reference' => 'SHIPPING-STD',
+            'note' => 'Standard Delivery (2-3 business days)',
+            'price' => 499, // 4.99 in cents
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 15498, // Total: 154.98
+        ]),
+    ],
 ]);
-$invoice->item($headphones);
 
-$shipping = ItemData::make([
-    'reference' => 'SHIPPING-STD',
-    'note' => 'Standard Delivery (2-3 business days)',
-    'price' => 499,    // 4.99 in cents
-]);
-$invoice->item($shipping);
+$invoice = Invoice::create($invoiceData)->execute()->getInvoice();
 
-// Record the payment
-$payment = PaymentData::make([
-    'method' => PaymentMethod::CREDIT_CARD,
-    'amount' => 15498, // Total: 154.98
-]);
-$invoice->payment($payment);
-
-// Attach customer billing details
-$client = ClientData::make([
-    'name' => 'Maria Silva',
-    'vat' => 'PT123456789',
-    'email' => 'maria.silva@email.pt',
-    'address' => 'Rua Augusta, 25',
-    'city' => 'Lisboa',
-    'postalCode' => '1100-053',
-    'country' => 'PT',
-]);
-$invoice->client($client);
-
-// Issue the invoice
-$result = $invoice->execute()->getInvoice();
-
-// Save the PDF
-if ($result->output) {
-    $result->output->save('invoices/' . $result->output->fileName());
+if ($invoice->output) {
+    $invoice->output->save('invoices/' . $invoice->output->fileName());
 }
 ```
 
