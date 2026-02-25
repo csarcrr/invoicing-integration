@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 use function collect;
 
-class Create extends CegidVendusInvoice implements ShouldHaveConfig, ShouldHavePayload
+class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasConfig;
 
