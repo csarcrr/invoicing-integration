@@ -36,19 +36,9 @@ use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 use function collect;
 
-class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
+class Create extends CegidVendusInvoice implements ShouldHaveConfig, ShouldHavePayload
 {
-    use HasClient;
     use HasConfig;
-    use HasCreditNoteReason;
-    use HasDueDate;
-    use HasItems;
-    use HasNotes;
-    use HasOutputFormat;
-    use HasPayments;
-    use HasRelatedDocument;
-    use HasTransport;
-    use HasType;
 
     /**
      * @var Collection<string, mixed>
@@ -61,7 +51,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
     public function __construct(protected InvoiceData $invoice)
     {
         $this->payload = collect([
-            'type' => $this->getType()->value,
+            'type' => $this->invoice->type->value,
         ]);
 
         $this->items = collect();
