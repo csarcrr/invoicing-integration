@@ -49,11 +49,12 @@ jobs:
           coverage: none
 
       - name: Install dependencies
+        shell: bash
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" \
                            "orchestra/testbench:${{ matrix.testbench }}" \
                            --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
-      - name: Run tests
-        run: vendor/bin/pest --ci
+          - name: Run tests
+            run: vendor/bin/pest --ci
