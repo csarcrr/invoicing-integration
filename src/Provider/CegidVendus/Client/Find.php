@@ -7,16 +7,17 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
-use CsarCrr\InvoicingIntegration\Traits\Client\HasEmail;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
+use function collect;
+
+class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
 {
-    use HasEmail;
     use HasPaginator;
 
     /** @var Collection<string, mixed> */
@@ -25,16 +26,17 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
     /** @var Collection<int, mixed> */
     protected Collection $list;
 
-    public function __construct()
+    public function __construct(protected ?ClientData $client = null)
     {
+        if (! $client) {
+            $this->client = ClientData::from([]);
+        }
+
         $this->payload = collect();
     }
 
     public function execute(): self
     {
-        $this->buildPagination();
-        $this->buildEmail();
-
         $request = Http::provider()->get('/clients', $this->getPayload());
 
         Http::handleUnwantedFailures($request);
@@ -58,6 +60,14 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
      */
     public function getPayload(): Collection
     {
+        $this->buildPagination();
+
+        $this->getClientAllowedProperties()->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
+
+        $this->buildVat();
+        $this->buildExternalReference();
+        $this->buildStatus();
+
         return $this->payload;
     }
 
@@ -66,9 +76,19 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
         $this->payload->put('page', $this->getCurrentPage());
     }
 
-    private function buildEmail(): void
+    private function buildVat(): void
     {
-        $this->email && $this->payload->put('email', $this->email);
+        (is_string($this->client->vat) || is_int($this->client->vat)) && $this->payload->put('fiscal_id', $this->client->vat);
+    }
+
+    private function buildExternalReference(): void
+    {
+        is_string($this->client->externalReference) && $this->payload->put('external_reference', $this->client->externalReference);
+    }
+
+    private function buildStatus(): void
+    {
+        is_string($this->client->status) && $this->payload->put('status', $this->client->status);
     }
 
     protected function updatePaginationDetails(Response $results): void
@@ -82,11 +102,11 @@ class Find implements FindClient, ShouldHavePagination, ShouldHavePayload
     protected function updateResults(array $results): void
     {
         $this->list = collect($results)->map(function (array $item) {
-            $client = ClientData::getFacadeRoot();
+            $data = [];
+            // todo: improve this since the response fields might be similar to the dto ones
+            ! empty($item['name']) && $data['name'] = $item['name'];
 
-            ! empty($item['name']) && $client->name($item['name']);
-
-            return $client;
+            return ClientData::from($data);
         })->values();
     }
 }

@@ -1,0 +1,9 @@
+{
+    "fiscal_id": "123456789",
+    "email": "email@test.com",
+    "name": "Name",
+    "external_reference": "External Reference",
+    "status": "active",
+    "date": "2026-01-01",
+    "id": 1234567
+}

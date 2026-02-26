@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Illuminate\Support\Collection;
 
 interface CreateClient
 {
-    public function execute(): ClientDataObject;
+    public function execute(): self;
 
     /**
      * @return Collection<string, mixed>
      */
     public function getPayload(): Collection;
+
+    public function getClient(): ClientData;
 }

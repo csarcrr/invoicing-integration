@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\ClientAction;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\ValueObjects\ClientDataObject;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -17,17 +16,13 @@ beforeEach(function () {
 });
 
 test('getting list of clients returns expected instances', function (Provider $provider, string $fixtureName) {
-    for ($i = 0; $i < 2; $i++) {
-        $response[] = fixtures()->response()->client()->files($fixtureName);
-    }
-
-    Http::fake(mockResponse($response));
+    Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
     $results = Client::find()->execute();
 
     expect($results->getList())->toBeInstanceOf(Collection::class)
-        ->and($results->getList()->first())->toBeInstanceOf(ClientDataObject::class);
-})->with('providers', ['response']);
+        ->and($results->getList()->first())->toBeInstanceOf(ClientData::class);
+})->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {
     for ($i = 0; $i < 2; $i++) {
@@ -36,12 +31,12 @@ test('automagically injects provider pagination details into the request', funct
 
     Http::fake(mockResponse($response, 200));
 
-    ClientAction::find()->execute();
+    Client::find()->execute();
 
     Http::assertSent(function (Request $request) use ($provider) {
         return match ($provider) {
             Provider::CEGID_VENDUS => Str::contains($request->url(), 'page=1'),
-            default => throw new Exception('Provider not supported.')
+            default => throw new Exception('ProviderConfigurationService not supported.')
         };
     });
 })->with('providers', ['response']);

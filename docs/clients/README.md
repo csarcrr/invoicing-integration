@@ -1,46 +1,204 @@
 # Clients
 
-Manage clients in your invoicing provider using the Client API. Clients can be created and retrieved independently of invoices, allowing you to maintain a client database in the provider system.
-
-## Available Operations
-
-- [Creating a Client](creating-a-client.md) - Register new clients in the provider
-- [Getting a Client](getting-a-client.md) - Retrieve existing client information
-- [Finding Clients](finding-clients.md) - Search & paginate provider clients
-
-## Quick Example
-
-```php
-use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
-
-// Create a new client
-$clientData = ClientData::name('John Doe')
-    ->vat('123456789')
-    ->email('john@example.com');
-
-$client = Client::create($clientData)->execute();
-
-echo $client->getId(); // Provider-assigned ID
-
-// Later, retrieve the client
-$existingClient = ClientData::id($client->getId());
-$fetched = Client::get($existingClient)->execute();
-
-echo $fetched->getName(); // "John Doe"
-```
+Register clients in the invoicing provider to reuse their details across invoices and take advantage of provider features like automatic email notifications.
 
 ## When to Use Client Management
 
-**Create clients when:**
+**Register clients when:**
 
-- You want to maintain a persistent client database in the provider
-- You need to reuse client information across multiple invoices
-- You want to leverage provider-specific client features (e.g., email notifications, payment terms)
+- You have repeat customers
+- You want the provider to track customer history
+- You need features like automatic invoice emails
 
 **Use inline client data when:**
 
-- You only need the client for a single invoice
-- You prefer not to create records in the provider's client database
+- It's a one-time purchase
+- You don't need to track the customer in the provider
+- You prefer to manage customer data in your own system
 
-> **Note:** You can still pass a `ClientData` object to `Invoice::create()->client()` without first creating the client in the provider. The invoice will be issued with the client details embedded directly.
+## Available Operations
+
+- [Creating a Client](creating-a-client.md) - Register new customers
+- [Getting a Client](getting-a-client.md) - Retrieve existing customer information
+- [Finding Clients](finding-clients.md) - Search and paginate your customer base
+
+## Quick Example: Registering a Customer
+
+```php
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
+
+// Register the customer
+$clientData = ClientData::make([
+    'name' => 'TechStore Portugal Lda',
+    'vat' => 'PT509876543',
+    'email' => 'invoices@techstore.pt',
+    'address' => 'Zona Industrial do Porto, Lote 15',
+    'city' => 'Porto',
+    'postalCode' => '4100-000',
+    'country' => 'PT',
+    'phone' => '220123456',
+    'emailNotification' => true, // Auto-send invoices to their email
+    'defaultPayDue' => 30,       // Payment due in 30 days
+]);
+
+$client = Client::create($clientData)->execute()->getClient();
+
+// Store their provider ID for future orders
+$customer->provider_client_id = $client->id;
+$customer->save();
+```
+
+Sample response (`$client->toArray()`):
+
+```json
+{
+    "id": 98765,
+    "name": "TechStore Portugal Lda",
+    "vat": "PT509876543",
+    "email": "invoices@techstore.pt",
+    "address": "Zona Industrial do Porto, Lote 15",
+    "city": "Porto",
+    "postalCode": "4100-000",
+    "country": "PT",
+    "defaultPayDue": 30,
+    "emailNotification": true
+}
+```
+
+## Using Registered Clients in Orders
+
+Once registered, use the client for all their orders:
+
+```php
+use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+// Retrieve the stored client
+$clientData = ClientData::make(['id' => $customer->provider_client_id]);
+$client = Client::get($clientData)->execute()->getClient();
+
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-PRO',
+            'note' => 'Business Laptops (50 units)',
+            'price' => 65000,
+            'quantity' => 50,
+        ]),
+    ],
+    'dueDate' => Carbon::now()->addDays(30),
+]);
+
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
+```
+
+## Inline vs. Registered Clients
+
+You don't have to register every customer. Here's when to use each approach:
+
+```php
+// Option 1: Inline client (for one-time purchases)
+$invoiceData = InvoiceData::make([
+    'client' => ClientData::make([
+        'name' => 'Individual Buyer',
+        'vat' => 'PT123456789',
+    ]),
+    'items' => [...],
+]);
+Invoice::create($invoiceData)->execute();
+// Client details are used once and not stored in the provider
+
+// Option 2: Registered client (for repeat customers)
+$client = Client::get(ClientData::make(['id' => $storedId]))->execute()->getClient();
+$invoiceData = InvoiceData::make([
+    'client' => $client,
+    'items' => [...],
+]);
+Invoice::create($invoiceData)->execute();
+// Provider tracks all invoices for this client
+```
+
+## Accessing Client Properties
+
+All DTOs expose **typed public properties**:
+
+```php
+$client = Client::get(ClientData::make(['id' => 12345]))->execute()->getClient();
+
+// Access values directly
+$client->name;             // "TechStore Portugal Lda"
+$client->vat;              // "PT509876543"
+$client->email;            // "invoices@techstore.pt"
+$client->defaultPayDue;    // 30
+$client->emailNotification; // true
+```
+
+### Provider-Specific Properties
+
+Some providers return additional fields not explicitly mapped. Access them via `toArray()`:
+
+```php
+$payload = $client->toArray();
+
+$status = $payload['status'] ?? null;
+$priceGroup = $payload['price_group']['name'] ?? null;
+$balance = $payload['balance'] ?? null;
+```
+
+## Common Scenarios
+
+### Multiple Locations
+
+```php
+// Main office
+$headquarters = Client::create(ClientData::make([
+    'name' => 'Empresa ABC - Sede',
+    'vat' => 'PT501234567',
+    'email' => 'finance@empresaabc.pt',
+    'address' => 'Av. da Liberdade, 100',
+    'city' => 'Lisboa',
+    'notes' => 'Main corporate account - HQ',
+]))->execute()->getClient();
+
+// Porto branch (same VAT, different billing address)
+$portoBranch = Client::create(ClientData::make([
+    'name' => 'Empresa ABC - Porto',
+    'vat' => 'PT501234567',
+    'email' => 'porto@empresaabc.pt',
+    'address' => 'Rua de Cedofeita, 200',
+    'city' => 'Porto',
+    'notes' => 'Porto branch office',
+]))->execute()->getClient();
+```
+
+### Custom Payment Terms
+
+```php
+$reseller = Client::create(ClientData::make([
+    'name' => 'Distribuidor Norte Lda',
+    'vat' => 'PT509999888',
+    'email' => 'orders@distrinorte.pt',
+    'defaultPayDue' => 60,  // 60 days payment terms
+    'notes' => '60-day terms approved',
+    'emailNotification' => true,
+]))->execute()->getClient();
+```
+
+---
+
+**Tips:**
+
+- Store the provider-assigned `id` in your database for future reference
+- Use `emailNotification: true` to have invoices sent automatically
+- Use `defaultPayDue` to set payment terms
+- Use the `notes` field for internal reference (not shown on invoices)
+
+---
+
+Continue to: [Creating a Client](creating-a-client.md)

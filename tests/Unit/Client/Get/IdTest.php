@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use CsarCrr\InvoicingIntegration\ClientAction;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 it('can set the client id', function (Provider $provider) {
     Http::fake(mockResponse([], 200));
-    $client = ClientData::id(999999);
+    $client = ClientData::from(['id' => '999999']);
 
-    ClientAction::get($client)->execute();
+    Client::get($client)->execute();
 
     Http::assertSent(function (Request $request) {
         return Str::contains($request->url(), '999999');
@@ -21,7 +21,7 @@ it('can set the client id', function (Provider $provider) {
 })->with('providers');
 
 it('fails when no id is set', function (Provider $provider) {
-    $client = ClientData::getFacadeRoot();
+    $client = ClientData::from([]);
 
-    ClientAction::get($client)->execute();
+    Client::get($client)->execute();
 })->with('providers')->throws(InvalidArgumentException::class, 'Client ID is required.');
