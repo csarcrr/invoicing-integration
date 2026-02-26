@@ -2,26 +2,34 @@ name: pr-tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
+  push:                # temporary so GitHub registers the check
+    branches: [ main ] # you can remove this after it appears in branch protection
 
 concurrency:
   group: pr-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  test:
+  pr:
+    name: PR Tests (PHP 8.2, Laravel 12)
     runs-on: ubuntu-latest
-    timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: shivammathur/setup-php@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
-          extensions: mbstring, sqlite, pdo_sqlite
+          php-version: 8.2
+          extensions: mbstring, fileinfo, sqlite, pdo_sqlite
           coverage: none
 
-      - run: composer install --no-interaction --prefer-dist
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" --no-update
+          composer update --prefer-dist --no-interaction
 
-      - run: vendor/bin/pest --ci
+      - name: Run tests
+        run: vendor/bin/pest --ci
