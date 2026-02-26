@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
@@ -17,6 +18,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocument
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusInvoice;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Exception;
@@ -209,15 +211,13 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     protected function buildRelatedDocument(): void
     {
-        if ($this->invoice->type === InvoiceType::CreditNote) {
+        $relatedDocument = is_string($this->invoice->relatedDocument) ? (int) $this->invoice->relatedDocument : null;
+
+        if ($this->invoice->type === InvoiceType::CreditNote || ! $relatedDocument) {
             return;
         }
 
-        if (! $this->invoice->relatedDocument) {
-            return;
-        }
-
-        $this->payload->put('related_document_id', (int) $this->invoice->relatedDocument);
+        $this->payload->put('related_document_id', $this->invoice->relatedDocument);
     }
 
     /**
@@ -249,6 +249,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     /**
      * @throws MissingRelatedDocumentException
+     * @throws \Throwable
      */
     protected function buildItems(): void
     {
@@ -256,7 +257,10 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
             return;
         }
 
-        throw_if($this->invoice->items instanceof Optional, Exception::class, 'Invoice items not set.');
+        throw_if(
+            ! ($this->invoice->items instanceof Collection),
+            Exception::class, 'Invoice items not set.'
+        );
 
         /** @var Collection<int, array<string, mixed>> $items */
         $items = $this->invoice->items->map(function (ItemData $item): array {
@@ -331,24 +335,36 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
     {
         $client = $this->invoice->client;
 
-        if (empty($client) || $client instanceof Optional) {
+        if (! ($client instanceof ClientData)) {
             return;
         }
 
-        throw_if(
-            empty($client->vat),
-            InvoiceRequiresClientVatException::class
-        );
+        throw_if(Properties::isNotValid($client->vat), InvoiceRequiresClientVatException::class);
 
         $data = $client->toArray();
 
-        $data['irs_retention'] = $client->irsRetention ? 'yes' : 'no';
-        $data['email_notification'] = $client->emailNotification ? 'yes' : 'no';
-        ! empty($client->vat) && $data['fiscal_id'] = $client->vat;
-        ! empty($client->postalCode) && $data['postalcode'] = $client->postalCode;
+        $data['irs_retention'] = $this->booleanFlag($client->irsRetention);
+        $data['email_notification'] = $this->booleanFlag($client->emailNotification);
+
+        $data['fiscal_id'] = $client->vat;
+
+        $postalCode = $client->postalCode;
+
+        if (Properties::isValid($postalCode)) {
+            $data['postalcode'] = $postalCode;
+        }
 
         unset($data['vat'], $data['postal_code']);
 
         $this->payload->put('client', $data);
+    }
+
+    private function booleanFlag(Optional|bool|null $value): string
+    {
+        if (! is_bool($value)) {
+            return 'no';
+        }
+
+        return $value ? 'yes' : 'no';
     }
 }

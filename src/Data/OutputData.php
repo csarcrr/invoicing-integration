@@ -22,13 +22,13 @@ class OutputData extends Data implements DataNeedsValidation
 
     public function __construct(
         public OutputFormat $format = OutputFormat::PDF_BASE64,
-        public Optional|string $content = '',
-        public Optional|string $fileName = '',
+        public Optional|null|string $content = null,
+        public Optional|null|string $fileName = null,
     ) {}
 
     public function save(?string $path = null): string
     {
-        if(empty($this->fileName) || $this->fileName instanceof Optional) {
+        if (! is_string($this->fileName)) {
             $this->fileName = Str::random(4).time();
         }
 
@@ -56,8 +56,8 @@ class OutputData extends Data implements DataNeedsValidation
 
     protected function base64EncodedPdf(): string
     {
-        if(!is_string($this->content)) {
-            return  '';
+        if (! is_string($this->content)) {
+            return '';
         }
 
         $decoded = base64_decode($this->content);
@@ -71,7 +71,7 @@ class OutputData extends Data implements DataNeedsValidation
 
     protected function base64EncodedEscPos(): string
     {
-        if($this->content instanceof Optional) {
+        if (! is_string($this->content)) {
             return '';
         }
 
