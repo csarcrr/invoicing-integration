@@ -17,20 +17,17 @@ If you already know the provider ID, prefer `Client::get()` for a direct lookup.
 ## Basic Usage
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
 $results = Client::find()->execute();
 
 foreach ($results->getList() as $client) {
-    printf(
-        "%s <%s>\n",
-        $client->getName(),
-        $client->getEmail() ?? 'no-email'
-    );
+    // do stuff
 }
 ```
 
-- `getList()` returns a `Collection` of `ClientDataObject` instances populated by
+- `getList()` returns a `Collection` of `ClientData` instances populated by
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
@@ -40,13 +37,13 @@ foreach ($results->getList() as $client) {
 Cegid Vendus currently supports server-side email filtering:
 
 ```php
-$results = Client::find()
-    ->email('billing@example.com')
-    ->execute();
+$filters = ClientData::make(['email' => 'billing@example.com']);
+
+$results = Client::find($filters)->execute();
 ```
 
-Passing an invalid email throws a Laravel validation exception via the shared
-`HasEmail` trait, ensuring you fail fast before hitting the provider API.
+Filterable fields depend on the provider, but the `ClientData` DTO supports
+common attributes such as `email`, `vat`, `status`, and `externalReference`.
 
 ## Pagination API
 
@@ -57,8 +54,7 @@ the `HasPaginator` trait.
 $results = Client::find()->execute();
 
 while ($results->getCurrentPage() < $results->getTotalPages()) {
-    // Process current page
-    syncClients($results->getList());
+    // do stuff
 
     // Move to the next provider page
     $results->next()->execute();
@@ -77,11 +73,12 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 
 try {
-    $clients = Client::find()->email('acme.com')->execute();
+    $filters = ClientData::make(['email' => 'acme.com']);
+    $clients = Client::find($filters)->execute();
 
     do {
         foreach ($clients->getList() as $client) {
-            importClient($client);
+            // do stuff
         }
 
         if ($clients->getCurrentPage() < $clients->getTotalPages()) {

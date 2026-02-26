@@ -4,27 +4,49 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
+use CsarCrr\InvoicingIntegration\Actions\ClientAction;
+use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
+use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
-use CsarCrr\InvoicingIntegration\Providers\CegidVendus;
+use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
+use function collect;
+use function implode;
+use function in_array;
+use function throw_if;
+
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 {
     public function bootingPackage(): void
     {
-        Http::macro('provider', function () {
-            $provider = Provider::from(config('invoicing-integration.provider'));
+        $this->setupHttpMacros();
 
-            return match ($provider) {
-                Provider::CEGID_VENDUS => CegidVendus::setupHttpConfiguration()
-            };
+        $this->app->when([InvoiceAction::class, ClientAction::class])
+            ->needs(Provider::class)
+            ->give(function () {
+                return ProviderConfiguration::getProvider();
+            });
+    }
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('invoicing-integration')
+            ->hasConfigFile('invoicing-integration');
+    }
+
+    private function setupHttpMacros(): void
+    {
+        Http::macro('provider', function () {
+            return HttpConfiguration::get();
         });
 
         Http::macro('handleUnwantedFailures', function (Response $response) {
@@ -49,18 +71,5 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
             throw new Exception('The integration API request failed for an unknown reason.');
         });
-
-        $this->app->when([Invoice::class, ClientAction::class])
-            ->needs(Provider::class)
-            ->give(function () {
-                return Provider::from(config('invoicing-integration.provider'));
-            });
-    }
-
-    public function configurePackage(Package $package): void
-    {
-        $package
-            ->name('invoicing-integration')
-            ->hasConfigFile('invoicing-integration');
     }
 }

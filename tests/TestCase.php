@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Spatie\LaravelData\LaravelDataServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -23,10 +24,11 @@ class TestCase extends Orchestra
         Http::preventStrayRequests();
     }
 
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             InvoicingIntegrationServiceProvider::class,
+            LaravelDataServiceProvider::class,
         ];
     }
 

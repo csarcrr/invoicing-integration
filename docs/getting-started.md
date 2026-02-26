@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide will help you install and configure the Invoicing Integration package in your Laravel project.
+This guide walks you through installation, configuration, and issuing your first invoice.
 
 ## 1. Install the Package
 
@@ -36,6 +36,8 @@ CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID=123460
 
 ## 4. Configuration File
 
+Each provider has its own configuration requirements. Currently, only **Cegid Vendus** is supported. See [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md) for a full understanding of the configuration options.
+
 The published configuration file (`config/invoicing-integration.php`) looks like this:
 
 ```php
@@ -66,45 +68,107 @@ return [
 ## 5. Your First Invoice
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-// Create a simple invoice (final consumer, no client details)
-$invoice = Invoice::create();
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'items' => [
+        ItemData::make([
+            'reference' => 'USB-CABLE-C',
+            'note' => 'USB-C Charging Cable 2m',
+            'price' => 1299,
+            'quantity' => 2,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY,
+            'amount' => 2598,
+        ]),
+    ],
+]);
 
-// Add an item (price in cents)
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000);
-$item->quantity(1);
-$invoice->item($item);
-
-// Issue the invoice
-$result = $invoice->execute();
-
-// Get the invoice sequence number
-echo $result->getSequence(); // e.g., "FT 01P2025/1"
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 ```
+
+Sample invoice response:
+
+```json
+{
+    "id": 4567,
+    "sequence": "FR 01P2025/1",
+    "total": 2598,
+    "totalNet": 2112,
+    "atcudHash": null
+}
+```
+
+When you need to pass structured data (clients, payments, etc.), prefer the
+`::make()` named constructor provided by `spatie/laravel-data` so every field is
+validated and transformed before the request reaches the provider.
 
 ## Understanding the API
 
-The package uses a fluent builder pattern. All invoice operations start with `Invoice::create()`:
+Invoice creation is DTO-first. Build an `InvoiceData` object and hand it to the
+`Invoice` facade:
 
 ```php
-$invoice = Invoice::create();
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 
-// Chain methods to configure the invoice
-$invoice
-    ->client($client)      // Optional: client details
-    ->item($item)          // Required: at least one item
-    ->payment($payment)    // Required for FR, FS, RG, NC types
-    ->type($invoiceType)   // Optional: defaults to FT (Invoice)
-    ->notes('...')         // Optional: invoice notes
-    ->dueDate($date);      // Optional: only for FT type
+$invoiceData = InvoiceData::make([
+    'items' => [...],
+    'payments' => [...],
+    'client' => $clientData ?? null,
+    'type' => InvoiceType::Invoice,
+]);
 
-// Issue the invoice
-$result = $invoice->execute();
+$action = Invoice::create($invoiceData);
+$result = $action->execute()->getInvoice();
 ```
+
+Need to adjust the payload dynamically (e.g., append a payment when a queue job
+resumes)? Mutate the `InvoiceData` instance directly (its properties are public,
+and collections inside it are regular Laravel collections) or create a new DTO
+via `InvoiceData::from([...])` before calling `Invoice::create()` again.
+
+## Troubleshooting
+
+### 401 Unauthorized Error
+
+If you see an `UnauthorizedException`, check the following:
+
+- **API Key**: Verify `CEGID_VENDUS_API_KEY` in your `.env` is correct
+- **Trailing spaces**: Make sure there are no extra spaces in the API key value
+- **Account status**: Confirm your Cegid Vendus account is active
+
+### Invalid Payment Method Error
+
+If payments fail:
+
+- **Payment IDs**: Ensure all `CEGID_VENDUS_PAYMENT_*_ID` values are set and match the IDs from your Cegid Vendus dashboard
+- **Mode mismatch**: Payment IDs are different between `tests` and `normal` mode accounts
+
+### Provider Unreachable
+
+If you get a `FailedReachingProviderException`:
+
+- Check your internet connection
+- Verify the Cegid Vendus API is not experiencing downtime
+- Look for network/firewall issues that might block outgoing HTTPS requests
+
+## Next Steps
+
+Now that you've issued your first invoice, explore these common workflows:
+
+- **[Creating an Invoice](invoices/creating-an-invoice.md)** - Full invoice with customer details, multiple items, and discounts
+- **[Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)** - Issue receipts for existing invoices
+- **[Credit Notes (NC)](invoices/creating-a-nc-invoice.md)** - Handle refunds and returns
+- **[Managing Clients](clients/README.md)** - Register and reuse customers
 
 ---
 

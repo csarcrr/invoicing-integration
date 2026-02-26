@@ -1,20 +1,20 @@
 # API Reference
 
-Complete reference for the Invoicing Integration package classes, methods, and enums.
+Complete reference for the Invoicing Integration package classes, methods, and enums. This page documents all public APIs you'll use when integrating invoicing into your Laravel application.
 
 ## Client
 
-Entry point for client management operations.
+Entry point for managing clients.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Client;
 ```
 
-| Method                               | Return Type    | Description                           |
-| ------------------------------------ | -------------- | ------------------------------------- |
-| `Client::create(ClientData $client)` | `CreateClient` | Creates a new client builder instance |
-| `Client::get(ClientData $client)`    | `GetClient`    | Creates a client retrieval instance   |
-| `Client::find()`                     | `FindClient`   | Lists/paginates provider clients      |
+| Method                                      | Return Type    | Description                           |
+| ------------------------------------------- | -------------- | ------------------------------------- |
+| `Client::create(ClientData $client)`        | `CreateClient` | Creates a new client builder instance |
+| `Client::get(ClientData $client)`           | `GetClient`    | Creates a client retrieval instance   |
+| `Client::find(?ClientData $filters = null)` | `FindClient`   | Lists/paginates provider clients      |
 
 ## CreateClient Contract
 
@@ -51,13 +51,14 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 | Method             | Return Type  | Description                                   |
 | ------------------ | ------------ | --------------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request              |
-| `getList()`        | `Collection` | Collection of `ClientDataObject` results      |
+| `getList()`        | `Collection` | `Collection<ClientData>` results              |
 | `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
 | `next()`           | `self`       | Move to the next page                         |
 | `previous()`       | `self`       | Go back one page                              |
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
 | `getTotalPages()`  | `int`        | Total pages reported by provider              |
+| `getClient()`      | `ClientData` | Current filter DTO (email, VAT, status, etc.) |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
 > outside the available range.
@@ -66,244 +67,254 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 
 ## Invoice
 
-Entry point for creating invoices.
+Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, and GT documents.
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 ```
 
-| Method              | Return Type     | Description                            |
-| ------------------- | --------------- | -------------------------------------- |
-| `Invoice::create()` | `CreateInvoice` | Creates a new invoice builder instance |
+| Method                                  | Return Type     | Description                                          |
+| --------------------------------------- | --------------- | ---------------------------------------------------- |
+| `Invoice::create(InvoiceData $invoice)` | `CreateInvoice` | Creates a builder seeded with the provided DTO state |
+
+> **Facade vs. Action:** The `Invoice` facade resolves the underlying
+> `InvoiceAction` class from the service container. Prefer the facade for day-to-day
+> usage. Resolve `InvoiceAction` directly only when you need to inject the class
+> (e.g., in constructors) or swap the implementation during testing. The facade is
+> now the canonical entry point; there is no standalone `Invoice` class you need to
+> instantiate manually.
 
 ## CreateInvoice Contract
 
-The builder interface returned by `Invoice::create()`. All methods return `self` for chaining unless otherwise noted.
+The contract returned by `Invoice::create()` focuses on executing the request
+and inspecting the resulting DTO. All configuration lives on `InvoiceData`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 ```
 
-### Builder Methods
+| Method         | Return Type   | Description                                                       |
+| -------------- | ------------- | ----------------------------------------------------------------- |
+| `execute()`    | `self`        | Issue the HTTP request using the data contained in `InvoiceData`  |
+| `getInvoice()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
+| `getPayload()` | `Collection`  | Inspect the payload that will be sent to the provider (debugging) |
 
-| Method                                         | Parameters                         | Description                                      | Throws |
-| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------ | ------ |
-| `client(ClientData $client)`                   | ClientData object                  | Set client details (optional for final consumer) | -      |
-| `item(Item $item)`                             | Item object                        | Add an item to the invoice                       | -      |
-| `payment(Payment $payment)`                    | Payment object                     | Add a payment to the invoice                     | -      |
-| `transport(TransportDetails $transport)`       | TransportDetails object            | Set transport details                            | -      |
-| `type(InvoiceType $type)`                      | InvoiceType enum                   | Set document type (default: FT)                  | -      |
-| `dueDate(Carbon $dueDate)`                     | Carbon date                        | Set due date (FT only)                           | -      |
-| `outputFormat(OutputFormat $format)`           | OutputFormat enum                  | Set output format (PDF or ESC/POS)               | -      |
-| `relatedDocument(int\|string $doc, ?int $row)` | Document ID/sequence, optional row | Link to related document                         | -      |
-| `creditNoteReason(string $reason)`             | Reason text                        | Set credit note reason (NC only)                 | -      |
-| `notes(string $notes)`                         | Notes text                         | Add notes to the invoice                         | -      |
-
-### Execution Method
-
-| Method      | Return Type             | Description                         |
-| ----------- | ----------------------- | ----------------------------------- |
-| `execute()` | `Invoice` (ValueObject) | Issue the invoice and return result |
-
-### Getter Methods
-
-| Method                  | Return Type         | Description                      |
-| ----------------------- | ------------------- | -------------------------------- |
-| `getClient()`           | `?ClientData`       | Get the current client           |
-| `getItems()`            | `Collection`        | Get all items                    |
-| `getPayments()`         | `Collection`        | Get all payments                 |
-| `getTransport()`        | `?TransportDetails` | Get transport details            |
-| `getType()`             | `InvoiceType`       | Get document type                |
-| `getOutputFormat()`     | `OutputFormat`      | Get output format                |
-| `getRelatedDocument()`  | `int\|string\|null` | Get related document reference   |
-| `getCreditNoteReason()` | `?string`           | Get credit note reason           |
-| `getNotes()`            | `?string`           | Get invoice notes                |
-| `getPayload()`          | `Collection`        | Get the prepared request payload |
+> Need to change values after instantiating your DTO? Mutate the
+> `InvoiceData` instance (its properties are public) before passing it to
+> `Invoice::create()`, or create a new DTO via `InvoiceData::from([...])`.
 
 ---
 
-## Value Objects
+## Value Objects & DTOs
 
-### ClientData
+All DTOs extend `spatie/laravel-data\Data`, expose a `::make()` factory, and rely
+on **public typed properties** rather than getters. Access values with
+`$dto->property` and rely on `Optional`-typed attributes to differentiate between
+`null` and "not provided" states. Always call `::make([...])` (or resolve from the
+container) so validation rules and transformers run before the HTTP request.
+
+### InvoiceData
+
+Entry point for invoice creation.
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'client' => $clientData ?? null,
+    'items' => [$item1, $item2],
+    'payments' => [$payment],
+    'creditNoteReason' => null,
+]);
 ```
+
+| Property           | Type                      | Description                                     |
+| ------------------ | ------------------------- | ----------------------------------------------- |
+| `type`             | `InvoiceType`             | Document type (defaults to `Invoice`)           |
+| `items`            | `Collection<ItemData>`    | Invoice lines; required except for receipts     |
+| `payments`         | `Collection<PaymentData>` | Payment records (required for FR, FS, RG, NC)   |
+| `client`           | `?ClientData`             | Customer information                            |
+| `transport`        | `?TransportData`          | Transport/movement of goods info                |
+| `creditNoteReason` | `?string`                 | Required for credit notes                       |
+| `relatedDocument`  | `?string`                 | Used for non-credit-note document relationships |
+| `notes`            | `?string`                 | Additional notes (printed on document)          |
+| `dueDate`          | `?Carbon`                 | Payment deadline (FT only)                      |
+| `output`           | `OutputData`              | Preferred output format (PDF default)           |
+
+> `InvoiceData` implements `DataNeedsValidation`, so misconfigured payloads throw
+> before any HTTP request runs.
+
+### ClientData
 
 **Usage:**
 
 ```php
-ClientData::name('John Doe')->vat('123456789')
+ClientData::make([
+    'name' => 'John Doe',
+    'vat' => '123456789',
+    'email' => 'john@example.com',
+]);
 ```
 
-**Methods (fluent, return self):**
+**Public Properties:**
 
-| Method                                  | Parameter         | Description              | Throws |
-| --------------------------------------- | ----------------- | ------------------------ | ------ |
-| `id(int $id)`                           | Provider ID       | Set provider-assigned ID | -      |
-| `name(string $name)`                    | Name string       | Set client name          | -      |
-| `vat(string $vat)`                      | VAT/Fiscal ID     | Set tax identification   | -      |
-| `address(string $address)`              | Address string    | Set street address       | -      |
-| `city(string $city)`                    | City name         | Set city                 | -      |
-| `postalCode(string $postalCode)`        | Postal code       | Set postal code          | -      |
-| `country(string $country)`              | ISO 2-letter code | Set country              | -      |
-| `email(string $email)`                  | Email address     | Set email (validated)    | -      |
-| `phone(string $phone)`                  | Phone number      | Set phone                | -      |
-| `notes(string $notes)`                  | Notes text        | Set internal notes       | -      |
-| `irsRetention(bool $retention)`         | Boolean           | Enable IRS retention     | -      |
-| `emailNotification(bool $notification)` | Boolean           | Enable email alerts      | -      |
-| `defaultPayDue(int $days)`              | Days              | Set default payment due  | -      |
+| Property            | Type               | Description                         |
+| ------------------- | ------------------ | ----------------------------------- |
+| `id`                | `Optional<int>`    | Provider-assigned identifier        |
+| `name`              | `Optional<string>` | Client name (auto-trimmed)          |
+| `vat`               | `Optional<string>` | VAT / fiscal ID                     |
+| `email`             | `Optional<string>` | Email (validated)                   |
+| `country`           | `Optional<string>` | ISO 3166-1 alpha-2 code             |
+| `city`              | `Optional<string>` | City name                           |
+| `address`           | `Optional<string>` | Street address                      |
+| `postalCode`        | `Optional<string>` | Postal/ZIP code                     |
+| `phone`             | `Optional<string>` | Phone number                        |
+| `notes`             | `Optional<string>` | Internal notes                      |
+| `defaultPayDue`     | `Optional<int>`    | Default payment due (days)          |
+| `externalReference` | `Optional<string>` | Provider-specific reference         |
+| `status`            | `Optional<string>` | Provider status                     |
+| `emailNotification` | `Optional<bool>`   | Whether to send documents via email |
+| `irsRetention`      | `Optional<bool>`   | IRS withholding flag                |
+| `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`)    |
 
-**Getter Methods:**
-
-| Method                   | Return Type |
-| ------------------------ | ----------- |
-| `getId()`                | `?int`      |
-| `getName()`              | `?string`   |
-| `getVat()`               | `?string`   |
-| `getAddress()`           | `?string`   |
-| `getCity()`              | `?string`   |
-| `getPostalCode()`        | `?string`   |
-| `getCountry()`           | `?string`   |
-| `getEmail()`             | `?string`   |
-| `getPhone()`             | `?string`   |
-| `getNotes()`             | `?string`   |
-| `getIrsRetention()`      | `?bool`     |
-| `getEmailNotification()` | `?bool`     |
-| `getDefaultPayDue()`     | `?int`      |
+> Access DTO values directly: `$client->name`, `$client->vat`, etc. Use
+> `$client->toArray()` when you need a payload-friendly structure (includes
+> provider-specific metadata stored on the DTO).
 
 ---
 
 ### Item
 
-```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
-```
-
-**Constructor:**
+**Instantiation:**
 
 ```php
-new Item()
+$item = ItemData::make([
+    'reference' => 'SKU-001',
+    'quantity' => 2,
+    'price' => 1500,
+    'note' => 'Consulting hours',
+    'tax' => ItemTax::EXEMPT,
+    'taxExemptionReason' => TaxExemptionReason::M04,
+    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'relatedDocument' => RelatedDocumentReferenceData::make([
+        'documentId' => 'FT 01P2025/1',
+        'row' => 1,
+    ]),
+]);
 ```
 
-**Methods (fluent, return self):**
+**Properties:**
 
-| Method                                     | Parameter             | Description                      | Throws                                            |
-| ------------------------------------------ | --------------------- | -------------------------------- | ------------------------------------------------- |
-| `reference(int\|string $reference)`        | Product SKU/code      | Set product reference            | -                                                 |
-| `quantity(int\|float $quantity)`           | Quantity              | Set quantity (default: 1)        | `UnsupportedQuantityException`                    |
-| `price(int $price)`                        | Price in cents        | Set unit price                   | -                                                 |
-| `note(string $note)`                       | Description           | Set item description             | -                                                 |
-| `type(ItemType $type)`                     | ItemType enum         | Set item type (default: Product) | -                                                 |
-| `tax(ItemTax $tax)`                        | ItemTax enum          | Set tax rate                     | -                                                 |
-| `taxExemption(TaxExemptionReason $reason)` | Exemption enum        | Set exemption reason             | `ExemptionCanOnlyBeUsedWithExemptTaxException`    |
-| `taxExemptionLaw(string $law)`             | Law reference         | Set exemption law                | `ExemptionLawCanOnlyBeUsedWithExemptionException` |
-| `amountDiscount(int $amount)`              | Amount in cents       | Set fixed discount               | -                                                 |
-| `percentageDiscount(int $percent)`         | Percentage            | Set percentage discount          | -                                                 |
-| `relatedDocument(string $doc, int $line)`  | Document, line number | Set related document (for NC)    | -                                                 |
-
-**Getter Methods:**
-
-| Method                    | Return Type                 |
-| ------------------------- | --------------------------- |
-| `getReference()`          | `int\|string`               |
-| `getQuantity()`           | `int\|float`                |
-| `getPrice()`              | `?int`                      |
-| `getNote()`               | `?string`                   |
-| `getTax()`                | `?ItemTax`                  |
-| `getTaxExemption()`       | `?TaxExemptionReason`       |
-| `getTaxExemptionLaw()`    | `?string`                   |
-| `getAmountDiscount()`     | `?int`                      |
-| `getPercentageDiscount()` | `?int`                      |
-| `getRelatedDocument()`    | `?RelatedDocumentReference` |
-| `getType()`               | `?ItemType`                 |
+| Property             | Type                            | Description                                        | Validation / Notes                                                        |
+| -------------------- | ------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `reference`          | `null\|int\|string`             | Product SKU or code                                | -                                                                         |
+| `quantity`           | `null\|int\|float`              | Quantity (defaults to `1`)                         | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
+| `price`              | `?int`                          | Unit price in cents                                | -                                                                         |
+| `note`               | `?string`                       | Optional line description                          | -                                                                         |
+| `type`               | `?ItemType`                     | Item classification (default: `ItemType::Product`) | -                                                                         |
+| `tax`                | `?ItemTax`                      | VAT rate                                           | Required for `taxExemptionReason`                                         |
+| `taxExemptionReason` | `?TaxExemptionReason`           | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
+| `taxExemptionLaw`    | `?string`                       | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
+| `amountDiscount`     | `?int`                          | Fixed discount in cents                            | -                                                                         |
+| `percentageDiscount` | `?int`                          | Percentage discount                                | -                                                                         |
+| `relatedDocument`    | `?RelatedDocumentReferenceData` | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
 
 ---
 
-### Payment
+### PaymentData
+
+Payment records for invoice settlements.
+
+**Instantiation:**
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+$payment = PaymentData::make([
+    'method' => PaymentMethod::CREDIT_CARD,
+    'amount' => 5000,
+]);
 ```
 
-**Constructor:**
+**Properties:**
 
-```php
-new Payment()
-```
+| Property | Type             | Description               |
+| -------- | ---------------- | ------------------------- |
+| `method` | `?PaymentMethod` | Payment method enum value |
+| `amount` | `?int`           | Payment amount (in cents) |
 
-**Methods (fluent, return self):**
-
-| Method                          | Parameter          | Description        | Throws |
-| ------------------------------- | ------------------ | ------------------ | ------ |
-| `method(PaymentMethod $method)` | PaymentMethod enum | Set payment method | -      |
-| `amount(int $amount)`           | Amount in cents    | Set payment amount | -      |
-
-**Getter Methods:**
-
-| Method        | Return Type      |
-| ------------- | ---------------- |
-| `getMethod()` | `?PaymentMethod` |
-| `getAmount()` | `?int`           |
+`PaymentData` extends `Spatie\LaravelData\Data`, so you can provide plain
+arrays or DTOs to `::make()` and let transformers/validation prepare the payload
+before the HTTP request is issued.
 
 ---
 
-### TransportDetails
+### TransportData
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\TransportDetails;
+use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Data\AddressData;
+use CsarCrr\InvoicingIntegration\Data\TransportData;
+
+$origin = AddressData::make([
+    'date' => Carbon::parse('2025-01-10'),
+    'time' => Carbon::parse('2025-01-10 10:00'),
+    'address' => 'Rua das Flores, 125',
+    'city' => 'Porto',
+    'postalCode' => '4410-200',
+    'country' => 'PT',
+]);
+
+$destination = AddressData::make([
+    'date' => Carbon::parse('2025-01-11'),
+    'time' => Carbon::parse('2025-01-11 14:00'),
+    'address' => 'Rua dos Paninhos, 521',
+    'city' => 'Lisboa',
+    'postalCode' => '1000-100',
+    'country' => 'PT',
+]);
+
+$transport = TransportData::make([
+    'origin' => $origin->toArray(),
+    'destination' => $destination->toArray(),
+    'vehicleLicensePlate' => '00-AB-00',
+]);
 ```
 
-**Constructor:**
+**TransportData Properties:**
 
-```php
-new TransportDetails()
-```
+| Property              | Type          | Description                                          |
+| --------------------- | ------------- | ---------------------------------------------------- |
+| `origin`              | `AddressData` | Load/location details (date, time, address, country) |
+| `destination`         | `AddressData` | Delivery/unload details                              |
+| `vehicleLicensePlate` | `?string`     | Truck/license plate identifier                       |
 
-**Context Methods:**
+**AddressData Fields:**
 
-| Method          | Return Type | Description                         |
-| --------------- | ----------- | ----------------------------------- |
-| `origin()`      | `self`      | Set context to origin location      |
-| `destination()` | `self`      | Set context to destination location |
-
-**Location Methods (call after origin() or destination()):**
-
-| Method                           | Parameter         | Description     | Throws |
-| -------------------------------- | ----------------- | --------------- | ------ |
-| `address(string $address)`       | Address string    | Set address     | -      |
-| `city(string $city)`             | City name         | Set city        | -      |
-| `postalCode(string $postalCode)` | Postal code       | Set postal code | -      |
-| `country(string $country)`       | ISO 2-letter code | Set country     | -      |
-| `date(Carbon $date)`             | Carbon date       | Set date        | -      |
-| `time(Carbon $time)`             | Carbon time       | Set time        | -      |
-
-**Other Methods:**
-
-| Method                               | Parameter     | Description       | Throws |
-| ------------------------------------ | ------------- | ----------------- | ------ |
-| `vehicleLicensePlate(string $plate)` | License plate | Set vehicle plate | -      |
+| Field        | Type      | Description                         |
+| ------------ | --------- | ----------------------------------- |
+| `address`    | `?string` | Street and house number             |
+| `city`       | `?string` | City                                |
+| `postalCode` | `?string` | Postal code                         |
+| `country`    | `string`  | ISO 3166-1 alpha-2 code (validated) |
+| `date`       | `?Carbon` | Optional load/unload date           |
+| `time`       | `?Carbon` | Optional load/unload time           |
 
 ---
 
 ### Invoice (Response)
 
-```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
-```
+The value object returned after issuing an invoice. Contains the provider's response data.
 
-Returned by `execute()` method after issuing.
+**Properties:**
 
-**Methods:**
-
-| Method           | Return Type | Description                             | Throws                          |
-| ---------------- | ----------- | --------------------------------------- | ------------------------------- |
-| `getId()`        | `int`       | Provider's internal ID                  | -                               |
-| `getSequence()`  | `string`    | Invoice sequence (e.g., "FT 01P2025/1") | -                               |
-| `getTotal()`     | `int`       | Total amount in cents (gross)           | -                               |
-| `getTotalNet()`  | `int`       | Net total amount in cents               | -                               |
-| `getAtcudHash()` | `?string`   | ATCUD hash (Portugal AT code)           | -                               |
-| `getOutput()`    | `Output`    | Output object for PDF/ESC/POS           | `InvoiceWithoutOutputException` |
+| Property    | Type      | Description                             | Notes                                   |
+| ----------- | --------- | --------------------------------------- | --------------------------------------- |
+| `id`        | `int`     | Provider's internal ID                  | -                                       |
+| `sequence`  | `string`  | Invoice sequence (e.g., "FT 01P2025/1") | -                                       |
+| `total`     | `int`     | Total amount in cents (gross)           | -                                       |
+| `totalNet`  | `int`     | Net total amount in cents               | -                                       |
+| `atcudHash` | `?string` | ATCUD hash (Portugal AT code)           | -                                       |
+| `output`    | `?Output` | Output object for PDF/ESC/POS           | `null` when the provider omits the file |
 
 ---
 
@@ -329,7 +340,11 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 
 ## Enums
 
+Enums provide type-safe values for document types, payment methods, taxes, and output formats.
+
 ### InvoiceType
+
+Document types.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
@@ -346,6 +361,8 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 ### PaymentMethod
 
+Payment methods. Each method maps to a provider-specific ID configured in your `.env`.
+
 ```php
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 ```
@@ -360,6 +377,8 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 ### ItemType
 
+Classification for invoice line items - products, services, or tax entries.
+
 ```php
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 ```
@@ -373,6 +392,8 @@ use CsarCrr\InvoicingIntegration\Enums\ItemType;
 | `SpecialTax` | Special tax      |
 
 ### ItemTax
+
+VAT rates for invoice items. Use `EXEMPT` with a `TaxExemptionReason` for tax-free items.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
@@ -432,9 +453,11 @@ Portuguese tax exemption codes supported by this package:
 | M99  | 0: Artigo 2.º, n.º 2 do CIVA<br>1: Artigo 3.º, n.º 4 do CIVA<br>2: Artigo 3.º, n.º 6 do CIVA<br>3: Artigo 3.º, n.º 7 do CIVA<br>4: Artigo 4.º, n.º 5 do CIVA |
 
 To print the first legal reference, call `TaxExemptionReason::M04->laws()[0]`. When multiple entries
-are available, pick the index that matches your scenario (e.g., `laws()[1]` for `M10` Article 57.º).
+are available, pick the index that matches your use case (e.g., `laws()[1]` for `M10` Article 57.º).
 
 ### OutputFormat
+
+Output format for invoice documents - PDF for email/archive or ESC/POS for thermal printers.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
@@ -449,22 +472,27 @@ use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 ## Exceptions
 
+Exceptions are thrown for validation errors (before the request) and provider errors (after the request).
+
 ### Validation Exceptions
 
-| Exception                                         | When Thrown                                     |
-| ------------------------------------------------- | ----------------------------------------------- |
-| `InvoiceRequiresClientVatException`               | Client provided with empty VAT                  |
-| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                      |
-| `CreditNoteReasonIsMissingException`              | NC type without credit note reason              |
-| `NeedsDateToSetLoadPointException`                | Transport without origin date                   |
-| `InvalidCountryException`                         | Invalid ISO country code                        |
-| `InvoiceWithoutOutputException`                   | Calling `getOutput()` when no output is present |
-| `UnsupportedQuantityException`                    | Item quantity is zero or negative               |
-| `MissingRelatedDocumentException`                 | Credit note item without related document       |
-| `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption set without `ItemTax::EXEMPT`     |
-| `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason      |
+These are thrown before the request is sent to the provider, during local validation.
+
+| Exception                                         | When Thrown                                 |
+| ------------------------------------------------- | ------------------------------------------- |
+| `InvoiceRequiresClientVatException`               | Client provided with empty VAT              |
+| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                  |
+| `CreditNoteReasonIsMissingException`              | NC type without credit note reason          |
+| `NeedsDateToSetLoadPointException`                | Transport without origin date               |
+| `InvalidCountryException`                         | Invalid ISO country code                    |
+| `UnsupportedQuantityException`                    | Item quantity is zero or negative           |
+| `MissingRelatedDocumentException`                 | Credit note item without related document   |
+| `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption set without `ItemTax::EXEMPT` |
+| `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law set without exemption reason  |
 
 ### Provider Exceptions
+
+These are thrown when communication with the provider fails or returns an error.
 
 | Exception                         | When Thrown                              |
 | --------------------------------- | ---------------------------------------- |

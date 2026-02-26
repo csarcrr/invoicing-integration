@@ -1,160 +1,284 @@
 # Creating a Credit Note (NC)
 
-Issue a credit note (NC / Nota de Crédito) to refund or correct a previously issued invoice.
+When a customer returns a product or you need to correct a billing error, you issue a credit note (NC / Nota de Crédito). This document officially refunds money and maintains proper accounting records.
 
-## Quick Example
+## When to Use Credit Notes
+
+**Use NC when:**
+
+- A customer returns a product (full or partial refund)
+- You overcharged a customer and need to correct it
+- A product arrived damaged and you're issuing a refund
+- You're canceling part of an order after invoicing
+
+**Don't use NC when:**
+
+- The customer hasn't paid yet - void the original invoice instead
+- You want to record a payment - use RG (Receipt) instead
+
+## Quick Example: Customer Returns a Product
+
+A customer bought headphones but they arrived defective. Let's issue a credit note:
 
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Data\RelatedDocumentReferenceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
+$creditNoteData = InvoiceData::make([
+    'type' => InvoiceType::CreditNote,
+    'client' => ClientData::make([
+        'name' => 'Maria Silva',
+        'vat' => 'PT123456789',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'HEADPHONES-PRO',
+            'note' => 'Wireless Noise-Cancelling Headphones - Defective unit',
+            'price' => 14999,
+            'relatedDocument' => RelatedDocumentReferenceData::make([
+                'documentId' => 'FR 01P2025/1',
+                'row' => 1,
+            ]),
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 14999,
+        ]),
+    ],
+    'creditNoteReason' => 'Product arrived defective - customer return',
+]);
 
-// Set document type to Credit Note
-$invoice->type(InvoiceType::CreditNote);
+$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+```
 
-// Create item with reference to original invoice line
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(500); // Amount to credit in cents
-$item->relatedDocument('FT 01P2025/1', 1); // Original invoice sequence, line number
+Sample credit note response:
 
-$invoice->item($item);
+```json
+{
+    "id": 222,
+    "sequence": "NC 01P2025/1",
+    "total": -14999,
+    "totalNet": -12194,
+    "atcudHash": "NC 01P2025/1 XYZ999"
+}
+```
 
-// Add payment (required for NC)
-$payment = new Payment();
-$payment->method(PaymentMethod::MB);
-$payment->amount(500);
-$invoice->payment($payment);
+## Partial Refunds
 
-// Provide reason for credit note (required)
-$invoice->creditNoteReason('Product returned by customer');
+Sometimes you only need to refund part of an order. For example, a customer ordered 3 items but wants to return 1:
 
-// Issue the credit note
-$result = $invoice->execute();
+```php
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Data\RelatedDocumentReferenceData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+$creditNoteData = InvoiceData::make([
+    'type' => InvoiceType::CreditNote,
+    'client' => ClientData::make([
+        'name' => 'Carlos Ferreira',
+        'vat' => 'PT567890123',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'MOUSE-WIRELESS',
+            'note' => 'Ergonomic Wireless Mouse - Customer changed mind',
+            'price' => 3999,
+            'quantity' => 1,
+            'relatedDocument' => RelatedDocumentReferenceData::make([
+                'documentId' => 'FR 01P2025/5',
+                'row' => 2,
+            ]),
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 3999,
+        ]),
+    ],
+    'creditNoteReason' => 'Customer return - item not needed',
+]);
+
+$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+```
+
+## Multiple Items in One Credit Note
+
+If a customer returns multiple items from the same order:
+
+```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Data\RelatedDocumentReferenceData;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+$creditNoteData = InvoiceData::make([
+    'type' => InvoiceType::CreditNote,
+    'client' => ClientData::make([
+        'name' => 'Ana Rodrigues',
+        'vat' => 'PT987654321',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'MONITOR-4K-27',
+            'note' => '27" 4K IPS Monitor - Dead pixels on arrival',
+            'price' => 44999,
+            'quantity' => 1,
+            'relatedDocument' => RelatedDocumentReferenceData::make([
+                'documentId' => 'FR 01P2025/10',
+                'row' => 1,
+            ]),
+        ]),
+        ItemData::make([
+            'reference' => 'CABLE-DP-2M',
+            'note' => 'DisplayPort Cable - Not needed without monitor',
+            'price' => 1499,
+            'quantity' => 1,
+            'relatedDocument' => RelatedDocumentReferenceData::make([
+                'documentId' => 'FR 01P2025/10',
+                'row' => 2,
+            ]),
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::MONEY_TRANSFER,
+            'amount' => 46498,
+        ]),
+    ],
+    'creditNoteReason' => 'Product quality issue - full return',
+]);
+
+$result = Invoice::create($creditNoteData)->execute()->getInvoice();
 ```
 
 ## Requirements
 
 Credit notes have specific requirements that differ from regular invoices:
 
-| Requirement           | Notes                                              |
-| --------------------- | -------------------------------------------------- |
-| Document Type         | Must be `InvoiceType::CreditNote`                  |
-| Credit Note Reason    | **Required** - explanation for the credit          |
-| Related Document      | Required on both invoice and item level            |
-| Item Related Document | Each item must reference the original invoice line |
-| Payment               | **Required** for credit notes                      |
+| Requirement           | Notes                                                           |
+| --------------------- | --------------------------------------------------------------- |
+| Document Type         | Must be `InvoiceType::CreditNote`                               |
+| Credit Note Reason    | **Required** - explains why you're issuing it                   |
+| Item Related Document | Each item must reference its original invoice line              |
+| Payment               | **Required** - how you're refunding the money                   |
+| Related Invoice       | Communicated through each item's `RelatedDocumentReferenceData` |
 
-## Item-Level Related Document
+## Credit Note Reasons
 
-Each item in a credit note must reference the original invoice and line number:
-
-```php
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(500);
-$item->relatedDocument('FT 01P2025/1', 1); // Document sequence, line number
-```
-
-The `lineNumber` is the row position in the original invoice:
-
-- If the item was on the 1st line of the original invoice, use `1`
-- If it was on the 3rd line, use `3`
-
-> **Note:** This is required for maintaining abstraction across providers, even if some providers don't strictly require it.
-
-## Credit Note Reason
-
-The reason is **mandatory** for credit notes:
+The reason is **mandatory** and should clearly explain the refund:
 
 ```php
-$invoice->creditNoteReason('Product damaged');
-$invoice->creditNoteReason('Customer returned item');
-$invoice->creditNoteReason('Pricing error correction');
+$creditNoteData = InvoiceData::make([
+    'creditNoteReason' => 'Product arrived damaged',
+    // ...
+]);
+
+// Common reasons:
+// - Customer return - 30 day policy
+// - Incorrect product shipped
+// - Price adjustment - promotional discount
+// - Order cancellation before shipping
 ```
 
-If you attempt to issue a credit note without a reason, a `CreditNoteReasonIsMissingException` is thrown.
+If you try to issue a credit note without a reason, you'll get a `CreditNoteReasonIsMissingException`.
 
-> **Note:** If you call `creditNoteReason()` on a non-NC document type, it is silently ignored.
+## Understanding Line Numbers
+
+The `row` in `relatedDocument` refers to the position of the item in the original invoice:
+
+```php
+// If the original invoice looked like this:
+// Line 1: Laptop - 1299.00
+// Line 2: Mouse - 39.99  <-- You want to refund this
+// Line 3: Keyboard - 79.99
+
+// Reference line 2
+$item = ItemData::make([
+    // ...
+    'relatedDocument' => RelatedDocumentReferenceData::make([
+        'documentId' => 'FR 01P2025/1',
+        'row' => 2, // Mouse was on line 2
+    ]),
+]);
+```
+
+> **Note:** This is required for maintaining compatibility across providers, even if some providers don't strictly require it.
 
 ## Complete Example
 
+Full credit note example:
+
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Data\RelatedDocumentReferenceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
+$creditNoteData = InvoiceData::make([
+    'type' => InvoiceType::CreditNote,
+    'client' => ClientData::make([
+        'name' => 'Pedro Santos',
+        'vat' => 'PT234567890',
+        'email' => 'pedro.santos@email.pt',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-ULTRA-13',
+            'note' => 'UltraBook Pro 13" - Customer return (14-day policy)',
+            'price' => 129900,
+            'quantity' => 1,
+            'relatedDocument' => RelatedDocumentReferenceData::make([
+                'documentId' => 'FR 01P2025/25',
+                'row' => 1,
+            ]),
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 129900,
+        ]),
+    ],
+    'creditNoteReason' => 'Customer return within 14-day cooling-off period',
+]);
 
-// Configure as credit note
-$invoice->type(InvoiceType::CreditNote);
+$result = Invoice::create($creditNoteData)->execute()->getInvoice();
 
-// Create the item being credited
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1500);  // Credit amount in cents (15.00)
-$item->quantity(1);
-$item->relatedDocument('FT 01P2025/1', 1);
-
-$invoice->item($item);
-
-// Add payment
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(1500);
-$invoice->payment($payment);
-
-// Link to original invoice
-$invoice->relatedDocument('FT 01P2025/1', 1);
-
-// Reason for the credit note
-$invoice->creditNoteReason('Product damaged during shipping');
-
-// Issue
-$result = $invoice->execute();
-
-echo $result->getSequence(); // e.g., "NC 01P2025/1"
-
-// Save credit note PDF
-$result->getOutput()->save('credit-notes/' . $result->getOutput()->fileName());
+if ($result->output) {
+    $result->output->save('credit-notes/' . $result->output->fileName());
+}
 ```
 
-## Multiple Items
+Example credit note response:
 
-Credit multiple items from the same invoice:
-
-```php
-$invoice = Invoice::create();
-$invoice->type(InvoiceType::CreditNote);
-
-// First item (line 1 of original invoice)
-$item1 = new Item();
-$item1->reference('SKU-001');
-$item1->price(500);
-$item1->relatedDocument('FT 01P2025/1', 1);
-$invoice->item($item1);
-
-// Second item (line 2 of original invoice)
-$item2 = new Item();
-$item2->reference('SKU-002');
-$item2->price(300);
-$item2->relatedDocument('FT 01P2025/1', 2);
-$invoice->item($item2);
-
-$payment = new Payment();
-$payment->method(PaymentMethod::MB);
-$payment->amount(800);
-$invoice->payment($payment);
-$invoice->relatedDocument('FT 01P2025/1', 1);
-$invoice->creditNoteReason('Order cancelled by customer');
-
-$result = $invoice->execute();
+```json
+{
+    "id": 333,
+    "sequence": "NC 01P2025/1",
+    "total": -129900,
+    "totalNet": -105610,
+    "atcudHash": "NC 01P2025/1 XYZ999"
+}
 ```
 
 ---
@@ -162,9 +286,10 @@ $result = $invoice->execute();
 **Tips:**
 
 - Always provide a clear, descriptive reason for the credit note
-- Each item must reference the original invoice line number
+- Each item must reference its line number on the original invoice
 - The payment amount should match the total credit amount
 - Credit notes require the same payment method configuration as invoices
+- The `total` in the response will be negative, indicating a refund
 
 ---
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Illuminate\Support\Collection;
 
 interface FindClient
@@ -19,4 +20,6 @@ interface FindClient
      * @return Collection<string, mixed>
      */
     public function getPayload(): Collection;
+
+    public function getClient(): ClientData;
 }

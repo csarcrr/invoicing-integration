@@ -4,77 +4,52 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\CreateInvoice;
+use Carbon\Carbon;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\OutputData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
-use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresVatWhenClientHasName;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Helpers\Properties;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusInvoice;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasClient;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasCreditNoteReason;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasDueDate;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasItems;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasNotes;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasOutputFormat;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasPayments;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasRelatedDocument;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasTransport;
-use CsarCrr\InvoicingIntegration\Traits\Invoice\HasType;
-use CsarCrr\InvoicingIntegration\ValueObjects\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
-use CsarCrr\InvoicingIntegration\ValueObjects\Output;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Optional;
 
-class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
+use function collect;
+
+class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
-    use HasClient;
     use HasConfig;
-    use HasCreditNoteReason;
-    use HasDueDate;
-    use HasItems;
-    use HasNotes;
-    use HasOutputFormat;
-    use HasPayments;
-    use HasRelatedDocument;
-    use HasTransport;
-    use HasType;
 
     /**
      * @var Collection<string, mixed>
      */
     protected Collection $payload;
 
-    /**
-     * @var array<int, InvoiceType>
-     */
-    protected array $invoiceTypesThatRequirePayments = [
-        InvoiceType::Receipt,
-        InvoiceType::InvoiceReceipt,
-        InvoiceType::InvoiceSimple,
-        InvoiceType::CreditNote,
-    ];
-
-    /**
-     * @param  array<string, mixed>|Collection<string, mixed>  $config
-     */
-    public function __construct(array|Collection $config)
+    public function __construct(protected InvoiceData $invoice)
     {
-        $this->config($config);
         $this->payload = collect([
-            'type' => $this->getType()->value,
+            'type' => $this->invoice->type->value,
         ]);
-        $this->items = collect();
-        $this->payments = collect();
     }
 
-    public function execute(): Invoice
+    /**
+     * @throws \Throwable
+     * @throws MissingRelatedDocumentException
+     * @throws NeedsDateToSetLoadPointException
+     */
+    public function execute(): self
     {
         $response = Http::provider()->post('documents', $this->getPayload());
 
@@ -82,45 +57,38 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
         $data = $response->json();
 
-        $invoice = new Invoice;
+        $output = OutputData::make([
+            'format' => $this->invoice->output->format->value,
+            'content' => $data['output'] ?? null,
+            'fileName' => $data['number'] ?? null,
+        ]);
 
-        if (isset($data['id'])) {
-            $invoice->id($data['id']);
-        }
+        $this->invoice = InvoiceData::from([
+            'id' => (int) ($data['id'] ?? 0),
+            'sequence' => (string) ($data['number'] ?? ''),
+            'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
+            'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
+            'atcudHash' => $data['atcud'] ?? null,
+            'output' => $output,
+            'items' => $this->invoice->items,
+            'payments' => $this->invoice->payments,
+            'type' => $this->invoice->type,
+        ]);
 
-        if (isset($data['number'])) {
-            $invoice->sequence($data['number']);
-        }
+        $this->fillAdditionalProperties($data, $this->invoice);
 
-        if (isset($data['amount_gross'])) {
-            $invoice->total((int) ((float) $data['amount_gross'] * 100));
-        }
-
-        if (isset($data['amount_net'])) {
-            $invoice->totalNet((int) ((float) $data['amount_net'] * 100));
-        }
-
-        if (isset($data['atcud'])) {
-            $invoice->atcudHash($data['atcud']);
-        }
-
-        if (isset($data['output'])) {
-            $invoice->output(
-                new Output(
-                    format: $this->getOutputFormat(),
-                    content: $data['output'],
-                    fileName: $data['number']
-                )
-            );
-        }
-
-        return $invoice;
+        return $this;
     }
 
     /**
      * Get the payload to send to the provider
      *
      * @return Collection<string, mixed>
+     *
+     * @throws MissingRelatedDocumentException
+     * @throws NeedsDateToSetLoadPointException
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function getPayload(): Collection
     {
@@ -140,30 +108,30 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     protected function buildType(): void
     {
-        $this->payload->put('type', $this->getType()->value);
+        $this->payload->put('type', $this->invoice->type->value);
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|\Throwable
      */
     protected function buildDueDate(): void
     {
-        if (! $this->getDueDate()) {
+        if (! ($this->invoice->dueDate instanceof Carbon)) {
             return;
         }
 
         throw_if(
-            $this->getType() !== InvoiceType::Invoice,
+            $this->invoice->type !== InvoiceType::Invoice,
             Exception::class,
             'Due date can only be set for FT document types.'
         );
 
-        $this->payload->put('due_date', $this->getDueDate()->toDateString());
+        $this->payload->put('due_date', $this->invoice->dueDate->toDateString());
     }
 
     protected function buildOutput(): void
     {
-        $this->payload->put('output', $this->getOutputFormat()->vendus());
+        $this->payload->put('output', $this->invoice->output->format->vendus());
     }
 
     /**
@@ -172,46 +140,43 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
      */
     protected function buildTransport(): void
     {
-        if (! $this->getTransport()) {
+        if ($this->invoice->transport instanceof Optional) {
             return;
         }
 
-        if (! $this->getClient()) {
-            throw new Exception('ClientAction information is required when transport details are provided.');
+        if ($this->invoice->client instanceof Optional) {
+            throw new Exception('Client information is required when transport details are provided.');
         }
 
-        throw_if(
-            is_null($this->getTransport()->origin()->getDate()),
-            NeedsDateToSetLoadPointException::class
-        );
+        throw_if(is_null($this->invoice->transport->origin->dateTime), NeedsDateToSetLoadPointException::class);
 
         $data = [];
 
         $data['loadpoint'] = [
-            'date' => $this->getTransport()->origin()->getDate()->toDateString(),
-            'time' => $this->getTransport()->origin()->getTime()->format('H:i'),
-            'address' => $this->getTransport()->origin()->getAddress(),
-            'postalcode' => $this->getTransport()->origin()->getPostalCode(),
-            'city' => $this->getTransport()->origin()->getCity(),
-            'country' => $this->getTransport()->origin()->getCountry(),
+            'date' => $this->invoice->transport->origin->dateTime->toDateString(),
+            'time' => $this->invoice->transport->origin->dateTime->format('H:i'),
+            'address' => $this->invoice->transport->origin->address,
+            'postalcode' => $this->invoice->transport->origin->postalCode,
+            'city' => $this->invoice->transport->origin->city,
+            'country' => $this->invoice->transport->origin->country,
         ];
 
         $landpointData = [
-            'address' => $this->getTransport()->destination()->getAddress(),
-            'postalcode' => $this->getTransport()->destination()->getPostalCode(),
-            'city' => $this->getTransport()->destination()->getCity(),
-            'country' => $this->getTransport()->destination()->getCountry(),
+            'address' => $this->invoice->transport->destination->address,
+            'postalcode' => $this->invoice->transport->destination->postalCode,
+            'city' => $this->invoice->transport->destination->city,
+            'country' => $this->invoice->transport->destination->country,
         ];
 
-        if ($this->getTransport()->destination()->getDate()) {
-            $landpointData['date'] = $this->getTransport()->destination()->getDate()->toDateString();
-            $landpointData['time'] = $this->getTransport()->destination()->getTime()->format('H:i');
+        if ($this->invoice->transport->destination->dateTime) {
+            $landpointData['date'] = $this->invoice->transport->destination->dateTime->toDateString();
+            $landpointData['time'] = $this->invoice->transport->destination->dateTime->format('H:i');
         }
 
         $data['landpoint'] = $landpointData;
 
-        if ($this->getTransport()->getVehicleLicensePlate()) {
-            $data['vehicle_id'] = $this->getTransport()->getVehicleLicensePlate();
+        if ($this->invoice->transport->vehicleLicensePlate) {
+            $data['vehicle_id'] = $this->invoice->transport->vehicleLicensePlate;
         }
 
         $this->payload->put('movement_of_goods', $data);
@@ -219,37 +184,40 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     protected function buildNotes(): void
     {
-        if (! $this->getNotes()) {
+        if (! $this->invoice->notes) {
             return;
         }
 
-        $this->payload->put('notes', $this->getNotes());
+        $this->payload->put('notes', $this->invoice->notes);
     }
 
     /**
      * @throws CreditNoteReasonIsMissingException
+     * @throws \Throwable
      */
     protected function buildCreditNoteReason(): void
     {
-        if ($this->getType() !== InvoiceType::CreditNote) {
+        if ($this->invoice->type !== InvoiceType::CreditNote) {
             return;
         }
 
         throw_if(
-            is_null($this->getCreditNoteReason()),
+            is_null($this->invoice->creditNoteReason),
             CreditNoteReasonIsMissingException::class
         );
 
-        $this->payload->put('notes', $this->getCreditNoteReason());
+        $this->payload->put('notes', $this->invoice->creditNoteReason);
     }
 
     protected function buildRelatedDocument(): void
     {
-        if ($this->getType() !== InvoiceType::CreditNote) {
-            $this->payload->put('related_document_id', (int) $this->getRelatedDocument());
+        $relatedDocument = is_string($this->invoice->relatedDocument) ? (int) $this->invoice->relatedDocument : null;
 
+        if ($this->invoice->type === InvoiceType::CreditNote || ! $relatedDocument) {
             return;
         }
+
+        $this->payload->put('related_document_id', $this->invoice->relatedDocument);
     }
 
     /**
@@ -257,17 +225,21 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
      */
     protected function buildPayments(): void
     {
-        if ($this->getPayments()->isEmpty()) {
+        if (($this->invoice->payments instanceof Collection) === false) {
             return;
         }
 
-        $payments = $this->getPayments()->map(function (Payment $payment) {
-            $id = $this->getConfig()->get('payments')[$payment->getMethod()->value] ?? null;
+        $payments = $this->invoice->payments->map(function (PaymentData $payment) {
+            $method = $payment->method;
+
+            throw_if(! $method, Exception::class, 'Payment method not configured.');
+
+            $id = $this->getConfig()->get('payments')[$method->value] ?? null;
 
             throw_if(! $id, Exception::class, 'Payment method not configured.');
 
             return [
-                'amount' => (float) ($payment->getAmount() / 100),
+                'amount' => (float) (($payment->amount ?? 0) / 100),
                 'id' => $id,
             ];
         });
@@ -277,66 +249,72 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
 
     /**
      * @throws MissingRelatedDocumentException
+     * @throws \Throwable
      */
     protected function buildItems(): void
     {
-        if ($this->getType() === InvoiceType::Receipt) {
+        if ($this->invoice->type === InvoiceType::Receipt) {
             return;
         }
 
+        throw_if(
+            ! ($this->invoice->items instanceof Collection),
+            Exception::class, 'Invoice items not set.'
+        );
+
         /** @var Collection<int, array<string, mixed>> $items */
-        $items = $this->getItems()->map(function (Item $item): array {
+        $items = $this->invoice->items->map(function (ItemData $item): array {
             $data = [];
 
-            if ($item->getReference()) {
-                $data['reference'] = $item->getReference();
+            if ($item->reference) {
+                $data['reference'] = $item->reference;
             }
 
-            if ($item->getPrice()) {
-                $data['gross_price'] = $item->getPrice() / 100;
+            if ($item->price) {
+                $data['gross_price'] = $item->price / 100;
             }
 
-            if ($item->getQuantity()) {
-                $data['qty'] = $item->getQuantity();
+            if ($item->quantity) {
+                $data['qty'] = $item->quantity;
             }
 
-            if ($item->getNote()) {
-                $data['note'] = $item->getNote();
+            if ($item->note) {
+                $data['note'] = $item->note;
             }
 
-            if ($item->getType()) {
-                $data['type_id'] = $item->getType()->vendus();
+            if ($item->type) {
+                $data['type_id'] = $item->type->vendus();
             }
 
-            if ($item->getPercentageDiscount()) {
-                $data['discount_percent'] = $item->getPercentageDiscount();
+            if ($item->percentageDiscount) {
+                $data['discount_percent'] = $item->percentageDiscount;
             }
 
-            if ($item->getAmountDiscount()) {
-                $data['discount_amount'] = $item->getAmountDiscount() / 100;
+            if ($item->amountDiscount) {
+                $data['discount_amount'] = $item->amountDiscount / 100;
             }
 
-            if ($item->getTax()) {
-                $data['tax_id'] = $item->getTax()->vendus();
+            if ($item->tax) {
+                $data['tax_id'] = $item->tax->vendus();
             }
 
-            if ($item->getTaxExemption()) {
-                $data['tax_exemption'] = $item->getTaxExemption()->value;
+            if ($item->taxExemptionReason) {
+                $data['tax_exemption'] = $item->taxExemptionReason->value;
 
-                if ($item->getTaxExemptionLaw()) {
-                    $data['tax_exemption_law'] = $item->getTaxExemptionLaw();
+                if ($item->taxExemptionLaw) {
+                    $data['tax_exemption_law'] = $item->taxExemptionLaw;
                 }
             }
 
-            if ($this->getType() === InvoiceType::CreditNote) {
+            if ($this->invoice->type === InvoiceType::CreditNote) {
                 throw_if(
-                    ! $item->getRelatedDocument(),
+                    ! $item->relatedDocument,
                     MissingRelatedDocumentException::class
                 );
 
                 $data['reference_document'] = [
-                    'document_number' => $item->getRelatedDocument()->getDocumentId(),
-                    'document_row' => $item->getRelatedDocument()->getRow(),
+                    'document_number' => $item->relatedDocument->documentId,
+                    'document_row' => $item->relatedDocument->row,
                 ];
             }
 
@@ -351,40 +329,42 @@ class Create implements CreateInvoice, ShouldHaveConfig, ShouldHavePayload
     }
 
     /**
-     * @throws InvoiceRequiresClientVatException
-     * @throws InvoiceRequiresVatWhenClientHasName
+     * @throws InvoiceRequiresClientVatException|\Throwable
      */
     protected function buildClient(): void
     {
-        if (! $this->getClient()) {
+        $client = $this->invoice->client;
+
+        if (! ($client instanceof ClientData)) {
             return;
         }
 
-        throw_if(
-            ! is_null($this->getClient()->getVat()) &&
-                empty($this->getClient()->getVat()),
-            InvoiceRequiresClientVatException::class
-        );
+        throw_if(Properties::isNotValid($client->vat), InvoiceRequiresClientVatException::class);
 
-        throw_if(
-            $this->getClient()->getName() &&
-                ! $this->getClient()->getVat(),
-            InvoiceRequiresVatWhenClientHasName::class
-        );
+        $data = $client->toArray();
 
-        $this->getClient()->getId() && $data['id'] = $this->getClient()->getId();
-        $this->getClient()->getName() && $data['name'] = $this->getClient()->getName();
-        $this->getClient()->getVat() && $data['fiscal_id'] = $this->getClient()->getVat();
-        $this->getClient()->getAddress() && $data['address'] = $this->getClient()->getAddress();
-        $this->getClient()->getCity() && $data['city'] = $this->getClient()->getCity();
-        $this->getClient()->getPostalCode() && $data['postalcode'] = $this->getClient()->getPostalCode();
-        $this->getClient()->getCountry() && $data['country'] = $this->getClient()->getCountry();
-        $this->getClient()->getEmail() && $data['email'] = $this->getClient()->getEmail();
-        $this->getClient()->getPhone() && $data['phone'] = $this->getClient()->getPhone();
+        $data['irs_retention'] = $this->booleanFlag($client->irsRetention);
+        $data['email_notification'] = $this->booleanFlag($client->emailNotification);
 
-        $retention = $this->getClient()->getIrsRetention();
-        $data['irs_retention'] = $retention ? 'yes' : 'no';
+        $data['fiscal_id'] = $client->vat;
+
+        $postalCode = $client->postalCode;
+
+        if (Properties::isValid($postalCode)) {
+            $data['postalcode'] = $postalCode;
+        }
+
+        unset($data['vat'], $data['postal_code']);
 
         $this->payload->put('client', $data);
+    }
+
+    private function booleanFlag(Optional|bool|null $value): string
+    {
+        if (! is_bool($value)) {
+            return 'no';
+        }
+
+        return $value ? 'yes' : 'no';
     }
 }

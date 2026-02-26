@@ -1,6 +1,6 @@
 # Invoicing Integration Documentation
 
-Welcome to the documentation for the Invoicing Integration package. This package provides a unified, fluent API for integrating with invoicing systems in Portugal.
+This package provides a unified, fluent API for integrating with invoicing systems in Portugal, making it easy to issue fiscally compliant documents from your Laravel application.
 
 **Supported Providers:** Cegid Vendus
 
@@ -16,6 +16,13 @@ It is **your responsibility** to:
 - Validate that your usage complies with tax laws and accounting standards
 
 Always consult with legal and accounting professionals when implementing invoicing solutions.
+
+## What You'll Learn
+
+- **Getting Started** - Install, configure, and issue your first invoice in minutes
+- **Invoices** - Create different document types (FT, FR, FS, RG, NC)
+- **Clients** - Manage customer records in your invoicing provider
+- **Output Formats** - Save invoices as PDFs or print them on thermal printers
 
 ## Table of Contents
 
@@ -47,41 +54,87 @@ Always consult with legal and accounting professionals when implementing invoici
 
 ## Quick Example
 
+Issue an invoice-receipt (FR):
+
 ```php
-use CsarCrr\InvoicingIntegration\Invoice;
-use CsarCrr\InvoicingIntegration\ValueObjects\Item;
-use CsarCrr\InvoicingIntegration\ValueObjects\Payment;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::create();
+$invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
+    'client' => ClientData::make([
+        'name' => 'Pedro Santos',
+        'vat' => 'PT234567890',
+        'email' => 'pedro.santos@email.pt',
+        'address' => 'Avenida da Liberdade, 150',
+        'city' => 'Lisboa',
+        'postalCode' => '1250-096',
+        'country' => 'PT',
+    ]),
+    'items' => [
+        ItemData::make([
+            'reference' => 'LAPTOP-PRO-15',
+            'note' => 'Professional Laptop 15" - 16GB RAM',
+            'price' => 129900, // in cents
+            'quantity' => 1,
+        ]),
+        ItemData::make([
+            'reference' => 'SHIPPING-EXPRESS',
+            'note' => 'Express Delivery (next business day)',
+            'price' => 999,
+        ]),
+    ],
+    'payments' => [
+        PaymentData::make([
+            'method' => PaymentMethod::CREDIT_CARD,
+            'amount' => 130899,
+        ]),
+    ],
+]);
 
-$item = new Item();
-$item->reference('SKU-001');
-$item->price(1000);
-$item->quantity(2);
-$invoice->item($item);
+$result = Invoice::create($invoiceData)->execute()->getInvoice();
 
-$payment = new Payment();
-$payment->method(PaymentMethod::CREDIT_CARD);
-$payment->amount(2000);
-$invoice->payment($payment);
-
-$result = $invoice->execute();
-
-// Save the PDF
-$result->getOutput()->save('invoices/' . $result->getOutput()->fileName());
+if ($result->output) {
+    $result->output->save('invoices/' . $result->output->fileName());
+}
 ```
+
+Sample response:
+
+```json
+{
+    "id": 12345,
+    "sequence": "FR 01P2025/1",
+    "total": 130899,
+    "totalNet": 106422
+}
+```
+
+> Prefer the `Invoice` facade for day-to-day usage. Resolve
+> `CsarCrr\InvoicingIntegration\InvoiceAction` from the container only when you
+> need to inject the action class directly (for example, in queued jobs or
+> service constructors).
+
+> Because `ClientData`, `PaymentData`, and other value objects extend
+> `spatie/laravel-data\Data`, always instantiate them via `::make([...])` (or
+> dependency injection) so transformers, defaults, and validation attributes are
+> applied consistently.
 
 ## What's New
 
-**January 2025** - Documentation updated to reflect the new fluent API. Key changes:
+**February 2026** - Invoice creation is now driven by `InvoiceData`. Highlights:
 
-- Entry point is now `Invoice::create()` returning a `CreateInvoice` contract
-- Methods use plain verbs: `client()`, `item()`, `payment()`, `type()`, `notes()`, `dueDate()`
-- Payments are **required** for FR, FS, RG, and NC document types
-- Output format selection via `outputFormat()` method
-- Enhanced validation for transport details, credit notes, and client data
+- `Invoice::create(InvoiceData $invoice)` is the canonical entry point
+- All tests and docs rely on DTO-first inputs for consistency
+- Builder helpers still exist for incremental adjustments but mutate the same DTO instance
+- Payments remain **required** for FR, FS, RG, and NC document types
+- Responses now hydrate `OutputData`, ensuring PDFs/ESC-POS files expose helper methods consistently
 
 ---
 
-For more details, refer to the sidebar or the individual documentation files.
+Ready to get started? Head to [Getting Started](getting-started.md) for installation instructions.
