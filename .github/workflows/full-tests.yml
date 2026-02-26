@@ -1,0 +1,53 @@
+name: full-tests
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+
+          # --- Main coverage (Ubuntu full PHP range, latest Laravel) ---
+          - os: ubuntu-latest
+            php: 8.2
+            laravel: 12.*
+            stability: prefer-stable
+            testbench: 10.*
+
+          - os: ubuntu-latest
+            php: 8.3
+            laravel: 12.*
+            stability: prefer-stable
+            testbench: 10.*
+
+          - os: ubuntu-latest
+            php: 8.4
+            laravel: 12.*
+            stability: prefer-stable
+            testbench: 10.*
+
+          # --- Lowest deps (only once!) ---
+          - os: ubuntu-latest
+            php: 8.2
+            laravel: 12.*
+            stability: prefer-lowest
+            testbench: 10.*
+
+          # --- Older Laravel compatibility (only one PHP needed) ---
+          - os: ubuntu-latest
+            php: 8.2
+            laravel: 11.*
+            stability: prefer-stable
+            testbench: 9.*
+
+          # --- Windows sanity check (only latest stack) ---
+          - os: windows-latest
+            php: 8.3
+            laravel: 12.*
+            stability: prefer-stable
+            testbench: 10.*

@@ -1,0 +1,27 @@
+name: pr-tests
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: mbstring, sqlite, pdo_sqlite
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+
+      - run: vendor/bin/pest --ci
