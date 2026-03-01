@@ -45,9 +45,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
     private function setupHttpMacros(): void
     {
-        Http::macro('provider', function () {
-            return HttpConfiguration::get();
-        });
+        Http::macro('provider', fn () => HttpConfiguration::get());
 
         Http::macro('handleUnwantedFailures', function (Response $response) {
             $status = $response->status();
