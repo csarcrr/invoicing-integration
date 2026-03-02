@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CsarCrr\InvoicingIntegration\Facades;
+
+use CsarCrr\InvoicingIntegration\Actions\ClientAction;
+use CsarCrr\InvoicingIntegration\Actions\ItemAction;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * @method static CreateClient create(ClientData $client)
+ * @method static GetClient get(ClientData $client)
+ * @method static FindClient find()
+ *
+ * @see \CsarCrr\InvoicingIntegration\Actions\ClientAction
+ */
+class Item extends Facade
+{
+    public static function getFacadeAccessor(): string
+    {
+        return ItemAction::class;
+    }
+}
