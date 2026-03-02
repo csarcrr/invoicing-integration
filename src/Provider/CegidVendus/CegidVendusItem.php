@@ -24,7 +24,8 @@ class CegidVendusItem extends Base
      * @var list<string>
      */
     protected array $supportedProperties = [
-        'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention', 'date',
+        'title', 'reference', 'qty', 'gross_price', 'discount_percent', 'discount_amount',
+        'note', 'type_id', 'tax_id', 'tax_exemption', 'tax_exemption_law',
     ];
 
     public function getItem(): ItemData
