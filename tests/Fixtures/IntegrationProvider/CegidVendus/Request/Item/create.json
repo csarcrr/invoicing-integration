@@ -1,0 +1,29 @@
+{
+    "reference": "reference-1",
+    "barcode": "B100000000001",
+    "supplier_code": "AHSG102X",
+    "title": "Item Title",
+    "description": "Item Description",
+    "include_description": "no",
+    "supply_price": "10.12",
+    "gross_price": "20.00",
+    "prices": [
+        {
+            "id": "1234",
+            "gross_price": "20.00"
+        }
+    ],
+    "unit_id": "123",
+    "type_id": "P",
+    "class_id": "AL",
+    "lot_control": "true",
+    "stock_control": "1",
+    "stock_type": "M",
+    "tax_id": "NOR",
+    "tax_exemption": "M40",
+    "tax_exemption_law": "Artigo 13.º do CIVA",
+    "category_id": "123",
+    "brand_id": "123",
+    "image": "https://www.site.com/img/1.png",
+    "status": "on"
+}

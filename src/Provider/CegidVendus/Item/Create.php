@@ -48,8 +48,6 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         $this->buildReference();
         $this->buildQuantity();
         $this->buildPrice();
-        $this->buildPercentageDiscount();
-        $this->buildAmountDiscount();
         $this->buildDescription();
         $this->buildType();
         $this->buildTax();
