@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Facades;
 
-use CsarCrr\InvoicingIntegration\Actions\ClientAction;
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;

@@ -4,5 +4,5 @@ namespace CsarCrr\InvoicingIntegration\Contracts;
 
 interface ShouldExecute
 {
-    public function execute () : self;
+    public function execute(): self;
 }
