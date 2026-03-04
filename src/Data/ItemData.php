@@ -27,11 +27,13 @@ class ItemData extends Data implements DataNeedsValidation
         public ?int $percentageDiscount = null,
         public ?int $amountDiscount = null,
         public ?string $note = null,
+        public ?string $barcode = null,
         public ?ItemType $type = ItemType::Product,
         public ?ItemTax $tax = null,
         public ?TaxExemptionReason $taxExemptionReason = null,
         public ?string $taxExemptionLaw = null,
         public ?RelatedDocumentReferenceData $relatedDocument = null,
+        public ?CategoryData $category = null,
     ) {
         $this->ensureValidQuantity();
         $this->ensureTaxExemptionConsistency();
