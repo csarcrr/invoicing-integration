@@ -127,6 +127,6 @@ class Fixtures
             }
         }
 
-        return $name ? $files[$name] : $files;
+        return $name ? collect($files[$name])->sortKeys()->toArray() : $files;
     }
 }
