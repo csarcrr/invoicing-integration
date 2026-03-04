@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusItem;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
@@ -46,12 +45,13 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
     {
         $this->buildTitle();
         $this->buildReference();
-        $this->buildQuantity();
         $this->buildPrice();
         $this->buildDescription();
         $this->buildType();
         $this->buildTax();
         $this->buildTaxExemptionReason();
+        $this->buildBarcode();
+        $this->buildCategory();
 
         return $this->payload;
     }
@@ -68,15 +68,6 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         }
 
         $this->payload->put('reference', $this->item->reference);
-    }
-
-    protected function buildQuantity(): void
-    {
-        if (! $this->item->quantity) {
-            return;
-        }
-
-        $this->payload->put('qty', $this->item->quantity);
     }
 
     protected function buildPrice(): void
@@ -126,5 +117,23 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         if ($this->item->taxExemptionLaw) {
             $this->payload->put('tax_exemption_law', $this->item->taxExemptionLaw);
         }
+    }
+
+    protected function buildBarcode(): void
+    {
+        if (! $this->item->barcode) {
+            return;
+        }
+
+        $this->payload->put('barcode', $this->item->barcode);
+    }
+
+    protected function buildCategory(): void
+    {
+        if (! $this->item->category) {
+            return;
+        }
+
+        $this->payload->put('category_id', $this->item->category->id);
     }
 }
