@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreate
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusItem;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
@@ -52,6 +53,9 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         $this->buildTaxExemptionReason();
         $this->buildBarcode();
         $this->buildCategory();
+        $this->buildControlStock();
+        $this->buildEnabled();
+        $this->buildUnit();
 
         return $this->payload;
     }
@@ -135,5 +139,26 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         }
 
         $this->payload->put('category_id', $this->item->category->id);
+    }
+
+    protected function buildControlStock(): void
+    {
+        $this->payload->put('stock_control', $this->item->controlStock ? '1' : '0');
+    }
+
+    protected function buildEnabled(): void
+    {
+        $this->payload->put('status', $this->item->enabled ? 'on' : 'off');
+    }
+
+    protected function buildUnit(): void
+    {
+        if (! $this->item->unit) {
+            return;
+        }
+
+        $unitId = $this->getConfig()->get('units')[strtolower($this->item->unit->value)] ?? throw new CouldNotGetUnitIdException;
+
+        $this->payload->put('unit_id', $unitId);
     }
 }

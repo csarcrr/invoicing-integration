@@ -3,20 +3,13 @@
     "barcode": "barcode-1",
     "title": "Item Title",
     "description": "Item Description",
-    "gross_price": "20.00",
-    "prices": [
-        {
-            "id": "1234",
-            "gross_price": "20.00"
-        }
-    ],
-    "unit_id": "123",
+    "gross_price": 20.00,
+    "unit_id": 19999,
     "type_id": "P",
-    "class_id": "AL",
     "stock_control": "1",
-    "tax_id": "NOR",
+    "tax_id": "ISE",
     "tax_exemption": "M40",
-    "tax_exemption_law": "Artigo 13.º do CIVA",
-    "category_id": "123",
+    "tax_exemption_law": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
+    "category_id": "1",
     "status": "on"
 }
