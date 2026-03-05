@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Data;
 
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldBeUnit;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
@@ -20,20 +21,27 @@ class ItemData extends Data implements DataNeedsValidation
 
     public function __construct(
         public ?string $name = null,
-        public mixed $reference = null,
         public ?string $description = null,
-        public null|int|float $quantity = 1,
         public ?int $price = null,
         public ?int $percentageDiscount = null,
         public ?int $amountDiscount = null,
         public ?string $note = null,
         public ?string $barcode = null,
-        public ?ItemType $type = ItemType::Product,
+
+        public mixed $reference = null,
+        public null|int|float $quantity = 1,
+
         public ?ItemTax $tax = null,
         public ?TaxExemptionReason $taxExemptionReason = null,
         public ?string $taxExemptionLaw = null,
+
+        public ?ItemType $type = ItemType::Product,
         public ?RelatedDocumentReferenceData $relatedDocument = null,
         public ?CategoryData $category = null,
+        public ?ShouldBeUnit $unit = null,
+
+        public bool $controlStock = true,
+        public bool $enabled = true
     ) {
         $this->ensureValidQuantity();
         $this->ensureTaxExemptionConsistency();

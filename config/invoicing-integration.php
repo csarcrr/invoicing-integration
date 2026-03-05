@@ -15,6 +15,10 @@ return [
                 PaymentMethod::MONEY->value => env('CEGID_VENDUS_PAYMENT_MONEY_ID', null),
                 PaymentMethod::MONEY_TRANSFER->value => env('CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID', null),
             ],
+            'units' => [
+                'kg' => env('CEGID_VENDUS_UNIT_KG_ID', null),
+                'unit' => env('CEGID_VENDUS_UNIT_UNIT_ID', null),
+            ],
         ],
     ],
 ];

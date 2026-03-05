@@ -17,7 +17,7 @@ final class ItemAction
     public function create(ItemData $item): ShouldCreateItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Create($item),
+            Provider::CEGID_VENDUS => (new Create($item))->config($this->provider->getConfig()),
         };
     }
 }

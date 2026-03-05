@@ -33,8 +33,8 @@ uses(TestCase::class)->in('Unit', 'Feature');
 function mockConfiguration(Provider $provider): void
 {
     if ($provider === Provider::CEGID_VENDUS) {
-        config()->set('invoicing-integration.provider', Provider::CEGID_VENDUS->value);
-        config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value, [
+        config()->set('invoicing-integration.provider', $provider->value);
+        config()->set('invoicing-integration.providers.'.$provider->value, [
             'key' => 'test-api-key',
             'mode' => 'normal',
             'payments' => [
@@ -43,6 +43,10 @@ function mockConfiguration(Provider $provider): void
                 PaymentMethod::MB->value => 3999,
                 PaymentMethod::MONEY_TRANSFER->value => 4999,
                 PaymentMethod::CURRENT_ACCOUNT->value => 5999,
+            ],
+            'units' => [
+                'kg' => 19999,
+                'unit' => 29999,
             ],
         ]);
     }
