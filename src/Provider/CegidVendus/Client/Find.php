@@ -26,7 +26,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, ClientData> */
     protected Collection $list;
 
     public function __construct(protected ?ClientData $client = null)
@@ -54,7 +54,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     }
 
     /**
-     * @return Collection<int, mixed>
+     * @return Collection<int, ClientData>
      */
     public function getList(): Collection
     {
@@ -103,7 +103,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     }
 
     /**
-     * @param  array<string, mixed>  $results
+     * @param  array<int, array<string, mixed>>  $results
      */
     protected function updateResults(array $results): void
     {

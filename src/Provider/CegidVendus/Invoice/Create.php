@@ -49,6 +49,7 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
 
     /**
      * @throws \Throwable
+     * @throws \Exception
      * @throws MissingRelatedDocumentException
      * @throws NeedsDateToSetLoadPointException
      */
