@@ -35,6 +35,8 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
 
     /**
      * Sends the create request to the Cegid Vendus products endpoint.
+     *
+     * @throws CouldNotGetUnitIdException
      */
     public function execute(): self
     {
@@ -47,6 +49,8 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
 
     /**
      * @return Collection<string, mixed>
+     *
+     * @throws CouldNotGetUnitIdException
      */
     public function getPayload(): Collection
     {
@@ -157,6 +161,9 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         $this->payload->put('status', $this->item->enabled ? 'on' : 'off');
     }
 
+    /**
+     * @throws CouldNotGetUnitIdException
+     */
     protected function buildUnit(): void
     {
         if (! $this->item->unit) {

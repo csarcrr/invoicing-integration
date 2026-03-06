@@ -17,9 +17,10 @@ abstract class Base
     protected array $supportedProperties = [];
 
     /**
-     * Fills properties that are not supported.
+     * Stores response fields not listed in `$supportedProperties` as additional data on the given DTO.
      *
      * @param  array<string, mixed>  $values
+     * @param  Data  $data
      *
      * @throws \Throwable
      */
