@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Http;
 
 use function collect;
 
+/**
+ * Handles item creation against the Cegid Vendus API.
+ */
 class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute, ShouldHavePayload
 {
     use HasConfig;
@@ -30,6 +33,9 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
         $this->payload = collect();
     }
 
+    /**
+     * Sends the create request to the Cegid Vendus products endpoint.
+     */
     public function execute(): self
     {
         $response = Http::provider()->post('products', $this->getPayload());

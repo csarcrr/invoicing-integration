@@ -8,6 +8,9 @@ use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Provider\Base;
 
+/**
+ * Base class for Cegid Vendus invoice operations, holding invoice data and supported API response properties.
+ */
 #[AllowDynamicProperties]
 class CegidVendusInvoice extends Base
 {
@@ -18,6 +21,9 @@ class CegidVendusInvoice extends Base
      */
     protected array $supportedProperties = ['id', 'type', 'number', 'amount_gross', 'amount_net', 'atcud', 'output'];
 
+    /**
+     * Returns the current invoice DTO after an operation has been executed.
+     */
     public function getInvoice(): InvoiceData
     {
         return $this->invoice;

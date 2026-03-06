@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Http;
 
 use function collect;
 
+/**
+ * Handles paginated client search against the Cegid Vendus API.
+ */
 class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
 {
     use HasPaginator;
@@ -35,6 +38,9 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
         $this->payload = collect();
     }
 
+    /**
+     * Sends the search request and populates the result list and pagination details.
+     */
     public function execute(): self
     {
         $request = Http::provider()->get('/clients', $this->getPayload());

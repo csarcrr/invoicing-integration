@@ -6,6 +6,9 @@ use Spatie\LaravelData\Data;
 
 use function collect;
 
+/**
+ * Abstract base class for provider implementations, providing shared payload utilities.
+ */
 abstract class Base
 {
     /**

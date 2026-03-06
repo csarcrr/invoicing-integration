@@ -5,18 +5,14 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Facades;
 
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
-use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static CreateClient create(ClientData $client)
- * @method static GetClient get(ClientData $client)
- * @method static FindClient find()
+ * @method static ShouldCreateItem create(ItemData $item)
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\ClientAction
+ * @see \CsarCrr\InvoicingIntegration\Actions\ItemAction
  */
 class Item extends Facade
 {
