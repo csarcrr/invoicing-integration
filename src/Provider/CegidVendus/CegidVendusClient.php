@@ -14,6 +14,9 @@ use function collect;
 use function in_array;
 use function throw_if;
 
+/**
+ * Base class for Cegid Vendus client operations, handling shared client data and property mapping.
+ */
 #[AllowDynamicProperties]
 class CegidVendusClient extends Base
 {
@@ -26,6 +29,9 @@ class CegidVendusClient extends Base
         'id', 'name', 'email', 'postalcode', 'country', 'city', 'address', 'phone', 'notes', 'default_pay_due', 'fiscal_id', 'send_email', 'irs_retention', 'date',
     ];
 
+    /**
+     * Returns the current client DTO after an operation has been executed.
+     */
     public function getClient(): ClientData
     {
         return $this->client;

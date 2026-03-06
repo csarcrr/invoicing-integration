@@ -13,6 +13,9 @@ use InvalidArgumentException;
 use function is_int;
 use function throw_if;
 
+/**
+ * Handles retrieval of a single client by ID from the Cegid Vendus API.
+ */
 class Get extends CegidVendusClient implements GetClient
 {
     public function __construct(protected ?ClientData $client) {}

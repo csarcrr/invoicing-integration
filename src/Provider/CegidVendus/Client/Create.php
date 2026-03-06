@@ -12,6 +12,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
+/**
+ * Handles client creation against the Cegid Vendus API.
+ */
 class Create extends CegidVendusClient implements CreateClient, ShouldHavePayload
 {
     /** @var Collection<string, mixed> */
@@ -22,6 +25,11 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
         $this->payload = collect();
     }
 
+    /**
+     * Sends the create request and populates the client DTO with the API response.
+     *
+     * @throws \Throwable
+     */
     public function execute(): self
     {
         $response = Http::provider()->post('/clients', $this->getPayload());

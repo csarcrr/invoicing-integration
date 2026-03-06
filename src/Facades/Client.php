@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static CreateClient create(ClientData $client)
  * @method static GetClient get(ClientData $client)
- * @method static FindClient find()
+ * @method static FindClient find(?ClientData $client = null)
  *
  * @see \CsarCrr\InvoicingIntegration\Actions\ClientAction
  */

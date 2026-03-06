@@ -28,6 +28,9 @@ use Spatie\LaravelData\Optional;
 
 use function collect;
 
+/**
+ * Handles invoice creation against the Cegid Vendus API.
+ */
 class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasConfig;
