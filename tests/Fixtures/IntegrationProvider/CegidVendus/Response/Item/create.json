@@ -1,0 +1,115 @@
+{
+    "id": 111111,
+    "order": "1",
+    "reference": "XBD001",
+    "barcode": "P000000XBD001",
+    "supplier_code": "AHSG102X",
+    "title": "Book XPTO",
+    "description": "Book XPTO 2006 Edition",
+    "include_description": "no",
+    "supply_price": "10.12",
+    "gross_price": "123.00",
+    "price_without_tax": "100.00",
+    "prices": [
+        {
+            "id": "1234",
+            "price": "123.00",
+            "price_without_tax": "100.00"
+        }
+    ],
+    "unit_id": "123",
+    "class_name": "Alimentar",
+    "type_id": "N",
+    "compound": [
+        {
+            "id": "id",
+            "title": "title",
+            "gross_price": "gross_price",
+            "type": "type",
+            "stock": [
+                {
+                    "stock": "stock",
+                    "store_id": "store_id",
+                    "stock_alert": "stock_alert"
+                }
+            ]
+        }
+    ],
+    "lot_control": "1",
+    "stock_control": "1",
+    "stock_type": "M",
+    "tax_id": "NOR",
+    "tax_exemption": "M40",
+    "tax_exemption_law": "Artigo 13.º do CIVA",
+    "category_id": "123",
+    "brand_id": "123",
+    "status": "on",
+    "stock": "on",
+    "stock_store": [
+        {
+            "store": "Loja Principal",
+            "store_id": "1234",
+            "qty": 22,
+            "alert": 3
+        }
+    ],
+    "stock_alert": "on",
+    "variant_id": "1234",
+    "variants": [
+        {
+            "variant": {
+                "id": "1234",
+                "title": "title",
+                "code": "code"
+            },
+            "product_variants": [
+                {
+                    "id": "1234",
+                    "text": "Black / XS",
+                    "barcode": "barcode",
+                    "code": "code",
+                    "price": "price",
+                    "composite_ids": [
+                        {}
+                    ],
+                    "stock": [
+                        {
+                            "store_id": 123,
+                            "qty": "qty"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "images": {
+        "xs": "/foto/b906f77_xs.png",
+        "m": "/foto/b906f77_m.png"
+    },
+    "stores": [
+        {
+            "store": "Loja Principal",
+            "store_id": "1234"
+        }
+    ],
+    "modifiers": [
+        {
+            "id": "id",
+            "title": "title",
+            "min": "min",
+            "max": "max",
+            "options": [
+                {}
+            ]
+        }
+    ],
+    "lots": [
+        {
+            "id": "1234",
+            "title": "012-10002",
+            "status": "active",
+            "expiration_date": "2023-01-01",
+            "barcode": "1234567890"
+        }
+    ]
+}
