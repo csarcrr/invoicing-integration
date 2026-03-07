@@ -14,6 +14,7 @@ jobs:
   pr:
     name: PR Tests (PHP 8.2, Laravel 12)
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
 
     steps:
       - name: Checkout code
