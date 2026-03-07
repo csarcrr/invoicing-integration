@@ -44,6 +44,12 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
 
         Http::handleUnwantedFailures($response);
 
+        $data = $this->item->toArray();
+
+        $this->item = ItemData::make([
+            'id' => $response['id']
+        ] + $data);
+
         return $this;
     }
 

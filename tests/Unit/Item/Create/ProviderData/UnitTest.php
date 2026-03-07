@@ -14,4 +14,4 @@ it('fails when unit is not found', function (Provider $provider) {
     Item::create(ItemData::make([
         'unit' => Unit::KG,
     ]))->getPayload();
-})->with('providers')->throws(CouldNotGetUnitIdException::class)->only();
+})->with('providers')->throws(CouldNotGetUnitIdException::class);
