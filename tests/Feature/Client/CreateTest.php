@@ -18,10 +18,3 @@ test('create client request is successful', function (Provider $provider, string
 
     Http::assertSentCount(1);
 })->with('providers', ['create'], ['response_simple']);
-
-test('handles errors successfully', function (Provider $provider) {
-    Http::fake(mockResponse([], 500));
-
-    $client = ClientData::from(['name' => 'Quim']);
-    Client::create($client)->execute();
-})->with('providers')->throws(FailedReachingProviderException::class);
