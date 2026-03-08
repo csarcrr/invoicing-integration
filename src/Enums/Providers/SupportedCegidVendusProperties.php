@@ -8,6 +8,9 @@ enum SupportedCegidVendusProperties: string
 {
     case Item = 'item';
 
+    /**
+     * @return array<string>
+     */
     public function properties(): array
     {
         return match ($this) {

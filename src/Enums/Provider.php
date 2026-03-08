@@ -10,6 +10,9 @@ enum Provider: string
 {
     case CEGID_VENDUS = 'CegidVendus';
 
+    /**
+     * @return array<string>
+     */
     public function supportedProperties(Property $property): array
     {
         return match ($this) {

@@ -12,7 +12,7 @@ use function collect;
 abstract class Base
 {
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $supportedProperties = [];
 
