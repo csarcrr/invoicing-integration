@@ -20,6 +20,17 @@ The columns show what's implemented for each provider: **Cegid Vendus**, **Molon
 - ❌ — Not Implemented
 - ⛔ — Not applicable
 
+# Item Management
+
+Features for managing items (product catalog) independently of invoices.
+
+|               | Cegid Vendus | Moloni | Invoice Express |
+| ------------- | ------------ | ------ | --------------- |
+| Create Item   | ✅           | ❌     | ❌              |
+| Update Item   | ❌           | ❌     | ❌              |
+| Delete Item   | ❌           | ❌     | ❌              |
+| List Items    | ❌           | ❌     | ❌              |
+
 # Client Management
 
 Features for managing clients independently of invoices.

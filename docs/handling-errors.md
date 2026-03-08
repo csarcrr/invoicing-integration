@@ -4,11 +4,12 @@ Things don't always go smoothly. The API key might be wrong, the provider might 
 
 ## Quick Reference
 
-| Exception                         | Meaning         | First Thing to Check                 |
-| --------------------------------- | --------------- | ------------------------------------ |
-| `UnauthorizedException`           | Bad credentials | Your API key in `.env`               |
-| `FailedReachingProviderException` | Provider down   | Internet connection, try again later |
-| `RequestFailedException`          | Invalid data    | Check the error message for details  |
+| Exception                         | Meaning              | First Thing to Check                        |
+| --------------------------------- | -------------------- | ------------------------------------------- |
+| `UnauthorizedException`           | Bad credentials      | Your API key in `.env`                      |
+| `FailedReachingProviderException` | Provider down        | Internet connection, try again later        |
+| `RequestFailedException`          | Invalid data         | Check the error message for details         |
+| `CouldNotGetUnitIdException`      | Unit not in config   | Check `units` mapping in your config file   |
 
 ## Provider Exceptions
 
@@ -113,6 +114,35 @@ try {
     return response()->json([
         'error' => 'Could not issue invoice: ' . $e->getMessage(),
     ], 422);
+}
+```
+
+### CouldNotGetUnitIdException
+
+**What it means:** The unit you specified on `ItemData` doesn't have a matching entry in your config's `units` map.
+
+**Common causes:**
+
+- Using `Unit::KG` or `Unit::UNIT` but the config `units` key is missing or incomplete
+- Typo in a custom unit implementation's `value`
+
+**How to fix:** Open `config/invoicing-integration.php` and ensure every unit you use has a mapped provider ID:
+
+```php
+'units' => [
+    'unit' => 1,   // provider ID for Unit::UNIT
+    'kg'   => 5,   // provider ID for Unit::KG
+],
+```
+
+```php
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
+
+try {
+    Item::create($itemData)->execute()->getItem();
+} catch (CouldNotGetUnitIdException $e) {
+    // Missing unit mapping in config
+    Log::error('Unit configuration missing', ['message' => $e->getMessage()]);
 }
 ```
 

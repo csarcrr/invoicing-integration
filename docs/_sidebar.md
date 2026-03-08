@@ -2,6 +2,10 @@
 - [Getting Started](getting-started.md)
 - [Features](features.md)
 
+- **Items**
+    - [Overview](items/README.md)
+    - [Creating an Item](items/creating-an-item.md)
+
 - **Clients**
     - [Overview](clients/README.md)
     - [Creating a Client](clients/creating-a-client.md)
