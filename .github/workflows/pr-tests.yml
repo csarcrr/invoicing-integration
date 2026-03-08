@@ -3,6 +3,7 @@ name: pr-tests
 on:
   pull_request:
     branches: [ main ]
+    types: [ opened, synchronize, reopened, ready_for_review ]
   push:                # temporary so GitHub registers the check
     branches: [ main ] # you can remove this after it appears in branch protection
 
