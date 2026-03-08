@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CsarCrr\InvoicingIntegration\Provider;
 
 use Spatie\LaravelData\Data;
