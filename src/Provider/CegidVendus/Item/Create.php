@@ -21,7 +21,7 @@ use function collect;
 /**
  * Handles item creation against the Cegid Vendus API.
  */
-class Create extends Item implements ShouldCreateItem, ShouldExecute, ShouldHavePayload
+class Create extends Item implements ShouldCreateItem
 {
     use HasConfig;
 
@@ -47,13 +47,11 @@ class Create extends Item implements ShouldCreateItem, ShouldExecute, ShouldHave
 
         Http::handleUnwantedFailures($response);
 
-        $data = $this->item->toArray();
-
         $this->item = ItemData::make([
             'id' => $response['id']
-        ] + $data);
+        ] + $this->item->toArray());
 
-        $this->fillAdditionalProperties($data, $this->item);
+        $this->fillAdditionalProperties($response->json(), $this->item);
 
         return $this;
     }
@@ -155,11 +153,11 @@ class Create extends Item implements ShouldCreateItem, ShouldExecute, ShouldHave
 
     protected function buildCategory(): void
     {
-        if (! $this->item->category) {
+        if (! $this->item->category || !$this->item->category->id) {
             return;
         }
 
-        $this->payload->put('category_id', $this->item->category->id);
+        $this->payload->put('category_id', (int) $this->item->category->id);
     }
 
     protected function buildControlStock(): void
