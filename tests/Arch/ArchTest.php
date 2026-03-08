@@ -14,16 +14,18 @@ arch('it will not use debugging functions')
     ->each->not->toBeUsed();
 
 arch('strict types')
-    ->expect('CsarCrr\InvoicingIntegration\Enums')
-    ->expect('CsarCrr\InvoicingIntegration\Facades')
-    ->expect('CsarCrr\InvoicingIntegration\Provider')
-    ->expect('CsarCrr\InvoicingIntegration\Providers')
-    ->expect('CsarCrr\InvoicingIntegration\Services')
-    ->expect('CsarCrr\InvoicingIntegration\Traits')
-    ->expect('CsarCrr\InvoicingIntegration\Transformers')
-    ->expect('CsarCrr\InvoicingIntegration\Actions')
-    ->expect('CsarCrr\InvoicingIntegration\Data')
-    ->expect('CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider')
+    ->expect([
+        'CsarCrr\InvoicingIntegration\Enums',
+        'CsarCrr\InvoicingIntegration\Facades',
+        'CsarCrr\InvoicingIntegration\Provider',
+        'CsarCrr\InvoicingIntegration\Providers',
+        'CsarCrr\InvoicingIntegration\Services',
+        'CsarCrr\InvoicingIntegration\Traits',
+        'CsarCrr\InvoicingIntegration\Transformers',
+        'CsarCrr\InvoicingIntegration\Actions',
+        'CsarCrr\InvoicingIntegration\Data',
+        'CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider',
+    ])
     ->toUseStrictTypes();
 
 arch('final classes')
