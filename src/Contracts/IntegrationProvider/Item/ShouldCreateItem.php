@@ -2,12 +2,12 @@
 
 namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item;
 
+use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
 use Illuminate\Support\Collection;
 
-interface ShouldCreateItem
+interface ShouldCreateItem extends ShouldExecute, ShouldHavePayload
 {
-    /**
-     * @return Collection<string, mixed>
-     */
-    public function getPayload(): Collection;
+    public function getItem(): ItemData;
 }
