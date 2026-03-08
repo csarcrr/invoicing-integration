@@ -20,7 +20,7 @@ class CegidVendusItem extends Base
      * @var list<string>
      */
     protected array $supportedProperties = [
-        'title', 'reference', 'qty', 'gross_price', 'description', 'tax_id', 'tax_exemption', 'tax_exemption_law', 'unit_id',
+        'title', 'reference', 'gross_price', 'description', 'type_id', 'tax_id', 'tax_exemption', 'tax_exemption_law', 'barcode', 'category_id', 'stock_control', 'status', 'unit_id'
     ];
 
     /**

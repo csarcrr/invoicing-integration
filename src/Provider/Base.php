@@ -22,7 +22,6 @@ abstract class Base
      * @param  array<string, mixed>  $values
      * @param  Data  $data
      *
-     * @throws \Throwable
      */
     protected function fillAdditionalProperties(array $values, Data $data): void
     {

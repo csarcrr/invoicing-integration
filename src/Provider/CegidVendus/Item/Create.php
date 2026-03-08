@@ -50,6 +50,8 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
             'id' => $response['id']
         ] + $data);
 
+        $this->fillAdditionalProperties($data, $this->item);
+
         return $this;
     }
 

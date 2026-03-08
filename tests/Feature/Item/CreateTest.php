@@ -21,5 +21,6 @@ test('creates an item', function (Provider $provider, string $fixture) {
     ]))->execute()->getItem();
 
     expect($data->id)->toBeInt()
-        ->and($data->name)->toBeString();
+        ->and($data->name)->toBeString()
+        ->and($data->getAdditionalData())->not->toBeEmpty();
 })->with('providers', ['create']);
