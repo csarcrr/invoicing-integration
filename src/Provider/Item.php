@@ -2,26 +2,18 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
+namespace CsarCrr\InvoicingIntegration\Provider;
 
 use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
-use CsarCrr\InvoicingIntegration\Provider\Base;
 
 /**
  * Base class for Cegid Vendus item operations, holding item data and supported API response properties.
  */
 #[AllowDynamicProperties]
-class CegidVendusItem extends Base
+class Item extends Base
 {
     protected ?ItemData $item = null;
-
-    /**
-     * @var list<string>
-     */
-    protected array $supportedProperties = [
-        'title', 'reference', 'gross_price', 'description', 'type_id', 'tax_id', 'tax_exemption', 'tax_exemption_law', 'barcode', 'category_id', 'stock_control', 'status', 'unit_id'
-    ];
 
     /**
      * Returns the current item DTO after an operation has been executed.

@@ -8,18 +8,20 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreate
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\Property;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\Providers\SupportedCegidVendusProperties;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusItem;
+use CsarCrr\InvoicingIntegration\Provider\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-
 use function collect;
 
 /**
  * Handles item creation against the Cegid Vendus API.
  */
-class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute, ShouldHavePayload
+class Create extends Item implements ShouldCreateItem, ShouldExecute, ShouldHavePayload
 {
     use HasConfig;
 
@@ -31,6 +33,7 @@ class Create extends CegidVendusItem implements ShouldCreateItem, ShouldExecute,
     public function __construct(protected ?ItemData $item)
     {
         $this->payload = collect();
+        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
     }
 
     /**
