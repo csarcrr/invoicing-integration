@@ -12,8 +12,7 @@ enum Provider: string
 
     public function supportedProperties(Property $property): array {
         return match ($this) {
-            self::CEGID_VENDUS => SupportedCegidVendusProperties::from($property->value)->properties(),
-            default => [],
+            self::CEGID_VENDUS => SupportedCegidVendusProperties::from($property->value)->properties()
         };
     }
 }
