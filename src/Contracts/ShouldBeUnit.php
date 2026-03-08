@@ -2,4 +2,7 @@
 
 namespace CsarCrr\InvoicingIntegration\Contracts;
 
-interface ShouldBeUnit {}
+interface ShouldBeUnit
+{
+    public function getUnitKey(): string;
+}

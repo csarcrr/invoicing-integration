@@ -177,7 +177,7 @@ class Create extends Item implements ShouldCreateItem
             return;
         }
 
-        $unitId = $this->getConfig()->get('units')[strtolower($this->item->unit->value)] ?? throw new CouldNotGetUnitIdException;
+        $unitId = $this->getConfig()->get('units')[$this->item->unit->getUnitKey()] ?? throw new CouldNotGetUnitIdException;
 
         $this->payload->put('unit_id', $unitId);
     }
