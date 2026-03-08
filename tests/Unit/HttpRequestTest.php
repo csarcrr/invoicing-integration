@@ -13,7 +13,6 @@ test('fails when request is not authorized', function () {
     Http::handleUnwantedFailures($response);
 })->throws(UnauthorizedException::class);
 
-
 it('fails when provider has server error', function () {
     Http::fake(mockResponse([], 500));
 
@@ -26,9 +25,9 @@ it('fails with error messages when it is possible to identify errors in the resp
     Http::fake(mockResponse([
         'errors' => [
             [
-                'message' => 'Generic error'
-            ]
-        ]
+                'message' => 'Generic error',
+            ],
+        ],
     ], 400));
 
     $response = Http::post('http://provider.site/example');

@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Enums\Providers\SupportedCegidVendusProperties;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Provider\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+
 use function collect;
 
 /**
@@ -48,7 +46,7 @@ class Create extends Item implements ShouldCreateItem
         Http::handleUnwantedFailures($response);
 
         $this->item = ItemData::make([
-            'id' => $response['id']
+            'id' => $response['id'],
         ] + $this->item->toArray());
 
         $this->fillAdditionalProperties($response->json(), $this->item);
@@ -153,7 +151,7 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildCategory(): void
     {
-        if (! $this->item->category || !$this->item->category->id) {
+        if (! $this->item->category || ! $this->item->category->id) {
             return;
         }
 

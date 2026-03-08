@@ -20,8 +20,6 @@ abstract class Base
      * Stores response fields not listed in `$supportedProperties` as additional data on the given DTO.
      *
      * @param  array<string, mixed>  $values
-     * @param  Data  $data
-     *
      */
     protected function fillAdditionalProperties(array $values, Data $data): void
     {

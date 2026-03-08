@@ -10,7 +10,8 @@ enum Provider: string
 {
     case CEGID_VENDUS = 'CegidVendus';
 
-    public function supportedProperties(Property $property): array {
+    public function supportedProperties(Property $property): array
+    {
         return match ($this) {
             self::CEGID_VENDUS => SupportedCegidVendusProperties::from($property->value)->properties()
         };
