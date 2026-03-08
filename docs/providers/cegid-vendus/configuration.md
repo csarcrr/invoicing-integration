@@ -18,6 +18,10 @@ return [
                 PaymentMethod::MONEY->value => env('CEGID_VENDUS_PAYMENT_MONEY_ID'),
                 PaymentMethod::MONEY_TRANSFER->value => env('CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID'),
             ],
+            'units' => [
+                'kg'   => env('CEGID_VENDUS_UNIT_KG_ID'),
+                'unit' => env('CEGID_VENDUS_UNIT_UNIT_ID'),
+            ],
         ],
     ],
 ];
@@ -105,3 +109,31 @@ return [
 > **Note:** This approach requires configuring static IDs. A future version will allow you to fetch these IDs programmatically via the API.
 
 You can read more about configuring payment methods in Cegid Vendus <a href="https://www.vendus.pt/ajuda/adicionar-metodos-pagamento/" target="_blank">here</a>.
+
+## units mapping
+
+When creating catalog items with a unit of measure, the package resolves the unit's string value to a provider ID using the `units` map in your config.
+
+The built-in `Unit` enum ships with `kg` and `unit`. Add their IDs to your `.env`:
+
+```bash
+CEGID_VENDUS_UNIT_KG_ID=your-kg-unit-id
+CEGID_VENDUS_UNIT_UNIT_ID=your-unit-id
+```
+
+If you define a custom enum implementing `ShouldBeUnit`, add an entry for each of its values:
+
+```bash
+CEGID_VENDUS_UNIT_LITRE_ID=your-litre-unit-id
+CEGID_VENDUS_UNIT_HOUR_ID=your-hour-unit-id
+```
+
+```php
+// config/invoicing-integration.php
+'units' => [
+    'kg'    => env('CEGID_VENDUS_UNIT_KG_ID'),
+    'unit'  => env('CEGID_VENDUS_UNIT_UNIT_ID'),
+    'litre' => env('CEGID_VENDUS_UNIT_LITRE_ID'),
+    'hour'  => env('CEGID_VENDUS_UNIT_HOUR_ID'),
+],
+```

@@ -65,6 +65,42 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 
 ---
 
+## Item
+
+Entry point for managing items (product catalog). Use this facade to create products and services independently of invoices.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Item;
+```
+
+| Method                             | Return Type        | Description                            |
+| ---------------------------------- | ------------------ | -------------------------------------- |
+| `Item::create(ItemData $item)`     | `ShouldCreateItem` | Creates a new item builder instance    |
+
+## ShouldCreateItem Contract
+
+The interface returned by `Item::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
+```
+
+| Method         | Return Type  | Description                                                                                 |
+| -------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| `execute()`    | `self`       | Send the create request and populate the response                                           |
+| `getItem()`    | `ItemData`   | Access the hydrated DTO (includes provider-assigned `id`)                                   |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)                                        |
+
+Fields from the provider response that the package does not explicitly handle are stored on the returned `ItemData` and accessible via `getAdditionalData()`:
+
+```php
+$created = Item::create($item)->execute()->getItem();
+
+$created->getAdditionalData(); // fields from the provider response not handled by the package
+```
+
+---
+
 ## Invoice
 
 Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, and GT documents.
@@ -184,12 +220,15 @@ ClientData::make([
 
 ---
 
-### Item
+### ItemData
+
+`ItemData` is used both for invoice line items and for product catalog management (via `Item::create()`).
 
 **Instantiation:**
 
 ```php
 $item = ItemData::make([
+    'name' => 'Consulting Service',
     'reference' => 'SKU-001',
     'quantity' => 2,
     'price' => 1500,
@@ -206,19 +245,46 @@ $item = ItemData::make([
 
 **Properties:**
 
-| Property             | Type                            | Description                                        | Validation / Notes                                                        |
-| -------------------- | ------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
-| `reference`          | `null\|int\|string`             | Product SKU or code                                | -                                                                         |
-| `quantity`           | `null\|int\|float`              | Quantity (defaults to `1`)                         | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
-| `price`              | `?int`                          | Unit price in cents                                | -                                                                         |
-| `note`               | `?string`                       | Optional line description                          | -                                                                         |
-| `type`               | `?ItemType`                     | Item classification (default: `ItemType::Product`) | -                                                                         |
-| `tax`                | `?ItemTax`                      | VAT rate                                           | Required for `taxExemptionReason`                                         |
-| `taxExemptionReason` | `?TaxExemptionReason`           | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
-| `taxExemptionLaw`    | `?string`                       | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
-| `amountDiscount`     | `?int`                          | Fixed discount in cents                            | -                                                                         |
-| `percentageDiscount` | `?int`                          | Percentage discount                                | -                                                                         |
-| `relatedDocument`    | `?RelatedDocumentReferenceData` | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
+| Property             | Type                            | Default              | Description                                        | Validation / Notes                                                        |
+| -------------------- | ------------------------------- | -------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `id`                 | `?int`                          | `null`               | Provider-assigned identifier (set after create)    | -                                                                         |
+| `name`               | `?string`                       | `null`               | Item/product name                                  | Required for catalog item creation                                        |
+| `description`        | `?string`                       | `null`               | Longer description of the item                     | -                                                                         |
+| `reference`          | `null\|int\|string`             | `null`               | Product SKU or code                                | -                                                                         |
+| `quantity`           | `null\|int\|float`              | `1`                  | Quantity (invoice line use)                        | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
+| `price`              | `?int`                          | `null`               | Unit price in cents                                | -                                                                         |
+| `note`               | `?string`                       | `null`               | Optional line description (invoice use)            | -                                                                         |
+| `barcode`            | `?string`                       | `null`               | EAN/barcode                                        | -                                                                         |
+| `type`               | `?ItemType`                     | `ItemType::Product`  | Item classification                                | -                                                                         |
+| `tax`                | `?ItemTax`                      | `null`               | VAT rate                                           | Required for `taxExemptionReason`                                         |
+| `taxExemptionReason` | `?TaxExemptionReason`           | `null`               | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
+| `taxExemptionLaw`    | `?string`                       | `null`               | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
+| `amountDiscount`     | `?int`                          | `null`               | Fixed discount in cents                            | -                                                                         |
+| `percentageDiscount` | `?int`                          | `null`               | Percentage discount                                | -                                                                         |
+| `category`           | `?CategoryData`                 | `null`               | Product category                                   | -                                                                         |
+| `unit`               | `?ShouldBeUnit`                 | `null`               | Unit of measure (use `Unit` enum or custom)        | Must be mapped in config; throws `CouldNotGetUnitIdException` if missing  |
+| `controlStock`       | `bool`                          | `true`               | Whether to track stock for this item               | -                                                                         |
+| `enabled`            | `bool`                          | `true`               | Whether the item is active in the provider         | -                                                                         |
+| `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
+
+---
+
+### CategoryData
+
+Represents a product category for catalog items.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\CategoryData;
+
+$category = CategoryData::make([
+    'id' => 5,
+]);
+```
+
+| Property | Type      | Description                  |
+| -------- | --------- | ---------------------------- |
+| `id`     | `?int`    | Provider-assigned category ID |
+| `name`   | `?string` | Category name                |
 
 ---
 
@@ -391,6 +457,45 @@ use CsarCrr\InvoicingIntegration\Enums\ItemType;
 | `Tax`        | Tax (VAT)        |
 | `SpecialTax` | Special tax      |
 
+### Unit
+
+`Unit` is the default implementation of the `ShouldBeUnit` contract, shipping with two common units out of the box.
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\Unit;
+```
+
+| Case   | Value    |
+| ------ | -------- |
+| `KG`   | `'kg'`   |
+| `UNIT` | `'unit'` |
+
+### ShouldBeUnit
+
+`ItemData->unit` accepts any enum that implements `ShouldBeUnit`, not just the built-in `Unit` enum. This lets you define your own set of units to match your provider configuration:
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\ShouldBeUnit;
+
+enum MyUnit: string implements ShouldBeUnit
+{
+    case LITRE  = 'litre';
+    case METER  = 'meter';
+    case HOUR   = 'hour';
+}
+```
+
+Each case's `value` must have a corresponding entry in your config's `units` map so the resolver can look up the provider ID:
+
+```php
+// config/invoicing-integration.php
+'units' => [
+    'litre' => env('CEGID_VENDUS_UNIT_LITRE_ID'),
+    'meter' => env('CEGID_VENDUS_UNIT_METER_ID'),
+    'hour'  => env('CEGID_VENDUS_UNIT_HOUR_ID'),
+],
+```
+
 ### ItemTax
 
 VAT rates for invoice items. Use `EXEMPT` with a `TaxExemptionReason` for tax-free items.
@@ -494,11 +599,12 @@ These are thrown before the request is sent to the provider, during local valida
 
 These are thrown when communication with the provider fails or returns an error.
 
-| Exception                         | When Thrown                              |
-| --------------------------------- | ---------------------------------------- |
-| `RequestFailedException`          | Provider returned an error response      |
-| `UnauthorizedException`           | Invalid or missing API credentials (401) |
-| `FailedReachingProviderException` | Provider is unreachable or returned 500  |
+| Exception                         | When Thrown                                              |
+| --------------------------------- | -------------------------------------------------------- |
+| `RequestFailedException`          | Provider returned an error response                      |
+| `UnauthorizedException`           | Invalid or missing API credentials (401)                 |
+| `FailedReachingProviderException` | Provider is unreachable or returned 500                  |
+| `CouldNotGetUnitIdException`      | Unit not found in config when creating a catalog item    |
 
 ---
 

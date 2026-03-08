@@ -64,6 +64,10 @@
 - `composer analyse` - Run PHPStan static analysis
 - `composer format` - Run Pint code formatter
 
+## Documentation
+
+- Never suggest what the user should or should not do from a legal standpoint in any documentation
+
 ## Service Provider & Facade
 
 - Service Provider: `CsarCrr\InvoicingIntegration\InvoicingIntegrationServiceProvider`
