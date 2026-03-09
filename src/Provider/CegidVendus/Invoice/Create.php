@@ -84,7 +84,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'type' => $this->data->type,
         ]);
 
-        $this->fillAdditionalProperties($data, $this->data);
+        $this->fillAdditionalProperties($data);
 
         return $this;
     }

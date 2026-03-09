@@ -39,7 +39,7 @@ class Find extends Client implements ShouldGetClient
 
         $data = $request->json();
 
-        $this->fillAdditionalProperties($data, $this->data);
+        $this->fillAdditionalProperties($data);
 
         ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
         ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
