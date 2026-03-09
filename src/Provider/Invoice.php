@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider;
 
 use AllowDynamicProperties;
-use Spatie\LaravelData\Data;
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 
 /**
  * Base class for Cegid Vendus invoice operations, holding invoice data and supported API response properties.
+ *
+ * @extends Base<InvoiceData>
  */
 #[AllowDynamicProperties]
 class Invoice extends Base
@@ -16,7 +18,7 @@ class Invoice extends Base
     /**
      * Returns the current invoice DTO after an operation has been executed.
      */
-    public function getInvoice(): Data
+    public function getInvoice(): InvoiceData
     {
         return $this->data;
     }

@@ -11,9 +11,12 @@ use function collect;
 
 /**
  * Abstract base class for provider implementations, providing shared payload utilities.
+ *
+ * @template TData of Data
  */
 abstract class Base
 {
+    /** @var TData */
     protected Data $data;
 
     /**

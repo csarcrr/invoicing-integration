@@ -6,9 +6,8 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Illuminate\Support\Collection;
-use Spatie\LaravelData\Data;
 
 interface ShouldFindClient extends ShouldHavePagination, ShouldHavePayload
 {
@@ -24,8 +23,5 @@ interface ShouldFindClient extends ShouldHavePagination, ShouldHavePayload
      */
     public function getPayload(): Collection;
 
-    /**
-     * @return InvoiceData
-     */
-    public function getClient(): Data;
+    public function getClient(): ClientData;
 }

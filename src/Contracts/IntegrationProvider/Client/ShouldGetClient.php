@@ -6,12 +6,8 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use Spatie\LaravelData\Data;
 
 interface ShouldGetClient extends ShouldExecute
 {
-    /**
-     * @return ClientData
-     */
-    public function getClient(): Data;
+    public function getClient(): ClientData;
 }
