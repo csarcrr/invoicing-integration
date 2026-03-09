@@ -6,7 +6,9 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
+use CsarCrr\InvoicingIntegration\Enums\Property;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Provider\Client;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
@@ -16,9 +18,12 @@ use function throw_if;
 /**
  * Handles retrieval of a single client by ID from the Cegid Vendus API.
  */
-class Get extends CegidVendusClient implements GetClient
+class Get extends Client implements GetClient
 {
-    public function __construct(protected ?ClientData $client) {}
+    public function __construct(protected ?ClientData $client)
+    {
+        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
+    }
 
     /**
      * @throws InvalidArgumentException|\Throwable
@@ -31,7 +36,17 @@ class Get extends CegidVendusClient implements GetClient
 
         Http::handleUnwantedFailures($request);
 
-        $this->updateClientData($request->json());
+        $data = $request->json();
+
+        $this->fillAdditionalProperties($data, $this->client);
+
+        ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
+        ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
+        ! empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
+        ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
+        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
+
+        $this->client = $this->client->from($data);
 
         return $this;
     }

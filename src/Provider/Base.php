@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider;
 
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
 use function collect;
@@ -27,5 +28,15 @@ abstract class Base
     {
         $additionalProperties = collect($values)->except($this->supportedProperties)->toArray();
         $data->additional($additionalProperties);
+    }
+
+    /**
+     * @return Collection<string, mixed>
+     */
+    protected function getAllowedProperties(Data $data): Collection
+    {
+        return collect($data->toArray())->filter(
+            fn (mixed $value, string $key) => in_array($key, $this->supportedProperties)
+        );
     }
 }

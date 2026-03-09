@@ -7,7 +7,9 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
+use CsarCrr\InvoicingIntegration\Enums\Property;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Provider\Client;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
@@ -15,7 +17,7 @@ use Spatie\LaravelData\Optional;
 /**
  * Handles client creation against the Cegid Vendus API.
  */
-class Create extends CegidVendusClient implements CreateClient, ShouldHavePayload
+class Create extends Client implements CreateClient, ShouldHavePayload
 {
     /** @var Collection<string, mixed> */
     protected Collection $payload;
@@ -23,6 +25,7 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
     public function __construct(protected ?ClientData $client)
     {
         $this->payload = collect();
+        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
 
     /**
@@ -32,13 +35,20 @@ class Create extends CegidVendusClient implements CreateClient, ShouldHavePayloa
      */
     public function execute(): self
     {
-        $response = Http::provider()->post('/clients', $this->getPayload());
+        $request = Http::provider()->post('/clients', $this->getPayload());
 
-        Http::handleUnwantedFailures($response);
+        Http::handleUnwantedFailures($request);
 
-        $data = $response->json();
+        $data = $request->json();
+        $this->fillAdditionalProperties($data, $this->client);
 
-        $this->updateClientData($data);
+        ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
+        ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
+        ! empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
+        ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
+        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
+
+        $this->client = $this->client->from($data);
 
         return $this;
     }
