@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Provider;
 
 use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use Spatie\LaravelData\Data;
 
 /**
  * Base class for Cegid Vendus item operations, holding item data and supported API response properties.
