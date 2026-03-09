@@ -13,13 +13,12 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 #[AllowDynamicProperties]
 class Item extends Base
 {
-    protected ?ItemData $item = null;
-
     /**
      * Returns the current item DTO after an operation has been executed.
+     * @returns ItemData
      */
-    public function getItem(): ItemData
+    public function getItem(): Data
     {
-        return $this->item;
+        return $this->data;
     }
 }

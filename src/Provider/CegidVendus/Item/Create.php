@@ -30,6 +30,7 @@ class Create extends Item implements ShouldCreateItem
 
     public function __construct(protected ?ItemData $item)
     {
+        $this->data = $item;
         $this->payload = collect();
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
     }
@@ -45,11 +46,11 @@ class Create extends Item implements ShouldCreateItem
 
         Http::handleUnwantedFailures($response);
 
-        $this->item = ItemData::make([
+        $this->data = ItemData::make([
             'id' => $response['id'],
-        ] + $this->item->toArray());
+        ] + $this->data->toArray());
 
-        $this->fillAdditionalProperties($response->json(), $this->item);
+        $this->fillAdditionalProperties($response->json(), $this->data);
 
         return $this;
     }
@@ -79,93 +80,93 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildTitle(): void
     {
-        $this->payload->put('title', $this->item->name);
+        $this->payload->put('title', $this->data->name);
     }
 
     protected function buildReference(): void
     {
-        if (! $this->item->reference) {
+        if (! $this->data->reference) {
             return;
         }
 
-        $this->payload->put('reference', $this->item->reference);
+        $this->payload->put('reference', $this->data->reference);
     }
 
     protected function buildPrice(): void
     {
-        if (! $this->item->price) {
+        if (! $this->data->price) {
             return;
         }
 
-        $this->payload->put('gross_price', $this->item->price / 100);
+        $this->payload->put('gross_price', $this->data->price / 100);
     }
 
     protected function buildDescription(): void
     {
-        if (! $this->item->description) {
+        if (! $this->data->description) {
             return;
         }
 
-        $this->payload->put('description', $this->item->description);
+        $this->payload->put('description', $this->data->description);
     }
 
     protected function buildType(): void
     {
-        if (! $this->item->type) {
+        if (! $this->data->type) {
             return;
         }
 
-        $this->payload->put('type_id', $this->item->type->vendus());
+        $this->payload->put('type_id', $this->data->type->vendus());
     }
 
     protected function buildTax(): void
     {
-        if (! $this->item->tax) {
+        if (! $this->data->tax) {
             return;
         }
 
-        $this->payload->put('tax_id', $this->item->tax->vendus());
+        $this->payload->put('tax_id', $this->data->tax->vendus());
     }
 
     protected function buildTaxExemptionReason(): void
     {
-        if (! $this->item->taxExemptionReason) {
+        if (! $this->data->taxExemptionReason) {
             return;
         }
 
-        $this->payload->put('tax_exemption', $this->item->taxExemptionReason->value);
+        $this->payload->put('tax_exemption', $this->data->taxExemptionReason->value);
 
-        if ($this->item->taxExemptionLaw) {
-            $this->payload->put('tax_exemption_law', $this->item->taxExemptionLaw);
+        if ($this->data->taxExemptionLaw) {
+            $this->payload->put('tax_exemption_law', $this->data->taxExemptionLaw);
         }
     }
 
     protected function buildBarcode(): void
     {
-        if (! $this->item->barcode) {
+        if (! $this->data->barcode) {
             return;
         }
 
-        $this->payload->put('barcode', $this->item->barcode);
+        $this->payload->put('barcode', $this->data->barcode);
     }
 
     protected function buildCategory(): void
     {
-        if (! $this->item->category || ! $this->item->category->id) {
+        if (! $this->data->category || ! $this->data->category->id) {
             return;
         }
 
-        $this->payload->put('category_id', (int) $this->item->category->id);
+        $this->payload->put('category_id', (int) $this->data->category->id);
     }
 
     protected function buildControlStock(): void
     {
-        $this->payload->put('stock_control', $this->item->controlStock ? '1' : '0');
+        $this->payload->put('stock_control', $this->data->controlStock ? '1' : '0');
     }
 
     protected function buildEnabled(): void
     {
-        $this->payload->put('status', $this->item->enabled ? 'on' : 'off');
+        $this->payload->put('status', $this->data->enabled ? 'on' : 'off');
     }
 
     /**
@@ -173,11 +174,11 @@ class Create extends Item implements ShouldCreateItem
      */
     protected function buildUnit(): void
     {
-        if (! $this->item->unit) {
+        if (! $this->data->unit) {
             return;
         }
 
-        $unitId = $this->getConfig()->get('units')[$this->item->unit->getUnitKey()] ?? throw new CouldNotGetUnitIdException;
+        $unitId = $this->getConfig()->get('units')[$this->data->unit->getUnitKey()] ?? throw new CouldNotGetUnitIdException;
 
         $this->payload->put('unit_id', $unitId);
     }
