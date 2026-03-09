@@ -43,8 +43,10 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
 
     public function __construct(protected InvoiceData $invoice)
     {
+        $this->data = $invoice;
+
         $this->payload = collect([
-            'type' => $this->invoice->type->value,
+            'type' => $this->data->type->value,
         ]);
 
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Invoice);
@@ -65,24 +67,24 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
         $data = $response->json();
 
         $output = OutputData::make([
-            'format' => $this->invoice->output->format->value,
+            'format' => $this->data->output->format->value,
             'content' => $data['output'] ?? null,
             'fileName' => $data['number'] ?? null,
         ]);
 
-        $this->invoice = InvoiceData::from([
+        $this->data = InvoiceData::from([
             'id' => (int) ($data['id'] ?? 0),
             'sequence' => (string) ($data['number'] ?? ''),
             'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
             'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
             'atcudHash' => $data['atcud'] ?? null,
             'output' => $output,
-            'items' => $this->invoice->items,
-            'payments' => $this->invoice->payments,
-            'type' => $this->invoice->type,
+            'items' => $this->data->items,
+            'payments' => $this->data->payments,
+            'type' => $this->data->type,
         ]);
 
-        $this->fillAdditionalProperties($data, $this->invoice);
+        $this->fillAdditionalProperties($data, $this->data);
 
         return $this;
     }
@@ -115,7 +117,7 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
 
     protected function buildType(): void
     {
-        $this->payload->put('type', $this->invoice->type->value);
+        $this->payload->put('type', $this->data->type->value);
     }
 
     /**
@@ -123,22 +125,22 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
      */
     protected function buildDueDate(): void
     {
-        if (! ($this->invoice->dueDate instanceof Carbon)) {
+        if (! ($this->data->dueDate instanceof Carbon)) {
             return;
         }
 
         throw_if(
-            $this->invoice->type !== InvoiceType::Invoice,
+            $this->data->type !== InvoiceType::Invoice,
             Exception::class,
             'Due date can only be set for FT document types.'
         );
 
-        $this->payload->put('due_date', $this->invoice->dueDate->toDateString());
+        $this->payload->put('due_date', $this->data->dueDate->toDateString());
     }
 
     protected function buildOutput(): void
     {
-        $this->payload->put('output', $this->invoice->output->format->vendus());
+        $this->payload->put('output', $this->data->output->format->vendus());
     }
 
     /**
@@ -147,43 +149,43 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
      */
     protected function buildTransport(): void
     {
-        if ($this->invoice->transport instanceof Optional) {
+        if ($this->data->transport instanceof Optional) {
             return;
         }
 
-        if ($this->invoice->client instanceof Optional) {
+        if ($this->data->client instanceof Optional) {
             throw new Exception('Client information is required when transport details are provided.');
         }
 
-        throw_if(is_null($this->invoice->transport->origin->dateTime), NeedsDateToSetLoadPointException::class);
+        throw_if(is_null($this->data->transport->origin->dateTime), NeedsDateToSetLoadPointException::class);
 
         $data = [];
 
         $data['loadpoint'] = [
-            'date' => $this->invoice->transport->origin->dateTime->toDateString(),
-            'time' => $this->invoice->transport->origin->dateTime->format('H:i'),
-            'address' => $this->invoice->transport->origin->address,
-            'postalcode' => $this->invoice->transport->origin->postalCode,
-            'city' => $this->invoice->transport->origin->city,
-            'country' => $this->invoice->transport->origin->country,
+            'date' => $this->data->transport->origin->dateTime->toDateString(),
+            'time' => $this->data->transport->origin->dateTime->format('H:i'),
+            'address' => $this->data->transport->origin->address,
+            'postalcode' => $this->data->transport->origin->postalCode,
+            'city' => $this->data->transport->origin->city,
+            'country' => $this->data->transport->origin->country,
         ];
 
         $landpointData = [
-            'address' => $this->invoice->transport->destination->address,
-            'postalcode' => $this->invoice->transport->destination->postalCode,
-            'city' => $this->invoice->transport->destination->city,
-            'country' => $this->invoice->transport->destination->country,
+            'address' => $this->data->transport->destination->address,
+            'postalcode' => $this->data->transport->destination->postalCode,
+            'city' => $this->data->transport->destination->city,
+            'country' => $this->data->transport->destination->country,
         ];
 
-        if ($this->invoice->transport->destination->dateTime) {
-            $landpointData['date'] = $this->invoice->transport->destination->dateTime->toDateString();
-            $landpointData['time'] = $this->invoice->transport->destination->dateTime->format('H:i');
+        if ($this->data->transport->destination->dateTime) {
+            $landpointData['date'] = $this->data->transport->destination->dateTime->toDateString();
+            $landpointData['time'] = $this->data->transport->destination->dateTime->format('H:i');
         }
 
         $data['landpoint'] = $landpointData;
 
-        if ($this->invoice->transport->vehicleLicensePlate) {
-            $data['vehicle_id'] = $this->invoice->transport->vehicleLicensePlate;
+        if ($this->data->transport->vehicleLicensePlate) {
+            $data['vehicle_id'] = $this->data->transport->vehicleLicensePlate;
         }
 
         $this->payload->put('movement_of_goods', $data);
@@ -191,11 +193,11 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
 
     protected function buildNotes(): void
     {
-        if (! $this->invoice->notes) {
+        if (! $this->data->notes) {
             return;
         }
 
-        $this->payload->put('notes', $this->invoice->notes);
+        $this->payload->put('notes', $this->data->notes);
     }
 
     /**
@@ -204,27 +206,27 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
      */
     protected function buildCreditNoteReason(): void
     {
-        if ($this->invoice->type !== InvoiceType::CreditNote) {
+        if ($this->data->type !== InvoiceType::CreditNote) {
             return;
         }
 
         throw_if(
-            is_null($this->invoice->creditNoteReason),
+            is_null($this->data->creditNoteReason),
             CreditNoteReasonIsMissingException::class
         );
 
-        $this->payload->put('notes', $this->invoice->creditNoteReason);
+        $this->payload->put('notes', $this->data->creditNoteReason);
     }
 
     protected function buildRelatedDocument(): void
     {
-        $relatedDocument = is_string($this->invoice->relatedDocument) ? (int) $this->invoice->relatedDocument : null;
+        $relatedDocument = is_string($this->data->relatedDocument) ? (int) $this->data->relatedDocument : null;
 
-        if ($this->invoice->type === InvoiceType::CreditNote || ! $relatedDocument) {
+        if ($this->data->type === InvoiceType::CreditNote || ! $relatedDocument) {
             return;
         }
 
-        $this->payload->put('related_document_id', $this->invoice->relatedDocument);
+        $this->payload->put('related_document_id', $this->data->relatedDocument);
     }
 
     /**
@@ -232,11 +234,11 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
      */
     protected function buildPayments(): void
     {
-        if (($this->invoice->payments instanceof Collection) === false) {
+        if (($this->data->payments instanceof Collection) === false) {
             return;
         }
 
-        $payments = $this->invoice->payments->map(function (PaymentData $payment) {
+        $payments = $this->data->payments->map(function (PaymentData $payment) {
             $method = $payment->method;
 
             throw_if(! $method, Exception::class, 'Payment method not configured.');
@@ -260,17 +262,17 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
      */
     protected function buildItems(): void
     {
-        if ($this->invoice->type === InvoiceType::Receipt) {
+        if ($this->data->type === InvoiceType::Receipt) {
             return;
         }
 
         throw_if(
-            ! ($this->invoice->items instanceof Collection),
+            ! ($this->data->items instanceof Collection),
             Exception::class, 'Invoice items not set.'
         );
 
         /** @var Collection<int, array<string, mixed>> $items */
-        $items = $this->invoice->items->map(function (ItemData $item): array {
+        $items = $this->data->items->map(function (ItemData $item): array {
             $data = [];
 
             if ($item->reference) {
@@ -313,7 +315,7 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
                 }
             }
 
-            if ($this->invoice->type === InvoiceType::CreditNote) {
+            if ($this->data->type === InvoiceType::CreditNote) {
                 throw_if(
                     ! $item->relatedDocument,
                     MissingRelatedDocumentException::class
@@ -340,7 +342,7 @@ class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, S
      */
     protected function buildClient(): void
     {
-        $client = $this->invoice->client;
+        $client = $this->data->client;
 
         if (! ($client instanceof ClientData)) {
             return;

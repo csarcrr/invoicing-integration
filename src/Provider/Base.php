@@ -14,10 +14,12 @@ use function collect;
  */
 abstract class Base
 {
+    protected Data $data;
+
     /**
      * @var array<string>
      */
-    protected array $supportedProperties = [];
+    protected array $supportedProperties;
 
     /**
      * Stores response fields not listed in `$supportedProperties` as additional data on the given DTO.
