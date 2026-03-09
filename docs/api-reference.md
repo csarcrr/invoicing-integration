@@ -12,11 +12,11 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 | Method                                      | Return Type    | Description                           |
 | ------------------------------------------- | -------------- | ------------------------------------- |
-| `Client::create(ClientData $client)`        | `CreateClient` | Creates a new client builder instance |
-| `Client::get(ClientData $client)`           | `GetClient`    | Creates a client retrieval instance   |
-| `Client::find(?ClientData $filters = null)` | `FindClient`   | Lists/paginates provider clients      |
+| `Client::create(ClientData $client)`        | `ShouldCreateClient` | Creates a new client builder instance |
+| `Client::get(ClientData $client)`           | `ShouldGetClient`    | Creates a client retrieval instance   |
+| `Client::find(?ClientData $filters = null)` | `ShouldFindClient`   | Lists/paginates provider clients      |
 
-## CreateClient Contract
+## ShouldCreateClient Contract
 
 The interface returned by `Client::create()`.
 
@@ -28,7 +28,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 | ----------- | ------------ | ------------------------------------------- |
 | `execute()` | `ClientData` | Create the client and return populated data |
 
-## GetClient Contract
+## ShouldGetClient Contract
 
 The interface returned by `Client::get()`.
 
@@ -40,7 +40,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetC
 | ----------- | ------------ | --------------------------------------------- | ------------------------------------------ |
 | `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing) |
 
-## FindClient Contract
+## ShouldFindClient Contract
 
 Search/paginate provider clients via `Client::find()`.
 
@@ -111,7 +111,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 | Method                                  | Return Type     | Description                                          |
 | --------------------------------------- | --------------- | ---------------------------------------------------- |
-| `Invoice::create(InvoiceData $invoice)` | `CreateInvoice` | Creates a builder seeded with the provided DTO state |
+| `Invoice::create(InvoiceData $invoice)` | `ShouldCreateInvoice` | Creates a builder seeded with the provided DTO state |
 
 > **Facade vs. Action:** The `Invoice` facade resolves the underlying
 > `InvoiceAction` class from the service container. Prefer the facade for day-to-day
@@ -120,7 +120,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 > now the canonical entry point; there is no standalone `Invoice` class you need to
 > instantiate manually.
 
-## CreateInvoice Contract
+## ShouldCreateInvoice Contract
 
 The contract returned by `Invoice::create()` focuses on executing the request
 and inspecting the resulting DTO. All configuration lives on `InvoiceData`.
