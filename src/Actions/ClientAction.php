@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Actions;
 
 use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 
 /**
  * Orchestrates client operations by routing them to the correct provider implementation.
@@ -26,7 +26,7 @@ final class ClientAction
     /**
      * Returns a provider-specific implementation to create a client.
      */
-    public function create(ClientData $client): CreateClient
+    public function create(ClientData $client): ShouldCreateClient
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Create($client),
@@ -36,20 +36,20 @@ final class ClientAction
     /**
      * Returns a provider-specific implementation to retrieve a single client by ID.
      */
-    public function get(ClientData $client): GetClient
+    public function get(ClientData $client): ShouldGetClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Get($client),
+            Provider::CEGID_VENDUS => new Find($client),
         };
     }
 
     /**
      * Returns a provider-specific implementation to search for clients.
      */
-    public function find(?ClientData $client = null): FindClient
+    public function find(?ClientData $client = null): ShouldFindClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Find($client),
+            Provider::CEGID_VENDUS => new Get($client),
         };
     }
 }

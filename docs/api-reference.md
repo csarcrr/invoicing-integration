@@ -21,7 +21,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 The interface returned by `Client::create()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 ```
 
 | Method      | Return Type  | Description                                 |
@@ -33,7 +33,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClie
 The interface returned by `Client::get()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 ```
 
 | Method      | Return Type  | Description                                   | Throws                                     |
@@ -45,7 +45,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\GetClient;
 Search/paginate provider clients via `Client::find()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
 ```
 
 | Method             | Return Type  | Description                                   |
