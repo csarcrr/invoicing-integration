@@ -16,6 +16,7 @@ class Client extends Base
 {
     /**
      * Returns the current client DTO after an operation has been executed.
+     *
      * @return ClientData
      */
     public function getClient(): Data

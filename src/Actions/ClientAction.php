@@ -11,8 +11,8 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetC
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
 
 /**
  * Orchestrates client operations by routing them to the correct provider implementation.

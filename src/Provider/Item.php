@@ -16,6 +16,7 @@ class Item extends Base
 {
     /**
      * Returns the current item DTO after an operation has been executed.
+     *
      * @returns ItemData
      */
     public function getItem(): Data
