@@ -26,18 +26,18 @@ abstract class Base
      *
      * @param  array<string, mixed>  $values
      */
-    protected function fillAdditionalProperties(array $values, Data $data): void
+    protected function fillAdditionalProperties(array $values): void
     {
         $additionalProperties = collect($values)->except($this->supportedProperties)->toArray();
-        $data->additional($additionalProperties);
+        $this->data->additional($additionalProperties);
     }
 
     /**
      * @return Collection<string, mixed>
      */
-    protected function getAllowedProperties(Data $data): Collection
+    protected function getAllowedProperties(): Collection
     {
-        return collect($data->toArray())->filter(
+        return collect($this->data->toArray())->filter(
             fn (mixed $value, string $key) => in_array($key, $this->supportedProperties)
         );
     }

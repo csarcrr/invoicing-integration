@@ -50,7 +50,7 @@ class Create extends Item implements ShouldCreateItem
             'id' => $response['id'],
         ] + $this->data->toArray());
 
-        $this->fillAdditionalProperties($response->json(), $this->data);
+        $this->fillAdditionalProperties($response->json());
 
         return $this;
     }
