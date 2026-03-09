@@ -21,7 +21,7 @@ use function collect;
 /**
  * Handles paginated client search against the Cegid Vendus API.
  */
-class Get extends Client implements ShouldFindClient, ShouldHavePagination, ShouldHavePayload
+class Get extends Client implements ShouldFindClient
 {
     use HasPaginator;
 

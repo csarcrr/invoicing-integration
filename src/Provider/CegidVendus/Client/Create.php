@@ -17,7 +17,7 @@ use Spatie\LaravelData\Optional;
 /**
  * Handles client creation against the Cegid Vendus API.
  */
-class Create extends Client implements ShouldCreateClient, ShouldHavePayload
+class Create extends Client implements ShouldCreateClient
 {
     /** @var Collection<string, mixed> */
     protected Collection $payload;

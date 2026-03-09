@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
-interface ShouldFindClient
+interface ShouldFindClient extends ShouldHavePagination, ShouldHavePayload
 {
     public function execute(): self;
 

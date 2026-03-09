@@ -32,7 +32,7 @@ use function collect;
 /**
  * Handles invoice creation against the Cegid Vendus API.
  */
-class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
+class Create extends Invoice implements ShouldCreateInvoice
 {
     use HasConfig;
 
