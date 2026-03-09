@@ -4,118 +4,51 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\Client;
-use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 
-use function collect;
+use function is_int;
+use function throw_if;
 
 /**
- * Handles paginated client search against the Cegid Vendus API.
+ * Handles retrieval of a single client by ID from the Cegid Vendus API.
  */
-class Find extends Client implements FindClient, ShouldHavePagination, ShouldHavePayload
+class Find extends Client implements ShouldGetClient
 {
-    use HasPaginator;
-
-    /** @var Collection<string, mixed> */
-    protected Collection $payload;
-
-    /** @var Collection<int, ClientData> */
-    protected Collection $list;
-
-    public function __construct(protected ?ClientData $client = null)
+    public function __construct(protected ?ClientData $client)
     {
-        if (! $client) {
-            $this->client = ClientData::from([]);
-        }
-
-        $this->payload = collect();
+        $this->data = $client;
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
 
     /**
-     * Sends the search request and populates the result list and pagination details.
+     * @throws InvalidArgumentException|\Throwable
      */
     public function execute(): self
     {
-        $request = Http::provider()->get('/clients', $this->getPayload());
+        throw_if(! is_int($this->data->id), InvalidArgumentException::class, 'Client ID is required.');
+
+        $request = Http::provider()->get('/clients/'.$this->data->id);
 
         Http::handleUnwantedFailures($request);
 
-        $this->updatePaginationDetails($request);
-        $this->updateResults($request->json());
+        $data = $request->json();
+
+        $this->fillAdditionalProperties($data, $this->data);
+
+        ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
+        ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
+        ! empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
+        ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
+        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
+
+        $this->data = $this->data->from($data);
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, ClientData>
-     */
-    public function getList(): Collection
-    {
-        return $this->list;
-    }
-
-    /**
-     * @return Collection<string, mixed>
-     */
-    public function getPayload(): Collection
-    {
-        $this->buildPagination();
-
-        $this->getAllowedProperties($this->client)->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
-
-        $this->buildVat();
-        $this->buildExternalReference();
-        $this->buildStatus();
-
-        return $this->payload;
-    }
-
-    protected function buildPagination(): void
-    {
-        $this->payload->put('page', $this->getCurrentPage());
-    }
-
-    private function buildVat(): void
-    {
-        (is_string($this->client->vat) || is_int($this->client->vat)) && $this->payload->put('fiscal_id', $this->client->vat);
-    }
-
-    private function buildExternalReference(): void
-    {
-        is_string($this->client->externalReference) && $this->payload->put('external_reference', $this->client->externalReference);
-    }
-
-    private function buildStatus(): void
-    {
-        is_string($this->client->status) && $this->payload->put('status', $this->client->status);
-    }
-
-    protected function updatePaginationDetails(Response $results): void
-    {
-        $this->totalPages((int) $results->header('X-Paginator-Pages') ?: 1);
-    }
-
-    /**
-     * @param  array<int, array<string, mixed>>  $results
-     */
-    protected function updateResults(array $results): void
-    {
-        $this->list = collect($results)->map(function (array $item) {
-            $data = [];
-            // todo: improve this since the response fields might be similar to the dto ones
-            ! empty($item['name']) && $data['name'] = $item['name'];
-
-            return ClientData::from($data);
-        })->values();
     }
 }

@@ -14,13 +14,12 @@ use Spatie\LaravelData\Data;
 #[AllowDynamicProperties]
 class Client extends Base
 {
-    protected ?ClientData $client = null;
-
     /**
      * Returns the current client DTO after an operation has been executed.
+     * @return ClientData
      */
-    public function getClient(): ClientData
+    public function getClient(): Data
     {
-        return $this->client;
+        return $this->data;
     }
 }

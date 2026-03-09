@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\CreateClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
@@ -17,13 +17,14 @@ use Spatie\LaravelData\Optional;
 /**
  * Handles client creation against the Cegid Vendus API.
  */
-class Create extends Client implements CreateClient, ShouldHavePayload
+class Create extends Client implements ShouldCreateClient, ShouldHavePayload
 {
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
     public function __construct(protected ?ClientData $client)
     {
+        $this->data = $client;
         $this->payload = collect();
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
@@ -40,7 +41,7 @@ class Create extends Client implements CreateClient, ShouldHavePayload
         Http::handleUnwantedFailures($request);
 
         $data = $request->json();
-        $this->fillAdditionalProperties($data, $this->client);
+        $this->fillAdditionalProperties($data, $this->data);
 
         ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
         ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
@@ -48,7 +49,7 @@ class Create extends Client implements CreateClient, ShouldHavePayload
         ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
         ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
 
-        $this->client = $this->client->from($data);
+        $this->data = $this->data->from($data);
 
         return $this;
     }
@@ -73,49 +74,49 @@ class Create extends Client implements CreateClient, ShouldHavePayload
 
     protected function buildName(): void
     {
-        $this->client->name && $this->payload->put('name', $this->client->name);
+        $this->data->name && $this->payload->put('name', $this->data->name);
     }
 
     protected function buildEmail(): void
     {
-        $this->client->email && $this->payload->put('email', $this->client->email);
+        $this->data->email && $this->payload->put('email', $this->data->email);
     }
 
     protected function buildCompleteAddress(): void
     {
-        $this->client->address && $this->payload->put('address', $this->client->address);
-        $this->client->city && $this->payload->put('city', $this->client->city);
-        $this->client->postalCode && $this->payload->put('postalcode', $this->client->postalCode);
-        $this->client->country && $this->payload->put('country', $this->client->country);
+        $this->data->address && $this->payload->put('address', $this->data->address);
+        $this->data->city && $this->payload->put('city', $this->data->city);
+        $this->data->postalCode && $this->payload->put('postalcode', $this->data->postalCode);
+        $this->data->country && $this->payload->put('country', $this->data->country);
     }
 
     protected function buildVat(): void
     {
-        $this->client->vat && $this->payload->put('fiscal_id', $this->client->vat);
+        $this->data->vat && $this->payload->put('fiscal_id', $this->data->vat);
     }
 
     protected function buildNotes(): void
     {
-        $this->client->notes && $this->payload->put('notes', $this->client->notes);
+        $this->data->notes && $this->payload->put('notes', $this->data->notes);
     }
 
     protected function buildIrsRetention(): void
     {
-        $this->client->irsRetention ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
+        $this->data->irsRetention ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
     }
 
     protected function buildEmailNotification(): void
     {
-        $this->client->emailNotification ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
+        $this->data->emailNotification ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
     }
 
     protected function buildContacts(): void
     {
-        $this->client->phone && $this->payload->put('phone', $this->client->phone);
+        $this->data->phone && $this->payload->put('phone', $this->data->phone);
     }
 
     protected function buildDefaultPayDue(): void
     {
-        ! ($this->client->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->client->defaultPayDue);
+        ! ($this->data->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->data->defaultPayDue);
     }
 }
