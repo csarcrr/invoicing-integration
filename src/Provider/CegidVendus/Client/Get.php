@@ -66,7 +66,7 @@ class Get extends Client implements ShouldFindClient
     {
         $this->buildPagination();
 
-        $this->getAllowedProperties($this->data)->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
+        $this->getAllowedProperties()->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
 
         $this->buildVat();
         $this->buildExternalReference();

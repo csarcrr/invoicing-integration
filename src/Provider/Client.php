@@ -6,20 +6,19 @@ namespace CsarCrr\InvoicingIntegration\Provider;
 
 use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use Spatie\LaravelData\Data;
 
 /**
  * Base class for Cegid Vendus client operations, handling shared client data and property mapping.
+ *
+ * @extends Base<ClientData>
  */
 #[AllowDynamicProperties]
 class Client extends Base
 {
     /**
      * Returns the current client DTO after an operation has been executed.
-     *
-     * @return ClientData
      */
-    public function getClient(): Data
+    public function getClient(): ClientData
     {
         return $this->data;
     }
