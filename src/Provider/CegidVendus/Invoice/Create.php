@@ -14,24 +14,25 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\Property;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusInvoice;
+use CsarCrr\InvoicingIntegration\Provider\Invoice;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
-
 use function collect;
 
 /**
  * Handles invoice creation against the Cegid Vendus API.
  */
-class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
+class Create extends Invoice implements ShouldCreateInvoice, ShouldHaveConfig, ShouldHavePayload
 {
     use HasConfig;
 
@@ -45,6 +46,8 @@ class Create extends CegidVendusInvoice implements ShouldCreateInvoice, ShouldHa
         $this->payload = collect([
             'type' => $this->invoice->type->value,
         ]);
+
+        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Invoice);
     }
 
     /**
