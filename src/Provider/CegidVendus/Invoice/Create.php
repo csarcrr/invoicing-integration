@@ -6,8 +6,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldHaveConfig;
-use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
@@ -27,6 +25,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
+
 use function collect;
 
 /**

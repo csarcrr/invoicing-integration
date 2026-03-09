@@ -6,7 +6,6 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
