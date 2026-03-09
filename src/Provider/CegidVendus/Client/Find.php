@@ -8,7 +8,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\FindClient
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\CegidVendusClient;
+use CsarCrr\InvoicingIntegration\Enums\Property;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Provider\Client;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
@@ -19,7 +21,7 @@ use function collect;
 /**
  * Handles paginated client search against the Cegid Vendus API.
  */
-class Find extends CegidVendusClient implements FindClient, ShouldHavePagination, ShouldHavePayload
+class Find extends Client implements FindClient, ShouldHavePagination, ShouldHavePayload
 {
     use HasPaginator;
 
@@ -36,6 +38,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
         }
 
         $this->payload = collect();
+        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
 
     /**
@@ -68,7 +71,7 @@ class Find extends CegidVendusClient implements FindClient, ShouldHavePagination
     {
         $this->buildPagination();
 
-        $this->getClientAllowedProperties()->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
+        $this->getAllowedProperties($this->client)->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
 
         $this->buildVat();
         $this->buildExternalReference();
