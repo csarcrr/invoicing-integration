@@ -54,12 +54,38 @@ Please include:
 3. Create a new branch from `main`
 
 ```bash
-git checkout -b feature/my-feature
+git checkout -b fix/my-fix
 ```
 
-4. Install dependencies (see project README)
+4. Install dependencies:
+
+```bash
+composer install
+```
+
 5. Make your changes
 6. Ensure tests pass and code follows the existing style
+
+## 🛠 Development Commands
+
+| Command            | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `composer install` | Install PHP dependencies                        |
+| `composer test`    | Run the Pest test suite in parallel             |
+| `composer analyse` | Run PHPStan static analysis (level 7)           |
+| `composer format`  | Run Laravel Pint code formatter                 |
+| `composer complete`| Run format + analyse + test (full quality pass) |
+
+Run `composer complete` before opening a pull request to ensure formatting, static analysis, and all tests pass.
+
+## 🌿 Branch Naming
+
+Use the following prefixes when naming branches:
+
+- `fix/` — Bug fixes (e.g., `fix/invoice-due-date-validation`)
+- `feature/` — New features (e.g., `feature/moloni-provider`)
+- `enhance/` — Enhancements to existing behaviour (e.g., `enhance-actions-structure`)
+- `docs/` — Documentation-only changes
 
 ---
 
