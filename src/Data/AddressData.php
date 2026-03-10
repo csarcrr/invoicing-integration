@@ -44,16 +44,4 @@ class AddressData extends Data implements DataNeedsValidation
             ],
         ];
     }
-    //    public function country(string $country): self
-    //    {
-    //        try {
-    //            $data = (new ISO3166)->alpha2(strtolower($country));
-    //        } catch (\Exception $e) {
-    //            throw new InvalidCountryException;
-    //        }
-    //
-    //        $this->data[$this->type]['country'] = $data['alpha2'];
-    //
-    //        return $this;
-    //    }
 }
