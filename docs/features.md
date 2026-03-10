@@ -20,7 +20,7 @@ The columns show what's implemented for each provider: **Cegid Vendus**, **Molon
 - ❌ — Not Implemented
 - ⛔ — Not applicable
 
-# Item Management
+## Item Management
 
 Features for managing items (product catalog) independently of invoices.
 
@@ -31,7 +31,7 @@ Features for managing items (product catalog) independently of invoices.
 | Delete Item   | ❌           | ❌     | ❌              |
 | List Items    | ❌           | ❌     | ❌              |
 
-# Client Management
+## Client Management
 
 Features for managing clients independently of invoices.
 
@@ -43,7 +43,7 @@ Features for managing clients independently of invoices.
 | Delete Client | ❌           | ❌     | ❌              |
 | List Clients  | ✅           | ❌     | ❌              |
 
-# Invoicing
+## Invoicing
 
 Features that apply when issuing an Invoicing.
 
@@ -126,7 +126,7 @@ Features that apply when issuing an Invoicing.
 
 Features that are "shared" between multiple Invoicing types.
 
-#### Outputing
+#### Outputting
 
 |               | Cegid Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |

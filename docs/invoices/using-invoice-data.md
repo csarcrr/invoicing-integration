@@ -1,6 +1,13 @@
 # Using Invoice Data
 
-When you issue an invoice, you receive an `Invoice` value object containing the response data. This object provides a unified interface regardless of which provider you use.
+`InvoiceData` serves a dual role in this package:
+
+1. **Input DTO** — You populate it and pass it to `Invoice::create(InvoiceData $invoice)` to describe the invoice you want to issue (items, payments, client, output format, etc.).
+2. **Response object** — After calling `execute()->getInvoice()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, and `output`).
+
+This means you work with the same class on both sides of the HTTP boundary; there is no separate "response" type to import.
+
+When you issue an invoice, you receive a hydrated `InvoiceData` containing the response data. This object provides a unified interface regardless of which provider you use.
 
 ## Accessing Invoice Data
 
@@ -27,11 +34,14 @@ $output = $result->output;
 
 ## Available Methods
 
-| Property   | Type      | Description                                        |
-| ---------- | --------- | -------------------------------------------------- |
-| `sequence` | `string`  | The invoice sequence number (e.g., "FT 01P2025/1") |
-| `id`       | `int`     | The provider's internal ID                         |
-| `output`   | `?Output` | Output object, or `null` when no file is provided  |
+| Property    | Type      | Description                                        |
+| ----------- | --------- | -------------------------------------------------- |
+| `sequence`  | `string`  | The invoice sequence number (e.g., "FT 01P2025/1") |
+| `id`        | `int`     | The provider's internal ID                         |
+| `total`     | `int`     | Total gross amount in cents                        |
+| `totalNet`  | `int`     | Net total amount in cents (excl. VAT)              |
+| `atcudHash` | `?string` | ATCUD hash (Portugal AT code); `null` if absent    |
+| `output`    | `?Output` | Output object, or `null` when no file is provided  |
 
 ## Working with the Sequence
 
@@ -70,6 +80,8 @@ Invoice::create($receiptData)->execute();
 ```
 
 ## Working with Output
+
+> **OutputData vs Output:** `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. The methods you interact with (`save()`, `fileName()`, `content()`) are all on `OutputData` itself — there is no separate `Output` value object to import.
 
 The output object provides access to the generated document:
 

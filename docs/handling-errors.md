@@ -152,10 +152,9 @@ These exceptions are thrown **before** the request is sent to the provider, duri
 
 ### Client Validation
 
-| Exception                             | Meaning                        | How to Fix                                                         |
-| ------------------------------------- | ------------------------------ | ------------------------------------------------------------------ |
-| `InvoiceRequiresClientVatException`   | Client provided with empty VAT | Either provide a VAT number or don't set a client (final consumer) |
-| `InvoiceRequiresVatWhenClientHasName` | Client has name but no VAT     | Add the client's VAT number                                        |
+| Exception                           | Meaning                                         | How to Fix                                                         |
+| ----------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------ |
+| `InvoiceRequiresClientVatException` | Client provided with empty VAT or name but no VAT | Either provide a VAT number or don't set a client (final consumer) |
 
 ```php
 // Wrong: empty VAT string
