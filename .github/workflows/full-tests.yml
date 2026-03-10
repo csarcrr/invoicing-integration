@@ -3,6 +3,8 @@ name: full-tests
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - "**.md"
 
 jobs:
   test:
