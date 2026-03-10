@@ -92,7 +92,7 @@ $config = ProviderConfiguration::getConfig();
 | -------------------------------- | ------------------------------------------------------------ |
 | `INVOICING_INTEGRATION_PROVIDER` | Provider key (`CegidVendus` for now)                         |
 | `CEGID_VENDUS_API_KEY`           | API token generated in Vendus                                |
-| `CEGID_VENDUS_MODE`              | `tests` (sandbox) or `normal` (fiscal)                       |
+| `CEGID_VENDUS_MODE`              | `tests` (sandbox/training) or `production` (fiscal)          |
 | `CEGID_VENDUS_PAYMENT_*`         | Mapping between `PaymentMethod` enums and Vendus payment IDs |
 
 > The package validates configuration lazily when you issue invoices or clients, so misconfigured payment IDs will raise descriptive exceptions before the HTTP call is sent.
@@ -258,7 +258,7 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for coding standards, branching st
 
 ## Security
 
-Please review [the security policy](../../security/policy) to learn how to report vulnerabilities.
+Please review [the security policy](https://github.com/csarcrr/invoicing-integration/security/advisories) to learn how to report vulnerabilities.
 
 ## License
 

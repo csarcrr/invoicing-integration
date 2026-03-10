@@ -284,28 +284,31 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\AddressData;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
-
-$transport = new AddressData;
+use CsarCrr\InvoicingIntegration\Data\TransportData;
 
 // Where the order ships from (your warehouse)
-$transport->origin()
-    ->date(Carbon::now())
-    ->time(Carbon::now()->setHour(10)->setMinute(0))
-    ->address('Zona Industrial de Maia, Lote 42')
-    ->city('Maia')
-    ->postalCode('4470-000')
-    ->country('PT');
+$origin = AddressData::make([
+    'dateTime' => Carbon::now()->setHour(10)->setMinute(0),
+    'address'  => 'Zona Industrial de Maia, Lote 42',
+    'city'     => 'Maia',
+    'postalCode' => '4470-000',
+    'country'  => 'PT',
+]);
 
 // Where it's being delivered
-$transport->destination()
-    ->date(Carbon::now()->addDay())
-    ->time(Carbon::now()->setHour(14)->setMinute(0))
-    ->address('Rua do Comércio, 88')
-    ->city('Porto')
-    ->postalCode('4000-150')
-    ->country('PT');
+$destination = AddressData::make([
+    'dateTime' => Carbon::now()->addDay()->setHour(14)->setMinute(0),
+    'address'  => 'Rua do Comércio, 88',
+    'city'     => 'Porto',
+    'postalCode' => '4000-150',
+    'country'  => 'PT',
+]);
 
-$transport->vehicleLicensePlate('00-AB-00');
+$transport = TransportData::make([
+    'origin'              => $origin,
+    'destination'         => $destination,
+    'vehicleLicensePlate' => '00-AB-00',
+]);
 
 $invoiceData = InvoiceData::make([
     'client' => ClientData::make([

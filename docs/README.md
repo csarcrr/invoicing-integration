@@ -127,13 +127,7 @@ Sample response:
 
 ## What's New
 
-**February 2026** - Invoice creation is now driven by `InvoiceData`. Highlights:
-
-- `Invoice::create(InvoiceData $invoice)` is the canonical entry point
-- All tests and docs rely on DTO-first inputs for consistency
-- Builder helpers still exist for incremental adjustments but mutate the same DTO instance
-- Payments remain **required** for FR, FS, RG, and NC document types
-- Responses now hydrate `OutputData`, ensuring PDFs/ESC-POS files expose helper methods consistently
+For a full history of changes, see the [CHANGELOG](../CHANGELOG.md).
 
 ---
 

@@ -97,4 +97,4 @@ See also:
 - [Clients Overview](README.md)
 - [Creating a Client](creating-a-client.md)
 - [Getting a Client](getting-a-client.md)
-- [API Reference – FindClient](../api-reference.md#createclient-contract)
+- [API Reference – FindClient](../api-reference.md#shouldfindclient-contract)

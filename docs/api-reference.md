@@ -151,6 +151,8 @@ container) so validation rules and transformers run before the HTTP request.
 
 ### InvoiceData
 
+`InvoiceData` serves a dual role: it is the **input DTO** you populate and pass to `Invoice::create()`, and it is also the **response object** returned by `execute()->getInvoice()`. After a successful call the same class is returned, now hydrated with provider response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, and `output`). There is no separate response type to import.
+
 Entry point for invoice creation.
 
 ```php
@@ -175,7 +177,7 @@ $invoiceData = InvoiceData::make([
 | `creditNoteReason` | `?string`                 | Required for credit notes                       |
 | `relatedDocument`  | `?string`                 | Used for non-credit-note document relationships |
 | `notes`            | `?string`                 | Additional notes (printed on document)          |
-| `dueDate`          | `?Carbon`                 | Payment deadline (FT only)                      |
+| `dueDate`          | `?Carbon`                 | Payment deadline (FT only); throws `Exception` if set on non-FT types |
 | `output`           | `OutputData`              | Preferred output format (PDF default)           |
 
 > `InvoiceData` implements `DataNeedsValidation`, so misconfigured payloads throw
@@ -369,7 +371,9 @@ $transport = TransportData::make([
 
 ### Invoice (Response)
 
-The value object returned after issuing an invoice. Contains the provider's response data.
+The hydrated `InvoiceData` returned after issuing an invoice. Contains the provider's response data.
+
+> **OutputData vs Output:** The `output` property on the returned `InvoiceData` is an `OutputData` instance (the same type used as the input DTO). It is hydrated with the provider's file content after `execute()`. All file-handling methods (`save()`, `fileName()`, `content()`) live directly on `OutputData` — there is no separate `Output` value object. The "Output" section below describes the same `OutputData` methods accessible via `$result->output`.
 
 **Properties:**
 
@@ -392,7 +396,6 @@ use CsarCrr\InvoicingIntegration\ValueObjects\Output;
 
 **Methods:**
 
-| Method | Return Type | Description |
 | Method | Return Type | Description |
 | -------------------------- | -------------- | ---------------------------------- |
 | `fileName()` | `?string` | Auto-generated filename |
@@ -585,8 +588,7 @@ These are thrown before the request is sent to the provider, during local valida
 
 | Exception                                         | When Thrown                                 |
 | ------------------------------------------------- | ------------------------------------------- |
-| `InvoiceRequiresClientVatException`               | Client provided with empty VAT              |
-| `InvoiceRequiresVatWhenClientHasName`             | Client has name but no VAT                  |
+| `InvoiceRequiresClientVatException`               | Client provided with empty VAT or name but no VAT |
 | `CreditNoteReasonIsMissingException`              | NC type without credit note reason          |
 | `NeedsDateToSetLoadPointException`                | Transport without origin date               |
 | `InvalidCountryException`                         | Invalid ISO country code                    |
