@@ -149,6 +149,16 @@ on **public typed properties** rather than getters. Access values with
 `null` and "not provided" states. Always call `::make([...])` (or resolve from the
 container) so validation rules and transformers run before the HTTP request.
 
+`Optional` and `null` serve different purposes:
+
+```php
+// null means "send null to the API"
+new ItemData(discount: null);
+
+// Optional means "omit this field entirely from the payload"
+new ItemData(discount: Optional::create());
+```
+
 ### InvoiceData
 
 `InvoiceData` serves a dual role: it is the **input DTO** you populate and pass to `Invoice::create()`, and it is also the **response object** returned by `execute()->getInvoice()`. After a successful call the same class is returned, now hydrated with provider response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, and `output`). There is no separate response type to import.

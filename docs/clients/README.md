@@ -192,12 +192,7 @@ $reseller = Client::create(ClientData::make([
 
 ---
 
-**Tips:**
-
-- Store the provider-assigned `id` in your database for future reference
-- Use `emailNotification: true` to have invoices sent automatically
-- Use `defaultPayDue` to set payment terms
-- Use the `notes` field for internal reference (not shown on invoices)
+Store the provider-assigned `id` in your database for future reference. Use `emailNotification: true` to have invoices sent automatically and `defaultPayDue` to set payment terms. The `notes` field is for internal reference only and is not shown on invoices.
 
 ---
 

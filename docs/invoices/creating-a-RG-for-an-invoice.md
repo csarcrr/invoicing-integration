@@ -201,13 +201,7 @@ if ($result->output) {
 
 ---
 
-**Tips:**
-
-- RG documents require the original invoice reference and payment(s)
-- No items or client details are needed for receipts
-- Ensure payment method IDs are configured in your provider settings
-- For full payment, the total should match the original invoice amount
-- For partial payments, issue separate receipts for each installment
+RG documents require the original invoice reference and at least one payment. No items or client details are needed. For full payment, the total should match the original invoice amount. For partial payments, issue separate receipts for each installment. Ensure payment method IDs are configured in your provider settings.
 
 ---
 

@@ -1,60 +1,6 @@
 # Invoicing Integration Documentation
 
-This package provides a unified, fluent API for integrating with invoicing systems in Portugal, making it easy to issue fiscally compliant documents from your Laravel application.
-
-**Supported Providers:** Cegid Vendus
-
-## Important Legal Disclaimer
-
-**This package facilitates invoicing provider API usage and is not intended to serve as legal guidance.**
-
-It is **your responsibility** to:
-
-- Comply with all applicable invoicing laws and regulations in your jurisdiction
-- Understand each provider's specific requirements
-- Ensure proper invoicing practices according to your legal obligations
-- Validate that your usage complies with tax laws and accounting standards
-
-Always consult with legal and accounting professionals when implementing invoicing solutions.
-
-## What You'll Learn
-
-- **Getting Started** - Install, configure, and issue your first invoice in minutes
-- **Invoices** - Create different document types (FT, FR, FS, RG, NC)
-- **Clients** - Manage customer records in your invoicing provider
-- **Output Formats** - Save invoices as PDFs or print them on thermal printers
-
-## Table of Contents
-
-- [Getting Started](getting-started.md) - Installation and configuration
-- [Features](features.md) - Supported features by provider and document type
-
-### Clients
-
-- [Overview](clients/README.md)
-- [Creating a Client](clients/creating-a-client.md)
-- [Getting a Client](clients/getting-a-client.md)
-- [Finding Clients](clients/finding-clients.md)
-
-### Invoices
-
-- [Creating an Invoice](invoices/creating-an-invoice.md)
-- [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)
-- [Creating a Credit Note (NC)](invoices/creating-a-nc-invoice.md)
-- [Output Formats](invoices/outputting-invoice.md)
-- [Using Invoice Data](invoices/using-invoice-data.md)
-
-### Providers
-
-- [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md)
-
-### Reference
-
-- [API Reference](api-reference.md)
-
-## Quick Example
-
-Issue an invoice-receipt (FR):
+A unified, fluent API for integrating with Portuguese invoicing systems from your Laravel application. Currently supports **Cegid Vendus**.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
@@ -124,6 +70,38 @@ Sample response:
 > `spatie/laravel-data\Data`, always instantiate them via `::make([...])` (or
 > dependency injection) so transformers, defaults, and validation attributes are
 > applied consistently.
+
+## Important Legal Disclaimer
+
+This package facilitates invoicing provider API usage and is not intended to serve as legal guidance. It is your responsibility to comply with all applicable invoicing laws and regulations, understand each provider's specific requirements, and validate that your usage complies with tax laws and accounting standards. Always consult with legal and accounting professionals when implementing invoicing solutions.
+
+## Table of Contents
+
+- [Getting Started](getting-started.md) - Installation and configuration
+- [Features](features.md) - Supported features by provider and document type
+
+### Clients
+
+- [Overview](clients/README.md)
+- [Creating a Client](clients/creating-a-client.md)
+- [Getting a Client](clients/getting-a-client.md)
+- [Finding Clients](clients/finding-clients.md)
+
+### Invoices
+
+- [Creating an Invoice](invoices/creating-an-invoice.md)
+- [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)
+- [Creating a Credit Note (NC)](invoices/creating-a-nc-invoice.md)
+- [Output Formats](invoices/outputting-invoice.md)
+- [Using Invoice Data](invoices/using-invoice-data.md)
+
+### Providers
+
+- [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md)
+
+### Reference
+
+- [API Reference](api-reference.md)
 
 ## What's New
 

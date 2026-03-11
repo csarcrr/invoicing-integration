@@ -283,13 +283,7 @@ Example credit note response:
 
 ---
 
-**Tips:**
-
-- Always provide a clear, descriptive reason for the credit note
-- Each item must reference its line number on the original invoice
-- The payment amount should match the total credit amount
-- Credit notes require the same payment method configuration as invoices
-- The `total` in the response will be negative, indicating a refund
+Always provide a clear, descriptive reason for the credit note. Each item must reference its line number on the original invoice, and the payment amount should match the total credit amount. Credit notes use the same payment method configuration as invoices. The `total` in the response will be negative, indicating a refund.
 
 ---
 

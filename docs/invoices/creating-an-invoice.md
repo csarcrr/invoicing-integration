@@ -1,9 +1,5 @@
 # Creating an Invoice
 
-Create and send invoices using the Invoicing Integration package with a fluent API.
-
-## Basic Invoice
-
 The simplest invoice requires an item and payment. No client details needed for final consumer invoices:
 
 ```php
@@ -405,12 +401,7 @@ Example invoice result (`$result->toArray()`):
 
 ---
 
-**Tips:**
-
-- For final consumer invoices, do **not** set any client
-- At least one item is required (except for receipts)
-- Payment method IDs must be configured in your provider
-- See [Output Formats](outputting-invoice.md) for PDF and ESC/POS options
+For final consumer invoices, do not set any client. At least one item is required (except for receipts), and payment method IDs must be configured in your provider. See [Output Formats](outputting-invoice.md) for PDF and ESC/POS options.
 
 ---
 
