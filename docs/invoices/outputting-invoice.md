@@ -1,10 +1,6 @@
 # Output Formats
 
-Invoices can be returned as PDF or ESC/POS data.
-
-## Saving the Invoice PDF
-
-The provider returns the document as base64-encoded PDF:
+The provider returns the document as base64-encoded PDF by default, or as ESC/POS for thermal printers:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -234,14 +230,7 @@ return response()->json([
 
 ---
 
-**Summary:**
-
-- Default output is PDF (base64 encoded)
-- Use `outputFormat()` to select PDF or ESC/POS before issuing
-- Use `$result->output?->save($path)` to store the document
-- Use `$result->output?->fileName()` for the auto-generated filename
-- Always check `if ($result->output)` before saving
-- Check provider [Features](../features.md) for format support
+The default output format is PDF (base64 encoded). Set the format via `OutputData` on your `InvoiceData` before issuing. Use `$result->output?->save($path)` to store the document and `$result->output?->fileName()` for the auto-generated filename. Always check `if ($result->output)` before saving, since the provider may not always return a file. Check provider [Features](../features.md) for format support.
 
 ---
 

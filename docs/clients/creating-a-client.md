@@ -219,13 +219,7 @@ try {
 
 ---
 
-**Tips:**
-
-- Store the provider-assigned `id` in your database for future reference
-- Use `emailNotification: true` to have the provider send invoices automatically
-- Country codes must be valid ISO 3166-1 alpha-2 codes
-- Use `defaultPayDue` to set payment terms (e.g., 30 days)
-- The `notes` field is internal-only (not shown on invoices)
+Store the provider-assigned `id` in your database for future reference. Use `emailNotification: true` to have the provider send invoices automatically and `defaultPayDue` to set payment terms (e.g., 30 days). Country codes must be valid ISO 3166-1 alpha-2 codes. The `notes` field is internal-only and not shown on invoices.
 
 ---
 

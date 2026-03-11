@@ -175,12 +175,7 @@ function processInvoiceResult($result): array
 
 ---
 
-**Tips:**
-
-- Always store both `sequence` and `id` in your database
-- Use `sequence` for display and official references
-- Use `id` when making related API calls (receipts, credit notes)
-- The output object handles both PDF and ESC/POS formats transparently
+Always store both `sequence` and `id` in your database. Use `sequence` for display and official references, and `id` when making related API calls (receipts, credit notes). The output object handles both PDF and ESC/POS formats transparently.
 
 ---
 

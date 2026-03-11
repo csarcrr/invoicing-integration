@@ -150,11 +150,7 @@ try {
 
 ---
 
-**Tips:**
-
-- Always store the provider-assigned `id` when creating clients for later retrieval
-- The returned `ClientData` object is the same instance passed to `get()`, now populated with provider data
-- Use retrieved clients to ensure invoice data matches the provider's records
+Always store the provider-assigned `id` when creating clients for later retrieval. The returned `ClientData` object is the same instance passed to `get()`, now populated with provider data. Use retrieved clients to ensure invoice data matches the provider's records.
 
 ---
 
