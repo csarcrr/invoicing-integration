@@ -81,7 +81,8 @@ Invoice::create($receiptData)->execute();
 
 ## Working with Output
 
-> **OutputData vs Output:** `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. The methods you interact with (`save()`, `fileName()`, `content()`) are all on `OutputData` itself — there is no separate `Output` value object to import.
+> [!NOTE]
+> `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. The methods you interact with (`save()`, `fileName()`, `content()`) are all on `OutputData` itself — there is no separate `Output` value object to import.
 
 The output object provides access to the generated document:
 
@@ -97,7 +98,8 @@ if ($output) {
 }
 ```
 
-> **Note:** `$result->output` is `null` whenever the provider doesn't return files. Handle that case before calling `save()`.
+> [!NOTE]
+> `$result->output` is `null` whenever the provider doesn't return files. Handle that case before calling `save()`.
 
 ## Complete Example
 

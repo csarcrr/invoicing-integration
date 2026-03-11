@@ -106,7 +106,8 @@ return [
 ];
 ```
 
-> **Note:** This approach requires configuring static IDs. A future version will allow you to fetch these IDs programmatically via the API.
+> [!NOTE]
+> This approach requires configuring static IDs. A future version will allow you to fetch these IDs programmatically via the API.
 
 You can read more about configuring payment methods in Cegid Vendus <a href="https://www.vendus.pt/ajuda/adicionar-metodos-pagamento/" target="_blank">here</a>.
 

@@ -13,6 +13,7 @@
     - [Finding Clients](clients/finding-clients.md)
 
 - **Invoices**
+    - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)
     - [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)
     - [Creating a Credit Note (NC)](invoices/creating-a-nc-invoice.md)

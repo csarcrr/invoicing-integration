@@ -63,7 +63,8 @@ return [
 ];
 ```
 
-> **Note:** Payment method IDs are required. See [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md) for details on obtaining these IDs.
+> [!NOTE]
+> Payment method IDs are required. See [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md) for details on obtaining these IDs.
 
 ## 5. Your First Invoice
 

@@ -6,7 +6,8 @@ how to configure exemptions when building your `InvoiceData` payload and lists e
 
 ## When to Use an Exemption
 
-> **Important:** Tax law interpretation can be complex and varies by business context. Always consult your certified accountant to determine which exemption code applies to your specific situation and ensure compliance with Portuguese tax regulations.
+> [!WARNING]
+> Tax law interpretation can be complex and varies by business context. Always consult your certified accountant to determine which exemption code applies to your specific situation and ensure compliance with Portuguese tax regulations.
 
 ## Step-by-Step
 
@@ -83,7 +84,8 @@ articles exist.
 > Need the precise law text for the invoice footer? Every enum case exposes a `laws()` helper that
 > returns the officially recommended references.
 
-> **Tip:** To show which index you selected, log the array index alongside the law text when persisting invoices. This helps with audits and future migrations.
+> [!TIP]
+> To show which index you selected, log the array index alongside the law text when persisting invoices. This helps with audits and future migrations.
 
 ## Validating Inputs
 

@@ -218,7 +218,8 @@ $item = ItemData::make([
 ]);
 ```
 
-> **Note:** This is required for maintaining compatibility across providers, even if some providers don't strictly require it.
+> [!NOTE]
+> This is required for maintaining compatibility across providers, even if some providers don't strictly require it.
 
 ## Complete Example
 

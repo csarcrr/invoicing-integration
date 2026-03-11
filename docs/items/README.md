@@ -2,7 +2,8 @@
 
 The item management API lets you create and manage products or services in your provider's catalog, independently of issuing invoices.
 
-> **Note:** Item management is separate from invoice line items. When you include an `ItemData` inside `InvoiceData`, you're describing a line on an invoice. When you use `Item::create()`, you're registering a product in the provider's catalog.
+> [!NOTE]
+> Item management is separate from invoice line items. When you include an `ItemData` inside `InvoiceData`, you're describing a line on an invoice. When you use `Item::create()`, you're registering a product in the provider's catalog.
 
 ## When to use item management
 
@@ -38,7 +39,7 @@ echo $created->id; // provider-assigned ID
 
 | Operation     | Docs                                       |
 | ------------- |--------------------------------------------|
-| Create an item | [Creating an Item](items/creating-an-item) |
+| Create an item | [Creating an Item](creating-an-item.md) |
 
 ## Provider support
 
