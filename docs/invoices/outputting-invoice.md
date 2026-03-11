@@ -151,7 +151,8 @@ if ($result->output) {
 }
 ```
 
-> **Note:** ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
+> [!NOTE]
+> ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
 
 ## Output Object Methods
 

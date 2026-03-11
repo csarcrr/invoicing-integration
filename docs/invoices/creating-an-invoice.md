@@ -121,7 +121,8 @@ $invoiceData = InvoiceData::make([
 ]);
 ```
 
-> **Note:** Quantity must be greater than zero. Setting zero or negative values throws an `UnsupportedQuantityException`.
+> [!NOTE]
+> Quantity must be greater than zero. Setting zero or negative values throws an `UnsupportedQuantityException`.
 
 ### Applying Discounts
 
@@ -173,7 +174,8 @@ $items[] = ItemData::make([
 ]);
 ```
 
-> **Note:** Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. See
+> [!NOTE]
+> Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. See
 > [Tax Exemptions](invoices/tax-exemption.md?id=working-with-tax-exemptions-1) for the complete list of `M` codes and validation rules.
 
 ## Adding Payments
@@ -216,7 +218,8 @@ $invoiceData = InvoiceData::make([
 ]);
 ```
 
-> **Important:** Ensure payment method IDs are configured in your provider settings. See [Cegid Vendus Configuration](../providers/cegid-vendus/configuration.md).
+> [!WARNING]
+> Ensure payment method IDs are configured in your provider settings. See [Cegid Vendus Configuration](../providers/cegid-vendus/configuration.md).
 
 ## Document Types
 
@@ -258,7 +261,8 @@ $invoiceData = InvoiceData::make([
 Invoice::create($invoiceData)->execute();
 ```
 
-> **Note:** Setting a due date on non-FT document types throws an exception.
+> [!NOTE]
+> Setting a due date on non-FT document types throws an exception.
 
 ## Notes
 

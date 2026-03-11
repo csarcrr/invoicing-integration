@@ -113,12 +113,8 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 | --------------------------------------- | --------------- | ---------------------------------------------------- |
 | `Invoice::create(InvoiceData $invoice)` | `ShouldCreateInvoice` | Creates a builder seeded with the provided DTO state |
 
-> **Facade vs. Action:** The `Invoice` facade resolves the underlying
-> `InvoiceAction` class from the service container. Prefer the facade for day-to-day
-> usage. Resolve `InvoiceAction` directly only when you need to inject the class
-> (e.g., in constructors) or swap the implementation during testing. The facade is
-> now the canonical entry point; there is no standalone `Invoice` class you need to
-> instantiate manually.
+> [!TIP]
+> The `Invoice` facade resolves the underlying `InvoiceAction` class from the service container. Prefer the facade for day-to-day usage. Resolve `InvoiceAction` directly only when you need to inject the class (e.g., in constructors) or swap the implementation during testing.
 
 ## ShouldCreateInvoice Contract
 
@@ -383,7 +379,8 @@ $transport = TransportData::make([
 
 The hydrated `InvoiceData` returned after issuing an invoice. Contains the provider's response data.
 
-> **OutputData vs Output:** The `output` property on the returned `InvoiceData` is an `OutputData` instance (the same type used as the input DTO). It is hydrated with the provider's file content after `execute()`. All file-handling methods (`save()`, `fileName()`, `content()`) live directly on `OutputData` — there is no separate `Output` value object. The "Output" section below describes the same `OutputData` methods accessible via `$result->output`.
+> [!NOTE]
+> The `output` property on the returned `InvoiceData` is an `OutputData` instance (the same type used as the input DTO). It is hydrated with the provider's file content after `execute()`. All file-handling methods (`save()`, `fileName()`, `content()`) live directly on `OutputData` — there is no separate `Output` value object. The "Output" section below describes the same `OutputData` methods accessible via `$result->output`.
 
 **Properties:**
 

@@ -78,7 +78,8 @@ $clientData = ClientData::make([
 | `emailNotification` | Auto-send invoices via email           |
 | `defaultPayDue`     | Default payment due (days)             |
 
-> **Note:** Required fields vary by provider. If a required field is missing, the provider will return an explicit error message.
+> [!NOTE]
+> Required fields vary by provider. If a required field is missing, the provider will return an explicit error message.
 
 ## Complete Example
 

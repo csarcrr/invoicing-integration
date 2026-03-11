@@ -67,7 +67,8 @@ $client->emailNotification;// Email notification flag (bool)
 $client->defaultPayDue;    // Default payment due days
 ```
 
-> **Note:** Properties not set in the provider will return `null`.
+> [!NOTE]
+> Properties not set in the provider will return `null`.
 
 ## Complete Example
 
