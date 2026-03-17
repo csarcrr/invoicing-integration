@@ -89,7 +89,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     }
 
     /**
-     * Get the payload to send to the provider
+     * Find the payload to send to the provider
      *
      * @return Collection<string, mixed>
      *
