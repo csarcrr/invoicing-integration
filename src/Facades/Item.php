@@ -6,11 +6,13 @@ namespace CsarCrr\InvoicingIntegration\Facades;
 
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static ShouldCreateItem create(ItemData $item)
+ * @method static ShouldGetItem get(ItemData $item)
  *
  * @see \CsarCrr\InvoicingIntegration\Actions\ItemAction
  */
