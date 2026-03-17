@@ -22,13 +22,13 @@ $invoiceData = InvoiceData::make([
 
 $result = Invoice::create($invoiceData)->execute()->getInvoice();
 
-// Get the invoice sequence number (provider's reference)
+// Find the invoice sequence number (provider's reference)
 $sequence = $result->sequence; // e.g., "FT 01P2025/1"
 
-// Get the internal ID (provider's database ID)
+// Find the internal ID (provider's database ID)
 $id = $result->id; // e.g., 12345678
 
-// Get the output object (PDF or ESC/POS data, may be null)
+// Find the output object (PDF or ESC/POS data, may be null)
 $output = $result->output;
 ```
 
