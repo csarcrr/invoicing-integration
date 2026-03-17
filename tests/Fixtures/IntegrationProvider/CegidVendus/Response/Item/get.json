@@ -11,5 +11,6 @@
     "tax_exemption": "M40",
     "tax_exemption_law": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
     "category_id": 1,
-    "status": "on"
+    "status": "on",
+    "lot_control": "1"
 }
