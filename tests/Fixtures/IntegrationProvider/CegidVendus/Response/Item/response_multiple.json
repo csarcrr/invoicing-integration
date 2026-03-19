@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1001,
+        "title": "Item Title",
+        "reference": "reference-1",
+        "barcode": "barcode-1",
+        "description": "Item Description",
+        "gross_price": 20.00,
+        "unit_id": 19999,
+        "type_id": "P",
+        "stock_control": "1",
+        "tax_id": "ISE",
+        "tax_exemption": "M40",
+        "status": "on"
+    },
+    {
+        "id": 1002,
+        "title": "Another Item",
+        "reference": "reference-2",
+        "barcode": "barcode-2",
+        "description": "Another Description",
+        "gross_price": 45.00,
+        "unit_id": 19999,
+        "type_id": "S",
+        "stock_control": "0",
+        "tax_id": "NOR",
+        "status": "on"
+    },
+    {
+        "id": 1003,
+        "title": "Third Item",
+        "reference": "reference-3",
+        "barcode": "barcode-3",
+        "description": "Third Description",
+        "gross_price": 10.50,
+        "unit_id": 19999,
+        "type_id": "P",
+        "stock_control": "1",
+        "tax_id": "INT",
+        "status": "off"
+    }
+]
