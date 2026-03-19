@@ -86,6 +86,11 @@ test('maps all response fields onto the returned ClientData', function (Provider
     expect($client->name)->toBe('Marta Silva')
         ->and($client->email)->toBe('marta.silva@example.com')
         ->and($client->vat)->toBe('215783920');
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($client->emailNotification)->toBeTrue()
+            ->and($client->irsRetention)->toBeFalse(),
+    };
 })->with('providers', ['response_multiple']);
 
 test('absent response fields remain Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
