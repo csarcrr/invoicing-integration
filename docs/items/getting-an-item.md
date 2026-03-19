@@ -1,4 +1,4 @@
-****************# Getting an Item
+# Getting an Item
 
 Retrieve an existing item from your provider's catalog using `Item::get()`.
 

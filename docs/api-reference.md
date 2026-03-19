@@ -73,10 +73,11 @@ Entry point for managing items (product catalog). Use this facade to create prod
 use CsarCrr\InvoicingIntegration\Facades\Item;
 ```
 
-| Method                          | Return Type        | Description                          |
-| ------------------------------- | ------------------ | ------------------------------------ |
-| `Item::create(ItemData $item)`  | `ShouldCreateItem` | Creates a new item builder instance  |
-| `Item::get(ItemData $item)`     | `ShouldGetItem`    | Creates an item retrieval instance   |
+| Method                              | Return Type        | Description                          |
+| ----------------------------------- | ------------------ | ------------------------------------ |
+| `Item::create(ItemData $item)`      | `ShouldCreateItem` | Creates a new item builder instance  |
+| `Item::get(ItemData $item)`         | `ShouldGetItem`    | Creates an item retrieval instance   |
+| `Item::find(?ItemData $item = null)` | `ShouldFindItem`  | Lists/paginates provider catalog items |
 
 ## ShouldGetItem Contract
 
@@ -100,6 +101,30 @@ $item->name;                // mapped from provider's `title` field
 $item->description;         // mapped directly
 $item->getAdditionalData(); // all other provider fields (barcode, gross_price, tax_id, …)
 ```
+
+## ShouldFindItem Contract
+
+Search/paginate provider catalog items via `Item::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindItem;
+```
+
+| Method             | Return Type  | Description                                   |
+| ------------------ | ------------ | --------------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request              |
+| `getList()`        | `Collection` | `Collection<ItemData>` results                |
+| `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
+| `next()`           | `self`       | Move to the next page                         |
+| `previous()`       | `self`       | Go back one page                              |
+| `page(int $page)`  | `self`       | Jump to a specific page                       |
+| `getCurrentPage()` | `int`        | Current page index                            |
+| `getTotalPages()`  | `int`        | Total pages reported by provider              |
+
+> `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
+> outside the available range.
+
+---
 
 ## ShouldCreateItem Contract
 
