@@ -36,7 +36,7 @@ class Get extends Item implements ShouldGetItem
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function fillProperties(array $data): void
     {
