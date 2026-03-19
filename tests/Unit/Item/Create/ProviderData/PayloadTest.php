@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
 use CsarCrr\InvoicingIntegration\Facades\Item;
@@ -17,7 +18,7 @@ it('transforms item data to provider payload', function (Provider $provider, str
         'barcode' => 'barcode-1',
         'category' => CategoryData::make(['id' => 1]),
         'price' => 2000,
-        'tax' => CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax::EXEMPT,
+        'tax' => ItemTax::EXEMPT,
         'taxExemptionReason' => TaxExemptionReason::M40,
         'taxExemptionLaw' => TaxExemptionReason::M40->laws()[0],
         'unit' => Unit::KG,
