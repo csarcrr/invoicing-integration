@@ -37,12 +37,14 @@ echo $created->id; // provider-assigned ID
 
 ## Available operations
 
-| Operation     | Docs                                       |
-| ------------- |--------------------------------------------|
-| Create an item | [Creating an Item](creating-an-item.md) |
+| Operation      | Docs                                        |
+| -------------- | ------------------------------------------- |
+| Create an item | [Creating an Item](creating-an-item.md)     |
+| Get an item    | [Getting an Item](getting-an-item.md)       |
 
 ## Provider support
 
 | Operation   | Cegid Vendus | Moloni | Invoice Express |
 | ----------- | ------------ | ------ | --------------- |
 | Create Item | ✅           | ❌     | ❌              |
+| Get Item    | ✅           | ❌     | ❌              |

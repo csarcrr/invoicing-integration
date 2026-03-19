@@ -73,9 +73,33 @@ Entry point for managing items (product catalog). Use this facade to create prod
 use CsarCrr\InvoicingIntegration\Facades\Item;
 ```
 
-| Method                             | Return Type        | Description                            |
-| ---------------------------------- | ------------------ | -------------------------------------- |
-| `Item::create(ItemData $item)`     | `ShouldCreateItem` | Creates a new item builder instance    |
+| Method                          | Return Type        | Description                          |
+| ------------------------------- | ------------------ | ------------------------------------ |
+| `Item::create(ItemData $item)`  | `ShouldCreateItem` | Creates a new item builder instance  |
+| `Item::get(ItemData $item)`     | `ShouldGetItem`    | Creates an item retrieval instance   |
+
+## ShouldGetItem Contract
+
+The interface returned by `Item::get()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
+```
+
+| Method      | Return Type | Description                                                  | Throws                                     |
+| ----------- | ----------- | ------------------------------------------------------------ | ------------------------------------------ |
+| `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing) |
+| `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, and additional data) | — |
+
+Provider response fields that the package does not explicitly map onto `ItemData` are accessible via `getAdditionalData()` on the returned DTO:
+
+```php
+$item = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+$item->name;                // mapped from provider's `title` field
+$item->description;         // mapped directly
+$item->getAdditionalData(); // all other provider fields (barcode, gross_price, tax_id, …)
+```
 
 ## ShouldCreateItem Contract
 

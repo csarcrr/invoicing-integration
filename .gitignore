@@ -29,3 +29,4 @@ phpstan.neon
 testbench.yaml
 /coverage
 .DS_Store
+/.claude/agent-memory
