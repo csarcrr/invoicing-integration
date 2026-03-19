@@ -10,6 +10,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Spatie\LaravelData\Optional;
 
 beforeEach(function () {
     $this->headers = ['X-Paginator-Items' => 10, 'X-Paginator-Pages' => 5];
@@ -76,6 +77,28 @@ test('can go to the next page and then go back', function (Provider $provider, s
         ->and($results->getList()->count())->toBe(5)
         ->and($results->getTotalPages())->toBe(5);
 })->with('providers', ['response']);
+
+test('maps all response fields onto the returned ClientData', function (Provider $provider, string $fixtureName) {
+    Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
+
+    $client = Client::find()->execute()->getList()->first();
+
+    expect($client->name)->toBe('Marta Silva')
+        ->and($client->email)->toBe('marta.silva@example.com')
+        ->and($client->vat)->toBe('215783920');
+})->with('providers', ['response_multiple']);
+
+test('absent response fields remain Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
+    Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
+
+    $client = Client::find()->execute()->getList()->first();
+
+    expect($client->id)->toBeInstanceOf(Optional::class)
+        ->and($client->email)->toBeInstanceOf(Optional::class)
+        ->and($client->vat)->toBeInstanceOf(Optional::class)
+        ->and($client->city)->toBeInstanceOf(Optional::class)
+        ->and($client->externalReference)->toBeInstanceOf(Optional::class);
+})->with('providers', ['response_sparse']);
 
 test('fails when attempting to go above or below the allowed pages', function (Provider $provider, string $fixtureName, int $page) {
     Http::fakeSequence()
