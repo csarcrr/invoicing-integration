@@ -107,8 +107,22 @@ class Find extends Client implements ShouldFindClient
     {
         $this->list = collect($results)->map(function (array $item) {
             $data = [];
-            // todo: improve this since the response fields might be similar to the dto ones
+
+            ! empty($item['id']) && $data['id'] = $item['id'];
             ! empty($item['name']) && $data['name'] = $item['name'];
+            ! empty($item['email']) && $data['email'] = $item['email'];
+            ! empty($item['fiscal_id']) && $data['vat'] = $item['fiscal_id'];
+            ! empty($item['city']) && $data['city'] = $item['city'];
+            ! empty($item['address']) && $data['address'] = $item['address'];
+            ! empty($item['postalcode']) && $data['postalCode'] = $item['postalcode'];
+            ! empty($item['country']) && $data['country'] = $item['country'];
+            ! empty($item['default_pay_due']) && $data['defaultPayDue'] = $item['default_pay_due'];
+            ! empty($item['notes']) && $data['notes'] = $item['notes'];
+            ! empty($item['phone']) && $data['phone'] = $item['phone'];
+            ! empty($item['external_reference']) && $data['externalReference'] = $item['external_reference'];
+            ! empty($item['send_email']) && $data['emailNotification'] = $item['send_email'];
+            ! empty($item['irs_retention']) && $data['irsRetention'] = $item['irs_retention'];
+            ! empty($item['status']) && $data['status'] = $item['status'];
 
             return ClientData::from($data);
         })->values();
