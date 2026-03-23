@@ -32,6 +32,16 @@ uses(TestCase::class)->in('Unit', 'Feature');
 
 function mockConfiguration(Provider $provider): void
 {
+    if ($provider === Provider::MOLONI) {
+        config()->set('invoicing-integration.provider', $provider->value);
+        config()->set('invoicing-integration.providers.'.$provider->value, [
+            'developer_id' => 'test-developer-id',
+            'client_secret' => 'test-client-secret',
+            'authorization_code' => 'test-auth-code',
+            'callback_url' => 'https://example.com/callback',
+        ]);
+    }
+
     if ($provider === Provider::CEGID_VENDUS) {
         config()->set('invoicing-integration.provider', $provider->value);
         config()->set('invoicing-integration.providers.'.$provider->value, [
