@@ -32,13 +32,14 @@ final class HttpConfiguration
             ->connectTimeout(10);
     }
 
-    private static function moloni () : PendingRequest {
+    private static function moloni(): PendingRequest
+    {
         $config = ProviderConfiguration::getConfig();
 
         $auth = (new SolveMoloniAuthentication($config))->execute()->getPayload();
 
         return Http::withHeaders([
-            'Authorization' => 'Bearer '. $auth['access_token'],
+            'Authorization' => 'Bearer '.$auth['access_token'],
         ])
             ->baseUrl('https://api.moloni.pt/v1/')
             ->timeout(30)
