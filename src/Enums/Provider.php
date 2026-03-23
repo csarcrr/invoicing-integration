@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Enums\Providers\SupportedCegidVendusProperties;
 enum Provider: string
 {
     case CEGID_VENDUS = 'CegidVendus';
+    case MOLONI = 'MOLONI';
 
     /**
      * @return array<string>

@@ -99,6 +99,57 @@ return [
 
         ],
 
+        'Moloni' => [
+
+            /*
+            |----------------------------------------------------------------------
+            | Developer ID
+            |----------------------------------------------------------------------
+            |
+            | Your Moloni Developer ID, obtained when registering your application
+            | in the Moloni developer portal.
+            |
+            */
+
+            'developer_id' => env('MOLONI_DEVELOPER_ID', null),
+
+            /*
+            |----------------------------------------------------------------------
+            | Client Secret
+            |----------------------------------------------------------------------
+            |
+            | Your Moloni client secret, used alongside the developer ID to
+            | authenticate your application with the Moloni API.
+            |
+            */
+
+            'client_secret' => env('MOLONI_CLIENT_SECRET', null),
+
+            /*
+            |----------------------------------------------------------------------
+            | Authorization Code
+            |----------------------------------------------------------------------
+            |
+            | @todo explanation
+            |
+            */
+
+            'authorization_code' => env('MOLONI_AUTHORIZATION_CODE', null),
+
+            /*
+            |----------------------------------------------------------------------
+            | Callback URL
+            |----------------------------------------------------------------------
+            |
+            | The URL Moloni will redirect to after the OAuth authorization flow.
+            | Must match the callback URL registered in your Moloni application.
+            |
+            */
+
+            'callback_url' => env('MOLONI_CALLBACK_URL', null),
+
+        ],
+
     ],
 
 ];
