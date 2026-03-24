@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ShouldGetClient get(ClientData $client)
  * @method static ShouldFindClient find(?ClientData $client = null)
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\ClientAction
+ * @see ClientAction
  */
 class Client extends Facade
 {
