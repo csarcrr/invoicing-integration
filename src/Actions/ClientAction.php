@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
@@ -30,6 +31,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Create($client),
+            Provider::MOLONI => throw new OperationNotSupportedException,
         };
     }
 
@@ -40,6 +42,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Get($client),
+            Provider::MOLONI => throw new OperationNotSupportedException,
         };
     }
 
@@ -50,6 +53,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Find($client),
+            Provider::MOLONI => throw new OperationNotSupportedException,
         };
     }
 }
