@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Enums;
 
 use CsarCrr\InvoicingIntegration\Enums\Providers\SupportedCegidVendusProperties;
+use CsarCrr\InvoicingIntegration\Enums\Providers\SupportedMoloniProperties;
 
 enum Provider: string
 {
@@ -18,7 +19,7 @@ enum Provider: string
     {
         return match ($this) {
             self::CEGID_VENDUS => SupportedCegidVendusProperties::from($property->value)->properties(),
-            self::MOLONI => [],
+            self::MOLONI => SupportedMoloniProperties::from($property->value)->properties(),
         };
     }
 }

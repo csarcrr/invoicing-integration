@@ -14,6 +14,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedExcep
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Get;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Create as MoloniCreate;
 
 /**
  * Orchestrates item operations by routing them to the correct provider implementation.
@@ -31,7 +32,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => (new Create($item))->config($this->provider->getConfig()),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => (new MoloniCreate($item))->config($this->provider->getConfig()),
         };
     }
 
