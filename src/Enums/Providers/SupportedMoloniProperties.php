@@ -12,7 +12,7 @@ enum SupportedMoloniProperties: string
     public function properties(): array
     {
         return match ($this) {
-            self::Item => [],
+            self::Item => ['company_id', 'category_id', 'type', 'name', 'reference', 'price', 'unit_id', 'has_stock', 'stock', 'taxes'],
         };
     }
 }
