@@ -67,11 +67,11 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
     protected function buildGrantUrl(): string
     {
         return 'https://api.moloni.pt/v1/grant/?'.http_build_query([
-            'grant_type' => 'authorization_code',
+            'grant_type' => 'password',
             'client_id' => $this->config['developer_id'],
-            'redirect_uri' => $this->config['callback_url'],
             'client_secret' => $this->config['client_secret'],
-            'code' => $this->config['authorization_code'],
+            'username' => $this->config['username'],
+            'password' => $this->config['password'],
         ]);
     }
 

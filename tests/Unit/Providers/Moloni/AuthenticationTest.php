@@ -47,11 +47,11 @@ it('builds the correct OAuth URL with all four query params', function () {
     Http::assertSent(function ($request) use ($config) {
         parse_str(parse_url($request->url(), PHP_URL_QUERY), $query);
 
-        return $query['grant_type'] === 'authorization_code'
+        return $query['grant_type'] === 'password'
             && $query['client_id'] === $config['developer_id']
-            && $query['redirect_uri'] === $config['callback_url']
             && $query['client_secret'] === $config['client_secret']
-            && $query['code'] === $config['authorization_code'];
+            && $query['username'] === $config['username']
+            && $query['password'] === $config['password'];
     });
 });
 

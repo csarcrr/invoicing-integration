@@ -39,6 +39,8 @@ function mockConfiguration(Provider $provider): void
             'client_secret' => 'test-client-secret',
             'authorization_code' => 'test-auth-code',
             'callback_url' => 'https://example.com/callback',
+            'username' => 'test-username',
+            'password' => 'test-password',
         ]);
     }
 

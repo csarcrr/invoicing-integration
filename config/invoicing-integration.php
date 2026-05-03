@@ -127,26 +127,23 @@ return [
 
             /*
             |----------------------------------------------------------------------
-            | Authorization Code
+            | Username
             |----------------------------------------------------------------------
             |
-            | @todo explanation
+            | Your Moloni account username - usually it is your email address
             |
             */
-
-            'authorization_code' => env('MOLONI_AUTHORIZATION_CODE', null),
+            'username' => env('MOLONI_USERNAME', null),
 
             /*
             |----------------------------------------------------------------------
-            | Callback URL
+            | Password
             |----------------------------------------------------------------------
             |
-            | The URL Moloni will redirect to after the OAuth authorization flow.
-            | Must match the callback URL registered in your Moloni application.
+            | Your Moloni account password.
             |
             */
-
-            'callback_url' => env('MOLONI_CALLBACK_URL', null),
+            'password' => env('MOLONI_PASSWORD', null),
 
         ],
 
