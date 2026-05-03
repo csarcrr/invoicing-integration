@@ -2,11 +2,25 @@
 
 ## Project Context
 
-- This is a Laravel framework package for invoicing system integrations
-- Package name: `csarcrr/invoicing-integration`
+- This is a Laravel framework package (`csarcrr/invoicing-integration`) providing a provider-agnostic API for Portuguese fiscal invoicing, currently supporting Cegid Vendus
 - Uses Pest PHP for testing
 - Uses PHPStan (Larastan) for static analysis
 - Uses Pint for code formatting/linting
+
+## Commands
+
+```bash
+composer test        # Run Pest tests in parallel
+composer analyse     # Run PHPStan static analysis (level 7)
+composer format      # Run Laravel Pint code formatter
+composer complete    # Run all: format + analyse + test
+```
+
+To run a single test file:
+
+```bash
+./vendor/bin/pest tests/Unit/Invoice/CreateTest.php
+```
 
 ## PHP Requirements
 
@@ -20,12 +34,56 @@
 - Uses `spatie/laravel-package-tools` for package scaffolding
 - Test against multiple Laravel versions using Orchestra Testbench
 
+## Architecture
+
+### Request Flow
+
+User calls a Facade → Action class → Provider implementation → HTTP → Provider API
+
+```
+Facades/Invoice::create(InvoiceData)
+  → Actions/InvoiceAction (match on Provider enum)
+    → Provider/CegidVendus/Invoice/Create
+      → buildPayload() assembles request
+        → Http::provider() macro (configured HTTP client)
+```
+
+### Key Directories
+
+- **`src/Actions/`** — Orchestrators that route operations to the correct provider implementation via `match` on `Provider` enum
+- **`src/Contracts/`** — Interfaces that all provider implementations must satisfy (e.g., `ShouldCreateInvoice`, `CreateClient`)
+- **`src/Data/`** — Spatie Laravel Data DTOs (`InvoiceData`, `ItemData`, `ClientData`, etc.) — validated on instantiation
+- **`src/Enums/`** — Strongly-typed domain enums (`InvoiceType`, `ItemTax`, `TaxExemptionReason`, `PaymentMethod`, `Provider`)
+- **`src/Provider/CegidVendus/`** — All Cegid Vendus-specific logic, mirroring the `Invoice/`, `Client/`, `Item/` sub-structure
+- **`src/Exceptions/`** — Domain exceptions organized by concern (`Providers/`, `Invoice/`, `Pagination/`)
+- **`src/Traits/`** — `HasMakeValidation`, `HasPaginator`, `HasConfig`, `EnumOptions`
+
+### Adding a New Provider
+
+1. Add a case to `Enums/Provider`
+2. Add provider config to `config/invoicing-integration.php`
+3. Implement the relevant contracts (e.g., `ShouldCreateInvoice`) in `src/Provider/<ProviderName>/`
+4. Add the provider case to the `match` in each `Action` class
+
+### HTTP Layer
+
+Two custom HTTP macros registered in the service provider:
+
+- `Http::provider()` — Returns a pre-configured HTTP client for the active provider
+- `Http::handleUnwantedFailures()` — Centralized mapping of HTTP status codes to domain exceptions
+
+### DTOs
+
+All domain data uses `Spatie\LaravelData`. DTOs validate on construction. Use `Optional` (from `src/Helpers/Properties.php`) when a field may be intentionally absent vs. `null`.
+
 ## Namespace Conventions
 
-- Main source namespace: `CsarCrr\InvoicingIntegration\` → `src/`
-- Database factories: `CsarCrr\InvoicingIntegration\Database\Factories\` → `database/factories/`
-- Tests namespace: `CsarCrr\InvoicingIntegration\Tests\` → `tests/`
-- Workbench app: `Workbench\App\` → `workbench/app/`
+| Path                  | Namespace                                          |
+| --------------------- | -------------------------------------------------- |
+| `src/`                | `CsarCrr\InvoicingIntegration\`                    |
+| `tests/`              | `CsarCrr\InvoicingIntegration\Tests\`              |
+| `database/factories/` | `CsarCrr\InvoicingIntegration\Database\Factories\` |
+| `workbench/app/`      | `Workbench\App\`                                   |
 
 ## Key Dependencies
 
@@ -44,9 +102,9 @@
 
 ## Testing
 
-- Write tests using Pest PHP syntax (not PHPUnit)
-- Use Pest's expressive API (`it()`, `test()`, `expect()`, etc.)
-- Use architecture tests with `pestphp/pest-plugin-arch`
+- Write tests using Pest PHP syntax — `it()`, `test()`, `expect()` — never raw PHPUnit
+- Use `pestphp/pest-plugin-arch` for architecture tests
+- Tests mirror `src/` structure under `tests/Unit/`
 - Run tests: `composer test`
 - Run tests with coverage: `composer test-coverage`
 
