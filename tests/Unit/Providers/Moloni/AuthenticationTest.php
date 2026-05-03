@@ -70,7 +70,7 @@ it('caches the token after a successful fetch', function () {
     (new SolveMoloniAuthentication($config))->execute();
 
     expect(Cache::has('invoicing_integration_moloni_access_token'))->toBeTrue();
-    expect(Cache::get('invoicing_integration_moloni_access_token'))->toMatchArray(['access_token' => 'test-access-token']);
+    expect(Cache::get('invoicing_integration_moloni_access_token'))->toMatchArray(['access_token' => 'test-access-token', 'refresh_token' => 'test-refresh-token']);
 });
 
 it('reuses the cached token without making a new HTTP request', function () {

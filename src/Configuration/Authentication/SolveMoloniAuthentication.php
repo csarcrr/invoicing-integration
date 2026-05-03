@@ -32,7 +32,7 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
         /** @var array<string, mixed>|null $cached */
         $cached = Cache::get($this->cacheKey);
 
-        if (! is_null($cached)) {
+        if (!is_null($cached)) {
             /** @var Collection<string, mixed> $payload */
             $payload = collect($cached);
             $this->payload = $payload;
@@ -42,7 +42,7 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
 
         $response = $this->fetch();
 
-        $this->cacheToken((string) $response['access_token'], (int) $response['expires_in']);
+        $this->cacheToken((string)$response['access_token'], (string)$response['refresh_token'], (int)$response['expires_in']);
 
         /** @var Collection<string, mixed> $payload */
         $payload = collect($response);
@@ -66,20 +66,20 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
 
     protected function buildGrantUrl(): string
     {
-        return 'https://api.moloni.pt/v1/grant/?'.http_build_query([
-            'grant_type' => 'password',
-            'client_id' => $this->config['developer_id'],
-            'client_secret' => $this->config['client_secret'],
-            'username' => $this->config['username'],
-            'password' => $this->config['password'],
-        ]);
+        return 'https://api.moloni.pt/v1/grant/?' . http_build_query([
+                'grant_type' => 'password',
+                'client_id' => $this->config['developer_id'],
+                'client_secret' => $this->config['client_secret'],
+                'username' => $this->config['username'],
+                'password' => $this->config['password'],
+            ]);
     }
 
-    protected function cacheToken(string $token, int $expiresIn): void
+    protected function cacheToken(string $token, string $refreshToken ,int $expiresIn): void
     {
         Cache::put(
             $this->cacheKey,
-            ['access_token' => $token],
+            ['access_token' => $token, 'refresh_token' => $refreshToken],
             $expiresIn - $this->refreshBufferSeconds,
         );
     }
