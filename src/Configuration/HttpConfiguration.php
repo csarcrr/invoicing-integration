@@ -16,7 +16,7 @@ final class HttpConfiguration
     {
         return match (ProviderConfiguration::getProvider()) {
             Provider::CEGID_VENDUS => self::cegidVendus(),
-            Provider::MOLONI => self::moloni(),
+            Provider::MOLONI => self::Moloni(),
         };
     }
 
@@ -32,15 +32,21 @@ final class HttpConfiguration
             ->connectTimeout(10);
     }
 
-    private static function moloni(): PendingRequest
+    /**
+     * @throws \Throwable Failed obtaining access_token
+     */
+    private static function Moloni(): PendingRequest
     {
         $config = ProviderConfiguration::getConfig();
         $auth = (new SolveMoloniAuthentication($config))->execute()->getPayload();
 
-        return Http::withHeaders([
-            'Authorization' => 'Bearer '.$auth->get('access_token'),
-        ])
-            ->baseUrl('https://api.moloni.pt/v1/')
+        throw_if(empty($auth['access_token']), \Exception::class, 'Could not authenticate with Moloni');
+
+        return Http::baseUrl('https://api.moloni.pt/v1/')
+            ->withQueryParameters([
+                'access_token' => $auth['access_token']
+            ])
+            ->withoutRedirecting()
             ->timeout(30)
             ->connectTimeout(10);
     }

@@ -23,13 +23,15 @@ class Create extends Item implements ShouldCreateItem
     public function __construct(protected ?ItemData $item)
     {
         $this->data = $item;
-        $this->payload = collect();
+        $this->payload = collect([
+            'company_id' => 287728684,
+        ]);
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
     }
 
     public function execute(): self
     {
-        $response = Http::provider()->post('products', $this->getPayload());
+        $response = Http::provider()->post('products/insert', $this->getPayload()->toArray())->dump();
 
         Http::handleUnwantedFailures($response);
 

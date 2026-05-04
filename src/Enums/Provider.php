@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Providers\SupportedMoloniProperties;
 enum Provider: string
 {
     case CEGID_VENDUS = 'CegidVendus';
-    case MOLONI = 'MOLONI';
+    case MOLONI = 'Moloni';
 
     /**
      * @return array<string>

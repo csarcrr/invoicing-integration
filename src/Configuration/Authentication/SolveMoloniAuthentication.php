@@ -75,7 +75,7 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
             ]);
     }
 
-    protected function cacheToken(string $token, string $refreshToken ,int $expiresIn): void
+    protected function cacheToken(string $token, string $refreshToken, int $expiresIn): void
     {
         Cache::put(
             $this->cacheKey,

@@ -16,6 +16,7 @@ use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -59,14 +60,25 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             throw_if($status === 401, UnauthorizedException::class);
 
             $body = $response->json();
-            /** @var array<int, array{code?: string, message?: string}> $errorList */
-            $errorList = $body['errors'] ?? [];
 
-            $messages = collect($errorList)->map(function (array $error): string {
-                return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
-            })->toArray();
+            $messages = [];
+
+            if(!empty($body['errors'])) {
+                $messages = collect($body['errors'])->map(function (array $error): string {
+                    return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
+                })->toArray();
+            }
+
+            if(!empty($body['error']) && !empty($body['error_description'])) {
+                $messages = ["{$body['error']}: {$body['error_description']}"];
+            }
 
             throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
+
+            Log::error('Failed handling unwanted failures.', [
+                'response' => $body,
+                'status' => $status,
+            ]);
 
             throw new Exception('The integration API request failed for an unknown reason.');
         });
