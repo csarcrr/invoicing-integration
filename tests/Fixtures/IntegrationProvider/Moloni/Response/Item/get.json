@@ -1,0 +1,22 @@
+{
+    "product_id": 1542,
+    "category_id": 12,
+    "type": 1,
+    "name": "Wireless Bluetooth Headphones",
+    "summary": "Over-ear wireless headphones with noise cancellation and 30-hour battery life.",
+    "reference": "WBH-2026-BLK",
+    "ean": "5601234567890",
+    "price": 89.99,
+    "unit_id": 3,
+    "has_stock": 1,
+    "stock": 42,
+    "image": "https://example.com/images/products/headphones.jpg",
+    "exemption_reason": "",
+    "category": {
+        "category_id": 12,
+        "parent_id": 2,
+        "name": "Audio Equipment",
+        "summary": "Speakers, headphones, microphones and other audio accessories.",
+        "image": "https://example.com/images/categories/audio-equipment.jpg"
+    }
+}

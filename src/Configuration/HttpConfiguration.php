@@ -5,8 +5,11 @@ namespace CsarCrr\InvoicingIntegration\Configuration;
 use CsarCrr\InvoicingIntegration\Configuration\Authentication\SolveMoloniAuthentication;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\RequestInterface;
 
 final class HttpConfiguration
 {
@@ -46,6 +49,14 @@ final class HttpConfiguration
             ->withQueryParameters([
                 'access_token' => $auth['access_token']
             ])
+            ->asForm()
+            ->withMiddleware(Middleware::mapRequest(function (RequestInterface $request) use ($config) {
+                $body = [];
+                parse_str($request->getBody()->getContents(), $body) ?? [];
+                $body['company_id'] = (int) $config['company_id'];
+
+                return $request->withBody(Utils::streamFor(http_build_query($body)));
+            }))
             ->withoutRedirecting()
             ->timeout(30)
             ->connectTimeout(10);

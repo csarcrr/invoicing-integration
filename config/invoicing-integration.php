@@ -145,6 +145,16 @@ return [
             */
             'password' => env('MOLONI_PASSWORD', null),
 
+            /*
+            |----------------------------------------------------------------------
+            | Company ID
+            |----------------------------------------------------------------------
+            |
+            | Your Moloni account company ID.
+            |
+            */
+            'company' => env('MOLONI_COMPANY_ID', null),
+
         ],
 
     ],

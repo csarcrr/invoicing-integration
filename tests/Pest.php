@@ -41,6 +41,17 @@ function mockConfiguration(Provider $provider): void
             'callback_url' => 'https://example.com/callback',
             'username' => 'test-username',
             'password' => 'test-password',
+            'company_id' => 123456,
+        ]);
+
+        Http::fake([
+            'api.moloni.pt/v1/grant/*' => mockResponse([
+                'access_token' => 'fresh-access-token',
+                'expires_in' => 3600,
+                'token_type' => 'bearer',
+                'scope' => null,
+                'refresh_token' => 'test-refresh-token',
+            ]),
         ]);
     }
 

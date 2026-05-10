@@ -49,6 +49,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Find($item),
+            Provider::MOLONI => throw new \Exception('Not currently supported'),
         };
     }
 }

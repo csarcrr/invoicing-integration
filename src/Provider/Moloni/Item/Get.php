@@ -29,9 +29,7 @@ class Get extends Item implements ShouldGetItem
         $this->data = $item;
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
 
-        $this->payload = collect([
-            'company_id' => 386389
-        ]);
+        $this->payload = collect([]);
     }
 
     /**
@@ -39,7 +37,7 @@ class Get extends Item implements ShouldGetItem
      */
     public function execute(): Get
     {
-        $request = Http::provider()->asForm()->post('/products/getOne/', $this->getPayload());
+        $request = Http::provider()->post('/products/getOne/', $this->getPayload());
 
         Http::handleUnwantedFailures($request);
 
@@ -76,15 +74,15 @@ class Get extends Item implements ShouldGetItem
 
         $this->data = ItemData::make([
             'id' => $this->data->id,
-            'reference' => $data['reference'],
-            'notes' => $data['notes'],
+            'reference' => $data['reference'] ?? null,
+            'notes' => $data['notes'] ?? null,
             'type' => $type,
-            'name' => $data['name'],
-            'price' => ($data['price'] + $data['taxes'][0]['value']) * 100,
-            'unit_id' => $data['unit_id'],
-            'has_stock' => $data['has_stock'],
-            'stock' => $data['stock'],
-            'tax' => ItemTax::from($data['taxes'][0]['tax']['vat_type'])
+            'name' => $data['name'] ?? null,
+            'price' => !empty($data['taxes']) && !empty($data['price']) ? ($data['price'] + $data['taxes'][0]['value']) * 100 : null,
+            'unit_id' => $data['unit_id'] ?? null,
+            'has_stock' => $data['has_stock'] ?? null,
+            'stock' => $data['stock'] ?? null,
+            'tax' => !empty($data['taxes']) ? ItemTax::from($data['taxes'][0]['tax']['vat_type']) : null
         ]);
     }
 }
