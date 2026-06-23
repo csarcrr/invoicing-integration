@@ -75,6 +75,7 @@ class Get extends Item implements ShouldGetItem
         $this->data = ItemData::make([
             'id' => $this->data->id,
             'reference' => $data['reference'] ?? null,
+            'description' => $data['summary'] ?? null,
             'notes' => $data['notes'] ?? null,
             'type' => $type,
             'name' => $data['name'] ?? null,

@@ -19,11 +19,19 @@ function fixtures(): Fixtures
 
 dataset('providers', [
     'vendus' => fn () => cegidVendusProvider(),
+    'moloni' => fn () => moloniProvider(),
 ]);
 
 function cegidVendusProvider(): Provider
 {
     mockConfiguration(Provider::CEGID_VENDUS);
+
+    return ProviderConfiguration::getProvider();
+}
+
+function moloniProvider(): Provider
+{
+    mockConfiguration(Provider::MOLONI);
 
     return ProviderConfiguration::getProvider();
 }
