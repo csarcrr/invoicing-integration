@@ -4,40 +4,34 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindItem;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
+use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Provider\Item;
-use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 use function collect;
 
-/**
- * Handles paginated item search against the Cegid Vendus API.
- */
 class Get extends Item implements ShouldGetItem
 {
-    public function __construct(protected ?ItemData $item = null)
+    /** @var Collection<string, mixed> */
+    protected Collection $payload;
+
+    public function __construct(ItemData $item)
     {
         $this->data = $item;
-        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
-
-        $this->payload = collect([]);
+        $this->payload = collect();
+        $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
     }
 
-    /**
-     * Sends the search request and populates the result list and pagination details.
-     */
-    public function execute(): Get
+    public function execute(): self
     {
-        $request = Http::provider()->post('/products/getOne/', $this->getPayload());
+        $request = Http::provider()->post('products/getOne', $this->getPayload()->toArray());
 
         Http::handleUnwantedFailures($request);
 
@@ -61,29 +55,33 @@ class Get extends Item implements ShouldGetItem
 
     protected function buildId(): void
     {
-        throw_if(!$this->item->id, \Exception::class, 'Moloni only is able to get an item via their ID.');
+        throw_if(! is_int($this->data->id), \InvalidArgumentException::class, 'Item ID is required.');
 
-        $this->item->id && $this->payload->put('product_id', $this->item->id);
+        $this->payload->put('product_id', $this->data->id);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function fillProperties(array $data): void
     {
-        $type = match($data['type']) {
-            1 => ItemType::Product,
-        };
+        $tax = $data['taxes'][0] ?? null;
 
         $this->data = ItemData::make([
             'id' => $this->data->id,
-            'reference' => $data['reference'] ?? null,
-            'description' => $data['summary'] ?? null,
-            'notes' => $data['notes'] ?? null,
-            'type' => $type,
             'name' => $data['name'] ?? null,
-            'price' => !empty($data['taxes']) && !empty($data['price']) ? ($data['price'] + $data['taxes'][0]['value']) * 100 : null,
-            'unit_id' => $data['unit_id'] ?? null,
-            'has_stock' => $data['has_stock'] ?? null,
-            'stock' => $data['stock'] ?? null,
-            'tax' => !empty($data['taxes']) ? ItemTax::from($data['taxes'][0]['tax']['vat_type']) : null
+            'description' => $data['summary'] ?? null,
+            'reference' => $data['reference'] ?? null,
+            'barcode' => $data['ean'] ?? null,
+            'category' => CategoryData::make(['id' => $data['category_id'] ?? null]),
+            'controlStock' => (bool) ($data['has_stock'] ?? true),
+            'type' => match ($data['type']) {
+                1 => ItemType::Product,
+                2 => ItemType::Service,
+                3 => ItemType::Other,
+            },
+            'tax' => $tax ? ItemTax::from($tax['tax']['vat_type']) : null,
+            'price' => $tax ? (int) round($data['price'] * (1 + $tax['value'] / 100) * 100) : null,
         ]);
     }
 }

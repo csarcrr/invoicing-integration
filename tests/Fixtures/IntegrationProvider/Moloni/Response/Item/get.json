@@ -6,7 +6,7 @@
     "summary": "A small product description used for testing purposes.",
     "reference": "WBH-2026-BLK",
     "ean": "5601234567890",
-    "price": 89.99,
+    "price": 20,
     "unit_id": 3,
     "has_stock": 1,
     "stock": 42,
@@ -18,5 +18,26 @@
         "name": "Audio Equipment",
         "summary": "Speakers, headphones, microphones and other audio accessories.",
         "image": "https://example.com/images/categories/audio-equipment.jpg"
-    }
+    },
+    "taxes": [
+        {
+            "product_id": 1542,
+            "tax_id": 1,
+            "value": 23,
+            "order": 0,
+            "cumulative": 0,
+            "tax": {
+                "tax_id": 1,
+                "type": 1,
+                "saft_type": 1,
+                "vat_type": "NOR",
+                "stamp_tax": "",
+                "name": "IVA Normal",
+                "value": 23,
+                "fiscal_zone": "PT",
+                "active_by_default": 1,
+                "exemption_reason": ""
+            }
+        }
+    ]
 }
