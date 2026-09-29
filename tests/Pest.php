@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
@@ -71,6 +72,11 @@ function mockConfiguration(Provider $provider): void
                 'scope' => null,
                 'refresh_token' => 'test-refresh-token',
             ]),
+        ]);
+
+        Cache::put('invoicing_integration_moloni_access_token', [
+            'access_token' => 'fresh-access-token',
+            'refresh_token' => 'test-refresh-token',
         ]);
     }
 
