@@ -1,0 +1,13 @@
+{
+    "name": "Item Title",
+    "reference": "reference-1",
+    "summary": "Item Description",
+    "ean": "barcode-1",
+    "type": 1,
+    "category_id": 1,
+    "unit_id": 19999,
+    "has_stock": 1,
+    "stock": 0,
+    "exemption_reason": "M40",
+    "price": 20
+}

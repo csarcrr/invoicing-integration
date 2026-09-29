@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Enums\Tax;
 
-enum ItemTax
+enum ItemTax: string
 {
-    case NORMAL;
-    case INTERMEDIATE;
-    case REDUCED;
-    case EXEMPT;
-    case OTHER;
+    case NORMAL = 'NOR';
+    case INTERMEDIATE = 'INT';
+    case REDUCED = 'RED';
+    case EXEMPT = 'ISE';
+    case OTHER = 'OUT';
 
     public function vendus(): string
     {

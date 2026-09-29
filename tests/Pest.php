@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
 use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 define('FIXTURES_PATH', __DIR__.'/Fixtures/');
@@ -19,11 +21,19 @@ function fixtures(): Fixtures
 
 dataset('providers', [
     'vendus' => fn () => cegidVendusProvider(),
+    'moloni' => fn () => moloniProvider(),
 ]);
 
 function cegidVendusProvider(): Provider
 {
     mockConfiguration(Provider::CEGID_VENDUS);
+
+    return ProviderConfiguration::getProvider();
+}
+
+function moloniProvider(): Provider
+{
+    mockConfiguration(Provider::MOLONI);
 
     return ProviderConfiguration::getProvider();
 }
@@ -39,6 +49,34 @@ function mockConfiguration(Provider $provider): void
             'client_secret' => 'test-client-secret',
             'authorization_code' => 'test-auth-code',
             'callback_url' => 'https://example.com/callback',
+            'username' => 'test-username',
+            'password' => 'test-password',
+            'company_id' => 123456,
+            'units' => [
+                'kg' => 19999,
+                'unit' => 29999,
+            ],
+            'taxes' => [
+                ItemTax::NORMAL->value => ['id' => 1, 'rate' => 23],
+                ItemTax::INTERMEDIATE->value => ['id' => 2, 'rate' => 13],
+                ItemTax::REDUCED->value => ['id' => 3, 'rate' => 6],
+                ItemTax::OTHER->value => ['id' => 4, 'rate' => 0],
+            ],
+        ]);
+
+        Http::fake([
+            'api.moloni.pt/v1/grant/*' => mockResponse([
+                'access_token' => 'fresh-access-token',
+                'expires_in' => 3600,
+                'token_type' => 'bearer',
+                'scope' => null,
+                'refresh_token' => 'test-refresh-token',
+            ]),
+        ]);
+
+        Cache::put('invoicing_integration_moloni_access_token', [
+            'access_token' => 'fresh-access-token',
+            'refresh_token' => 'test-refresh-token',
         ]);
     }
 
