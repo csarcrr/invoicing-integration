@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use CsarCrr\InvoicingIntegration\Tests\Fixtures\Fixtures;
 use CsarCrr\InvoicingIntegration\Tests\TestCase;
@@ -50,6 +51,16 @@ function mockConfiguration(Provider $provider): void
             'username' => 'test-username',
             'password' => 'test-password',
             'company_id' => 123456,
+            'units' => [
+                'kg' => 19999,
+                'unit' => 29999,
+            ],
+            'taxes' => [
+                ItemTax::NORMAL->value => ['id' => 1, 'rate' => 23],
+                ItemTax::INTERMEDIATE->value => ['id' => 2, 'rate' => 13],
+                ItemTax::REDUCED->value => ['id' => 3, 'rate' => 6],
+                ItemTax::OTHER->value => ['id' => 4, 'rate' => 0],
+            ],
         ]);
 
         Http::fake([

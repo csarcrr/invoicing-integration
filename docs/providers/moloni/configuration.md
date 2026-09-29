@@ -35,6 +35,18 @@ MOLONI_DEVELOPER_ID=your-developer-id
 MOLONI_CLIENT_SECRET=your-client-secret
 MOLONI_USERNAME=your-email@example.com
 MOLONI_PASSWORD=your-password
+MOLONI_COMPANY_ID=your-company-id
+
+# Measurement unit IDs (items)
+MOLONI_UNIT_KG_ID=
+MOLONI_UNIT_UNIT_ID=
+
+# Tax IDs (items)
+MOLONI_TAX_NORMAL_ID=
+MOLONI_TAX_INTERMEDIATE_ID=
+MOLONI_TAX_REDUCED_ID=
+MOLONI_TAX_OTHER_ID=
+MOLONI_TAX_OTHER_RATE=0
 ```
 
 #### `MOLONI_DEVELOPER_ID`
@@ -52,6 +64,18 @@ Your Moloni account username — usually your email address.
 #### `MOLONI_PASSWORD`
 
 Your Moloni account password.
+
+#### `MOLONI_COMPANY_ID`
+
+The ID of the Moloni company to operate on. It is sent automatically with every request.
+
+#### `MOLONI_UNIT_*_ID`
+
+Moloni measurement unit IDs, mapped to the values of the `Unit` enum (or any custom enum implementing `ShouldBeUnit`). Required when creating items with a `unit`; a missing mapping throws `CouldNotGetUnitIdException`.
+
+#### `MOLONI_TAX_*_ID`
+
+Moloni tax IDs, mapped to the values of the `ItemTax` enum. Each entry also holds the tax rate, which is used to convert the gross `price` of an item into the net price Moloni expects. Exempt items (`ItemTax::EXEMPT`) send no taxes and use `taxExemptionReason` instead. A missing mapping throws `CouldNotGetTaxIdException`.
 
 ### Token Management
 
@@ -72,8 +96,21 @@ The published configuration file (`config/invoicing-integration.php`) includes a
     'client_secret' => env('MOLONI_CLIENT_SECRET', null),
     'username' => env('MOLONI_USERNAME', null),
     'password' => env('MOLONI_PASSWORD', null),
+    'company_id' => env('MOLONI_COMPANY_ID', null),
+    'units' => [
+        'kg' => env('MOLONI_UNIT_KG_ID', null),
+        'unit' => env('MOLONI_UNIT_UNIT_ID', null),
+    ],
+    'taxes' => [
+        ItemTax::NORMAL->value => ['id' => env('MOLONI_TAX_NORMAL_ID', null), 'rate' => 23],
+        ItemTax::INTERMEDIATE->value => ['id' => env('MOLONI_TAX_INTERMEDIATE_ID', null), 'rate' => 13],
+        ItemTax::REDUCED->value => ['id' => env('MOLONI_TAX_REDUCED_ID', null), 'rate' => 6],
+        ItemTax::OTHER->value => ['id' => env('MOLONI_TAX_OTHER_ID', null), 'rate' => env('MOLONI_TAX_OTHER_RATE', 0)],
+    ],
 ],
 ```
+
+Items created in Moloni also require a `category` (`CategoryData` with an `id`); omitting it throws `MissingCategoryException`.
 
 No additional configuration is needed beyond setting the environment variables.
 
