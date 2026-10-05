@@ -116,7 +116,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     {
         $client = $this->data->client;
 
-        $this->payload->put('customer_id', 0);
+        $this->payload->put('customer_id', (int) $this->getConfig()->get('no_vat_client_id'));
 
         if (! ($client instanceof ClientData)) {
             return;

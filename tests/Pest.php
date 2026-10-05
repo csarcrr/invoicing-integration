@@ -52,6 +52,7 @@ function mockConfiguration(Provider $provider): void
             'username' => 'test-username',
             'password' => 'test-password',
             'company_id' => 123456,
+            'no_vat_client_id' => 999999,
             'payments' => [
                 PaymentMethod::CREDIT_CARD->value => 1999,
                 PaymentMethod::MONEY->value => 2999,

@@ -14,7 +14,6 @@ These required fields are sent as `0` until real values are defined:
 Sent as placeholders until real values are defined:
 
 - `document_set_id` is `0`
-- `customer_id` is `0` when the invoice has no client, or the client has no id (needs the final consumer id)
 - `product_id` is `0` and `name` is empty when the item has no id / name
 
 `InvoiceData` inputs not sent:

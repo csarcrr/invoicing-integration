@@ -339,7 +339,7 @@ Moloni creates the document with `status` `0` (documents are issued, `status` `1
 
 Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`.
 
-- **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, `customer_id` is `0`. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
+- **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
 - **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.
 - **Payments**: need the `MOLONI_PAYMENT_*_ID` mappings. On RG the sum of the payments is sent as `net_value`.
 - **Due date**: sent as `expiration_date`; today when not set.

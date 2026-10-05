@@ -36,6 +36,7 @@ MOLONI_CLIENT_SECRET=your-client-secret
 MOLONI_USERNAME=your-email@example.com
 MOLONI_PASSWORD=your-password
 MOLONI_COMPANY_ID=your-company-id
+MOLONI_NO_VAT_CLIENT_ID=your-no-vat-customer-id
 
 # Measurement unit IDs (items)
 MOLONI_UNIT_KG_ID=
@@ -76,6 +77,10 @@ Your Moloni account password.
 
 The ID of the Moloni company to operate on. It is sent automatically with every request.
 
+#### `MOLONI_NO_VAT_CLIENT_ID`
+
+The ID of the Moloni customer used on invoices that have no client, or whose client has no `id`. When it is not set, `customer_id` is sent as `0` and Moloni rejects the document.
+
 #### `MOLONI_UNIT_*_ID`
 
 Moloni measurement unit IDs, mapped to the values of the `Unit` enum (or any custom enum implementing `ShouldBeUnit`). Required when creating items with a `unit`; a missing mapping throws `CouldNotGetUnitIdException`.
@@ -108,6 +113,7 @@ The published configuration file (`config/invoicing-integration.php`) includes a
     'username' => env('MOLONI_USERNAME', null),
     'password' => env('MOLONI_PASSWORD', null),
     'company_id' => env('MOLONI_COMPANY_ID', null),
+    'no_vat_client_id' => env('MOLONI_NO_VAT_CLIENT_ID', null),
     'payments' => [
         PaymentMethod::MB->value => env('MOLONI_PAYMENT_MB_ID', null),
         PaymentMethod::CREDIT_CARD->value => env('MOLONI_PAYMENT_CREDIT_CARD_ID', null),
