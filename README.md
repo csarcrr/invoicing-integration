@@ -59,7 +59,7 @@ Always consult with legal and accounting professionals when implementing invoici
 ## Requirements
 
 - PHP 8.2+
-- Laravel 11.x or 12.x (`illuminate/contracts: ^11.0 || ^12.0`)
+- Laravel 11.x, 12.x or 13.x (`illuminate/contracts: ^11.0 || ^12.0 || ^13.0`)
 
 ## Installation
 
