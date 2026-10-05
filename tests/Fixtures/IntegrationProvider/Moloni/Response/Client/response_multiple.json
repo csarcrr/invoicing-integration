@@ -1,0 +1,387 @@
+[
+    {
+        "customer_id": 12001,
+        "number": "VEN-2024-001",
+        "name": "Marta Silva",
+        "vat": "215783920",
+        "address": "Rua do Limoeiro 45",
+        "city": "Porto",
+        "zip_code": "4300-215",
+        "country_id": 1,
+        "email": "marta.silva@example.com",
+        "website": "https://marta-silva.pt",
+        "phone": "220111333",
+        "fax": "",
+        "contact_name": "Marta Silva",
+        "contact_email": "marta.silva@example.com",
+        "contact_phone": "919 321 444",
+        "notes": "Prefers invoices by email",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 210,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 301,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 210,
+            "name": "10 Dias",
+            "days": 10,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 301,
+            "name": "Transferência Bancária"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    },
+    {
+        "customer_id": 12002,
+        "number": "GAIA-PO-77",
+        "name": "João Carvalho",
+        "vat": "190283746",
+        "address": "Av. da Republica 999",
+        "city": "Vila Nova de Gaia",
+        "zip_code": "4430-203",
+        "country_id": 1,
+        "email": "joao.carvalho@carv.pt",
+        "website": "https://carvalho-consulting.pt",
+        "phone": "223890123",
+        "fax": "",
+        "contact_name": "João Carvalho",
+        "contact_email": "joao.carvalho@carv.pt",
+        "contact_phone": "935 234 890",
+        "notes": "Requires PO before billing",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 230,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 301,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 230,
+            "name": "30 Dias",
+            "days": 30,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 301,
+            "name": "Transferência Bancária"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    },
+    {
+        "customer_id": 12003,
+        "number": "LXB-CLARA-03",
+        "name": "Clara Monteiro",
+        "vat": "298111765",
+        "address": "Rua do Alecrim 12",
+        "city": "Lisboa",
+        "zip_code": "1200-018",
+        "country_id": 1,
+        "email": "clara@monteirodesigns.com",
+        "website": "https://monteirodesigns.com",
+        "phone": "211345678",
+        "fax": "",
+        "contact_name": "Clara Monteiro",
+        "contact_email": "clara@monteirodesigns.com",
+        "contact_phone": "927 456 222",
+        "notes": "Call before shipment",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 220,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 302,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 220,
+            "name": "20 Dias",
+            "days": 20,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 302,
+            "name": "Numerário"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    },
+    {
+        "customer_id": 12004,
+        "number": "CBR-INV-908",
+        "name": "Bruno Ramos",
+        "vat": "305667421",
+        "address": "Estrada da Beira 88",
+        "city": "Coimbra",
+        "zip_code": "3020-123",
+        "country_id": 1,
+        "email": "bruno.ramos@ramos.pt",
+        "website": "https://ramoslog.pt",
+        "phone": "239567441",
+        "fax": "",
+        "contact_name": "Bruno Ramos",
+        "contact_email": "bruno.ramos@ramos.pt",
+        "contact_phone": "932 550 210",
+        "notes": "Send SMS for delivery",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 205,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 302,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 205,
+            "name": "5 Dias",
+            "days": 5,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 302,
+            "name": "Numerário"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    },
+    {
+        "customer_id": 12005,
+        "number": "EVR-FOOD-12",
+        "name": "Sofia Pires",
+        "vat": "276004512",
+        "address": "Rua da Figueira 5",
+        "city": "Évora",
+        "zip_code": "7005-112",
+        "country_id": 1,
+        "email": "sofia.pires@alentejofoods.pt",
+        "website": "https://alentejofoods.pt",
+        "phone": "266782134",
+        "fax": "",
+        "contact_name": "Sofia Pires",
+        "contact_email": "sofia.pires@alentejofoods.pt",
+        "contact_phone": "965 730 010",
+        "notes": "Offers seasonal discounts",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 225,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 301,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 225,
+            "name": "25 Dias",
+            "days": 25,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 301,
+            "name": "Transferência Bancária"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    },
+    {
+        "customer_id": 12006,
+        "number": "LEI-TECH-42",
+        "name": "Luís Figueira",
+        "vat": "180993341",
+        "address": "Rua Padre Cruz 210",
+        "city": "Leiria",
+        "zip_code": "2410-048",
+        "country_id": 1,
+        "email": "luis.figueira@figtech.pt",
+        "website": "https://figtech.pt",
+        "phone": "244810900",
+        "fax": "",
+        "contact_name": "Luís Figueira",
+        "contact_email": "luis.figueira@figtech.pt",
+        "contact_phone": "968 660 678",
+        "notes": "Send invoice PDF and XML",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 212,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 301,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 212,
+            "name": "12 Dias",
+            "days": 12,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 301,
+            "name": "Transferência Bancária"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    },
+    {
+        "customer_id": 12007,
+        "number": "GMR-ATELIER-55",
+        "name": "Helena Costa",
+        "vat": "250891667",
+        "address": "Largo do Toural 7",
+        "city": "Guimarães",
+        "zip_code": "4810-225",
+        "country_id": 1,
+        "email": "helena.costa@costatelier.pt",
+        "website": "https://costatelier.pt",
+        "phone": "253421998",
+        "fax": "",
+        "contact_name": "Helena Costa",
+        "contact_email": "helena.costa@costatelier.pt",
+        "contact_phone": "963 880 557",
+        "notes": "Has outstanding credit note",
+        "salesman_id": 0,
+        "discount": 0,
+        "credit_limit": 0,
+        "maturity_date_id": 245,
+        "payment_day": 0,
+        "field_notes": "",
+        "language_id": 1,
+        "payment_method_id": 302,
+        "delivery_method_id": 0,
+        "country": {
+            "country_id": 1,
+            "country": "Portugal",
+            "iso_3166_1": "pt"
+        },
+        "language": {
+            "language_id": 1,
+            "code": "PT",
+            "name": "Português"
+        },
+        "maturity_date": {
+            "maturity_date_id": 245,
+            "name": "45 Dias",
+            "days": 45,
+            "associated_discount": 0
+        },
+        "payment_method": {
+            "payment_method_id": 302,
+            "name": "Numerário"
+        },
+        "alternate_addresses": [],
+        "copies": [
+            {
+                "document_type_id": 1,
+                "copies": 2
+            }
+        ],
+        "associated_taxes": []
+    }
+]

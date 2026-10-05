@@ -1,0 +1,55 @@
+{
+    "customer_id": 99999,
+    "number": "AB892798/19",
+    "name": "Alberto Albertino",
+    "vat": "223098091",
+    "address": "Rua das Flores 125",
+    "city": "Porto",
+    "zip_code": "4100-100",
+    "country_id": 1,
+    "email": "alberto.albertino@aa.pt",
+    "website": "https://www.dominio.pt",
+    "phone": "222333444",
+    "fax": "",
+    "contact_name": "Alberto Albertino",
+    "contact_email": "alberto.albertino@aa.pt",
+    "contact_phone": "918 876 546",
+    "notes": "Client Notes",
+    "salesman_id": 0,
+    "discount": 0,
+    "credit_limit": 0,
+    "maturity_date_id": 215,
+    "payment_day": 0,
+    "field_notes": "",
+    "language_id": 1,
+    "payment_method_id": 301,
+    "delivery_method_id": 0,
+    "country": {
+        "country_id": 1,
+        "country": "Portugal",
+        "iso_3166_1": "pt"
+    },
+    "language": {
+        "language_id": 1,
+        "code": "PT",
+        "name": "Português"
+    },
+    "maturity_date": {
+        "maturity_date_id": 215,
+        "name": "15 Dias",
+        "days": 15,
+        "associated_discount": 0
+    },
+    "payment_method": {
+        "payment_method_id": 301,
+        "name": "Transferência Bancária"
+    },
+    "alternate_addresses": [],
+    "copies": [
+        {
+            "document_type_id": 1,
+            "copies": 2
+        }
+    ],
+    "associated_taxes": []
+}

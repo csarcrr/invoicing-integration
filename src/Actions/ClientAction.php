@@ -14,6 +14,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedExcep
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Create as MoloniCreate;
 
 /**
  * Orchestrates client operations by routing them to the correct provider implementation.
@@ -31,7 +32,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Create($client),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniCreate($client),
         };
     }
 

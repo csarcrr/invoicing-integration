@@ -254,7 +254,7 @@ ClientData::make([
 
 | Property            | Type               | Description                         |
 | ------------------- | ------------------ | ----------------------------------- |
-| `id`                | `Optional<int>`    | Provider-assigned identifier        |
+| `id`                | `Optional<string>` | Provider-assigned identifier        |
 | `name`              | `Optional<string>` | Client name (auto-trimmed)          |
 | `vat`               | `Optional<string>` | VAT / fiscal ID                     |
 | `email`             | `Optional<string>` | Email (validated)                   |
