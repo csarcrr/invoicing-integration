@@ -19,7 +19,6 @@ Sent as placeholders until real values are defined:
 `InvoiceData` inputs not sent:
 
 - item `reference`, `type`, `amountDiscount` and `taxExemptionLaw`
-- client fields other than `id` (Moloni only takes a `customer_id`)
 - transport origin / destination `country` (needs the Moloni country id) and destination `dateTime`
 - `output`: no PDF or ESC/POS is fetched (`documents/getPDFLink`)
 
