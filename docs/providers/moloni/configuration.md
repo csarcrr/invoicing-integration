@@ -1,7 +1,7 @@
 # Providers - Moloni - Configuration
 
 > [!NOTE]
-> Moloni support is actively being built. Authentication is currently implemented; other features (invoices, items, clients) are coming soon. Check the [Features](/features.md) page to track implementation progress.
+> Moloni support is actively being built. Authentication and client management (create, get, find) are implemented; other features are coming soon. Check the [Features](/features.md) page to track implementation progress.
 
 ## Authentication
 
@@ -116,7 +116,7 @@ No additional configuration is needed beyond setting the environment variables.
 
 ## Next Steps
 
-Once Moloni features (invoices, items, clients) are implemented, using them will follow the same patterns as other providers. See:
+Moloni features follow the same patterns as other providers. See:
 
 - [Creating an Invoice](/invoices/creating-an-invoice.md)
 - [Managing Clients](/clients/README.md)

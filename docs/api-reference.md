@@ -57,7 +57,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 | `previous()`       | `self`       | Go back one page                              |
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
-| `getTotalPages()`  | `int`        | Total pages reported by provider              |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported         |
 | `getClient()`      | `ClientData` | Current filter DTO (email, VAT, status, etc.) |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
@@ -119,7 +119,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 | `previous()`       | `self`       | Go back one page                              |
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
-| `getTotalPages()`  | `int`        | Total pages reported by provider              |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported         |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
 > outside the available range.

@@ -81,6 +81,13 @@ $clientData = ClientData::make([
 > [!NOTE]
 > Required fields vary by provider. If a required field is missing, the provider will return an explicit error message.
 
+### Moloni
+
+- `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
+- `id` is optional and is sent as the Moloni customer `number`. Without it, a number is generated from the VAT plus a random string.
+- After `execute()`, `id` holds that number. The Moloni `customer_id` (the one `Client::get()` expects) is in `getAdditionalData()`.
+- `country`, `irsRetention`, `emailNotification` and `defaultPayDue` are not sent. The country, language, payment method and maturity date ids are sent as `0` for now.
+
 ## Complete Example
 
 Here's a full example with all available fields:

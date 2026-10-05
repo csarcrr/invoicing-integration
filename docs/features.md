@@ -37,11 +37,11 @@ Features for managing clients independently of invoices.
 
 |               | Cegid Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
-| Create Client | ✅           | ❌     | ❌              |
-| Get Client    | ✅           | ❌     | ❌              |
+| Create Client | ✅           | ✅     | ❌              |
+| Get Client    | ✅           | ✅     | ❌              |
 | Update Client | ❌           | ❌     | ❌              |
 | Delete Client | ❌           | ❌     | ❌              |
-| List Clients  | ✅           | ❌     | ❌              |
+| List Clients  | ✅           | ✅     | ❌              |
 
 ## Invoicing
 

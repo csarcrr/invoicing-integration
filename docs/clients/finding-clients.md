@@ -45,6 +45,26 @@ $results = Client::find($filters)->execute();
 Filterable fields depend on the provider, but the `ClientData` DTO supports
 common attributes such as `email`, `vat`, `status`, and `externalReference`.
 
+## Searching on Moloni
+
+Moloni accepts a single search term, matched against the customer VAT, name
+and number. When several are set, only one is sent, in this order:
+
+1. `vat`
+2. `name`
+3. `id` (sent as the customer number)
+
+```php
+$results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
+```
+
+- At least one of the three is required; otherwise `InvalidArgumentException`
+  is thrown before the request, so `Client::find()` without filters is not
+  supported on Moloni.
+- Other filters (`email`, `status`, `externalReference`, `date`) are ignored.
+- Each returned client has `id` set to the Moloni `customer_id`, ready for
+  `Client::get()`.
+
 ## Pagination API
 
 `Client::find()` implements `next()`, `previous()`, and `page()` helpers through
@@ -62,7 +82,8 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
 ```
 
 - `getTotalPages()` reads the provider's `X-Paginator-Pages` header (defaults to
-  `1` if absent).
+  `1` if absent). It returns `null` when the provider does not report a total
+  (Moloni): keep calling `next()` until a page comes back empty.
 - Calling `next()` beyond the last page, `previous()` before page 1, or
   `page()` with an invalid value raises `NoMorePagesException`.
 
