@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\TransportData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -52,6 +53,50 @@ it('transforms to provider payload with transport details', function (Provider $
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['transport']);
+
+it('only sends transport details on document types that accept them', function (Provider $provider) {
+    $origin = AddressData::make([
+        'dateTime' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025)->setHour(10)->setMinute(5),
+        'address' => 'Rua das Flores, 125',
+        'city' => 'Porto',
+        'postalCode' => '4410-200',
+        'country' => 'PT',
+    ]);
+
+    $destination = AddressData::make([
+        'address' => 'Rua dos Paninhos, 521',
+        'city' => 'Porto',
+        'postalCode' => '4410-100',
+        'country' => 'PT',
+    ]);
+
+    $transport = TransportData::make([
+        'origin' => $origin,
+        'destination' => $destination,
+        'vehicleLicensePlate' => '00-AB-00',
+    ]);
+
+    $invoice = Invoice::create(
+        InvoiceData::make([
+            'type' => InvoiceType::Receipt,
+            'client' => ClientData::from(['name' => 'Client Name', 'vat' => '123456789']),
+            'items' => [ItemData::from(['reference' => 'reference-1'])],
+            'transport' => $transport,
+        ])
+    );
+
+    $payload = $invoice->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload)->toHaveKey('movement_of_goods'),
+        Provider::MOLONI => expect($payload)->not->toHaveKeys([
+            'delivery_datetime',
+            'delivery_departure_address',
+            'delivery_destination_address',
+            'vehicle_number_plate',
+        ]),
+    };
+})->with('providers');
 
 it('fails when no client is provided with transport', function (Provider $provider) {
     $origin = AddressData::make([

@@ -44,3 +44,20 @@ it('fails setting a due date in a type different than FT', function (Provider $p
     $invoice->getPayload();
 })->with('providers')
     ->throws(Exception::class, 'Due date can only be set for FT document types.');
+
+it('only sends an expiration date on document types that accept it', function (Provider $provider) {
+    $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Receipt,
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+        'payments' => [
+            PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
+        ],
+    ]));
+
+    $payload = $invoice->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('type'))->toBe(InvoiceType::Receipt->value),
+        Provider::MOLONI => expect($payload)->not->toHaveKey('expiration_date'),
+    };
+})->with('providers');

@@ -14,11 +14,10 @@ These required fields are sent as `0` until real values are defined:
 Sent as placeholders until real values are defined:
 
 - `document_set_id` is `0`
-- `product_id` is `0` and `name` is empty when the item has no id / name
 
 `InvoiceData` inputs not sent:
 
-- item `reference`, `type`, `amountDiscount` and `taxExemptionLaw`
+- item `type`, `amountDiscount` and `taxExemptionLaw`
 - transport origin / destination `country` (needs the Moloni country id) and destination `dateTime`
 - `output`: no PDF or ESC/POS is fetched (`documents/getPDFLink`)
 
@@ -29,6 +28,6 @@ Response:
 
 To confirm against the live API:
 
-- every field is sent to every document endpoint (e.g. `payments` on FT, `expiration_date` on NC)
+- GT and NC still send every field, whether or not their endpoint has it (e.g. `payments`, `expiration_date`)
 - `associated_documents.value` is sent as a gross amount
 - GT is mapped to `billsOfLading`

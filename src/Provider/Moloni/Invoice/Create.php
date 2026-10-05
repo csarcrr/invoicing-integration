@@ -228,6 +228,10 @@ class Create extends Invoice implements ShouldCreateInvoice
      */
     protected function buildPayments(): void
     {
+        if ($this->data->type === InvoiceType::Invoice) {
+            return;
+        }
+
         if (! ($this->data->payments instanceof Collection)) {
             return;
         }
@@ -264,6 +268,10 @@ class Create extends Invoice implements ShouldCreateInvoice
     {
         $transport = $this->data->transport;
 
+        if ($this->data->type === InvoiceType::Receipt) {
+            return;
+        }
+
         if ($transport instanceof Optional) {
             return;
         }
@@ -293,7 +301,9 @@ class Create extends Invoice implements ShouldCreateInvoice
      */
     protected function buildDueDate(): void
     {
-        $this->payload->put('expiration_date', Carbon::now()->toDateString());
+        if ($this->data->type !== InvoiceType::Receipt) {
+            $this->payload->put('expiration_date', Carbon::now()->toDateString());
+        }
 
         if (! ($this->data->dueDate instanceof Carbon)) {
             return;
@@ -343,6 +353,10 @@ class Create extends Invoice implements ShouldCreateInvoice
             return;
         }
 
+        if ($this->data->type !== InvoiceType::Receipt) {
+            return;
+        }
+
         $relatedDocument = is_string($this->data->relatedDocument) ? (int) $this->data->relatedDocument : 0;
 
         if (! $relatedDocument) {
@@ -377,10 +391,6 @@ class Create extends Invoice implements ShouldCreateInvoice
     {
         if ($this->data->payments instanceof Collection) {
             return (float) $this->data->payments->sum('amount') / 100;
-        }
-
-        if ($this->data->items instanceof Collection) {
-            return $this->itemsTotal($this->data->items);
         }
 
         return 0.0;

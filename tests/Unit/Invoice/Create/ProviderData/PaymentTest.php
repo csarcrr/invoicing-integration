@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -19,6 +20,7 @@ it('transforms to provider payload with single payment', function (Provider $pro
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::InvoiceReceipt,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [
                 PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
@@ -34,6 +36,7 @@ it('transforms to provider payload with multiple payments', function (Provider $
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::InvoiceReceipt,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [
                 PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
@@ -44,6 +47,25 @@ it('transforms to provider payload with multiple payments', function (Provider $
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['payment_multiple']);
+
+it('only sends payments on document types that accept them', function (Provider $provider) {
+    $invoice = Invoice::create(
+        InvoiceData::make([
+            'type' => InvoiceType::Invoice,
+            'items' => [ItemData::from(['reference' => 'reference-1'])],
+            'payments' => [
+                PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
+            ],
+        ])
+    );
+
+    $payload = $invoice->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload)->toHaveKey('payments'),
+        Provider::MOLONI => expect($payload)->not->toHaveKey('payments'),
+    };
+})->with('providers');
 
 it('throws error when configuration is not set', function (Provider $provider) {
     config()->set('invoicing-integration.providers.'.$provider->value.'.payments', [
@@ -56,6 +78,7 @@ it('throws error when configuration is not set', function (Provider $provider) {
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::InvoiceReceipt,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD])],
         ])

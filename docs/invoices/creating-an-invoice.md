@@ -341,10 +341,10 @@ Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts
 
 - **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
 - **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.
-- **Payments**: need the `MOLONI_PAYMENT_*_ID` mappings. On RG the sum of the payments is sent as `net_value`.
-- **Due date**: sent as `expiration_date`; today when not set.
-- **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not.
-- **Related document**: must be the numeric Moloni `document_id`. It is sent with the payments total as its value, or the items total when there are no payments.
+- **Payments**: need the `MOLONI_PAYMENT_*_ID` mappings. Not sent on FT, whose endpoint has no payments. On RG the sum of the payments is sent as `net_value`.
+- **Due date**: sent as `expiration_date`; today when not set. Not sent on RG.
+- **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not. Nothing is sent on RG.
+- **Related document**: only sent on RG, as the invoice the receipt settles. It must be the numeric Moloni `document_id` and is sent with the payments total as its value. FT, FR and FS do not send it.
 - **Document set**: `document_set_id` is sent as `0` for now.
 - **Response**: only `id` (the Moloni `document_id`) is filled. `sequence` is empty and `total`, `totalNet` and the ATCUD are not returned. No output is returned, see [Output Formats](outputting-invoice.md).
 

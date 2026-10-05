@@ -111,10 +111,10 @@ Features that apply when issuing an Invoicing.
     </tr>
     <tr>
       <td>Related Document</td>
+      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
       <td>✅</td><td>✅</td><td>❌</td>
-      <td>✅</td><td>✅</td><td>❌</td>
-      <td>✅</td><td>✅</td><td>❌</td>
-      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>❌</td><td>❌</td>
       <td>❌</td><td>✅</td><td>❌</td>
     </tr>
   </tbody>
