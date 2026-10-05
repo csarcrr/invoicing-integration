@@ -15,8 +15,9 @@ it('can set the client id', function (Provider $provider) {
 
     Client::get($client)->execute();
 
-    Http::assertSent(function (Request $request) {
-        return Str::contains($request->url(), '999999');
+    Http::assertSent(fn (Request $request) => match ($provider) {
+        Provider::CEGID_VENDUS => Str::contains($request->url(), '999999'),
+        Provider::MOLONI => Str::contains($request->body(), 'customer_id=999999'),
     });
 })->with('providers');
 
