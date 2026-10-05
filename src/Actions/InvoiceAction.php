@@ -8,8 +8,8 @@ use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Create;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice\Create as MoloniCreate;
 
 /**
  * Orchestrates invoice operations by routing them to the correct provider implementation.
@@ -27,7 +27,7 @@ final class InvoiceAction
     {
         return match ($this->providerConfiguration->getProvider()) {
             Provider::CEGID_VENDUS => (new Create($invoice))->config($this->providerConfiguration->getConfig()),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => (new MoloniCreate($invoice))->config($this->providerConfiguration->getConfig()),
         };
     }
 }

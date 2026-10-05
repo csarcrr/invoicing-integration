@@ -203,6 +203,9 @@ if ($result->output) {
 
 RG documents require the original invoice reference and at least one payment. No items or client details are needed. For full payment, the total should match the original invoice amount. For partial payments, issue separate receipts for each installment. Ensure payment method IDs are configured in your provider settings.
 
+> [!NOTE]
+> On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice.
+
 ---
 
 Next: [Creating a Credit Note (NC)](creating-a-nc-invoice.md)

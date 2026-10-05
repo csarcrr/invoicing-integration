@@ -158,6 +158,24 @@ return [
 
             /*
             |----------------------------------------------------------------------
+            | Payment Methods
+            |----------------------------------------------------------------------
+            |
+            | Maps each PaymentMethod enum value to its numeric Moloni payment
+            | method ID.
+            |
+            */
+
+            'payments' => [
+                PaymentMethod::MB->value => env('MOLONI_PAYMENT_MB_ID', null),
+                PaymentMethod::CREDIT_CARD->value => env('MOLONI_PAYMENT_CREDIT_CARD_ID', null),
+                PaymentMethod::CURRENT_ACCOUNT->value => env('MOLONI_PAYMENT_CURRENT_ACCOUNT_ID', null),
+                PaymentMethod::MONEY->value => env('MOLONI_PAYMENT_MONEY_ID', null),
+                PaymentMethod::MONEY_TRANSFER->value => env('MOLONI_PAYMENT_MONEY_TRANSFER_ID', null),
+            ],
+
+            /*
+            |----------------------------------------------------------------------
             | Units
             |----------------------------------------------------------------------
             |

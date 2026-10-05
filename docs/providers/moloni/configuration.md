@@ -1,7 +1,7 @@
 # Providers - Moloni - Configuration
 
 > [!NOTE]
-> Moloni support is actively being built. Authentication and client management (create, get, find) are implemented; other features are coming soon. Check the [Features](/features.md) page to track implementation progress.
+> Moloni support is actively being built. Authentication, client management (create, get, find), item create and get, and invoice creation are implemented; other features are coming soon. Check the [Features](/features.md) page to track implementation progress.
 
 ## Authentication
 
@@ -47,6 +47,13 @@ MOLONI_TAX_INTERMEDIATE_ID=
 MOLONI_TAX_REDUCED_ID=
 MOLONI_TAX_OTHER_ID=
 MOLONI_TAX_OTHER_RATE=0
+
+# Payment method IDs (invoices)
+MOLONI_PAYMENT_MB_ID=
+MOLONI_PAYMENT_CREDIT_CARD_ID=
+MOLONI_PAYMENT_CURRENT_ACCOUNT_ID=
+MOLONI_PAYMENT_MONEY_ID=
+MOLONI_PAYMENT_MONEY_TRANSFER_ID=
 ```
 
 #### `MOLONI_DEVELOPER_ID`
@@ -77,6 +84,10 @@ Moloni measurement unit IDs, mapped to the values of the `Unit` enum (or any cus
 
 Moloni tax IDs, mapped to the values of the `ItemTax` enum. Each entry also holds the tax rate, which is used to convert the gross `price` of an item into the net price Moloni expects. Exempt items (`ItemTax::EXEMPT`) send no taxes and use `taxExemptionReason` instead. A missing mapping throws `CouldNotGetTaxIdException`.
 
+#### `MOLONI_PAYMENT_*_ID`
+
+Moloni payment method IDs, mapped to the values of the `PaymentMethod` enum. Required when an invoice has payments; a missing mapping throws an `Exception` with the message `Payment method not configured.`.
+
 ### Token Management
 
 You don't need to handle token lifecycles manually. The package manages Moloni tokens automatically:
@@ -97,6 +108,13 @@ The published configuration file (`config/invoicing-integration.php`) includes a
     'username' => env('MOLONI_USERNAME', null),
     'password' => env('MOLONI_PASSWORD', null),
     'company_id' => env('MOLONI_COMPANY_ID', null),
+    'payments' => [
+        PaymentMethod::MB->value => env('MOLONI_PAYMENT_MB_ID', null),
+        PaymentMethod::CREDIT_CARD->value => env('MOLONI_PAYMENT_CREDIT_CARD_ID', null),
+        PaymentMethod::CURRENT_ACCOUNT->value => env('MOLONI_PAYMENT_CURRENT_ACCOUNT_ID', null),
+        PaymentMethod::MONEY->value => env('MOLONI_PAYMENT_MONEY_ID', null),
+        PaymentMethod::MONEY_TRANSFER->value => env('MOLONI_PAYMENT_MONEY_TRANSFER_ID', null),
+    ],
     'units' => [
         'kg' => env('MOLONI_UNIT_KG_ID', null),
         'unit' => env('MOLONI_UNIT_UNIT_ID', null),

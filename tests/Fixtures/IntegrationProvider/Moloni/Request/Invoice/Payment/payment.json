@@ -1,0 +1,9 @@
+{
+    "payments": [
+        {
+            "payment_method_id": 1999,
+            "date": "2025-06-15",
+            "value": 5
+        }
+    ]
+}

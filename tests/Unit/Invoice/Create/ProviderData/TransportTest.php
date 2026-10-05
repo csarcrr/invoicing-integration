@@ -13,6 +13,10 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSet
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Validation\ValidationException;
 
+beforeEach(function () {
+    Carbon::setTestNow('2025-06-15');
+});
+
 it('transforms to provider payload with transport details', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 

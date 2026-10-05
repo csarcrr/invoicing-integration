@@ -91,6 +91,17 @@ it('transforms to provider payload with correct tax type', function (Provider $p
     ['item_tax_ise', ItemTax::EXEMPT],
 ]);
 
+it('sends the item id to the provider when it identifies items by id', function (Provider $provider) {
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['id' => 1542, 'reference' => 'reference-1'])],
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['reference'])->toBe('reference-1'),
+        Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
+    };
+})->with('providers');
+
 it('has the item always with the default quantity of one', function () {
     $item = ItemData::from(['reference' => 'reference-1']);
 

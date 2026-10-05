@@ -177,6 +177,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCre
 | Method         | Return Type   | Description                                                       |
 | -------------- | ------------- | ----------------------------------------------------------------- |
 | `execute()`    | `self`        | Issue the HTTP request using the data contained in `InvoiceData`  |
+| `draft()`      | `static`      | Create the document as a draft (Moloni); ignored by Cegid Vendus  |
 | `getInvoice()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
 | `getPayload()` | `Collection`  | Inspect the payload that will be sent to the provider (debugging) |
 

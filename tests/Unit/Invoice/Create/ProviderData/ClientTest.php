@@ -45,3 +45,17 @@ it('fails when vat is not valid', function (Provider $provider) {
 
     $invoice->getPayload();
 })->with('providers')->throws(InvoiceRequiresClientVatException::class);
+
+it('sends the client id to the provider', function (Provider $provider) {
+    $payload = Invoice::create(
+        InvoiceData::make([
+            'items' => [ItemData::from(['reference' => 'reference-1'])],
+            'client' => ClientData::from(['id' => '12001', 'vat' => '123456789']),
+        ])
+    )->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('client')['id'])->toBe('12001'),
+        Provider::MOLONI => expect($payload->get('customer_id'))->toBe(12001),
+    };
+})->with('providers');

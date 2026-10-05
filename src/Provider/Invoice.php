@@ -15,6 +15,15 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 #[AllowDynamicProperties]
 class Invoice extends Base
 {
+    protected bool $draft = false;
+
+    public function draft(): static
+    {
+        $this->draft = true;
+
+        return $this;
+    }
+
     /**
      * Returns the current invoice DTO after an operation has been executed.
      */

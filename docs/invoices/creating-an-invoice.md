@@ -325,6 +325,29 @@ $invoiceData = InvoiceData::make([
 - Origin date is **required** when setting transport details
 - Country codes must be valid ISO 2-letter codes (PT, ES, FR, etc.)
 
+## Drafts
+
+Call `draft()` before `execute()` to create the document as a draft instead of issuing it:
+
+```php
+$result = Invoice::create($invoiceData)->draft()->execute()->getInvoice();
+```
+
+Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `draft()` and always issues the document.
+
+## Moloni
+
+Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`.
+
+- **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, `customer_id` is `0`. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
+- **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.
+- **Payments**: need the `MOLONI_PAYMENT_*_ID` mappings. On RG the sum of the payments is sent as `net_value`.
+- **Due date**: sent as `expiration_date`; today when not set.
+- **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not.
+- **Related document**: must be the numeric Moloni `document_id`. It is sent with the payments total as its value, or the items total when there are no payments.
+- **Document set**: `document_set_id` is sent as `0` for now.
+- **Response**: only `id` (the Moloni `document_id`) is filled. `sequence` is empty and `total`, `totalNet` and the ATCUD are not returned. No output is returned, see [Output Formats](outputting-invoice.md).
+
 ## Complete Example
 
 Full invoice with multiple items:

@@ -26,7 +26,7 @@ Features for managing items (product catalog) independently of invoices.
 
 |               | Cegid Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
-| Create Item   | ✅           | ❌     | ❌              |
+| Create Item   | ✅           | ✅     | ❌              |
 | Update Item   | ❌           | ❌     | ❌              |
 | Delete Item   | ❌           | ❌     | ❌              |
 | List Items    | ❌           | ❌     | ❌              |
@@ -71,51 +71,51 @@ Features that apply when issuing an Invoicing.
   <tbody>
     <tr>
       <td><a href="/#/features?id=client">Client</a></td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=item">Item</a></td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=payment">Payment</a></td>
       <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
       <td>✅</td><td>❌</td><td>❌</td>
     </tr>
     <tr>
       <td>Due Date</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
     </tr>
     <tr>
       <td><a href="/#/features?id=transport">Transport</a></td>
-      <td>❌</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
-      <td>⛔</td><td>❌</td><td>❌</td>
+      <td>❌</td><td>✅</td><td>❌</td>
+      <td>⛔</td><td>✅</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
+      <td>⛔</td><td>✅</td><td>❌</td>
+      <td>⛔</td><td>⛔</td><td>❌</td>
     </tr>
     <tr>
       <td>Related Document</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>✅</td><td>❌</td><td>❌</td>
-      <td>❌</td><td>❌</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>✅</td><td>✅</td><td>❌</td>
+      <td>❌</td><td>✅</td><td>❌</td>
     </tr>
   </tbody>
 </table>
@@ -133,6 +133,8 @@ Features that are "shared" between multiple Invoicing types.
 | Save as PDF   | ✅           | ❌     | ❌              |
 | Obtain ESCPOS | ✅           | ❌     | ❌              |
 
+Moloni documents can also be created as drafts with `draft()`.
+
 #### Client
 
 |               | Cegid Vendus | Moloni | Invoice Express |
@@ -147,27 +149,29 @@ Features that are "shared" between multiple Invoicing types.
 | Phone         | ✅           | ❌     | ❌              |
 | IRS Retention | ✅           | ❌     | ❌              |
 
+On Moloni the client is linked through its `id` (the Moloni `customer_id`); the fields above are not sent with the invoice.
+
 #### Item
 
 |                                 | Cegid Vendus | Moloni | Invoice Express |
 | ------------------------------- | ------------ | ------ | --------------- |
 | Reference                       | ✅           | ❌     | ❌              |
-| Item ID                         | ❌           | ❌     | ❌              |
-| Description                     | ✅           | ❌     | ❌              |
-| Price                           | ✅           | ❌     | ❌              |
-| Tax                             | ✅           | ❌     | ❌              |
-| Tax exempt with reason          | ✅           | ❌     | ❌              |
+| Item ID                         | ❌           | ✅     | ❌              |
+| Description                     | ✅           | ✅     | ❌              |
+| Price                           | ✅           | ✅     | ❌              |
+| Tax                             | ✅           | ✅     | ❌              |
+| Tax exempt with reason          | ✅           | ✅     | ❌              |
 | Type                            | ✅           | ❌     | ❌              |
-| Percentage Discount             | ✅           | ❌     | ❌              |
+| Percentage Discount             | ✅           | ✅     | ❌              |
 | Amount Discount                 | ✅           | ❌     | ❌              |
-| Related Document (Credit Notes) | ✅           | ❌     | ❌              |
+| Related Document (Credit Notes) | ✅           | ✅     | ❌              |
 
 #### Payment
 
 |                              | Cegid Vendus | Moloni | Invoice Express |
 | ---------------------------- | ------------ | ------ | --------------- |
-| Amount                       | ✅           | ❌     | ❌              |
-| Method (with integration ID) | ✅           | ❌     | ❌              |
+| Amount                       | ✅           | ✅     | ❌              |
+| Method (with integration ID) | ✅           | ✅     | ❌              |
 
 #### Transport
 

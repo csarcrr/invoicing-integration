@@ -1,0 +1,10 @@
+{
+    "delivery_datetime": "2025-12-12 10:05:00",
+    "delivery_departure_address": "Rua das Flores, 125",
+    "delivery_departure_city": "Porto",
+    "delivery_departure_zip_code": "4410-200",
+    "delivery_destination_address": "Rua dos Paninhos, 521",
+    "delivery_destination_city": "Porto",
+    "delivery_destination_zip_code": "4410-100",
+    "vehicle_number_plate": "00-AB-00"
+}

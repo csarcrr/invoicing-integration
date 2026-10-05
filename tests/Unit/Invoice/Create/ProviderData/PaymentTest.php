@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+beforeEach(function () {
+    Carbon::setTestNow('2025-06-15');
+});
 
 it('transforms to provider payload with single payment', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->payment()->files($fixtureName);
@@ -41,7 +46,7 @@ it('transforms to provider payload with multiple payments', function (Provider $
 })->with('providers', ['payment_multiple']);
 
 it('throws error when configuration is not set', function (Provider $provider) {
-    config()->set('invoicing-integration.providers.'.Provider::CEGID_VENDUS->value.'.payments', [
+    config()->set('invoicing-integration.providers.'.$provider->value.'.payments', [
         PaymentMethod::CREDIT_CARD->value => null,
         PaymentMethod::MONEY->value => null,
         PaymentMethod::MB->value => null,

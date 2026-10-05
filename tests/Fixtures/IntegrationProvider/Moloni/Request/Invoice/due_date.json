@@ -1,0 +1,10 @@
+{
+    "expiration_date": "2025-12-31",
+    "payments": [
+        {
+            "payment_method_id": 1999,
+            "date": "2025-06-15",
+            "value": 5
+        }
+    ]
+}

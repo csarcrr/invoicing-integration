@@ -11,6 +11,10 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
+beforeEach(function () {
+    Carbon::setTestNow('2025-06-15');
+});
+
 it('transforms to provider payload with due date', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
