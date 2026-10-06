@@ -41,6 +41,15 @@ Two custom HTTP macros registered in the service provider:
 - `Http::provider()` — Returns a pre-configured HTTP client for the active provider
 - `Http::handleUnwantedFailures()` — Centralized mapping of HTTP status codes to domain exceptions
 
+### Provider API Docs
+
+Offline copies of the provider API docs live in `providers-docs/`. For any endpoint, parameter or response lookup, read the local copy first and go to the web only when the local docs lack what is needed.
+
+| Provider | Local docs |
+|---|---|
+| Moloni | `providers-docs/moloni/` (HTML pages, e.g. `providers-docs/moloni/dev/settings/payment-methods/insert/index.html`) |
+| Cegid Vendus | `providers-docs/vendus/` (`openapi.json` is the full API spec; `index.html` is its Redoc viewer) |
+
 ### Namespaces
 
 | Path | Namespace |
