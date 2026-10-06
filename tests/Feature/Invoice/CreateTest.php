@@ -37,6 +37,38 @@ test('handles invoice response correctly', function (Provider $provider, string 
 
 })->with('providers', ['full']);
 
+test('fills the sequence and totals from the provider response', function (Provider $provider, string $fixture) {
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]))->execute()->getInvoice();
+
+    expect($invoice->total)->toBe(3000)
+        ->and($invoice->totalNet)->toBe(2439);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($invoice->sequence)->toBe('FT 01P2025/1'),
+        Provider::MOLONI => expect($invoice->sequence)->toBe('FT A/12'),
+    };
+})->with('providers', ['full']);
+
+test('fetches the created document when the provider needs it', function (Provider $provider, string $fixture) {
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
+
+    Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]))->execute();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Http::assertSentCount(1),
+        Provider::MOLONI => Http::assertSent(
+            fn (Request $request) => Str::contains($request->url(), '/v1/documents/getOne')
+                && $request['document_id'] === 123456
+        ),
+    };
+})->with('providers', ['full']);
+
 test('sends each invoice type to the provider', function (Provider $provider, InvoiceType $type, string $moloniEndpoint) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
 

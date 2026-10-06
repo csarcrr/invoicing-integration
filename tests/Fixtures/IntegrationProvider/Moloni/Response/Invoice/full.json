@@ -1,4 +1,16 @@
 {
     "valid": 1,
-    "document_id": 123456
+    "document_id": 123456,
+    "number": 12,
+    "document_type": {
+        "document_type_id": 1,
+        "saft_code": "FT"
+    },
+    "document_set": {
+        "document_set_id": 1,
+        "name": "A"
+    },
+    "taxes_value": 5.61,
+    "net_value": 30.00,
+    "rsa_hash": "g9jP"
 }

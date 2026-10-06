@@ -15,7 +15,7 @@ enum SupportedMoloniProperties: string
     {
         return match ($this) {
             self::Client => ['name', 'vat', 'address', 'city', 'zip_code', 'email', 'phone', 'notes'],
-            self::Invoice => ['document_id'],
+            self::Invoice => ['document_id', 'number', 'net_value', 'taxes_value'],
             self::Item => ['product_id', 'category_id', 'type', 'name', 'summary', 'reference', 'ean', 'price', 'has_stock', 'taxes', 'exemption_reason'],
         };
     }

@@ -346,7 +346,7 @@ Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts
 - **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not. Nothing is sent on RG.
 - **Related document**: only sent on RG, as the invoice the receipt settles. It must be the numeric Moloni `document_id` and is sent with the payments total as its value. FT, FR and FS do not send it.
 - **Document set**: `document_set_id` is sent as `0` for now.
-- **Response**: only `id` (the Moloni `document_id`) is filled. `sequence` is empty and `total`, `totalNet` and the ATCUD are not returned. No output is returned, see [Output Formats](outputting-invoice.md).
+- **Response**: after the insert, a second request to `documents/getOne` fetches the created document. `id` is the Moloni `document_id`, `sequence` is built as `{type} {document set name}/{number}` (e.g. `FT A/12`), `total` is the document `net_value` and `totalNet` is `net_value` minus `taxes_value`. The other fields of the fetched document are available through `getAdditionalData()`. The ATCUD is not returned. No output is returned, see [Output Formats](outputting-invoice.md).
 
 ## Complete Example
 

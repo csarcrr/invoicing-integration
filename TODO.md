@@ -22,7 +22,7 @@ Sent as placeholders until real values are defined:
 
 Response:
 
-- `sequence` is empty and `total`, `totalNet` and the ATCUD are not filled (needs `getOne`)
+- the ATCUD is not filled (`getOne` does not return it)
 - errors returned with HTTP 200 are not detected
 
 To confirm against the live API:
@@ -30,3 +30,5 @@ To confirm against the live API:
 - GT and NC still send every field, whether or not their endpoint has it (e.g. `payments`, `expiration_date`)
 - `associated_documents.value` is sent as a gross amount
 - GT is mapped to `billsOfLading`
+- `sequence` is built as `{saft_code} {document set name}/{number}` from `documents/getOne`
+- `total` is `net_value` and `totalNet` is `net_value - taxes_value` from `documents/getOne`

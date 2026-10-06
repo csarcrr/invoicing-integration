@@ -54,11 +54,21 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         Http::handleUnwantedFailures($response);
 
+        $id = (int) ($response->json('document_id') ?? 0);
+
+        $response = Http::provider()->post('documents/getOne', ['document_id' => $id]);
+
+        Http::handleUnwantedFailures($response);
+
         $data = $response->json();
 
+        $total = (float) ($data['net_value'] ?? 0);
+
         $this->data = InvoiceData::from([
-            'id' => (int) ($data['document_id'] ?? 0),
-            'sequence' => '',
+            'id' => $id,
+            'sequence' => $this->sequence($data),
+            'total' => $this->toCents($total),
+            'totalNet' => $this->toCents($total - (float) ($data['taxes_value'] ?? 0)),
             'output' => $this->data->output,
             'items' => $this->data->items,
             'payments' => $this->data->payments,
@@ -68,6 +78,18 @@ class Create extends Invoice implements ShouldCreateInvoice
         $this->fillAdditionalProperties($data);
 
         return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $document
+     */
+    protected function sequence(array $document): string
+    {
+        $type = $document['document_type']['saft_code'] ?? '';
+        $set = $document['document_set']['name'] ?? '';
+        $number = $document['number'] ?? 0;
+
+        return "{$type} {$set}/{$number}";
     }
 
     /**
