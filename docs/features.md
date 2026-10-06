@@ -52,6 +52,15 @@ Features for managing due dates (payment terms) independently of invoices.
 | Create Due Date | ❌           | ✅     | ❌              |
 | List Due Dates  | ❌           | ✅     | ❌              |
 
+## Payment Method Management
+
+Features for managing the payment methods stored in the provider.
+
+|                       | Cegid Vendus | Moloni | Invoice Express |
+| --------------------- | ------------ | ------ | --------------- |
+| Create Payment Method | ❌           | ✅     | ❌              |
+| List Payment Methods  | ❌           | ✅     | ❌              |
+
 ## Invoicing
 
 Features that apply when issuing an Invoicing.

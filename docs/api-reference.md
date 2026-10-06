@@ -200,6 +200,56 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ---
 
+## PaymentMethod (Facade)
+
+Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
+```
+
+| Method                                                    | Return Type                 | Description                                   |
+| --------------------------------------------------------- | --------------------------- | --------------------------------------------- |
+| `PaymentMethod::create(PaymentMethodData $paymentMethod)` | `ShouldCreatePaymentMethod` | Creates a new payment method builder instance |
+| `PaymentMethod::find()`                                   | `ShouldFindPaymentMethod`   | Lists/paginates provider payment methods      |
+
+## ShouldCreatePaymentMethod Contract
+
+The interface returned by `PaymentMethod::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\ShouldCreatePaymentMethod;
+```
+
+| Method               | Return Type         | Description                                               |
+| -------------------- | ------------------- | --------------------------------------------------------- |
+| `execute()`          | `self`              | Send the create request and populate the response         |
+| `getPaymentMethod()` | `PaymentMethodData` | Access the hydrated DTO (includes provider-assigned `id`) |
+| `getPayload()`       | `Collection`        | Inspect the payload sent to the provider (debugging)      |
+
+## ShouldFindPaymentMethod Contract
+
+Paginate provider payment methods via `PaymentMethod::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\ShouldFindPaymentMethod;
+```
+
+| Method             | Return Type  | Description                             |
+| ------------------ | ------------ | --------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request        |
+| `getList()`        | `Collection` | `Collection<PaymentMethodData>` results |
+| `getPayload()`     | `Collection` | Current request payload (pagination)    |
+| `next()`           | `self`       | Move to the next page                   |
+| `previous()`       | `self`       | Go back one page                        |
+| `page(int $page)`  | `self`       | Jump to a specific page                 |
+| `getCurrentPage()` | `int`        | Current page index                      |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported   |
+
+> `previous()` and `page()` throw `NoMorePagesException` when you move below page 1.
+
+---
+
 ## Invoice
 
 Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, and GT documents.
@@ -414,6 +464,28 @@ $dueDate = DueDateData::make([
 | `name`   | `string` | Required. Name of the payment term     |
 | `days`   | `int`    | Required. Number of days until payment |
 | `id`     | `?int`   | Provider-assigned due date ID          |
+
+---
+
+### PaymentMethodData
+
+Represents a payment method stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\PaymentMethodData;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+
+$paymentMethod = PaymentMethodData::make([
+    'name' => 'Multibanco',
+    'type' => PaymentMethod::MB,
+]);
+```
+
+| Property | Type             | Description                                                         |
+| -------- | ---------------- | ------------------------------------------------------------------- |
+| `name`   | `string`         | Required. Name of the payment method                                |
+| `type`   | `?PaymentMethod` | Kind of payment method, `null` when the provider has no match for it |
+| `id`     | `?int`           | Provider-assigned payment method ID                                 |
 
 ---
 

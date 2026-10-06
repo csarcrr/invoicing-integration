@@ -19,6 +19,11 @@
     - [Creating a Due Date](due-dates/creating-a-due-date.md)
     - [Finding Due Dates](due-dates/finding-due-dates.md)
 
+- **Payment Methods**
+    - [Overview](payment-methods/README.md)
+    - [Creating a Payment Method](payment-methods/creating-a-payment-method.md)
+    - [Finding Payment Methods](payment-methods/finding-payment-methods.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)
