@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Actions\ClientAction;
+use CsarCrr\InvoicingIntegration\Actions\DueDateAction;
 use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
 use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
@@ -33,7 +34,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     {
         $this->setupHttpMacros();
 
-        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class])
+        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class, DueDateAction::class])
             ->needs(Provider::class)
             ->give(function () {
                 return ProviderConfiguration::getProvider();

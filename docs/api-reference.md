@@ -150,6 +150,56 @@ $created->getAdditionalData(); // fields from the provider response not handled 
 
 ---
 
+## DueDate
+
+Entry point for managing due dates (payment terms). Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\DueDate;
+```
+
+| Method                                 | Return Type           | Description                             |
+| -------------------------------------- | --------------------- | --------------------------------------- |
+| `DueDate::create(DueDateData $dueDate)` | `ShouldCreateDueDate` | Creates a new due date builder instance |
+| `DueDate::find()`                      | `ShouldFindDueDate`   | Lists/paginates provider due dates      |
+
+## ShouldCreateDueDate Contract
+
+The interface returned by `DueDate::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldCreateDueDate;
+```
+
+| Method         | Return Type   | Description                                               |
+| -------------- | ------------- | --------------------------------------------------------- |
+| `execute()`    | `self`        | Send the create request and populate the response         |
+| `getDueDate()` | `DueDateData` | Access the hydrated DTO (includes provider-assigned `id`) |
+| `getPayload()` | `Collection`  | Inspect the payload sent to the provider (debugging)      |
+
+## ShouldFindDueDate Contract
+
+Paginate provider due dates via `DueDate::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFindDueDate;
+```
+
+| Method             | Return Type  | Description                           |
+| ------------------ | ------------ | ------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request      |
+| `getList()`        | `Collection` | `Collection<DueDateData>` results     |
+| `getPayload()`     | `Collection` | Current request payload (pagination)  |
+| `next()`           | `self`       | Move to the next page                 |
+| `previous()`       | `self`       | Go back one page                      |
+| `page(int $page)`  | `self`       | Jump to a specific page               |
+| `getCurrentPage()` | `int`        | Current page index                    |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported |
+
+> `previous()` and `page()` throw `NoMorePagesException` when you move below page 1.
+
+---
+
 ## Invoice
 
 Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, and GT documents.
@@ -343,6 +393,27 @@ $category = CategoryData::make([
 | -------- | --------- | ---------------------------- |
 | `id`     | `?int`    | Provider-assigned category ID |
 | `name`   | `?string` | Category name                |
+
+---
+
+### DueDateData
+
+Represents a due date (payment term) stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\DueDateData;
+
+$dueDate = DueDateData::make([
+    'name' => '30 dias',
+    'days' => 30,
+]);
+```
+
+| Property | Type     | Description                            |
+| -------- | -------- | -------------------------------------- |
+| `name`   | `string` | Required. Name of the payment term     |
+| `days`   | `int`    | Required. Number of days until payment |
+| `id`     | `?int`   | Provider-assigned due date ID          |
 
 ---
 

@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
+use CsarCrr\InvoicingIntegration\Facades\DueDate;
+
+it('builds the pagination payload for the first page', function (Provider $provider) {
+    $find = fn () => DueDate::find();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
+        Provider::MOLONI => expect($find()->getPayload()->toArray())->toBe(['qty' => 20, 'offset' => 0]),
+    };
+})->with('providers');
+
+it('moves the offset when changing page', function (Provider $provider) {
+    $find = fn () => DueDate::find();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
+        Provider::MOLONI => expect($find()->next()->getPayload()->toArray())->toBe(['qty' => 20, 'offset' => 20]),
+    };
+})->with('providers');

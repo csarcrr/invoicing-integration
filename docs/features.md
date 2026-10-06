@@ -43,6 +43,15 @@ Features for managing clients independently of invoices.
 | Delete Client | ❌           | ❌     | ❌              |
 | List Clients  | ✅           | ✅     | ❌              |
 
+## Due Date Management
+
+Features for managing due dates (payment terms) independently of invoices.
+
+|                 | Cegid Vendus | Moloni | Invoice Express |
+| --------------- | ------------ | ------ | --------------- |
+| Create Due Date | ❌           | ✅     | ❌              |
+| List Due Dates  | ❌           | ✅     | ❌              |
+
 ## Invoicing
 
 Features that apply when issuing an Invoicing.

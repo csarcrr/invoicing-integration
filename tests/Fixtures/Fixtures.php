@@ -85,6 +85,13 @@ class Fixtures
         return $this;
     }
 
+    public function dueDate(): self
+    {
+        $this->path[] = 'DueDate';
+
+        return $this;
+    }
+
     public function tax(): self
     {
         $this->path[] = 'Tax';

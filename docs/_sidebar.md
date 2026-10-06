@@ -14,6 +14,11 @@
     - [Getting a Client](clients/getting-a-client.md)
     - [Finding Clients](clients/finding-clients.md)
 
+- **Due Dates**
+    - [Overview](due-dates/README.md)
+    - [Creating a Due Date](due-dates/creating-a-due-date.md)
+    - [Finding Due Dates](due-dates/finding-due-dates.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)

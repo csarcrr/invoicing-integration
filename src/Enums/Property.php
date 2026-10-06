@@ -9,4 +9,5 @@ enum Property: string
     case Client = 'client';
     case Item = 'item';
     case Invoice = 'invoice';
+    case DueDate = 'due_date';
 }
