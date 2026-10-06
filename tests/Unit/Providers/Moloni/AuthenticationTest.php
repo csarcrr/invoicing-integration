@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Configuration\Authentication\SolveMoloniAuthentication;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -43,7 +45,24 @@ it('caches the token after a successful fetch', function () {
     (new SolveMoloniAuthentication($config))->execute();
 
     expect(Cache::has('invoicing_integration_moloni_access_token'))->toBeTrue()
-        ->and(Cache::get('invoicing_integration_moloni_access_token'))->toMatchArray(['access_token' => 'fresh-access-token', 'refresh_token' => 'test-refresh-token']);
+        ->and(Cache::get('invoicing_integration_moloni_access_token'))->toBe(['access_token' => 'fresh-access-token']);
+});
+
+it('throws the Moloni error when the grant request fails', function () {
+    Http::swap(new Factory);
+    Http::fake([
+        'api.moloni.pt/v1/grant/*' => mockResponse([
+            'error' => 'invalid_grant',
+            'error_description' => 'Invalid username and password combination',
+        ], 400),
+    ]);
+
+    $config = config('invoicing-integration.providers.'.Provider::MOLONI->value);
+
+    expect(fn () => (new SolveMoloniAuthentication($config))->execute())
+        ->toThrow(RequestFailedException::class, 'invalid_grant: Invalid username and password combination');
+
+    expect(Cache::has('invoicing_integration_moloni_access_token'))->toBeFalse();
 });
 
 it('reuses the cached token without making a new HTTP request', function () {

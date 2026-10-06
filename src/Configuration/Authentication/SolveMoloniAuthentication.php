@@ -42,7 +42,7 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
 
         $response = $this->fetch();
 
-        $this->cacheToken((string)$response['access_token'], (string)$response['refresh_token'], (int)$response['expires_in']);
+        $this->cacheToken((string)$response['access_token'], (int)$response['expires_in']);
 
         /** @var Collection<string, mixed> $payload */
         $payload = collect($response);
@@ -60,8 +60,12 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
     /** @return array<string, mixed> */
     protected function fetch(): array
     {
+        $response = Http::get($this->buildGrantUrl());
+
+        Http::handleUnwantedFailures($response);
+
         /** @var array<string, mixed> */
-        return Http::get($this->buildGrantUrl())->json();
+        return $response->json();
     }
 
     protected function buildGrantUrl(): string
@@ -75,11 +79,11 @@ class SolveMoloniAuthentication implements ShouldExecute, ShouldHavePayload
             ]);
     }
 
-    protected function cacheToken(string $token, string $refreshToken, int $expiresIn): void
+    protected function cacheToken(string $token, int $expiresIn): void
     {
         Cache::put(
             $this->cacheKey,
-            ['access_token' => $token, 'refresh_token' => $refreshToken],
+            ['access_token' => $token],
             $expiresIn - $this->refreshBufferSeconds,
         );
     }

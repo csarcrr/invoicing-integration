@@ -23,7 +23,47 @@ We opted for the **password grant** because:
 - **Simpler setup** — developers only need to provide their Moloni credentials as environment variables
 - **No redirect flow** — no callback URLs, no manual code exchange, no browser redirects
 - **Consistent DX** — configuring Moloni feels the same as configuring any other provider in this package
-- **The package handles the rest** — token lifecycle (access + refresh) is managed entirely behind the scenes
+- **The package handles the rest** — the access token is requested, cached and renewed entirely behind the scenes
+
+### Obtaining Your Credentials
+
+You never request or store a token yourself. The package only needs the values below.
+
+#### Developer ID and Client Secret
+
+1. Register a Moloni account if you do not have one. Developing against the API does not require a paid plan.
+2. In Moloni, open **Configurações → Developers → Configuração de conta e API** and tick **Ativar API**.
+3. Fill in **Developer ID** (Moloni suggests your account slug) and **URI de Resposta (Callback)**. The callback is mandatory in the form but is not used by the password grant, so any URL you control works.
+4. Click **Atualizar**. Moloni generates the **Chave Secreta**: this is your Client Secret.
+
+Use the Developer ID as `MOLONI_DEVELOPER_ID` and the Chave Secreta as `MOLONI_CLIENT_SECRET`.
+
+#### Username and Password
+
+The login of the Moloni user whose company you want to operate on: the same email and password used at [moloni.pt](https://www.moloni.pt/). Use them as `MOLONI_USERNAME` and `MOLONI_PASSWORD`.
+
+#### Company ID
+
+Moloni does not show the company ID alongside the API settings. Ask the API for the companies your user can access:
+
+```bash
+curl -G "https://api.moloni.pt/v1/grant/" \
+  --data-urlencode "grant_type=password" \
+  --data-urlencode "client_id=$MOLONI_DEVELOPER_ID" \
+  --data-urlencode "client_secret=$MOLONI_CLIENT_SECRET" \
+  --data-urlencode "username=$MOLONI_USERNAME" \
+  --data-urlencode "password=$MOLONI_PASSWORD"
+```
+
+The response contains an `access_token` valid for 1 hour. Use it to list the companies:
+
+```bash
+curl -X POST "https://api.moloni.pt/v1/companies/getAll/?access_token=<access_token>"
+```
+
+Each entry has a `company_id`. Use the one you want as `MOLONI_COMPANY_ID`.
+
+The same `access_token` works for looking up the other IDs this page asks for (customers, measurement units, taxes, payment methods) through the matching Moloni endpoints, sending `company_id` in the POST body.
 
 ### Environment Variables
 
@@ -59,7 +99,7 @@ MOLONI_PAYMENT_MONEY_TRANSFER_ID=
 
 #### `MOLONI_DEVELOPER_ID`
 
-Your Moloni Developer ID, available in the [Moloni client area](https://www.moloni.pt/). This identifies your application when requesting access tokens.
+Your Moloni Developer ID (see [Obtaining Your Credentials](#obtaining-your-credentials)). This identifies your application when requesting access tokens.
 
 #### `MOLONI_CLIENT_SECRET`
 
@@ -98,9 +138,9 @@ Moloni payment method IDs, mapped to the values of the `PaymentMethod` enum. Req
 You don't need to handle token lifecycles manually. The package manages Moloni tokens automatically:
 
 - **Access token** — cached for its full validity period (1 hour), with a small buffer subtracted to avoid edge-case expirations
-- **Refresh token** — cached alongside the access token (valid for 14 days)
 - On each request, the package checks the cache first. If a valid token is found, it's reused without making a new HTTP request to Moloni's token endpoint
-- If the cache is empty or expired, a fresh token is requested automatically
+- If the cache is empty or expired, a fresh token is requested automatically with the password grant. Moloni's refresh token is not used
+- If Moloni rejects the credentials, a `RequestFailedException` is thrown with Moloni's error, for example `invalid_grant: ...`
 
 ### Configuration File
 

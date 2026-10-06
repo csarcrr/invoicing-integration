@@ -14,4 +14,4 @@ it('properly sets the auth for '.Provider::CEGID_VENDUS->value, function () {
 
     expect($headers)->toHaveKey('Authorization');
     expect($headers['Authorization'])->toBe('Bearer '.$config->get('key'));
-})->with('providers');
+});

@@ -47,8 +47,6 @@ function mockConfiguration(Provider $provider): void
         config()->set('invoicing-integration.providers.'.$provider->value, [
             'developer_id' => 'test-developer-id',
             'client_secret' => 'test-client-secret',
-            'authorization_code' => 'test-auth-code',
-            'callback_url' => 'https://example.com/callback',
             'username' => 'test-username',
             'password' => 'test-password',
             'company_id' => 123456,
@@ -84,7 +82,6 @@ function mockConfiguration(Provider $provider): void
 
         Cache::put('invoicing_integration_moloni_access_token', [
             'access_token' => 'fresh-access-token',
-            'refresh_token' => 'test-refresh-token',
         ]);
     }
 
