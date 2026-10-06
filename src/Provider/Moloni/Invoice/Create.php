@@ -169,7 +169,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'product_id' => (int) $item->id,
             'name' => (string) $item->name,
             'qty' => $item->quantity,
-            'price' => round(($item->price ?? 0) / 100 / (1 + ($tax['rate'] ?? 0) / 100), 4),
+            'price' => $this->unitPriceWithoutTax($item, $tax),
         ];
 
         if ($item->note) {
@@ -200,6 +200,17 @@ class Create extends Invoice implements ShouldCreateInvoice
         }
 
         return $product;
+    }
+
+    /**
+     * @param  array{id: int, rate: float}|null  $tax
+     */
+    protected function unitPriceWithoutTax(ItemData $item, ?array $tax): float
+    {
+        $priceWithTax = ($item->price ?? 0) / 100;
+        $taxMultiplier = 1 + ($tax['rate'] ?? 0) / 100;
+
+        return round($priceWithTax / $taxMultiplier, 4);
     }
 
     /**
