@@ -24,3 +24,15 @@ it('has the payload properly defined in the request', function () {
 
     expect(!empty($recorded->first()[0]))->toBeTrue();
 });
+
+it('asks for human readable errors', function () {
+    Http::fake(mockResponse(fixtures()->response()->item()->files('get')));
+
+    Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    $recorded = Http::recorded(function (Request $request) {
+        return Str::contains($request->url(), 'human_errors=true');
+    });
+
+    expect(!empty($recorded->first()[0]))->toBeTrue();
+});

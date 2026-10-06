@@ -20,9 +20,11 @@ use Illuminate\Support\Facades\Log;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
+use function array_is_list;
 use function collect;
 use function implode;
 use function in_array;
+use function is_array;
 use function throw_if;
 
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
@@ -51,6 +53,18 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
         Http::macro('handleUnwantedFailures', function (Response $response) {
             $status = $response->status();
+            $body = $response->json();
+
+            $validationErrors = collect(is_array($body) && array_is_list($body) ? $body : [])
+                ->map(fn (mixed $error): ?string => is_array($error) && isset($error['code'], $error['description'])
+                    ? "{$error['code']} - {$error['description']}"
+                    : null);
+
+            throw_if(
+                $validationErrors->isNotEmpty() && ! $validationErrors->contains(null),
+                RequestFailedException::class,
+                $validationErrors->implode('; ')
+            );
 
             if (in_array($status, [200, 201, 300, 301])) {
                 return;
@@ -58,8 +72,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
             throw_if($status === 500, FailedReachingProviderException::class);
             throw_if($status === 401, UnauthorizedException::class);
-
-            $body = $response->json();
 
             $messages = [];
 

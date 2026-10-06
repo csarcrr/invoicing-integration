@@ -23,7 +23,6 @@ Sent as placeholders until real values are defined:
 Response:
 
 - the ATCUD is not filled (`getOne` does not return it)
-- errors returned with HTTP 200 are not detected
 
 To confirm against the live API:
 
@@ -32,3 +31,4 @@ To confirm against the live API:
 - GT is mapped to `billsOfLading`
 - `sequence` is built as `{saft_code} {document set name}/{number}` from `documents/getOne`
 - `total` is `net_value` and `totalNet` is `net_value - taxes_value` from `documents/getOne`
+- validation errors come as a list of `code` and `description` entries with `human_errors=true`, and the HTTP status they use

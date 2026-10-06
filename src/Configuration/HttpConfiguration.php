@@ -47,7 +47,8 @@ final class HttpConfiguration
 
         return Http::baseUrl('https://api.moloni.pt/v1/')
             ->withQueryParameters([
-                'access_token' => $auth['access_token']
+                'access_token' => $auth['access_token'],
+                'human_errors' => 'true',
             ])
             ->asForm()
             ->withMiddleware(Middleware::mapRequest(function (RequestInterface $request) use ($config) {
