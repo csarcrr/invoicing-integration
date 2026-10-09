@@ -42,4 +42,4 @@ echo $paymentMethod->id; // provider-assigned ID
 
 On Cegid Vendus both operations throw `OperationNotSupportedException`.
 
-Creating or finding a payment method does not change the invoice configuration: invoice payments still read their IDs from the `payments` config (`MOLONI_PAYMENT_*_ID`).
+On Moloni, invoice payments use these records: each payment is sent with the ID of the first account payment method whose `type` matches its `method`. A payment with no matching record throws `CouldNotGetPaymentMethodIdException`.

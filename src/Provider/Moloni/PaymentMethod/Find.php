@@ -26,6 +26,7 @@ class Find implements ShouldFindPaymentMethod
     public function __construct()
     {
         $this->payload = collect();
+        $this->perPage = 50;
         $this->totalPages(null);
     }
 

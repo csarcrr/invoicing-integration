@@ -18,6 +18,8 @@ beforeEach(function () {
 });
 
 it('transforms to provider payload with credit note reason', function (Provider $provider, string $fixtureName) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -40,6 +42,8 @@ it('transforms to provider payload with credit note reason', function (Provider 
 })->with('providers', ['credit_note']);
 
 it('fails when reason is not applied', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::CreditNote,
         'items' => [ItemData::from([

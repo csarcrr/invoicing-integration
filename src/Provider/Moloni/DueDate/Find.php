@@ -25,6 +25,7 @@ class Find implements ShouldFindDueDate
     public function __construct()
     {
         $this->payload = collect();
+        $this->perPage = 50;
         $this->totalPages(null);
     }
 

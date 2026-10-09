@@ -6,7 +6,7 @@
     "net_value": 10,
     "payments": [
         {
-            "payment_method_id": 1999,
+            "payment_method_id": 7003,
             "date": "2025-06-15",
             "value": 10
         }

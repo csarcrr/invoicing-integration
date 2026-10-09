@@ -3,7 +3,7 @@
 A due date is a reusable payment term stored in the provider: a name and a number of days (for example "30 dias"). Moloni calls them maturity dates (_prazos de vencimento_).
 
 > [!NOTE]
-> This is not the same as `InvoiceData->dueDate`, which is the calendar date a single invoice is due. A `DueDateData` is an account-level payment term you can manage through the `DueDate` facade.
+> This is not the same as `InvoiceData->dueDate`, which is the `DueDateTerm` (number of days) a single invoice is due in. A `DueDateData` is an account-level payment term you can manage through the `DueDate` facade. On Moloni, an invoice with a `dueDate` is linked to the account due date with the same or closest number of days.
 
 ## Quick example
 

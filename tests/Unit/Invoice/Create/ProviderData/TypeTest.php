@@ -27,6 +27,8 @@ it('transforms to provider payload with default invoice type', function (Provide
 })->with('providers', ['default_type']);
 
 it('transforms to provider payload with correct invoice type', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $attributes = ['reference' => 'reference-1'];

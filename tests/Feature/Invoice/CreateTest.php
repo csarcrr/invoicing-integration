@@ -70,6 +70,7 @@ test('fetches the created document when the provider needs it', function (Provid
 })->with('providers', ['full']);
 
 test('sends each invoice type to the provider', function (Provider $provider, InvoiceType $type, string $moloniEndpoint) {
+    fakeProviderPaymentMethods($provider);
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
 
     $attributes = ['reference' => 'reference-1'];

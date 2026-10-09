@@ -56,8 +56,8 @@ Sample receipt response:
 Here's a complete example from invoice to receipt:
 
 ```php
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
@@ -78,7 +78,7 @@ $invoiceData = InvoiceData::make([
             'quantity' => 10,
         ]),
     ],
-    'dueDate' => Carbon::now()->addDays(30),
+    'dueDate' => DueDateTerm::Days30,
     'notes' => 'NET30 payment terms as agreed',
 ]);
 

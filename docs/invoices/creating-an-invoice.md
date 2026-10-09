@@ -247,19 +247,21 @@ $invoiceData = InvoiceData::make([
 
 ## Due Date
 
-For FT invoices where payment comes later, set a due date:
+For FT invoices where payment comes later, set a due date with a `DueDateTerm`:
 
 ```php
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 
 $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
-    'dueDate' => Carbon::now()->addDays(30),
+    'dueDate' => DueDateTerm::Days30,
 ]);
 
 Invoice::create($invoiceData)->execute();
 ```
+
+Available terms: `Days10`, `Days15`, `Days30`, `Days60`, `Days90` and `Days120`. The due date sent to the provider is today plus the term's days.
 
 > [!NOTE]
 > Setting a due date on non-FT document types throws an exception.
@@ -341,8 +343,8 @@ Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts
 
 - **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
 - **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.
-- **Payments**: need the `MOLONI_PAYMENT_*_ID` mappings. Not sent on FT, whose endpoint has no payments. On RG the sum of the payments is sent as `net_value`.
-- **Due date**: sent as `expiration_date`; today when not set. Not sent on RG.
+- **Payments**: one request to `paymentMethods/getAll` (first 50 payment methods) resolves each `payment_method_id`: the first account payment method whose type matches the payment's `method` (`MONEY`, `MB` or `CREDIT_CARD`, see [Finding Payment Methods](../payment-methods/finding-payment-methods.md#moloni)). A payment with no matching method throws `CouldNotGetPaymentMethodIdException`; `MONEY_TRANSFER` and `CURRENT_ACCOUNT` always do, because Moloni has no flag for them. Not sent on FT, whose endpoint has no payments, so FT makes no lookup. On RG the sum of the payments is sent as `net_value`.
+- **Due date**: sent as `expiration_date`; today when not set. Not sent on RG. When set, one request to `maturityDates/getAll` (first 50 due dates) resolves `maturity_date_id`: the due date with the same number of days, or the closest one when none matches (the shorter one on a tie). `maturity_date_id` is not sent when the account has no due dates.
 - **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not. Nothing is sent on RG.
 - **Related document**: only sent on RG, as the invoice the receipt settles. It must be the numeric Moloni `document_id` and is sent with the payments total as its value. FT, FR and FS do not send it.
 - **Document set**: `document_set_id` is sent as `0` for now.

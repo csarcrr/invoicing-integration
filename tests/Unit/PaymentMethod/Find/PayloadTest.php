@@ -11,7 +11,7 @@ it('builds the pagination payload for the first page', function (Provider $provi
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($find()->getPayload()->toArray())->toBe(['qty' => 20, 'offset' => 0]),
+        Provider::MOLONI => expect($find()->getPayload()->toArray())->toBe(['qty' => 50, 'offset' => 0]),
     };
 })->with('providers');
 
@@ -20,6 +20,6 @@ it('moves the offset when changing page', function (Provider $provider) {
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($find()->next()->getPayload()->toArray())->toBe(['qty' => 20, 'offset' => 20]),
+        Provider::MOLONI => expect($find()->next()->getPayload()->toArray())->toBe(['qty' => 50, 'offset' => 50]),
     };
 })->with('providers');

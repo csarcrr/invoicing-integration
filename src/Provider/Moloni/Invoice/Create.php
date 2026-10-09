@@ -7,9 +7,11 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\DueDateData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
@@ -18,15 +20,19 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocument
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentMethodIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Invoice;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
+use function abs;
 use function collect;
 use function is_null;
 use function throw_if;
@@ -257,6 +263,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     }
 
     /**
+     * @throws CouldNotGetPaymentMethodIdException
      * @throws Exception|\Throwable
      */
     protected function buildPayments(): void
@@ -269,14 +276,16 @@ class Create extends Invoice implements ShouldCreateInvoice
             return;
         }
 
-        $payments = $this->data->payments->map(function (PaymentData $payment): array {
+        $paymentMethods = (new FindPaymentMethod)->execute()->getList();
+
+        $payments = $this->data->payments->map(function (PaymentData $payment) use ($paymentMethods): array {
             $method = $payment->method;
 
             throw_if(! $method, Exception::class, 'Payment method not configured.');
 
-            $id = $this->getConfig()->get('payments')[$method->value] ?? null;
+            $id = $paymentMethods->firstWhere('type', $method)?->id;
 
-            throw_if(! $id, Exception::class, 'Payment method not configured.');
+            throw_if(is_null($id), CouldNotGetPaymentMethodIdException::class);
 
             return [
                 'payment_method_id' => (int) $id,
@@ -338,7 +347,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             $this->payload->put('expiration_date', Carbon::now()->toDateString());
         }
 
-        if (! ($this->data->dueDate instanceof Carbon)) {
+        if (! ($this->data->dueDate instanceof DueDateTerm)) {
             return;
         }
 
@@ -348,7 +357,23 @@ class Create extends Invoice implements ShouldCreateInvoice
             'Due date can only be set for FT document types.'
         );
 
-        $this->payload->put('expiration_date', $this->data->dueDate->toDateString());
+        $this->payload->put('expiration_date', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
+
+        $maturityDateId = $this->maturityDateId($this->data->dueDate);
+
+        if (! is_null($maturityDateId)) {
+            $this->payload->put('maturity_date_id', $maturityDateId);
+        }
+    }
+
+    protected function maturityDateId(DueDateTerm $term): ?int
+    {
+        return (new FindDueDate)->execute()->getList()
+            ->sortBy([
+                fn (DueDateData $a, DueDateData $b): int => abs($a->days - $term->value) <=> abs($b->days - $term->value),
+                fn (DueDateData $a, DueDateData $b): int => $a->days <=> $b->days,
+            ])
+            ->first()?->id;
     }
 
     protected function buildNotes(): void

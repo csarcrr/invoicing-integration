@@ -34,6 +34,7 @@
     - [Using Invoice Data](invoices/using-invoice-data.md)
 
 - [Handling Errors](handling-errors.md)
+- [Changelog](changelog.md)
 
 - **Reference**
     - [API Reference](api-reference.md)

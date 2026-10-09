@@ -42,7 +42,7 @@ test('automagically injects provider pagination details into the request', funct
     DueDate::find()->execute();
 
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'maturityDates/getAll')
-        && Str::contains($request->body(), 'qty=20')
+        && Str::contains($request->body(), 'qty=50')
         && Str::contains($request->body(), 'offset=0'));
 })->with('providers');
 

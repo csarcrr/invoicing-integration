@@ -333,7 +333,7 @@ $invoiceData = InvoiceData::make([
 | `creditNoteReason` | `?string`                 | Required for credit notes                       |
 | `relatedDocument`  | `?string`                 | Used for non-credit-note document relationships |
 | `notes`            | `?string`                 | Additional notes (printed on document)          |
-| `dueDate`          | `?Carbon`                 | Payment deadline (FT only); throws `Exception` if set on non-FT types |
+| `dueDate`          | `?DueDateTerm`            | Payment term (FT only); throws `Exception` if set on non-FT types |
 | `output`           | `OutputData`              | Preferred output format (PDF default)           |
 
 > `InvoiceData` implements `DataNeedsValidation`, so misconfigured payloads throw
@@ -627,6 +627,23 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 | `Receipt`        | RG   | Receipt            |
 | `CreditNote`     | NC   | Credit note        |
 | `Transport`      | GT   | Transport document |
+
+### DueDateTerm
+
+Payment terms for `InvoiceData->dueDate`. The invoice is due today plus the term's days.
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
+```
+
+| Value     | Days |
+| --------- | ---- |
+| `Days10`  | 10   |
+| `Days15`  | 15   |
+| `Days30`  | 30   |
+| `Days60`  | 60   |
+| `Days90`  | 90   |
+| `Days120` | 120  |
 
 ### PaymentMethod
 

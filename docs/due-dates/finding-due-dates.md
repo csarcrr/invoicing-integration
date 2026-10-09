@@ -33,7 +33,7 @@ while ($results->getList()->isNotEmpty()) {
 }
 ```
 
-- Each page holds up to 20 due dates.
+- Each page holds up to 50 due dates.
 - `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
 - `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException`.
 

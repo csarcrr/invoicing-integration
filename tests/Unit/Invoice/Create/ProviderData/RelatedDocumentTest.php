@@ -17,6 +17,8 @@ beforeEach(function () {
 });
 
 it('transforms to provider payload with related document', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -32,6 +34,8 @@ it('transforms to provider payload with related document', function (Provider $p
 ]);
 
 it('transforms to provider payload with related document on invoice types', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -54,6 +58,8 @@ it('transforms to provider payload with related document on invoice types', func
 ]);
 
 it('transforms to provider payload with credit note related document', function (Provider $provider, string $fixtureName) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([

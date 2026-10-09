@@ -63,7 +63,7 @@ curl -X POST "https://api.moloni.pt/v1/companies/getAll/?access_token=<access_to
 
 Each entry has a `company_id`. Use the one you want as `MOLONI_COMPANY_ID`.
 
-The same `access_token` works for looking up the other IDs this page asks for (customers, measurement units, taxes, payment methods) through the matching Moloni endpoints, sending `company_id` in the POST body.
+The same `access_token` works for looking up the other IDs this page asks for (customers, measurement units, taxes) through the matching Moloni endpoints, sending `company_id` in the POST body.
 
 ### Environment Variables
 
@@ -88,13 +88,6 @@ MOLONI_TAX_INTERMEDIATE_ID=
 MOLONI_TAX_REDUCED_ID=
 MOLONI_TAX_OTHER_ID=
 MOLONI_TAX_OTHER_RATE=0
-
-# Payment method IDs (invoices)
-MOLONI_PAYMENT_MB_ID=
-MOLONI_PAYMENT_CREDIT_CARD_ID=
-MOLONI_PAYMENT_CURRENT_ACCOUNT_ID=
-MOLONI_PAYMENT_MONEY_ID=
-MOLONI_PAYMENT_MONEY_TRANSFER_ID=
 ```
 
 #### `MOLONI_DEVELOPER_ID`
@@ -129,9 +122,9 @@ Moloni measurement unit IDs, mapped to the values of the `Unit` enum (or any cus
 
 Moloni tax IDs, mapped to the values of the `ItemTax` enum. Each entry also holds the tax rate, which is used to convert the gross `price` of an item into the net price Moloni expects. Exempt items (`ItemTax::EXEMPT`) send no taxes and use `taxExemptionReason` instead. A missing mapping throws `CouldNotGetTaxIdException`.
 
-#### `MOLONI_PAYMENT_*_ID`
+#### Payment methods
 
-Moloni payment method IDs, mapped to the values of the `PaymentMethod` enum. Required when an invoice has payments; a missing mapping throws an `Exception` with the message `Payment method not configured.`.
+Payment methods need no configuration. When an invoice has payments, the package reads the account's payment methods from `paymentMethods/getAll` and uses the one matching each payment, see [Creating an Invoice – Moloni](../../invoices/creating-an-invoice.md#moloni).
 
 ### Token Management
 
@@ -154,13 +147,6 @@ The published configuration file (`config/invoicing-integration.php`) includes a
     'password' => env('MOLONI_PASSWORD', null),
     'company_id' => env('MOLONI_COMPANY_ID', null),
     'no_vat_client_id' => env('MOLONI_NO_VAT_CLIENT_ID', null),
-    'payments' => [
-        PaymentMethod::MB->value => env('MOLONI_PAYMENT_MB_ID', null),
-        PaymentMethod::CREDIT_CARD->value => env('MOLONI_PAYMENT_CREDIT_CARD_ID', null),
-        PaymentMethod::CURRENT_ACCOUNT->value => env('MOLONI_PAYMENT_CURRENT_ACCOUNT_ID', null),
-        PaymentMethod::MONEY->value => env('MOLONI_PAYMENT_MONEY_ID', null),
-        PaymentMethod::MONEY_TRANSFER->value => env('MOLONI_PAYMENT_MONEY_TRANSFER_ID', null),
-    ],
     'units' => [
         'kg' => env('MOLONI_UNIT_KG_ID', null),
         'unit' => env('MOLONI_UNIT_UNIT_ID', null),

@@ -28,6 +28,7 @@ Use **FT** (Invoice) when payment is deferred (e.g., NET30 terms with a business
 Use **NC** (Credit Note) when you need to refund. Every credit note references the original invoice and requires a reason.
 
 ```php
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 // Immediate sale — most common
@@ -39,7 +40,7 @@ $invoiceData = InvoiceData::make([
 // Deferred payment — issue receipt later
 $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
-    'dueDate' => Carbon::now()->addDays(30),
+    'dueDate' => DueDateTerm::Days30,
     // ...
 ]);
 ```

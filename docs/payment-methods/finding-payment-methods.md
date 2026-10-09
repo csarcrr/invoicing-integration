@@ -33,7 +33,7 @@ while ($results->getList()->isNotEmpty()) {
 }
 ```
 
-- Each page holds up to 20 payment methods.
+- Each page holds up to 50 payment methods.
 - `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
 - `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException`.
 
