@@ -56,7 +56,14 @@ final class HttpConfiguration
                 parse_str($request->getBody()->getContents(), $body) ?? [];
                 $body['company_id'] = (int) $config['company_id'];
 
-                return $request->withBody(Utils::streamFor(http_build_query($body)));
+                $stream = Utils::streamFor(http_build_query($body));
+
+                $uri = $request->getUri();
+
+                return $request
+                    ->withUri($uri->withPath(rtrim($uri->getPath(), '/').'/'))
+                    ->withBody($stream)
+                    ->withHeader('Content-Length', (string) $stream->getSize());
             }))
             ->withoutRedirecting()
             ->timeout(30)
