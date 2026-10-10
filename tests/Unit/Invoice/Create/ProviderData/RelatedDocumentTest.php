@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -11,7 +12,13 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
+beforeEach(function () {
+    Carbon::setTestNow('2025-06-15');
+});
+
 it('transforms to provider payload with related document', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -23,13 +30,36 @@ it('transforms to provider payload with related document', function (Provider $p
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers')->with([
-    ['normal_related_document', InvoiceType::Invoice],
-    ['normal_related_document', InvoiceType::InvoiceReceipt],
-    ['normal_related_document', InvoiceType::InvoiceSimple],
     ['normal_related_document', InvoiceType::Receipt],
 ]);
 
+it('transforms to provider payload with related document on invoice types', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+    fakeProviderPaymentMethods($provider);
+
+    $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'type' => $type,
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+        'payments' => [PaymentData::from(['amount' => 1000, 'method' => PaymentMethod::CREDIT_CARD])],
+        'relatedDocument' => '99999999',
+    ]));
+
+    $payload = $invoice->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload)->toMatchArray($data),
+        Provider::MOLONI => expect($payload)->not->toHaveKey('associated_documents'),
+    };
+})->with('providers')->with([
+    ['normal_related_document', InvoiceType::Invoice],
+    ['normal_related_document', InvoiceType::InvoiceReceipt],
+    ['normal_related_document', InvoiceType::InvoiceSimple],
+]);
+
 it('transforms to provider payload with credit note related document', function (Provider $provider, string $fixtureName) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->relatedDocument()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([

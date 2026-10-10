@@ -1,0 +1,12 @@
+{
+    "products": [
+        {
+            "product_id": 0,
+            "name": "",
+            "summary": "This is a test item",
+            "qty": 2,
+            "price": 10,
+            "discount": 10
+        }
+    ]
+}

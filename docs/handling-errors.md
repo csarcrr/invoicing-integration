@@ -97,6 +97,8 @@ try {
 - Invalid payment method ID
 - Business rule violation (e.g., duplicate VAT)
 
+**Moloni:** validation errors come back with a successful status, as a list of `code` and `description` entries. They are raised as this exception too, with a message like `1 name - Field 'name' is required; 3 email - Field 'email' must be a valid email address`.
+
 **How to fix:** Read the error message carefully - it usually tells you exactly what's wrong.
 
 ```php

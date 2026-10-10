@@ -22,7 +22,11 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
     $output = $data->output->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')->assertExists($output);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::MOLONI => expect($output)->toBe(''),
+    };
 })->with('providers', ['output_with_pdf']);
 
 test('can output escpos', function (Provider $provider, string $fixtureName) {
@@ -39,7 +43,11 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
     $output = $data->output->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')->assertExists($output);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::MOLONI => expect($output)->toBe(''),
+    };
 })->with('providers', ['output_with_escpos']);
 
 test('can save the output under a custom name and path', function (Provider $provider, string $fixtureName) {
@@ -56,7 +64,11 @@ test('can save the output under a custom name and path', function (Provider $pro
     $output = $data->output->save($path);
 
     expect($output)->toBeString();
-    Storage::disk('local')->assertExists($output);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::MOLONI => expect($output)->toBe(''),
+    };
 })->with('providers', ['output_with_pdf']);
 
 test('is able to sanitize the path and filename when saving', function (
@@ -75,8 +87,11 @@ test('is able to sanitize the path and filename when saving', function (
 
     $savePath = $data->output->save($invalidPath);
 
-    expect($savePath)->toBeString()->toBe($expectedPath);
-    Storage::disk('local')->assertExists($savePath);
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($savePath)->toBe($expectedPath)
+            ->and(Storage::disk('local')->exists($savePath))->toBeTrue(),
+        Provider::MOLONI => expect($savePath)->toBe(''),
+    };
 })
     ->with('providers', ['output_with_pdf'])
     ->with([

@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <head>
+        <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="HTML">
+<meta name="language" content="pt">
+
+<title>Moloni Developers | Moloni API | Bank Accounts | insert</title>
+<meta name="description" content="Insere um novo dado bancário. Melhore a gestão e faturação da sua empresa com integrações simples e eficazes via Moloni 
+    API.">
+<meta name="keywords" content="developer,api,settings,bank,accounts,insert">
+<meta name="author" content="© 2026 Moloni">
+<link rel="canonical" href="index.html">
+<meta name="robots" content="all">
+
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Moloni | Software de Faturação Online">
+<meta property="og:title"
+      content="Moloni Developers | Moloni API | Bank Accounts | insert">
+<meta property="og:description" content="Insere um novo dado bancário. Melhore a gestão e faturação da sua empresa com integrações simples e eficazes via Moloni 
+    API.">
+    <meta property="og:image" content="https://www.moloni.pt/_imagens/banner_fe_slide_9_s1.jpg">
+<meta property="og:url" content="https://www.moloni.pt/dev/settings/bank-accounts/insert/">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@MoloniSoftware">
+<meta name="twitter:title"
+      content="Moloni Developers | Moloni API | Bank Accounts | insert">
+<meta name="twitter:description" content="Insere um novo dado bancário. Melhore a gestão e faturação da sua empresa com integrações simples e eficazes via Moloni 
+    API.">
+    <meta name="twitter:image" content="https://www.moloni.pt/_imagens/banner_fe_slide_9_s1.jpg">
+
+<meta name="reply-to" content="info@moloni.pt">
+<meta name="distribution" content="global">
+<meta name="rating" content="general">
+<meta name="theme-color" content="#303A4D">
+
+<link href="../../../../favicon.ico" rel="shortcut icon" type="image/x-icon">
+<link href="../../../../_imagens/favicon_16x16_32.png" rel="icon">
+
+<link rel="stylesheet" type="text/css" href="../../../../_include/min/g_css_fe_dev_20260924105600.css">
+<link rel='stylesheet'
+      type="text/css"
+      href="../../../../_include/js/syntax_highlighter/styles/shCoreDefault.css">
+
+<script charset="utf-8" type="text/javascript" src="../../../../_include/min/g_js_fe_20260924105600.js"></script>
+
+<script charset="utf-8"
+        type="text/javascript"
+        src="../../../../_include/js/syntax_highlighter/scripts/XRegExp.js"></script>
+<script charset="utf-8"
+        type="text/javascript"
+        src="../../../../_include/js/syntax_highlighter/src/shCore.js"></script>
+<script charset="utf-8"
+        type="text/javascript"
+        src="../../../../_include/js/syntax_highlighter/scripts/shBrushJScript.js"></script>
+<script charset="utf-8"
+        type="text/javascript"
+        src="../../../../_include/js/syntax_highlighter/scripts/shBrushPlain.js"></script>
+<script charset="utf-8"
+        type="text/javascript"
+        src="../../../../_include/js/syntax_highlighter/scripts/shBrushPhp.js"></script>
+
+<script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="text/javascript">
+    $j = jQuery.noConflict();
+
+    var myConfigs = new Object(null);
+
+    myConfigs.canal = 'Developers';
+    myConfigs.idioma = 'pt';
+    myConfigs.menuTopo = true;
+
+    
+    function toggleSubCats(id, button) {
+        var x = document.getElementById(id);
+        if (x.style.display === "flex" || !x.style.display) {
+            x.style.display = "none";
+            button.className = "showSubCat";
+        } else {
+            x.style.display = "flex";
+            button.className = "showSubCat2";
+        }
+    }
+
+    $j(document).ready(function() {
+        pt.moloni.FE.init(myConfigs);
+
+        SyntaxHighlighter.config.stripBrs = true;
+        SyntaxHighlighter.all();
+
+        $j('#google_translate_element').bind('DOMSubtreeModified', function() {
+            $j('.topMenuApi').css('top', $j('body').offset().top)
+        });
+
+        if ($j('.sidebarSectionCatContent__active').length > 0) {
+            var distanceTop = $j(".sidebarContent").scrollTop();
+            var distanceTopSelected = $j('.sidebarSectionCatContent__active').offset().top;
+            $j('.sidebarContent').scrollTop(distanceTop + distanceTopSelected - 100);
+        }
+    });
+</script>
+        <script type="text/javascript">
+            
+            var divs2hide = Array();
+
+            $j(document).ready(function() {
+                SyntaxHighlighter.all();
+
+                
+                divs2hide.push("div_code_resposta");                                                                
+                divs2hide.push("div_code_tabela_erros");
+                divs2hide.forEach(function(Element) {
+                    $j('#' + Element).toggle();
+                });
+            });
+
+            function toggleMe(obj, evt) {
+                if ($j('#' + obj)) {
+                    $j('#' + obj).toggle();
+                    var expandIcon = $j('#' + obj).prev('div').find('div');
+                    if (expandIcon !== undefined) {
+                        expandIcon.toggleClass('devApi_iconeVerMenos_verde');
+                    }
+                }
+            }
+            
+        </script>
+    </head>
+    <body>
+        <div class="bodyHolder">
+            
+<script type="text/javascript">
+
+    function openSidebar() {
+        document.getElementById("sidebarApi").classList.add("sidebarLeftOpen");
+        document.getElementById("topMenuIcon").style.display = "none";
+        document.getElementById("topMenuIconClose").style.display = "block";
+    }
+
+    function closeSidebar() {
+        document.getElementById("sidebarApi").classList.remove("sidebarLeftOpen");
+        document.getElementById("topMenuIcon").style.display = "block";
+        document.getElementById("topMenuIconClose").style.display = "none";
+    }
+
+    function openTopMenuDropdown() {
+        document.getElementById("topMenuBtnDropdown").classList.toggle("dropdownContentShow");
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropdownBtn')) {
+            var dropdowns = document.getElementsByClassName("dropdownContent");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('dropdownContentShow')) {
+                    openDropdown.classList.remove('dropdownContentShow');
+                }
+            }
+        }
+    }
+
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'pt',
+            includedLanguages: 'pt,de,en,es,fr',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            multilanguagePage: true,
+            gaTrack: true,
+            gaId: 'UA-2257268-6'
+        }, 'google_translate_element');
+    }
+
+</script>
+
+
+<div class="topMenuApiContainer">
+    <div class="topMenuApi">
+        <div class="topMenuContent">
+            <div class="topMenuHoldItemsLeft">
+                <div class="topMenuLogo">
+                    <a href="https://www.moloni.pt/">
+                        <img src="../../../../_media/public/frontend_pt/common/wsize_moloni_logo_navy.svg"
+                             title="Moloni - Cloud Business Tools"
+                             alt="Moloni - Cloud Business Tools"/>
+                    </a>
+                </div>
+
+                <div class="topMenuIconHolder">
+                    <div class="topMenuIconOpen" id="topMenuIcon" onclick="openSidebar()"></div>
+                    <div class="topMenuIconClose" id="topMenuIconClose" onclick="closeSidebar()"></div>
+                </div>
+
+                <div class="topMenuLogoMobile">
+                    <a href="https://www.moloni.pt/">
+                        <img src="../../../../_media/public/frontend_pt/common/wsize_moloni_logo_petals_navy.svg"
+                             title="Moloni - Cloud Business Tools"
+                             alt="Moloni - Cloud Business Tools"/>
+                    </a>
+                </div>
+            </div>
+
+            <div class="topMenuHoldItemsRight">
+                <div id="google_translate_element"></div>
+
+                <div class="topMenuApiBtnLogin">
+                    <a id="loginBtn" target="_blank" href="https://www.moloni.pt/ac/">Login</a>
+                </div>
+
+                <div class="topMenuApiBtnTryNow">
+                    <a target="_self" href="https://www.moloni.pt/registo/">
+                        <span>Experimente</span>
+                    </a>
+                </div>
+
+                <div class="topMenuApiDropdownMobile">
+                    <div class="dropdownHoldContent">
+                        <div class="dropdownTryNow">
+                            <a target="_self" href="https://www.moloni.pt/registo/">
+                                <span>Experimente</span>
+                            </a>
+                        </div>
+                        <a onclick="openTopMenuDropdown()" class="dropdownBtn"></a>
+                    </div>
+                    <div id="topMenuBtnDropdown" class="dropdownContent">
+                        <a href="https://www.moloni.pt/ac/">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="sectionHoldContent">
+                <div class="sidebarLeft" id="sidebarApi">
+    <div class="sidebarContent">
+        <div class="sidebarSectionIntro">
+            <a class="sidebarTitle"
+               href="../../../endpoints/index.html">
+                Documentação API
+            </a>
+            <form class="searchBar" action="" method="post">
+                <button type="submit" class="searchButton" aria-label="Pesquisar"></button>
+                <label for="_pesquisaInputTop"></label>
+                <input id="_pesquisaInputTop" name="_pesquisaInputTop" class="searchInput" type="text"
+                       placeholder="Pesquise na documentação">
+            </form>
+        </div>
+
+        <ul class="sidebarSectionTopics">
+            <li class="sidebarSectionHoldTopics ">
+                <a class="sidebarTopicTitle"
+                   href="../../../index.html">
+                    Introdução
+                </a>
+            </li>
+                                                                                                                <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../visao-geral/index.html">
+                                Visão geral
+                            </a>
+                                            </li>
+                                                                                                    <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../criar-uma-conta/index.html">
+                                Criar uma conta
+                            </a>
+                                            </li>
+                                                                                                    <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../autenticacao/index.html">
+                                Autenticação
+                            </a>
+                                            </li>
+                                                                                                    <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../exemplos/index.html">
+                                Exemplos
+                            </a>
+                                            </li>
+                                                                                                    <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../utilizacao/index.html">
+                                Utilização
+                            </a>
+                                            </li>
+                                                                                                    <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../controlo-de-erros/index.html">
+                                Controlo de Erros
+                            </a>
+                                            </li>
+                                                                                                    <li class="sidebarSectionHoldTopics ">
+                                                    <a class="sidebarTopicTitle"
+                               href="../../../sandbox/index.html">
+                                Sandbox
+                            </a>
+                                            </li>
+                                        <li class="sidebarSectionHoldTopics">
+                <a class="sidebarTopicTitle"
+                   href="https://www.moloni.pt/changelog/api"
+                   target="_blank">
+                    ChangeLog
+                </a>
+            </li>
+            <li class="sidebarSectionHoldTopics">
+                <a class="sidebarTopicTitle"
+                   href="https://www.moloni.pt/plugins/"
+                   target="_blank">
+                    Plugins
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebarSectionCat">
+                                                                                                                                                    <ul class="sidebarSectionCatContent ">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle "
+                                           href="../../../account-profile/index.html">
+                                            Account & Profile
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_0',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_0">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../account-profile/my-profile/index.html">
+                                                    My Profile
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                                                                                                                            <ul class="sidebarSectionCatContent ">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle "
+                                           href="../../../company/index.html">
+                                            Company
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_1',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_1">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../company/company/index.html">
+                                                    Company
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../company/subscription/index.html">
+                                                    Subscription
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../company/users/index.html">
+                                                    Users
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                                                                                                                            <ul class="sidebarSectionCatContent ">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle "
+                                           href="../../../entities/index.html">
+                                            Entities
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_2',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_2">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../entities/customers/index.html">
+                                                    Customers
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../entities/customer-alternate-addresses/index.html">
+                                                    Customer Alternate Addresses
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../entities/suppliers/index.html">
+                                                    Suppliers
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../entities/salesmen/index.html">
+                                                    Salesmen
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                                                                                                                            <ul class="sidebarSectionCatContent ">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle "
+                                           href="../../../products/index.html">
+                                            Products
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_3',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_3">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../products/products/index.html">
+                                                    Products
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../products/product-categories/index.html">
+                                                    Product Categories
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../products/product-stocks/index.html">
+                                                    Product Stocks
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../products/price-classes/index.html">
+                                                    Price Classes
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                                                                                                                            <ul class="sidebarSectionCatContent ">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle "
+                                           href="../../../documents/index.html">
+                                            Documents
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_4',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_4">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/documents/index.html">
+                                                    Documents
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/invoices/index.html">
+                                                    Invoices
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/receipts/index.html">
+                                                    Receipts
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/credit-notes/index.html">
+                                                    Credit Notes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/debit-notes/index.html">
+                                                    Debit Notes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/simplified-invoices/index.html">
+                                                    Simplified Invoices
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/delivery-notes/index.html">
+                                                    Delivery Notes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/bills-of-lading/index.html">
+                                                    Bills of Lading
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/oamg/index.html">
+                                                    Own Asset MG
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/waybills/index.html">
+                                                    Waybills
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/customer-return-note/index.html">
+                                                    Customer Return Note
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/estimates/index.html">
+                                                    Estimates
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/internal-documents/index.html">
+                                                    Internal Documents
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/invoice-receipts/index.html">
+                                                    Invoice Receipts
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/payment-returns/index.html">
+                                                    Payment Returns
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/purchase-order/index.html">
+                                                    Purchase Order
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-purchase-order/index.html">
+                                                    Supplier Purchase Order
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-invoices/index.html">
+                                                    Supplier Invoices
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-simplified-invoices/index.html">
+                                                    Supplier Simplified Invoices
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-credit-notes/index.html">
+                                                    Supplier Credit Notes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-debit-notes/index.html">
+                                                    Supplier Debit Notes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-return-notes/index.html">
+                                                    Supplier Return Notes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-receipts/index.html">
+                                                    Supplier Receipts
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/supplier-warranty-requests/index.html">
+                                                    Supplier Warranty Requests
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../documents/global-guides/index.html">
+                                                    Global Guides
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                                                                                                                            <ul class="sidebarSectionCatContent sidebarSectionCatContent__active">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle sidebarSectionCatContent__active"
+                                           href="../../index.html">
+                                            Settings
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_5',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_5">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText sidebarSubCatText__active">
+                                                                                            <a href="../index.html">
+                                                    Bank Accounts
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../cae-codes/index.html">
+                                                    CAE Codes
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../payment-methods/index.html">
+                                                    Payment Methods
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../maturity-dates/index.html">
+                                                    Maturity Dates
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../delivery-methods/index.html">
+                                                    Delivery Methods
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../vehicles/index.html">
+                                                    Vehicles
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../deductions/index.html">
+                                                    Deductions
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../tax-fees/index.html">
+                                                    Tax & Fees
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../measurement-units/index.html">
+                                                    Measurement Units
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../identification-templates/index.html">
+                                                    Identification Templates
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../document-sets/index.html">
+                                                    Document Sets
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../warehouses/index.html">
+                                                    Warehouses
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../product-properties/index.html">
+                                                    Product Properties
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                                                                                                                            <ul class="sidebarSectionCatContent ">
+                            <li class="sidebarHoldCatInfo">
+                                <div class="sidebarCatName">
+                                                                            <a class="sidebarTopicTitle "
+                                           href="../../../global-data/index.html">
+                                            Global Data
+                                        </a>
+                                                                    </div>
+                                <a class="sidebarCatButton showSubCat2"
+                                   onclick="toggleSubCats('div_sub_cat_6',this)">
+                                </a>
+                            </li>
+                            <li>
+                                <ul class="sidebarHoldSubCatInfo" id="div_sub_cat_6">
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/countries/index.html">
+                                                    Countries
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/fiscal-zones/index.html">
+                                                    Fiscal Zones
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/languages/index.html">
+                                                    Languages
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/currencies/index.html">
+                                                    Currencies
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/document-models/index.html">
+                                                    Document Models
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/tax-exemptions/index.html">
+                                                    Tax Exemptions
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/currency-exchange/index.html">
+                                                    Currency Exchange
+                                                </a>
+                                                                                    </li>
+                                    
+                                                                                                                                                                    <li class="sidebarSubCatText ">
+                                                                                            <a href="../../../global-data/multibanco-gateways/index.html">
+                                                    Multibanco Gateways
+                                                </a>
+                                                                                    </li>
+                                    
+                                </ul>
+                            </li>
+                        </ul>
+                                                        </div>
+
+    </div>
+</div>
+                <div class="sectionRightHoldData">
+                    <div class="sectionRightHoldDataContent">
+                        <div id="breadcrumbWrapper" class="apiBreadCrumb">
+    <div class="sectionHoldBreadCrumb">
+                    <a href="../../../index.html" title="Voltar a Moloni API" target="_self">Moloni API</a>&nbsp;<span id="sep">/</span>&nbsp;<a href="../../../endpoints/index.html" title="Voltar a Endpoints" target="_self">Endpoints</a>&nbsp;<span id="sep">/</span>&nbsp;<a href="../../index.html" title="Voltar a Settings" target="_self">Settings</a>&nbsp;<span id="sep">/</span>&nbsp;<a href="../index.html" title="Voltar a Bank Accounts" target="_self">Bank Accounts</a>&nbsp;<span id="sep">/</span>&nbsp;insert            </div>
+</div>
+
+                        <h1 class="sectionTitle">insert</h1>
+                        <div class="sectionHoldText sectionBGColorGrey">
+                            <div class="sectionFullText">
+                                                                    <div class="sectionFullTextVersion">
+                                        Disponível na versão: 1.0+
+                                    </div>
+                                                                                                    <p>Insere um novo dado banc&aacute;rio.</p>
+                                                            </div>
+                        </div>
+
+                                                    <div class="sectionDocTitle marginTop64">Pedido</div>
+                            <div class="sectionDocHoldTextRequest sectionBGColorRequest">
+                                <div class="sectionDocText"><p>https://api.moloni.pt/v1/bankAccounts/insert/?access_token=[<em>current_access_token</em>]</p></div>
+                            </div>
+                        
+                        <div class="sectionDocTitle">Parâmetros</div>
+                                                    <div class="sectionDocHoldTextParameters sectionBGColorParameters">
+                                <div class="sectionDocText">
+                                    <h6>company_id <em>int</em></h6>
+<p>Obrigat&oacute;rio</p>
+<h6>ordination <em>int</em></h6>
+<p>Obrigat&oacute;rio</p>
+<h6>name <em>string</em></h6>
+<p>Obrigat&oacute;rio</p>
+<h6>value <em>string</em></h6>
+<p>Obrigat&oacute;rio</p>
+                                    <div class="sectionDocNotes">
+                                        <div class="sectionDocNotesText">
+                                            <b>Nota</b><br>
+                                            - O parâmetro <em>qty</em> tem como default 50 e o <em>offset</em> 0, sendo que o máximo <em>qty</em> é 50;<br>
+- Campos de preenchimento facultativo, significa que podem ser uma string vazia ou zero, dependendo do respectivo tipo.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                                                    <div class="sectionDocHoldExtra">
+                                <div class="sectionDocTitleExtra" onClick="toggleMe('div_code_resposta');">
+                                    Resposta
+                                </div>
+                                <div class="sectionDocTextExtra" id="div_code_resposta">
+                                    <pre class="brush: jscript; ">{
+    valid: 1,
+    bank_account_id: int
+}</pre>
+                                </div>
+                            </div>
+                        
+                        
+                        
+                        <div class="sectionDocHoldExtra">
+                            <div class="sectionDocTitleExtra" onClick="toggleMe('div_code_tabela_erros');">
+                                Lista de erros possíveis
+                            </div>
+                            <div class="sectionDocTextExtra" id="div_code_tabela_erros">
+                                Sempre que existir um erro no preenchimento dos campos, será devolvido via JSON o objeto com os erros indexado pela ordem dos campos.<br/>As mensagens de erro, são devolvidas sob a forma de códigos, e para perceber quais os erros disponíveis e como interpretar as mensagens recebidas, <a href="../../../controlo-de-erros/index.html">consulte esta ligação</a>.
+                            </div>
+                        </div>
+
+                                            </div>
+                    <div class="footerApi">
+    <div class="footerApiContent">
+        <div class="footerApiInfo" >
+            <p>© 2026 Moloni</p>
+            <p>Software de faturação online</p>
+            <p>Certificado pela Autoridade Tributária N.º 2860</p>
+        </div>
+        <div class="footerApiSocial">
+            <a href="https://www.facebook.com/molonisoftware/"
+               target="_blank"
+               rel="noopener">
+                <img src="../../../../_media/public/frontend_pt/api/facebook.svg"
+                     alt="Moloni Facebook" title="Moloni Facebook" width="24" height="24">
+            </a>
+            <a href="https://www.linkedin.com/company/moloniportugal/"
+               target="_blank"
+               rel="noopeer">
+                <img src="../../../../_media/public/frontend_pt/api/linkedin.svg"
+                     alt="Moloni LinkedIn" title="Moloni LinkedIn" width="24" height="24">
+            </a>
+            <a href="https://www.youtube.com/c/MoloniPortugal"
+               target="_blank"
+               rel="noopener">
+                <img src="../../../../_media/public/frontend_pt/api/youtube.svg"
+                     alt="Moloni Youtube" title="Moloni Youtube" width="30" height="24">
+            </a>
+            <a href="https://www.instagram.com/moloni_software/"
+               target="_blank"
+               rel="noopener">
+                <img src="../../../../_media/public/frontend_pt/api/instagram.svg"
+                     alt="Moloni Instagram" title="Moloni Instagram" width="24" height="24">
+            </a>
+            <a href="https://x.com/MoloniSoftware/"
+               target="_blank"
+               rel="noopener">
+                <img src="../../../../_media/public/frontend_pt/api/twitter_x.svg"
+                     alt="Moloni Twitter" title="Moloni Twitter" width="24" height="24">
+            </a>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -9,13 +9,14 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-it('sends the item id in the request url', function (Provider $provider) {
-    Http::fake(mockResponse([], 200));
+it('sends the item id in the request', function (Provider $provider) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files('get')));
 
     Item::get(ItemData::make(['id' => 999999]))->execute();
 
-    Http::assertSent(function (Request $request) {
-        return Str::contains($request->url(), 999999);
+    Http::assertSent(fn (Request $request) => match ($provider) {
+        Provider::CEGID_VENDUS => Str::contains($request->url(), '999999'),
+        Provider::MOLONI => Str::contains($request->body(), 'product_id=999999'),
     });
 })->with('providers');
 

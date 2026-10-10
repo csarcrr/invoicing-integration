@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Provider\Client;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
-use function is_int;
+use function is_string;
 use function throw_if;
 
 /**
@@ -31,7 +31,7 @@ class Get extends Client implements ShouldGetClient
      */
     public function execute(): self
     {
-        throw_if(! is_int($this->data->id), InvalidArgumentException::class, 'Client ID is required.');
+        throw_if(! is_string($this->data->id), InvalidArgumentException::class, 'Client ID is required.');
 
         $request = Http::provider()->get('/clients/'.$this->data->id);
 

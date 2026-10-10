@@ -10,10 +10,12 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Create as MoloniCreate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as MoloniFind;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Get as MoloniGet;
 
 /**
  * Orchestrates client operations by routing them to the correct provider implementation.
@@ -31,7 +33,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Create($client),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniCreate($client),
         };
     }
 
@@ -42,7 +44,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Get($client),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniGet($client),
         };
     }
 
@@ -53,7 +55,7 @@ final class ClientAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Find($client),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniFind($client),
         };
     }
 }

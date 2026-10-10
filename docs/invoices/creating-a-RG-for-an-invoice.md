@@ -56,8 +56,8 @@ Sample receipt response:
 Here's a complete example from invoice to receipt:
 
 ```php
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
@@ -78,7 +78,7 @@ $invoiceData = InvoiceData::make([
             'quantity' => 10,
         ]),
     ],
-    'dueDate' => Carbon::now()->addDays(30),
+    'dueDate' => DueDateTerm::Days30,
     'notes' => 'NET30 payment terms as agreed',
 ]);
 
@@ -202,6 +202,9 @@ if ($result->output) {
 ---
 
 RG documents require the original invoice reference and at least one payment. No items or client details are needed. For full payment, the total should match the original invoice amount. For partial payments, issue separate receipts for each installment. Ensure payment method IDs are configured in your provider settings.
+
+> [!NOTE]
+> On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice.
 
 ---
 

@@ -1,6 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 
 return [
 
@@ -127,26 +128,79 @@ return [
 
             /*
             |----------------------------------------------------------------------
-            | Authorization Code
+            | Username
             |----------------------------------------------------------------------
             |
-            | @todo explanation
+            | Your Moloni account username - usually it is your email address
             |
             */
-
-            'authorization_code' => env('MOLONI_AUTHORIZATION_CODE', null),
+            'username' => env('MOLONI_USERNAME', null),
 
             /*
             |----------------------------------------------------------------------
-            | Callback URL
+            | Password
             |----------------------------------------------------------------------
             |
-            | The URL Moloni will redirect to after the OAuth authorization flow.
-            | Must match the callback URL registered in your Moloni application.
+            | Your Moloni account password.
+            |
+            */
+            'password' => env('MOLONI_PASSWORD', null),
+
+            /*
+            |----------------------------------------------------------------------
+            | Company ID
+            |----------------------------------------------------------------------
+            |
+            | Your Moloni account company ID.
+            |
+            */
+            'company_id' => env('MOLONI_COMPANY_ID', null),
+
+            /*
+            |----------------------------------------------------------------------
+            | No VAT Client ID
+            |----------------------------------------------------------------------
+            |
+            | The ID of the Moloni customer used on invoices that have no client,
+            | or whose client has no ID.
             |
             */
 
-            'callback_url' => env('MOLONI_CALLBACK_URL', null),
+            'no_vat_client_id' => env('MOLONI_NO_VAT_CLIENT_ID', null),
+
+            /*
+            |----------------------------------------------------------------------
+            | Units
+            |----------------------------------------------------------------------
+            |
+            | Maps unit string values to their numeric Moloni measurement unit
+            | IDs. The keys must match the values of the Unit enum (or any
+            | custom enum implementing ShouldBeUnit).
+            |
+            */
+
+            'units' => [
+                'kg' => env('MOLONI_UNIT_KG_ID', null),
+                'unit' => env('MOLONI_UNIT_UNIT_ID', null),
+            ],
+
+            /*
+            |----------------------------------------------------------------------
+            | Taxes
+            |----------------------------------------------------------------------
+            |
+            | Maps each ItemTax enum value to its Moloni tax ID and rate (%).
+            | The rate is used to convert gross prices into the net price
+            | Moloni expects. Exempt items (ISE) send no taxes.
+            |
+            */
+
+            'taxes' => [
+                ItemTax::NORMAL->value => ['id' => env('MOLONI_TAX_NORMAL_ID', null), 'rate' => 23],
+                ItemTax::INTERMEDIATE->value => ['id' => env('MOLONI_TAX_INTERMEDIATE_ID', null), 'rate' => 13],
+                ItemTax::REDUCED->value => ['id' => env('MOLONI_TAX_REDUCED_ID', null), 'rate' => 6],
+                ItemTax::OTHER->value => ['id' => env('MOLONI_TAX_OTHER_ID', null), 'rate' => env('MOLONI_TAX_OTHER_RATE', 0)],
+            ],
 
         ],
 

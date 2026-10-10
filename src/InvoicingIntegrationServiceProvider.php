@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration;
 
 use CsarCrr\InvoicingIntegration\Actions\ClientAction;
+use CsarCrr\InvoicingIntegration\Actions\DueDateAction;
 use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
+use CsarCrr\InvoicingIntegration\Actions\PaymentMethodAction;
 use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
@@ -16,12 +18,15 @@ use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
+use function array_is_list;
 use function collect;
 use function implode;
 use function in_array;
+use function is_array;
 use function throw_if;
 
 class InvoicingIntegrationServiceProvider extends PackageServiceProvider
@@ -30,7 +35,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     {
         $this->setupHttpMacros();
 
-        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class])
+        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class, DueDateAction::class, PaymentMethodAction::class])
             ->needs(Provider::class)
             ->give(function () {
                 return ProviderConfiguration::getProvider();
@@ -50,6 +55,18 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
         Http::macro('handleUnwantedFailures', function (Response $response) {
             $status = $response->status();
+            $body = $response->json();
+
+            $validationErrors = collect(is_array($body) && array_is_list($body) ? $body : [])
+                ->map(fn (mixed $error): ?string => is_array($error) && isset($error['code'], $error['description'])
+                    ? "{$error['code']} - {$error['description']}"
+                    : null);
+
+            throw_if(
+                $validationErrors->isNotEmpty() && ! $validationErrors->contains(null),
+                RequestFailedException::class,
+                $validationErrors->implode('; ')
+            );
 
             if (in_array($status, [200, 201, 300, 301])) {
                 return;
@@ -58,15 +75,24 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             throw_if($status === 500, FailedReachingProviderException::class);
             throw_if($status === 401, UnauthorizedException::class);
 
-            $body = $response->json();
-            /** @var array<int, array{code?: string, message?: string}> $errorList */
-            $errorList = $body['errors'] ?? [];
+            $messages = [];
 
-            $messages = collect($errorList)->map(function (array $error): string {
-                return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
-            })->toArray();
+            if(!empty($body['errors'])) {
+                $messages = collect($body['errors'])->map(function (array $error): string {
+                    return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
+                })->toArray();
+            }
+
+            if(!empty($body['error']) && !empty($body['error_description'])) {
+                $messages = ["{$body['error']}: {$body['error_description']}"];
+            }
 
             throw_if(! empty($messages), RequestFailedException::class, implode('; ', $messages));
+
+            Log::error('Failed handling unwanted failures.', [
+                'response' => $body,
+                'status' => $status,
+            ]);
 
             throw new Exception('The integration API request failed for an unknown reason.');
         });

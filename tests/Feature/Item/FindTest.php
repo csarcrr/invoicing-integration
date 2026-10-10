@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
@@ -16,6 +17,10 @@ beforeEach(function () {
 });
 
 test('getting list of items returns expected instances', function (Provider $provider, string $fixtureName) {
+    if ($provider === Provider::MOLONI) {
+        $this->markTestSkipped('Find is not supported by Moloni yet.');
+    }
+
     Http::fake(mockResponse(fixtures()->response()->item()->files($fixtureName)));
 
     $results = Item::find()->execute();
@@ -25,6 +30,10 @@ test('getting list of items returns expected instances', function (Provider $pro
 })->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {
+    if ($provider === Provider::MOLONI) {
+        $this->markTestSkipped('Find is not supported by Moloni yet.');
+    }
+
     for ($i = 0; $i < 2; $i++) {
         $response[] = fixtures()->response()->item()->files($fixtureName);
     }
@@ -42,6 +51,10 @@ test('automagically injects provider pagination details into the request', funct
 })->with('providers', ['response_multiple']);
 
 test('can fetch the next page', function (Provider $provider, string $fixtureName) {
+    if ($provider === Provider::MOLONI) {
+        $this->markTestSkipped('Find is not supported by Moloni yet.');
+    }
+
     for ($i = 0; $i < 5; $i++) {
         $response[] = fixtures()->response()->item()->files($fixtureName);
     }
@@ -59,6 +72,10 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
 })->with('providers', ['response_multiple']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
+    if ($provider === Provider::MOLONI) {
+        $this->markTestSkipped('Find is not supported by Moloni yet.');
+    }
+
     for ($i = 0; $i < 5; $i++) {
         $response[] = fixtures()->response()->item()->files($fixtureName);
     }
@@ -78,6 +95,10 @@ test('can go to the next page and then go back', function (Provider $provider, s
 })->with('providers', ['response_multiple']);
 
 test('fails when attempting to go above or below the allowed pages', function (Provider $provider, string $fixtureName, int $page) {
+    if ($provider === Provider::MOLONI) {
+        $this->markTestSkipped('Find is not supported by Moloni yet.');
+    }
+
     Http::fakeSequence()
         ->push(collect([]), 200, $this->headers)
         ->push(collect([]), 200, $this->headers);
@@ -85,3 +106,9 @@ test('fails when attempting to go above or below the allowed pages', function (P
     $results = Item::find()->execute();
     $results->page($page)->execute();
 })->with('providers', ['response_multiple'], [[0], [10]])->throws(NoMorePagesException::class);
+
+test('find is not supported by moloni', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Item::find();
+})->throws(OperationNotSupportedException::class);

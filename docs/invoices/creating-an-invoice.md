@@ -247,19 +247,21 @@ $invoiceData = InvoiceData::make([
 
 ## Due Date
 
-For FT invoices where payment comes later, set a due date:
+For FT invoices where payment comes later, set a due date with a `DueDateTerm`:
 
 ```php
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 
 $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
-    'dueDate' => Carbon::now()->addDays(30),
+    'dueDate' => DueDateTerm::Days30,
 ]);
 
 Invoice::create($invoiceData)->execute();
 ```
+
+Available terms: `Days0`, `Days10`, `Days15`, `Days30`, `Days60`, `Days90` and `Days120`. The due date sent to the provider is today plus the term's days.
 
 > [!NOTE]
 > Setting a due date on non-FT document types throws an exception.
@@ -324,6 +326,29 @@ $invoiceData = InvoiceData::make([
 - Client information is **required** when transport details are provided
 - Origin date is **required** when setting transport details
 - Country codes must be valid ISO 2-letter codes (PT, ES, FR, etc.)
+
+## Drafts
+
+Call `draft()` before `execute()` to create the document as a draft instead of issuing it:
+
+```php
+$result = Invoice::create($invoiceData)->draft()->execute()->getInvoice();
+```
+
+Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `draft()` and always issues the document.
+
+## Moloni
+
+Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`.
+
+- **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
+- **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.
+- **Payments**: one request to `paymentMethods/getAll` (first 50 payment methods) resolves each `payment_method_id`: the first account payment method whose type matches the payment's `method` (`MONEY`, `MB` or `CREDIT_CARD`, see [Finding Payment Methods](../payment-methods/finding-payment-methods.md#moloni)). A payment with no matching method throws `CouldNotGetPaymentMethodIdException`; `MONEY_TRANSFER` and `CURRENT_ACCOUNT` always do, because Moloni has no flag for them. Not sent on FT, whose endpoint has no payments, so FT makes no lookup. On RG the sum of the payments is sent as `net_value`.
+- **Due date**: sent as `expiration_date`; today when not set. Not sent on RG. When set, one request to `maturityDates/getAll` (first 50 due dates) resolves `maturity_date_id`: the due date with the same number of days, or the closest one when none matches (the shorter one on a tie). `maturity_date_id` is not sent when the account has no due dates.
+- **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not. Nothing is sent on RG.
+- **Related document**: only sent on RG, as the invoice the receipt settles. It must be the numeric Moloni `document_id` and is sent with the payments total as its value. FT, FR and FS do not send it.
+- **Document set**: `document_set_id` is sent as `0` for now.
+- **Response**: after the insert, a second request to `documents/getOne` fetches the created document. `id` is the Moloni `document_id`, `sequence` is built as `{type} {document set name}/{number}` (e.g. `FT A/12`), `total` is the document `net_value` and `totalNet` is `net_value` minus `taxes_value`. The other fields of the fetched document are available through `getAdditionalData()`. The ATCUD is not returned. No output is returned, see [Output Formats](outputting-invoice.md).
 
 ## Complete Example
 

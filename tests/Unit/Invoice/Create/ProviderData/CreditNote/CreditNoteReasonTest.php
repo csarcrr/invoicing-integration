@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -12,7 +13,13 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
+beforeEach(function () {
+    Carbon::setTestNow('2025-06-15');
+});
+
 it('transforms to provider payload with credit note reason', function (Provider $provider, string $fixtureName) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -35,6 +42,8 @@ it('transforms to provider payload with credit note reason', function (Provider 
 })->with('providers', ['credit_note']);
 
 it('fails when reason is not applied', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::CreditNote,
         'items' => [ItemData::from([

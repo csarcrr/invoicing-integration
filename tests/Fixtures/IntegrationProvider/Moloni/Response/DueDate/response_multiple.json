@@ -1,0 +1,14 @@
+[
+    {
+        "maturity_date_id": 4321,
+        "name": "Pronto Pagamento",
+        "days": 0,
+        "associated_discount": 0
+    },
+    {
+        "maturity_date_id": 4322,
+        "name": "30 dias",
+        "days": 30,
+        "associated_discount": 2.5
+    }
+]

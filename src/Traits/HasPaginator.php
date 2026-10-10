@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Traits;
 
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 
+use function is_null;
 use function throw_if;
 
 trait HasPaginator
@@ -14,9 +15,9 @@ trait HasPaginator
 
     protected int $perPage = 20;
 
-    protected int $totalPages = 1;
+    protected ?int $totalPages = 1;
 
-    public function getTotalPages(): int
+    public function getTotalPages(): ?int
     {
         return $this->totalPages;
     }
@@ -58,7 +59,7 @@ trait HasPaginator
      */
     public function page(int $page): self
     {
-        $isAbove = $page > $this->getTotalPages();
+        $isAbove = ! is_null($this->getTotalPages()) && $page > $this->getTotalPages();
         $isBelow = $page < 1;
 
         throw_if($isAbove || $isBelow, NoMorePagesException::class);
@@ -68,7 +69,7 @@ trait HasPaginator
         return $this;
     }
 
-    public function totalPages(int $totalPages): self
+    public function totalPages(?int $totalPages): self
     {
         $this->totalPages = $totalPages;
 

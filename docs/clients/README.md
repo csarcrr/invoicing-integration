@@ -71,10 +71,10 @@ Sample response (`$client->toArray()`):
 Once registered, use the client for all their orders:
 
 ```php
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
@@ -92,7 +92,7 @@ $invoiceData = InvoiceData::make([
             'quantity' => 50,
         ]),
     ],
-    'dueDate' => Carbon::now()->addDays(30),
+    'dueDate' => DueDateTerm::Days30,
 ]);
 
 $result = Invoice::create($invoiceData)->execute()->getInvoice();
