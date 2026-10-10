@@ -261,7 +261,7 @@ $invoiceData = InvoiceData::make([
 Invoice::create($invoiceData)->execute();
 ```
 
-Available terms: `Days10`, `Days15`, `Days30`, `Days60`, `Days90` and `Days120`. The due date sent to the provider is today plus the term's days.
+Available terms: `Days0`, `Days10`, `Days15`, `Days30`, `Days60`, `Days90` and `Days120`. The due date sent to the provider is today plus the term's days.
 
 > [!NOTE]
 > Setting a due date on non-FT document types throws an exception.

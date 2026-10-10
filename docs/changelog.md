@@ -6,7 +6,7 @@ Changes that need action when upgrading.
 
 ### Breaking: `InvoiceData->dueDate` is now a `DueDateTerm`
 
-`dueDate` no longer accepts a `Carbon` date. It takes a `DueDateTerm` enum: `Days10`, `Days15`, `Days30`, `Days60`, `Days90` or `Days120`. The due date sent to the provider is today plus the term's days.
+`dueDate` no longer accepts a `Carbon` date. It takes a `DueDateTerm` enum: `Days0`, `Days10`, `Days15`, `Days30`, `Days60`, `Days90` or `Days120`. The due date sent to the provider is today plus the term's days.
 
 > [!WARNING]
 > This affects **Cegid Vendus** as well as Moloni. Existing Cegid Vendus integrations that pass a `Carbon` date to `dueDate` stop working: `InvoiceData::make()` throws a `ValidationException` until the value is changed to a `DueDateTerm`.

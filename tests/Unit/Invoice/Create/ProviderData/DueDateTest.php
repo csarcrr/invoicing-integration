@@ -55,6 +55,7 @@ it('resolves the due date term for the provider', function (Provider $provider, 
             ->and($payload->get('maturity_date_id'))->toBe($maturityDateId),
     };
 })->with('providers')->with([
+    'zero days' => [DueDateTerm::Days0, 4321, '2025-06-15'],
     'exact match' => [DueDateTerm::Days30, 4322, '2025-07-15'],
     'closest above' => [DueDateTerm::Days60, 4322, '2025-08-14'],
     'closest below' => [DueDateTerm::Days10, 4321, '2025-06-25'],

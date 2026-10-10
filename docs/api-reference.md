@@ -638,6 +638,7 @@ use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 
 | Value     | Days |
 | --------- | ---- |
+| `Days0`   | 0    |
 | `Days10`  | 10   |
 | `Days15`  | 15   |
 | `Days30`  | 30   |

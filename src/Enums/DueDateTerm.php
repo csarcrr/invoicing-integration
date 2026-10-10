@@ -10,6 +10,7 @@ enum DueDateTerm: int
 {
     use EnumOptions;
 
+    case Days0 = 0;
     case Days10 = 10;
     case Days15 = 15;
     case Days30 = 30;
