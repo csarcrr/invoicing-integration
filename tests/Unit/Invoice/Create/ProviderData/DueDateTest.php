@@ -104,6 +104,8 @@ it('does not fetch the provider due dates when no due date is set', function (Pr
 })->with('providers');
 
 it('fails setting a due date in a type different than FT', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::InvoiceSimple,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
@@ -118,6 +120,8 @@ it('fails setting a due date in a type different than FT', function (Provider $p
     ->throws(Exception::class, 'Due date can only be set for FT document types.');
 
 it('only sends an expiration date on document types that accept it', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::Receipt,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
