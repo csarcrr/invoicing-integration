@@ -44,4 +44,9 @@ abstract class Base
             fn (mixed $value, string $key) => in_array($key, $this->supportedProperties)
         );
     }
+
+    protected function toCents(float $amount): int
+    {
+        return (int) round($amount * 100);
+    }
 }

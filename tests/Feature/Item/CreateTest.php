@@ -1,5 +1,6 @@
 <?php
 
+use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Item;
@@ -14,6 +15,7 @@ test('creates an item', function (Provider $provider, string $fixture) {
         'reference' => 'reference-1',
         'description' => 'Item Description',
         'barcode' => 'barcode-1',
+        'category' => CategoryData::make(['id' => 1]),
         'price' => 2000,
         'tax' => CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax::NORMAL,
     ]))->execute()->getItem();

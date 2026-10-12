@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Tests\Fixtures;
 
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use Illuminate\Support\Facades\File;
+use RuntimeException;
 
 class Fixtures
 {
@@ -84,6 +85,20 @@ class Fixtures
         return $this;
     }
 
+    public function dueDate(): self
+    {
+        $this->path[] = 'DueDate';
+
+        return $this;
+    }
+
+    public function paymentMethod(): self
+    {
+        $this->path[] = 'PaymentMethod';
+
+        return $this;
+    }
+
     public function tax(): self
     {
         $this->path[] = 'Tax';
@@ -117,6 +132,10 @@ class Fixtures
         $basePath = __DIR__.'/IntegrationProvider/';
         $filesPath = "{$basePath}{$this->provider->value}/".implode('/', $this->path).'/';
 
+        if (! is_dir($filesPath)) {
+            throw new RuntimeException("Fixtures path not found: {$filesPath}");
+        }
+
         $files = [];
 
         foreach (scandir($filesPath) as $file) {
@@ -127,6 +146,14 @@ class Fixtures
             }
         }
 
-        return $name ? collect($files[$name])->sortKeys()->toArray() : $files;
+        if (! $name) {
+            return $files;
+        }
+
+        if (! array_key_exists($name, $files)) {
+            throw new RuntimeException("Fixture file not found: {$filesPath}{$name}.json");
+        }
+
+        return collect($files[$name])->sortKeys()->toArray();
     }
 }

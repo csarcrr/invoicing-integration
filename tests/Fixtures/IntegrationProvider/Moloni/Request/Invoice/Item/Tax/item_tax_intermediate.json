@@ -1,0 +1,18 @@
+{
+    "products": [
+        {
+            "product_id": 0,
+            "name": "",
+            "qty": 1,
+            "price": 0,
+            "taxes": [
+                {
+                    "tax_id": 2,
+                    "value": 13,
+                    "order": 0,
+                    "cumulative": 0
+                }
+            ]
+        }
+    ]
+}

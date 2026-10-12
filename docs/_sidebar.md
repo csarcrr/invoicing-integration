@@ -14,6 +14,16 @@
     - [Getting a Client](clients/getting-a-client.md)
     - [Finding Clients](clients/finding-clients.md)
 
+- **Due Dates**
+    - [Overview](due-dates/README.md)
+    - [Creating a Due Date](due-dates/creating-a-due-date.md)
+    - [Finding Due Dates](due-dates/finding-due-dates.md)
+
+- **Payment Methods**
+    - [Overview](payment-methods/README.md)
+    - [Creating a Payment Method](payment-methods/creating-a-payment-method.md)
+    - [Finding Payment Methods](payment-methods/finding-payment-methods.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)
@@ -24,6 +34,7 @@
     - [Using Invoice Data](invoices/using-invoice-data.md)
 
 - [Handling Errors](handling-errors.md)
+- [Changelog](changelog.md)
 
 - **Reference**
     - [API Reference](api-reference.md)

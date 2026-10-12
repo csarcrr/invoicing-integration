@@ -286,6 +286,9 @@ Example credit note response:
 
 Always provide a clear, descriptive reason for the credit note. Each item must reference its line number on the original invoice, and the payment amount should match the total credit amount. Credit notes use the same payment method configuration as invoices. The `total` in the response will be negative, indicating a refund.
 
+> [!NOTE]
+> On Moloni, `documentId` must be the numeric `document_id` of the original document and `row` the `document_product_id` of the line being credited. The credited documents are sent as `associated_documents`, each with the gross total of its items, and `total` is not returned.
+
 ---
 
 Next: [Output Formats](outputting-invoice.md)

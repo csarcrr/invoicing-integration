@@ -30,3 +30,6 @@ testbench.yaml
 /coverage
 .DS_Store
 /.claude/agent-memory
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/

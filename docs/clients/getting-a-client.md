@@ -18,6 +18,11 @@ $client = Client::get($clientData)->execute()->getClient();
 $payload = $client->toArray();
 ```
 
+> [!NOTE]
+> On Moloni, `id` is the `customer_id`. `irsRetention`, `emailNotification`,
+> `defaultPayDue`, `externalReference` and `status` are not returned; the
+> customer `number` is available in `getAdditionalData()`.
+
 Example payload:
 
 ```json

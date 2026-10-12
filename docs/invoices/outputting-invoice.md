@@ -233,6 +233,9 @@ return response()->json([
 
 The default output format is PDF (base64 encoded). Set the format via `OutputData` on your `InvoiceData` before issuing. Use `$result->output?->save($path)` to store the document and `$result->output?->fileName()` for the auto-generated filename. Always check `if ($result->output)` before saving, since the provider may not always return a file. Check provider [Features](../features.md) for format support.
 
+> [!NOTE]
+> Moloni does not return a file yet: `output->content` is `null` and `save()` returns an empty string without writing anything.
+
 ---
 
 Next: [Using Invoice Data](using-invoice-data.md)

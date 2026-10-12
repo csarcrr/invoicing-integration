@@ -6,7 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Contracts;
 
 interface ShouldHavePagination
 {
-    public function getTotalPages(): int;
+    public function getTotalPages(): ?int;
 
     public function getCurrentPage(): int;
 

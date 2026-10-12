@@ -28,4 +28,7 @@
             <directory suffix=".php">./src</directory>
         </include>
     </source>
+    <php>
+        <env name="CACHE_STORE" value="file" />
+    </php>
 </phpunit>

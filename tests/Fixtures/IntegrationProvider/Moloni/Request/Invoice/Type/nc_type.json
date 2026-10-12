@@ -1,0 +1,23 @@
+{
+    "date": "2025-06-15",
+    "expiration_date": "2025-06-15",
+    "document_set_id": 0,
+    "customer_id": 999999,
+    "status": 1,
+    "notes": "Broken product",
+    "products": [
+        {
+            "product_id": 0,
+            "name": "",
+            "qty": 1,
+            "price": 0,
+            "related_id": 1
+        }
+    ],
+    "associated_documents": [
+        {
+            "associated_id": 0,
+            "value": 0
+        }
+    ]
+}

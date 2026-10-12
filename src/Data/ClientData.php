@@ -38,7 +38,7 @@ class ClientData extends Data implements DataNeedsValidation
         public Optional|int $defaultPayDue,
 
         public Optional|string|int $vat,
-        public Optional|int $id,
+        public Optional|string $id,
         #[MapName(SnakeCaseMapper::class)]
         public Optional|string $externalReference,
         public Optional|string $status,

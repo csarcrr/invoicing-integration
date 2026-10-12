@@ -57,7 +57,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 | `previous()`       | `self`       | Go back one page                              |
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
-| `getTotalPages()`  | `int`        | Total pages reported by provider              |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported         |
 | `getClient()`      | `ClientData` | Current filter DTO (email, VAT, status, etc.) |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
@@ -119,7 +119,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 | `previous()`       | `self`       | Go back one page                              |
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
-| `getTotalPages()`  | `int`        | Total pages reported by provider              |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported         |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
 > outside the available range.
@@ -150,6 +150,106 @@ $created->getAdditionalData(); // fields from the provider response not handled 
 
 ---
 
+## DueDate
+
+Entry point for managing due dates (payment terms). Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\DueDate;
+```
+
+| Method                                 | Return Type           | Description                             |
+| -------------------------------------- | --------------------- | --------------------------------------- |
+| `DueDate::create(DueDateData $dueDate)` | `ShouldCreateDueDate` | Creates a new due date builder instance |
+| `DueDate::find()`                      | `ShouldFindDueDate`   | Lists/paginates provider due dates      |
+
+## ShouldCreateDueDate Contract
+
+The interface returned by `DueDate::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldCreateDueDate;
+```
+
+| Method         | Return Type   | Description                                               |
+| -------------- | ------------- | --------------------------------------------------------- |
+| `execute()`    | `self`        | Send the create request and populate the response         |
+| `getDueDate()` | `DueDateData` | Access the hydrated DTO (includes provider-assigned `id`) |
+| `getPayload()` | `Collection`  | Inspect the payload sent to the provider (debugging)      |
+
+## ShouldFindDueDate Contract
+
+Paginate provider due dates via `DueDate::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFindDueDate;
+```
+
+| Method             | Return Type  | Description                           |
+| ------------------ | ------------ | ------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request      |
+| `getList()`        | `Collection` | `Collection<DueDateData>` results     |
+| `getPayload()`     | `Collection` | Current request payload (pagination)  |
+| `next()`           | `self`       | Move to the next page                 |
+| `previous()`       | `self`       | Go back one page                      |
+| `page(int $page)`  | `self`       | Jump to a specific page               |
+| `getCurrentPage()` | `int`        | Current page index                    |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported |
+
+> `previous()` and `page()` throw `NoMorePagesException` when you move below page 1.
+
+---
+
+## PaymentMethod (Facade)
+
+Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
+```
+
+| Method                                                    | Return Type                 | Description                                   |
+| --------------------------------------------------------- | --------------------------- | --------------------------------------------- |
+| `PaymentMethod::create(PaymentMethodData $paymentMethod)` | `ShouldCreatePaymentMethod` | Creates a new payment method builder instance |
+| `PaymentMethod::find()`                                   | `ShouldFindPaymentMethod`   | Lists/paginates provider payment methods      |
+
+## ShouldCreatePaymentMethod Contract
+
+The interface returned by `PaymentMethod::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\ShouldCreatePaymentMethod;
+```
+
+| Method               | Return Type         | Description                                               |
+| -------------------- | ------------------- | --------------------------------------------------------- |
+| `execute()`          | `self`              | Send the create request and populate the response         |
+| `getPaymentMethod()` | `PaymentMethodData` | Access the hydrated DTO (includes provider-assigned `id`) |
+| `getPayload()`       | `Collection`        | Inspect the payload sent to the provider (debugging)      |
+
+## ShouldFindPaymentMethod Contract
+
+Paginate provider payment methods via `PaymentMethod::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\ShouldFindPaymentMethod;
+```
+
+| Method             | Return Type  | Description                             |
+| ------------------ | ------------ | --------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request        |
+| `getList()`        | `Collection` | `Collection<PaymentMethodData>` results |
+| `getPayload()`     | `Collection` | Current request payload (pagination)    |
+| `next()`           | `self`       | Move to the next page                   |
+| `previous()`       | `self`       | Go back one page                        |
+| `page(int $page)`  | `self`       | Jump to a specific page                 |
+| `getCurrentPage()` | `int`        | Current page index                      |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported   |
+
+> `previous()` and `page()` throw `NoMorePagesException` when you move below page 1.
+
+---
+
 ## Invoice
 
 Entry point for issuing invoices. Use this facade to create FT, FR, FS, RG, NC, and GT documents.
@@ -177,6 +277,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCre
 | Method         | Return Type   | Description                                                       |
 | -------------- | ------------- | ----------------------------------------------------------------- |
 | `execute()`    | `self`        | Issue the HTTP request using the data contained in `InvoiceData`  |
+| `draft()`      | `static`      | Create the document as a draft (Moloni); ignored by Cegid Vendus  |
 | `getInvoice()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
 | `getPayload()` | `Collection`  | Inspect the payload that will be sent to the provider (debugging) |
 
@@ -232,7 +333,7 @@ $invoiceData = InvoiceData::make([
 | `creditNoteReason` | `?string`                 | Required for credit notes                       |
 | `relatedDocument`  | `?string`                 | Used for non-credit-note document relationships |
 | `notes`            | `?string`                 | Additional notes (printed on document)          |
-| `dueDate`          | `?Carbon`                 | Payment deadline (FT only); throws `Exception` if set on non-FT types |
+| `dueDate`          | `?DueDateTerm`            | Payment term (FT only); throws `Exception` if set on non-FT types |
 | `output`           | `OutputData`              | Preferred output format (PDF default)           |
 
 > `InvoiceData` implements `DataNeedsValidation`, so misconfigured payloads throw
@@ -254,7 +355,7 @@ ClientData::make([
 
 | Property            | Type               | Description                         |
 | ------------------- | ------------------ | ----------------------------------- |
-| `id`                | `Optional<int>`    | Provider-assigned identifier        |
+| `id`                | `Optional<string>` | Provider-assigned identifier        |
 | `name`              | `Optional<string>` | Client name (auto-trimmed)          |
 | `vat`               | `Optional<string>` | VAT / fiscal ID                     |
 | `email`             | `Optional<string>` | Email (validated)                   |
@@ -342,6 +443,49 @@ $category = CategoryData::make([
 | -------- | --------- | ---------------------------- |
 | `id`     | `?int`    | Provider-assigned category ID |
 | `name`   | `?string` | Category name                |
+
+---
+
+### DueDateData
+
+Represents a due date (payment term) stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\DueDateData;
+
+$dueDate = DueDateData::make([
+    'name' => '30 dias',
+    'days' => 30,
+]);
+```
+
+| Property | Type     | Description                            |
+| -------- | -------- | -------------------------------------- |
+| `name`   | `string` | Required. Name of the payment term     |
+| `days`   | `int`    | Required. Number of days until payment |
+| `id`     | `?int`   | Provider-assigned due date ID          |
+
+---
+
+### PaymentMethodData
+
+Represents a payment method stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\PaymentMethodData;
+use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
+
+$paymentMethod = PaymentMethodData::make([
+    'name' => 'Multibanco',
+    'type' => PaymentMethod::MB,
+]);
+```
+
+| Property | Type             | Description                                                         |
+| -------- | ---------------- | ------------------------------------------------------------------- |
+| `name`   | `string`         | Required. Name of the payment method                                |
+| `type`   | `?PaymentMethod` | Kind of payment method, `null` when the provider has no match for it |
+| `id`     | `?int`           | Provider-assigned payment method ID                                 |
 
 ---
 
@@ -483,6 +627,24 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 | `Receipt`        | RG   | Receipt            |
 | `CreditNote`     | NC   | Credit note        |
 | `Transport`      | GT   | Transport document |
+
+### DueDateTerm
+
+Payment terms for `InvoiceData->dueDate`. The invoice is due today plus the term's days.
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
+```
+
+| Value     | Days |
+| --------- | ---- |
+| `Days0`   | 0    |
+| `Days10`  | 10   |
+| `Days15`  | 15   |
+| `Days30`  | 30   |
+| `Days60`  | 60   |
+| `Days90`  | 90   |
+| `Days120` | 120  |
 
 ### PaymentMethod
 

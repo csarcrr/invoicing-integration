@@ -12,8 +12,8 @@ test('an item get request is successful', function (Provider $provider, string $
 
     $data = Item::get($item)->execute()->getItem();
 
-    expect($data->name)->toBeString()
-        ->and($data->description)->toBeString()
+    expect($data->name)->toBeString()->not->toBeEmpty()
+        ->and($data->description)->toBe('A small product description used for testing purposes.')
         ->and($data->getAdditionalData())->not->toBeEmpty();
 
     Http::assertSentCount(1);

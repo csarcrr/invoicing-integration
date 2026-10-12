@@ -4,6 +4,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Support\Facades\Http;
+use Spatie\LaravelData\Optional;
 
 test('a client get request is successful', function (Provider $provider, string $responseFixture) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
@@ -14,7 +15,12 @@ test('a client get request is successful', function (Provider $provider, string 
 
     expect($data->name)->toBeString()
         ->and($data->email)->toBeString()
-        ->and($data->irsRetention)->toBeTrue();
+        ->and($data->country)->toBe('PT');
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($data->irsRetention)->toBeTrue(),
+        Provider::MOLONI => expect($data->irsRetention)->toBeInstanceOf(Optional::class),
+    };
 
     Http::assertSentCount(1);
 })->with('providers', ['response']);
@@ -28,5 +34,6 @@ test('supported properties are not filled in additional data', function (Provide
 
     expect($data->getAdditionalData())
         ->not->toHaveKey('postalCode')
-        ->not->toHaveKey('postal_code');
+        ->not->toHaveKey('postal_code')
+        ->not->toHaveKey('zip_code');
 })->with('providers', ['response']);

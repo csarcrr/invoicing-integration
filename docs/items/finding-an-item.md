@@ -80,8 +80,9 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
 }
 ```
 
-- `getTotalPages()` reads the provider's `X-Paginator-Pages` header (defaults
-  to `1` if absent).
+- `getTotalPages()` reads the provider's `X-Paginator-Pages` header (defaults to
+  `1` if absent). It returns `null` when the provider does not report a total
+  (Moloni): keep calling `next()` until a page comes back empty.
 - Calling `next()` beyond the last page, `previous()` before page 1, or
   `page()` with an invalid value raises `NoMorePagesException`.
 

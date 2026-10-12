@@ -108,7 +108,7 @@ class Find extends Client implements ShouldFindClient
         $this->list = collect($results)->map(function (array $item) {
             $data = [];
 
-            ! empty($item['id']) && $data['id'] = (int) $item['id'];
+            ! empty($item['id']) && $data['id'] = (string) $item['id'];
             ! empty($item['name']) && $data['name'] = $item['name'];
             ! empty($item['email']) && $data['email'] = $item['email'];
             ! empty($item['fiscal_id']) && $data['vat'] = $item['fiscal_id'];
