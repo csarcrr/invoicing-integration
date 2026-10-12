@@ -75,13 +75,14 @@ class Get extends Item implements ShouldGetItem
             'barcode' => $data['ean'] ?? null,
             'category' => CategoryData::make(['id' => $data['category_id'] ?? null]),
             'controlStock' => (bool) ($data['has_stock'] ?? true),
-            'type' => match ($data['type']) {
+            'type' => match ($data['type'] ?? null) {
                 1 => ItemType::Product,
                 2 => ItemType::Service,
                 3 => ItemType::Other,
+                default => null,
             },
             'tax' => $tax ? ItemTax::from($tax['tax']['vat_type']) : null,
-            'price' => $tax ? (int) round($data['price'] * (1 + $tax['value'] / 100) * 100) : null,
+            'price' => $tax ? $this->toCents((float) $data['price']) + $this->toCents((float) $tax['value']) : null,
         ]);
     }
 }
