@@ -55,6 +55,28 @@ it('fails with the error descriptions when the provider returns validation error
     "1 name - Field 'name' is required; 3 email - Field 'email' must be a valid email address"
 );
 
+it('fails with the error descriptions when the provider returns nested validation errors with a successful status', function () {
+    Http::fake(mockResponse([
+        [
+            [
+                'code' => '1 name',
+                'description' => "Field 'name' is required",
+            ],
+            [
+                'code' => '1 exemption_reason',
+                'description' => "Field 'exemption_reason' is required",
+            ],
+        ],
+    ]));
+
+    $response = Http::post('http://provider.site/example');
+
+    Http::handleUnwantedFailures($response);
+})->throws(
+    RequestFailedException::class,
+    "1 name - Field 'name' is required; 1 exemption_reason - Field 'exemption_reason' is required"
+);
+
 it('does not fail when a successful response is a list of records', function () {
     Http::fake(mockResponse([
         [

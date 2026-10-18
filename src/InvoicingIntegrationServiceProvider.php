@@ -58,6 +58,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             $body = $response->json();
 
             $validationErrors = collect(is_array($body) && array_is_list($body) ? $body : [])
+                ->flatMap(fn (mixed $error): array => is_array($error) && array_is_list($error) ? $error : [$error])
                 ->map(fn (mixed $error): ?string => is_array($error) && isset($error['code'], $error['description'])
                     ? "{$error['code']} - {$error['description']}"
                     : null);
