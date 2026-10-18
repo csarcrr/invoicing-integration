@@ -53,6 +53,16 @@ test('fills the sequence and totals from the provider response', function (Provi
     };
 })->with('providers', ['full']);
 
+test('does not keep the provider document lines as additional data', function (Provider $provider, string $fixture) {
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]))->execute()->getInvoice();
+
+    expect($invoice->getAdditionalData())->not->toHaveKeys(['products', 'items']);
+})->with('providers', ['full']);
+
 test('fetches the created document when the provider needs it', function (Provider $provider, string $fixture) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
 
