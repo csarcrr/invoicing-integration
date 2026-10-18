@@ -373,8 +373,10 @@ ClientData::make([
 | `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`)    |
 
 > Access DTO values directly: `$client->name`, `$client->vat`, etc. Use
-> `$client->toArray()` when you need a payload-friendly structure (includes
-> provider-specific metadata stored on the DTO).
+> `$client->toArray()` when you need a payload-friendly structure. Provider
+> response fields the package does not map are left out of `toArray()` and
+> `toJson()`; read them with `getAdditionalData()`. This applies to every DTO
+> the package hydrates from a provider response.
 
 ---
 

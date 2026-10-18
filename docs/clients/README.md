@@ -141,14 +141,14 @@ $client->emailNotification; // true
 
 ### Provider-Specific Properties
 
-Some providers return additional fields not explicitly mapped. Access them via `toArray()`:
+Some providers return additional fields not explicitly mapped. Access them via `getAdditionalData()`. They are not part of `toArray()` or `toJson()`:
 
 ```php
-$payload = $client->toArray();
+$additional = $client->getAdditionalData();
 
-$status = $payload['status'] ?? null;
-$priceGroup = $payload['price_group']['name'] ?? null;
-$balance = $payload['balance'] ?? null;
+$status = $additional['status'] ?? null;
+$priceGroup = $additional['price_group']['name'] ?? null;
+$balance = $additional['balance'] ?? null;
 ```
 
 ## Common Scenarios

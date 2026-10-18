@@ -420,7 +420,6 @@ Example invoice result (`$result->toArray()`):
     "sequence": "FR 01P2025/1",
     "total": 94696,
     "totalNet": 76988,
-    "atcudHash": "FR 01P2025/1 ABC123",
     "output": {
         "format": "pdf_base64",
         "fileName": "fr_01p2025_1.pdf"

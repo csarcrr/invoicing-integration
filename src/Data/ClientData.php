@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Data;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
+use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use CsarCrr\InvoicingIntegration\Transformers\Name;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Rule;
@@ -21,6 +22,7 @@ use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 class ClientData extends Data implements DataNeedsValidation
 {
     use HasMakeValidation;
+    use HidesAdditionalData;
 
     public function __construct(
         #[WithTransformer(Name::class)]

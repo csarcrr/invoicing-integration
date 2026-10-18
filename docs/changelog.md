@@ -4,6 +4,13 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Breaking: unmapped provider fields are no longer serialized
+
+`toArray()`, `toJson()` and JSON responses of `InvoiceData`, `ItemData`, `ClientData`, `DueDateData` and `PaymentMethodData` no longer include unmapped provider response fields. Read them with `getAdditionalData()`, which is unchanged.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that reads provider fields from the top level of `toArray()` (e.g. `$client->toArray()['status']`) must read them from `getAdditionalData()` instead.
+
 ### Breaking: `InvoiceData->dueDate` is now a `DueDateTerm`
 
 `dueDate` no longer accepts a `Carbon` date. It takes a `DueDateTerm` enum: `Days0`, `Days10`, `Days15`, `Days30`, `Days60`, `Days90` or `Days120`. The due date sent to the provider is today plus the term's days.

@@ -13,11 +13,13 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsed
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
+use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use Spatie\LaravelData\Data;
 
 class ItemData extends Data implements DataNeedsValidation
 {
     use HasMakeValidation;
+    use HidesAdditionalData;
 
     public function __construct(
         public ?int $id = null,
