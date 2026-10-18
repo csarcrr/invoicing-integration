@@ -27,7 +27,8 @@ foreach ($results->getList() as $item) {
 ```
 
 - `getList()` returns a `Collection` of `ItemData` instances populated by the
-  provider response.
+  provider response. Cegid Vendus items carry `id`, `name`, `description`,
+  `reference` and `barcode`.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
 

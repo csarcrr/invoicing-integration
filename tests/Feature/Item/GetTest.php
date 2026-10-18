@@ -12,9 +12,17 @@ test('an item get request is successful', function (Provider $provider, string $
 
     $data = Item::get($item)->execute()->getItem();
 
+    [$reference, $barcode] = match ($provider) {
+        Provider::CEGID_VENDUS => ['reference-1', 'barcode-1'],
+        Provider::MOLONI => ['WBH-2026-BLK', '5601234567890'],
+    };
+
     expect($data->name)->toBeString()->not->toBeEmpty()
         ->and($data->description)->toBe('A small product description used for testing purposes.')
-        ->and($data->getAdditionalData())->not->toBeEmpty();
+        ->and($data->reference)->toBe($reference)
+        ->and($data->barcode)->toBe($barcode)
+        ->and($data->getAdditionalData())->not->toBeEmpty()
+        ->and($data->getAdditionalData())->not->toHaveKeys(['reference', 'barcode']);
 
     Http::assertSentCount(1);
 })->with('providers', ['get']);

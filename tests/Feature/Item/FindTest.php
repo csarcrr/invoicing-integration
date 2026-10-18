@@ -99,6 +99,21 @@ test('fails when attempting to go above or below the allowed pages', function (P
     $results->page($page)->execute();
 })->with('providers', ['response_multiple'], [[0], [10]])->throws(NoMorePagesException::class);
 
+test('maps the vendus items onto the item list', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    Http::fake(mockResponse(fixtures()->response()->item()->files('response_multiple')));
+
+    $list = Item::find()->execute()->getList();
+
+    expect($list)->toHaveCount(3)
+        ->and($list->first()->id)->toBe(1001)
+        ->and($list->first()->name)->toBe('Item Title')
+        ->and($list->first()->description)->toBe('Item Description')
+        ->and($list->first()->reference)->toBe('reference-1')
+        ->and($list->first()->barcode)->toBe('barcode-1');
+});
+
 test('maps the moloni products onto the item list', function () {
     mockConfiguration(Provider::MOLONI);
 

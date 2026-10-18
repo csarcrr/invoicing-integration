@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Item;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
@@ -103,14 +103,8 @@ class Find extends Item implements ShouldFindItem
      */
     protected function updateResults(array $results): void
     {
-        $this->list = collect($results)->map(function (array $item) {
-            $data = [];
-            ! empty($item['title']) && $data['name'] = $item['title'];
-            ! empty($item['reference']) && $data['reference'] = $item['reference'];
-            ! empty($item['barcode']) && $data['barcode'] = $item['barcode'];
-            ! empty($item['id']) && $data['id'] = $item['id'];
-
-            return ItemData::from($data);
-        })->values();
+        $this->list = collect($results)
+            ->map(fn (array $item) => $this->toItemData($item['id'] ?? null, $item))
+            ->values();
     }
 }
