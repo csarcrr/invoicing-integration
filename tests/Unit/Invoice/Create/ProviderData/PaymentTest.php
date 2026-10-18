@@ -76,7 +76,7 @@ it('fetches the provider payment methods once per invoice', function (Provider $
         return;
     }
 
-    Http::assertSentCount(1);
+    expect(Http::recorded(fn (Request $request) => Str::contains($request->url(), 'paymentMethods/getAll')))->toHaveCount(1);
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'paymentMethods/getAll')
         && Str::contains($request->body(), 'qty=50')
         && Str::contains($request->body(), 'offset=0'));

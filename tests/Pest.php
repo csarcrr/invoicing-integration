@@ -71,6 +71,7 @@ function mockConfiguration(Provider $provider): void
                 'scope' => null,
                 'refresh_token' => 'test-refresh-token',
             ]),
+            '*documentSets/getAll*' => mockResponse(fixtures()->response()->documentSeries()->files('response_multiple')),
         ]);
 
         Cache::put('invoicing_integration_moloni_access_token', [

@@ -24,6 +24,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentM
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Invoice;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
@@ -133,7 +134,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     protected function buildDocument(): void
     {
         $this->payload->put('date', Carbon::now()->toDateString());
-        $this->payload->put('document_set_id', 0);
+        $this->payload->put('document_set_id', (new FindDocumentSeries)->execute()->getDefaultId());
         $this->payload->put('status', $this->draft ? 0 : 1);
     }
 

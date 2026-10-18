@@ -347,7 +347,7 @@ Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts
 - **Due date**: sent as `expiration_date`; today when not set. Not sent on RG. When set, one request to `maturityDates/getAll` (first 50 due dates) resolves `maturity_date_id`: the due date with the same number of days, or the closest one when none matches (the shorter one on a tie). `maturity_date_id` is not sent when the account has no due dates.
 - **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not. Nothing is sent on RG.
 - **Related document**: only sent on RG, as the invoice the receipt settles. It must be the numeric Moloni `document_id` and is sent with the payments total as its value. FT, FR and FS do not send it.
-- **Document set**: `document_set_id` is sent as `0` for now.
+- **Document series**: one request to `documentSets/getAll` (first 50 document series) resolves `document_set_id`: the account's default document series (`active_by_default`), or the first one when none is marked as default.
 - **Response**: after the insert, a second request to `documents/getOne` fetches the created document. `id` is the Moloni `document_id`, `sequence` is built as `{type} {document set name}/{number}` (e.g. `FT A/12`), `total` is the document `net_value` and `totalNet` is `net_value` minus `taxes_value`. The other fields of the fetched document are available through `getAdditionalData()`. The ATCUD is not returned. No output is returned, see [Output Formats](outputting-invoice.md).
 
 ## Complete Example

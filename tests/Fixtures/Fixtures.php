@@ -99,6 +99,13 @@ class Fixtures
         return $this;
     }
 
+    public function documentSeries(): self
+    {
+        $this->path[] = 'DocumentSeries';
+
+        return $this;
+    }
+
     public function tax(): self
     {
         $this->path[] = 'Tax';
