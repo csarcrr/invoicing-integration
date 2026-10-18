@@ -12,10 +12,6 @@ it('is an instance of the correct when creating an item', function (Provider $pr
 })->with('providers');
 
 it('is an instance of the correct when finding an item', function (Provider $provider) {
-    if ($provider === Provider::MOLONI) {
-        $this->markTestSkipped('Find is not supported by Moloni yet.');
-    }
-
     expect(Item::find())->toBeInstanceOf(ShouldFindItem::class);
 })->with('providers');
 

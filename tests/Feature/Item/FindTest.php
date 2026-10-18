@@ -86,18 +86,26 @@ test('can go to the next page and then go back', function (Provider $provider, s
         });
 })->with('providers', ['response_multiple']);
 
-test('fails when attempting to go above or below the allowed pages', function (Provider $provider, string $fixtureName, int $page) {
-    if ($provider === Provider::MOLONI && $page > 1) {
-        $this->markTestSkipped('Moloni does not report the total pages, so there is no upper limit.');
-    }
+test('fails when attempting to go below the first page', function (Provider $provider) {
+    Http::fakeSequence()
+        ->push(collect([]), 200, $this->headers)
+        ->push(collect([]), 200, $this->headers);
+
+    $results = Item::find($this->filters)->execute();
+    $results->page(0)->execute();
+})->with('providers')->throws(NoMorePagesException::class);
+
+// Moloni does not report its total pages, so there is no known upper limit to exceed.
+test('fails when attempting to go above the total pages', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
 
     Http::fakeSequence()
         ->push(collect([]), 200, $this->headers)
         ->push(collect([]), 200, $this->headers);
 
     $results = Item::find($this->filters)->execute();
-    $results->page($page)->execute();
-})->with('providers', ['response_multiple'], [[0], [10]])->throws(NoMorePagesException::class);
+    $results->page(10)->execute();
+})->throws(NoMorePagesException::class);
 
 test('maps the vendus items onto the item list', function () {
     mockConfiguration(Provider::CEGID_VENDUS);
