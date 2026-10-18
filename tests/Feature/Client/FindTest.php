@@ -138,13 +138,29 @@ test('fails when attempting to go above the known total of pages', function (Pro
     };
 })->with('providers');
 
-test('fails when no search criteria is set', function (Provider $provider) {
+test('lists all moloni clients when no search criteria is set', function () {
+    mockConfiguration(Provider::MOLONI);
+
     Http::fake(mockResponse([]));
 
-    $find = fn () => Client::find()->execute();
+    Client::find()->execute();
 
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($find)->not->toThrow(InvalidArgumentException::class),
-        Provider::MOLONI => expect($find)->toThrow(InvalidArgumentException::class, 'A vat, name or id is required to search clients.'),
-    };
-})->with('providers');
+    Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'customers/getAll')
+        && Str::contains($request->body(), 'offset=0'));
+});
+
+test('searches moloni clients on the endpoint of the search field', function (array $filters, string $endpoint, string $body) {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake(mockResponse([]));
+
+    Client::find(ClientData::from($filters))->execute();
+
+    Http::assertSent(fn (Request $request) => Str::contains($request->url(), $endpoint)
+        && Str::contains($request->body(), $body));
+})->with([
+    'vat' => [['vat' => '215783920'], 'customers/getByVat', 'vat=215783920'],
+    'email' => [['email' => 'marta@example.com'], 'customers/getByEmail', 'email=marta%40example.com'],
+    'number' => [['id' => '12001'], 'customers/getByNumber', 'number=12001'],
+    'name' => [['name' => 'Marta'], 'customers/getByName', 'name=Marta'],
+]);

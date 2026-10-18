@@ -34,7 +34,7 @@ foreach ($results->getList() as $client) {
 
 ## Filtering by Email
 
-Cegid Vendus currently supports server-side email filtering:
+Cegid Vendus and Moloni support server-side email filtering:
 
 ```php
 $filters = ClientData::make(['email' => 'billing@example.com']);
@@ -47,21 +47,20 @@ common attributes such as `email`, `vat`, `status`, and `externalReference`.
 
 ## Searching on Moloni
 
-Moloni accepts a single search term, matched against the customer VAT, name
-and number. When several are set, only one is sent, in this order:
+With no filter set, Moloni lists all clients. With filters set, Moloni searches
+by one field only. When several are set, the package sends the first one set,
+in this order:
 
 1. `vat`
-2. `name`
+2. `email`
 3. `id` (sent as the customer number)
+4. `name`
 
 ```php
 $results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
 ```
 
-- At least one of the three is required; otherwise `InvalidArgumentException`
-  is thrown before the request, so `Client::find()` without filters is not
-  supported on Moloni.
-- Other filters (`email`, `status`, `externalReference`, `date`) are ignored.
+- Other filters (`status`, `externalReference`, `date`) are ignored.
 - Each returned client has `id` set to the Moloni `customer_id`, ready for
   `Client::get()`.
 

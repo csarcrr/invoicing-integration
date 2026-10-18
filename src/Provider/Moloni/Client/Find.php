@@ -14,11 +14,8 @@ use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 
 use function collect;
-use function is_null;
-use function throw_if;
 
 class Find extends Client implements ShouldFindClient
 {
@@ -39,7 +36,15 @@ class Find extends Client implements ShouldFindClient
 
     public function execute(): self
     {
-        $request = Http::provider()->post('customers/getBySearch', $this->getPayload()->toArray());
+        $endpoint = match ($this->searchFilter()->keys()->first()) {
+            'vat' => 'customers/getByVat',
+            'email' => 'customers/getByEmail',
+            'number' => 'customers/getByNumber',
+            'name' => 'customers/getByName',
+            default => 'customers/getAll',
+        };
+
+        $request = Http::provider()->post($endpoint, $this->getPayload()->toArray());
 
         Http::handleUnwantedFailures($request);
 
@@ -67,14 +72,22 @@ class Find extends Client implements ShouldFindClient
         return $this->payload;
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
+    protected function searchFilter(): Collection
+    {
+        return collect([
+            'vat' => $this->data->vat,
+            'email' => $this->data->email,
+            'number' => $this->data->id,
+            'name' => $this->data->name,
+        ])->filter(fn (mixed $value) => Properties::isValid($value))->take(1);
+    }
+
     protected function buildSearch(): void
     {
-        $search = collect([$this->data->vat, $this->data->name, $this->data->id])
-            ->first(fn (mixed $value) => Properties::isValid($value));
-
-        throw_if(is_null($search), InvalidArgumentException::class, 'A vat, name or id is required to search clients.');
-
-        $this->payload->put('search', $search);
+        $this->searchFilter()->each(fn (mixed $value, string $key) => $this->payload->put($key, $value));
     }
 
     protected function buildPagination(): void
