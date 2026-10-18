@@ -44,6 +44,18 @@ test('automagically injects provider pagination details into the request', funct
     });
 })->with('providers', ['response_multiple']);
 
+test('searches moloni products when a search field is set', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake(mockResponse(fixtures()->response()->item()->files('response_multiple')));
+
+    Item::find(ItemData::make(['name' => 'Widget']))->execute();
+
+    Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'products/getBySearch')
+        && Str::contains($request->body(), 'search=Widget')
+        && ! Str::contains($request->body(), 'category_id'));
+});
+
 test('can fetch the next page', function (Provider $provider, string $fixtureName) {
     for ($i = 0; $i < 5; $i++) {
         $response[] = fixtures()->response()->item()->files($fixtureName)[0];

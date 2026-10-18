@@ -7,10 +7,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingCategoryExce
 use CsarCrr\InvoicingIntegration\Facades\Item;
 
 it('transforms item search filters to provider payload', function (Provider $provider, string $fixture) {
-    if ($provider === Provider::MOLONI) {
-        $this->markTestSkipped('Moloni does not support item search filters.');
-    }
-
     $payload = fixtures()->request()->item()->files($fixture);
 
     $data = Item::find(ItemData::from([
@@ -39,6 +35,22 @@ it('moves the offset when changing page', function (Provider $provider) {
         Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'qty' => 50, 'offset' => 50]),
     };
 })->with('providers');
+
+it('searches moloni by reference before name', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    $find = Item::find(ItemData::make(['name' => 'Item Title', 'reference' => 'reference-1']));
+
+    expect($find->getPayload()->toArray())->toBe(['search' => 'reference-1', 'qty' => 50, 'offset' => 0]);
+});
+
+it('searches moloni by name without a category', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    $find = Item::find(ItemData::make(['name' => 'Item Title']));
+
+    expect($find->getPayload()->toArray())->toBe(['search' => 'Item Title', 'qty' => 50, 'offset' => 0]);
+});
 
 it('fails when moloni has no category to list', function () {
     mockConfiguration(Provider::MOLONI);

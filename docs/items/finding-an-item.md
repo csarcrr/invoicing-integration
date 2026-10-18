@@ -53,7 +53,8 @@ $filters = ItemData::make(['barcode' => '5601234567890']);
 $results = Item::find($filters)->execute();
 ```
 
-Supported filter fields on `ItemData` for Cegid Vendus:
+Supported filter fields on `ItemData` (see [Moloni](#moloni) for how Moloni
+combines them):
 
 | Field       | Type      | Description               |
 | ----------- | --------- | ------------------------- |
@@ -67,8 +68,21 @@ Supported filter fields on `ItemData` for Cegid Vendus:
 
 ## Moloni
 
-Moloni lists the items of one category. Pass an `ItemData` with a `category`
-id. Moloni ignores the `name`, `reference` and `barcode` filters.
+Moloni searches all products when you set `name`, `reference` or `barcode`.
+Moloni accepts one search term only. When you set several fields, the package
+sends the first one set, in this order: `barcode`, `reference`, `name`. A
+search needs no category.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Item;
+
+$filters = ItemData::make(['reference' => 'WGT-001']);
+$results = Item::find($filters)->execute();
+```
+
+With no search field set, Moloni lists the items of one category. Pass an
+`ItemData` with a `category` id.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
@@ -79,7 +93,7 @@ $filters = ItemData::make(['category' => CategoryData::make(['id' => 12])]);
 $results = Item::find($filters)->execute();
 ```
 
-- A missing category id throws `MissingCategoryException`.
+- With no search field set, a missing category id throws `MissingCategoryException`.
 - Each page holds up to 50 items.
 - Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
   `reference`, `barcode`, `type`, `tax` and the gross `price`. Moloni does not

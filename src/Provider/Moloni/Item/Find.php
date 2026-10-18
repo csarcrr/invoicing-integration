@@ -39,7 +39,12 @@ class Find extends Item implements ShouldFindItem
      */
     public function execute(): self
     {
-        $request = Http::provider()->post('products/getAll', $this->getPayload()->toArray());
+        $endpoint = match (true) {
+            ! is_null($this->searchTerm()) => 'products/getBySearch',
+            default => 'products/getAll',
+        };
+
+        $request = Http::provider()->post($endpoint, $this->getPayload()->toArray());
 
         Http::handleUnwantedFailures($request);
 
@@ -63,10 +68,25 @@ class Find extends Item implements ShouldFindItem
      */
     public function getPayload(): Collection
     {
+        $this->buildSearch();
         $this->buildCategory();
         $this->buildPagination();
 
         return $this->payload;
+    }
+
+    protected function searchTerm(): ?string
+    {
+        $term = $this->data->barcode ?? $this->data->reference ?? $this->data->name;
+
+        return is_null($term) ? null : (string) $term;
+    }
+
+    protected function buildSearch(): void
+    {
+        $term = $this->searchTerm();
+
+        ! is_null($term) && $this->payload->put('search', $term);
     }
 
     /**
@@ -74,6 +94,10 @@ class Find extends Item implements ShouldFindItem
      */
     protected function buildCategory(): void
     {
+        if (! is_null($this->searchTerm())) {
+            return;
+        }
+
         $categoryId = $this->data->category->id ?? throw new MissingCategoryException;
 
         $this->payload->put('category_id', $categoryId);
