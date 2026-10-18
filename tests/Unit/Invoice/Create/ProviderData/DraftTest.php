@@ -21,7 +21,7 @@ it('issues the final document by default', function (Provider $provider) {
 it('can create the document as a draft', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'reference-1'])],
-    ]))->draft()->getPayload();
+    ]))->asDraft()->getPayload();
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($payload->has('status'))->toBeFalse(),

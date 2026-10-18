@@ -151,7 +151,7 @@ Features that are "shared" between multiple Invoicing types.
 | Save as PDF   | ✅           | ❌     | ❌              |
 | Obtain ESCPOS | ✅           | ❌     | ❌              |
 
-Moloni documents can also be created as drafts with `draft()`.
+Moloni documents can also be created as drafts with `asDraft()`.
 
 #### Client
 

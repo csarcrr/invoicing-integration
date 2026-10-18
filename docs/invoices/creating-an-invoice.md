@@ -329,13 +329,13 @@ $invoiceData = InvoiceData::make([
 
 ## Drafts
 
-Call `draft()` before `execute()` to create the document as a draft instead of issuing it:
+Call `asDraft()` before `execute()` to create the document as a draft instead of issuing it:
 
 ```php
-$result = Invoice::create($invoiceData)->draft()->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->asDraft()->execute()->getInvoice();
 ```
 
-Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `draft()` and always issues the document.
+Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `asDraft()` and always issues the document.
 
 ## Moloni
 

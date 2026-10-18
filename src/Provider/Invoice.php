@@ -17,7 +17,7 @@ class Invoice extends Base
 {
     protected bool $draft = false;
 
-    public function draft(): static
+    public function asDraft(): static
     {
         $this->draft = true;
 

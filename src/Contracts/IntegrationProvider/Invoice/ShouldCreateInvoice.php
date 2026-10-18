@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 
 interface ShouldCreateInvoice extends ShouldHaveConfig, ShouldHavePayload
 {
-    public function draft(): static;
+    public function asDraft(): static;
 
     public function getInvoice(): InvoiceData;
 }
