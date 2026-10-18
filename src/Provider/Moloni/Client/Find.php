@@ -35,7 +35,6 @@ class Find extends Client implements ShouldFindClient
         $this->data = $client ?? ClientData::from([]);
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
-        $this->totalPages(null);
     }
 
     public function execute(): self

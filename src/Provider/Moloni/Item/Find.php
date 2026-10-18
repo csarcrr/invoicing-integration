@@ -32,7 +32,6 @@ class Find extends Item implements ShouldFindItem
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
         $this->perPage = 50;
-        $this->totalPages(null);
     }
 
     /**

@@ -15,7 +15,7 @@ trait HasPaginator
 
     protected int $perPage = 20;
 
-    protected ?int $totalPages = 1;
+    protected ?int $totalPages = null;
 
     public function getTotalPages(): ?int
     {

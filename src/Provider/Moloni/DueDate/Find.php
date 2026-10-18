@@ -26,7 +26,6 @@ class Find implements ShouldFindDueDate
     {
         $this->payload = collect();
         $this->perPage = 50;
-        $this->totalPages(null);
     }
 
     public function execute(): self
