@@ -1,7 +1,7 @@
 # Providers - Moloni - Configuration
 
 > [!NOTE]
-> Moloni support is actively being built. Authentication, client management (create, get, find), item create and get, and invoice creation are implemented; other features are coming soon. Check the [Features](/features.md) page to track implementation progress.
+> Moloni support is actively being built. Authentication, client management (create, get, find), item create, get and find, and invoice creation are implemented; other features are coming soon. Check the [Features](/features.md) page to track implementation progress.
 
 ## Authentication
 

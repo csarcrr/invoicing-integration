@@ -64,6 +64,27 @@ Supported filter fields on `ItemData` for Cegid Vendus:
 > Cegid Vendus maps `name` to the `title` query parameter internally. This is
 > handled transparently by the package — pass `name` on `ItemData` as usual.
 
+## Moloni
+
+Moloni lists the items of one category. Pass an `ItemData` with a `category`
+id. Moloni ignores the `name`, `reference` and `barcode` filters.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\CategoryData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Item;
+
+$filters = ItemData::make(['category' => CategoryData::make(['id' => 12])]);
+$results = Item::find($filters)->execute();
+```
+
+- A missing category id throws `MissingCategoryException`.
+- Each page holds up to 50 items.
+- Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
+  `reference`, `barcode`, `type`, `tax` and the gross `price`. Moloni does not
+  return the category, description or stock control in the list, so those
+  fields keep their defaults.
+
 ## Pagination API
 
 `Item::find()` implements `next()`, `previous()`, and `page()` helpers through

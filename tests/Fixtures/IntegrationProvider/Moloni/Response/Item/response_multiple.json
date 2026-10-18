@@ -1,0 +1,66 @@
+[
+    {
+        "product_id": 1542,
+        "type": 1,
+        "name": "Wireless Bluetooth Headphones",
+        "reference": "WBH-2026-BLK",
+        "ean": "5601234567890",
+        "price": 20,
+        "stock": 42,
+        "unit_id": 3,
+        "pos_favorite": 0,
+        "at_product_category": "M",
+        "image": "https://example.com/images/products/headphones.jpg",
+        "measurement_unit": {
+            "unit_id": 3,
+            "name": "Unidade",
+            "short_name": "Un"
+        },
+        "taxes": [
+            {
+                "product_id": 1542,
+                "tax_id": 1,
+                "value": 4.6,
+                "order": 0,
+                "cumulative": 0,
+                "tax": {
+                    "tax_id": 1,
+                    "type": 1,
+                    "saft_type": 1,
+                    "vat_type": "NOR",
+                    "stamp_tax": "",
+                    "name": "IVA Normal",
+                    "value": 23,
+                    "fiscal_zone": "PT",
+                    "active_by_default": 1,
+                    "exemption_reason": ""
+                }
+            }
+        ],
+        "properties": [],
+        "price_classes": [],
+        "warehouses": []
+    },
+    {
+        "product_id": 1543,
+        "type": 2,
+        "name": "Installation Service",
+        "reference": "SRV-INSTALL",
+        "ean": "",
+        "price": 50,
+        "stock": 0,
+        "unit_id": 3,
+        "pos_favorite": 0,
+        "at_product_category": "S",
+        "image": "",
+        "measurement_unit": {
+            "unit_id": 3,
+            "name": "Unidade",
+            "short_name": "Un"
+        },
+        "taxes": [],
+        "properties": [],
+        "price_classes": [],
+        "warehouses": []
+    }
+]

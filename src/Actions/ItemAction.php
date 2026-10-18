@@ -10,11 +10,11 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Create as VendusCreate;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Get;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Create as MoloniCreate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Find as MoloniFind;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Get as MoloniGet;
 
 /**
@@ -49,7 +49,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Find($item),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniFind($item),
         };
     }
 }
