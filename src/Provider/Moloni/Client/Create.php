@@ -6,11 +6,14 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Client;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -32,6 +35,7 @@ class Create extends Client implements ShouldCreateClient
 
     /**
      * @throws MissingClientDataException
+     * @throws CouldNotGetCountryIdException
      */
     public function execute(): self
     {
@@ -54,6 +58,7 @@ class Create extends Client implements ShouldCreateClient
      * @return Collection<string, mixed>
      *
      * @throws MissingClientDataException
+     * @throws CouldNotGetCountryIdException
      */
     public function getPayload(): Collection
     {
@@ -63,6 +68,7 @@ class Create extends Client implements ShouldCreateClient
         $this->buildName();
         $this->buildVat();
         $this->buildAddress();
+        $this->buildCountry();
         $this->buildContacts();
         $this->buildNotes();
         $this->buildPendingIds();
@@ -115,6 +121,18 @@ class Create extends Client implements ShouldCreateClient
         $this->payload->put('zip_code', $this->data->postalCode);
     }
 
+    /**
+     * @throws CouldNotGetCountryIdException
+     */
+    protected function buildCountry(): void
+    {
+        $iso = Properties::isValid($this->data->country) ? $this->data->country : 'PT';
+
+        $country = (new GetCountry(CountryData::from(['iso' => $iso])))->execute()->getCountry();
+
+        $this->payload->put('country_id', $country->id);
+    }
+
     protected function buildContacts(): void
     {
         Properties::isValid($this->data->email) && $this->payload->put('email', $this->data->email);
@@ -132,7 +150,6 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildPendingIds(): void
     {
-        $this->payload->put('country_id', 0);
         $this->payload->put('language_id', 0);
         $this->payload->put('maturity_date_id', 0);
         $this->payload->put('payment_method_id', 0);

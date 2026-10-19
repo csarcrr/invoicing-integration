@@ -72,6 +72,7 @@ function mockConfiguration(Provider $provider): void
                 'refresh_token' => 'test-refresh-token',
             ]),
             '*documentSets/getAll*' => mockResponse(fixtures()->response()->documentSeries()->files('response_multiple')),
+            '*countries/getAll*' => mockResponse(fixtures()->response()->country()->files('response_multiple')),
         ]);
 
         Cache::put('invoicing_integration_moloni_access_token', [

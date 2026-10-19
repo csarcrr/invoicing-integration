@@ -86,7 +86,8 @@ $clientData = ClientData::make([
 - `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
 - `id` is optional and is sent as the Moloni customer `number`. Without it, a number is generated from the VAT plus a random string.
 - After `execute()`, `id` holds that number. The Moloni `customer_id` (the one `Client::get()` expects) is in `getAdditionalData()`.
-- `country`, `irsRetention`, `emailNotification` and `defaultPayDue` are not sent. The country, language, payment method and maturity date ids are sent as `0` for now.
+- `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, Portugal (`PT`) is used. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
+- `irsRetention`, `emailNotification` and `defaultPayDue` are not sent. The language, payment method and maturity date ids are sent as `0` for now.
 
 ## Complete Example
 
