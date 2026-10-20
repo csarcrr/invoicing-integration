@@ -78,7 +78,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
             $messages = [];
 
-            if(!empty($body['errors'])) {
+            if (! empty($body['errors'])) {
                 /** @var array<int, array{code?: string, message?: string}> $errors */
                 $errors = $body['errors'];
                 $messages = collect($errors)->map(function (array $error): string {
@@ -86,7 +86,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
                 })->toArray();
             }
 
-            if(!empty($body['error']) && !empty($body['error_description'])) {
+            if (! empty($body['error']) && ! empty($body['error_description'])) {
                 $messages = ["{$body['error']}: {$body['error_description']}"];
             }
 

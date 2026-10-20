@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ShouldCreatePaymentMethod create(PaymentMethodData $paymentMethod)
  * @method static ShouldFindPaymentMethod find()
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\PaymentMethodAction
+ * @see PaymentMethodAction
  */
 class PaymentMethod extends Facade
 {
