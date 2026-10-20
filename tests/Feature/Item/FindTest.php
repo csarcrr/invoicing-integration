@@ -100,8 +100,8 @@ test('can go to the next page and then go back', function (Provider $provider, s
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
     Http::fakeSequence()
-        ->push(collect([]), 200, $this->headers)
-        ->push(collect([]), 200, $this->headers);
+        ->push([], 200, $this->headers)
+        ->push([], 200, $this->headers);
 
     $results = Item::find($this->filters)->execute();
     $results->page(0)->execute();
@@ -112,8 +112,8 @@ test('fails when attempting to go above the total pages', function () {
     mockConfiguration(Provider::CEGID_VENDUS);
 
     Http::fakeSequence()
-        ->push(collect([]), 200, $this->headers)
-        ->push(collect([]), 200, $this->headers);
+        ->push([], 200, $this->headers)
+        ->push([], 200, $this->headers);
 
     $results = Item::find($this->filters)->execute();
     $results->page(10)->execute();
