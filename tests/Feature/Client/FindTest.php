@@ -118,7 +118,7 @@ test('absent response fields remain Optional on the returned ClientData', functi
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
     Http::fakeSequence()
-        ->push(collect([]), 200, $this->headers);
+        ->push([], 200, $this->headers);
 
     $results = Client::find($this->filters)->execute();
     $results->page(0)->execute();
@@ -126,8 +126,8 @@ test('fails when attempting to go below the first page', function (Provider $pro
 
 test('fails when attempting to go above the known total of pages', function (Provider $provider) {
     Http::fakeSequence()
-        ->push(collect([]), 200, $this->headers)
-        ->push(collect([]), 200, $this->headers);
+        ->push([], 200, $this->headers)
+        ->push([], 200, $this->headers);
 
     $results = Client::find($this->filters)->execute();
     $goAbove = fn () => $results->page(10)->execute();
