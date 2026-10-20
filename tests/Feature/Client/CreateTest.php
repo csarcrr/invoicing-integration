@@ -15,5 +15,8 @@ test('create client request is successful', function (Provider $provider, string
         ->and($data->name)->toBeString()
         ->and($data->vat)->toBeInt();
 
-    Http::assertSentCount(1);
+    match ($provider) {
+        Provider::MOLONI => Http::assertSentCount(3),
+        default => Http::assertSentCount(1)
+    };
 })->with('providers', ['create'], ['response_simple']);

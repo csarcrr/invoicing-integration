@@ -35,6 +35,7 @@ class Get
         throw_if(is_null($match), CouldNotGetCountryIdException::class);
 
         $this->country->id = (int) $match['country_id'];
+        $this->country->name = (string) $match['name'];
 
         return $this;
     }
