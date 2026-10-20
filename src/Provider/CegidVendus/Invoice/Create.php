@@ -11,6 +11,7 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
@@ -124,7 +125,7 @@ class Create extends Invoice implements ShouldCreateInvoice
      */
     protected function buildDueDate(): void
     {
-        if (! ($this->data->dueDate instanceof Carbon)) {
+        if (! ($this->data->dueDate instanceof DueDateTerm)) {
             return;
         }
 
@@ -134,7 +135,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'Due date can only be set for FT document types.'
         );
 
-        $this->payload->put('due_date', $this->data->dueDate->toDateString());
+        $this->payload->put('due_date', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
     }
 
     protected function buildOutput(): void

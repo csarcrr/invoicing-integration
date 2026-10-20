@@ -34,7 +34,7 @@ foreach ($results->getList() as $client) {
 
 ## Filtering by Email
 
-Cegid Vendus currently supports server-side email filtering:
+Cegid Vendus and Moloni support server-side email filtering:
 
 ```php
 $filters = ClientData::make(['email' => 'billing@example.com']);
@@ -44,6 +44,25 @@ $results = Client::find($filters)->execute();
 
 Filterable fields depend on the provider, but the `ClientData` DTO supports
 common attributes such as `email`, `vat`, `status`, and `externalReference`.
+
+## Searching on Moloni
+
+With no filter set, Moloni lists all clients. With filters set, Moloni searches
+by one field only. When several are set, the package sends the first one set,
+in this order:
+
+1. `vat`
+2. `email`
+3. `id` (sent as the customer number)
+4. `name`
+
+```php
+$results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
+```
+
+- Other filters (`status`, `externalReference`, `date`) are ignored.
+- Each returned client has `id` set to the Moloni `customer_id`, ready for
+  `Client::get()`.
 
 ## Pagination API
 
@@ -62,7 +81,9 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
 ```
 
 - `getTotalPages()` reads the provider's `X-Paginator-Pages` header (defaults to
-  `1` if absent).
+  `1` if absent). It returns `null` when the provider does not report a total
+  (Moloni), and before the first `execute()`: keep calling `next()` until a page
+  comes back empty.
 - Calling `next()` beyond the last page, `previous()` before page 1, or
   `page()` with an invalid value raises `NoMorePagesException`.
 

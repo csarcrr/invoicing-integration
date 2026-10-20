@@ -1,0 +1,35 @@
+[
+    {
+        "payment_method_id": 7001,
+        "name": "Numerário",
+        "is_numerary": 1,
+        "is_mb": 0,
+        "is_credit": 0
+    },
+    {
+        "payment_method_id": 7002,
+        "name": "Multibanco",
+        "is_numerary": 0,
+        "is_mb": 1,
+        "is_credit": 0
+    },
+    {
+        "payment_method_id": 7003,
+        "name": "Cartão de Crédito",
+        "is_numerary": 0,
+        "is_mb": 0,
+        "is_credit": 1
+    },
+    {
+        "payment_method_id": 7004,
+        "name": "Transferência Bancária",
+        "is_numerary": 0,
+        "is_mb": 0,
+        "is_credit": 0
+    },
+    {
+        "payment_method_id": 7005,
+        "name": "Cheque",
+        "is_numerary": 0
+    }
+]

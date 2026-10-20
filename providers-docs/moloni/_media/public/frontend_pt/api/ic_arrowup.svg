@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="ic_arrowup" transform="translate(1897 1588) rotate(180)">
+    <rect id="Retângulo_207" data-name="Retângulo 207" width="20" height="20" rx="2" transform="translate(1877 1568)" fill="#fff" opacity="0.35"/>
+    <path id="ic_arrowdown_dropdown" d="M9.374,75.126a.432.432,0,0,0-.611,0L4.751,79.139.738,75.126a.432.432,0,1,0-.611.611l4.318,4.318a.432.432,0,0,0,.611,0l4.318-4.318a.432.432,0,0,0,0-.611Z" transform="translate(1882.25 1500.41)" fill="#fff"/>
+  </g>
+</svg>

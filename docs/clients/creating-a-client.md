@@ -73,13 +73,28 @@ $clientData = ClientData::make([
 | `city`              | City name                              |
 | `postalCode`        | Postal/ZIP code                        |
 | `country`           | ISO 3166-1 alpha-2 code (e.g., PT, ES) |
+| `language`          | Language code (e.g., `['code' => 'pt']`) |
 | `notes`             | Internal notes (not on invoices)       |
 | `irsRetention`      | Portuguese IRS withholding flag        |
 | `emailNotification` | Auto-send invoices via email           |
 | `defaultPayDue`     | Default payment due (days)             |
+| `discount`          | Discount percentage (0 to 100)         |
+| `creditLimit`       | Credit limit (0 or more)               |
+| `deliveryMethodId`  | Provider delivery method id (0 or more) |
 
 > [!NOTE]
 > Required fields vary by provider. If a required field is missing, the provider will return an explicit error message.
+
+### Moloni
+
+- `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
+- `id` is optional and is sent as the Moloni customer `number`. Without it, a number is generated from the VAT plus a random string.
+- After `execute()`, `id` holds that number. The Moloni `customer_id` (the one `Client::get()` expects) is in `getAdditionalData()`.
+- `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, Portugal (`PT`) is used. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
+- `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, Portuguese (`pt`) is used. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
+- `defaultPayDue` is sent as the Moloni `payment_day`. Without it, `15` is used.
+- `discount`, `creditLimit` and `deliveryMethodId` are sent as `discount`, `credit_limit` and `delivery_method_id`. Without them, `0` is used. Cegid Vendus does not send them.
+- `irsRetention` and `emailNotification` are not sent. The payment method, maturity date and salesman ids are sent as `0` for now.
 
 ## Complete Example
 

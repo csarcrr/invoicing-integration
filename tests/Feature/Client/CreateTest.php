@@ -8,12 +8,15 @@ use Illuminate\Support\Facades\Http;
 test('create client request is successful', function (Provider $provider, string $createFixture, $responseFixture) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
-    $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789]);
+    $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
     $data = Client::create($client)->execute()->getClient();
 
-    expect($data->id)->toBeInt()
+    expect($data->id)->toBeString()
         ->and($data->name)->toBeString()
         ->and($data->vat)->toBeInt();
 
-    Http::assertSentCount(1);
+    match ($provider) {
+        Provider::MOLONI => Http::assertSentCount(3),
+        default => Http::assertSentCount(1)
+    };
 })->with('providers', ['create'], ['response_simple']);

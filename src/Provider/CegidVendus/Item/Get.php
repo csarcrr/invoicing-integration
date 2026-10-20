@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetIte
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Item;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 use Illuminate\Support\Facades\Http;
 
 class Get extends Item implements ShouldGetItem
@@ -40,10 +40,6 @@ class Get extends Item implements ShouldGetItem
      */
     protected function fillProperties(array $data): void
     {
-        $this->data = ItemData::make([
-            'id' => $this->data->id,
-            'name' => $data['title'] ?? null,
-            'description' => $data['description'] ?? null,
-        ]);
+        $this->data = $this->toItemData($this->data->id, $data);
     }
 }

@@ -26,4 +26,13 @@ enum ItemType: string
             ItemType::SpecialTax => 'E',
         };
     }
+
+    public function moloni(): int
+    {
+        return match ($this) {
+            ItemType::Product => 1,
+            ItemType::Service => 2,
+            ItemType::Other, ItemType::Tax, ItemType::SpecialTax => 3,
+        };
+    }
 }

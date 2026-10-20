@@ -18,6 +18,8 @@ $item = Item::get($itemData)->execute()->getItem();
 $item->id;          // 123
 $item->name;        // Item name
 $item->description; // Longer description
+$item->reference;   // Product SKU / code
+$item->barcode;     // EAN or barcode identifier
 ```
 
 ## Requirements
@@ -45,34 +47,25 @@ $item = Item::get($itemData)->execute()->getItem();
 $item->id;          // 123
 $item->name;        // Product name
 $item->description; // Product description
+$item->reference;   // Product SKU / code
+$item->barcode;     // EAN or barcode identifier
 ```
 
 ### Additional response data
 
-The provider response typically includes fields beyond what the package maps onto `ItemData` (e.g., `reference`, `barcode`, `gross_price`, `tax_id`). Those fields are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`:
+Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Cegid Vendus, that is any field outside the provider's supported item properties:
 
 ```php
 $item = Item::get($itemData)->execute()->getItem();
 
 $item->getAdditionalData();
 // [
-//     'reference'          => 'reference-1',
-//     'barcode'            => 'barcode-1',
-//     'gross_price'        => 20.0,
-//     'unit_id'            => 19999,
-//     'type_id'            => 'P',
-//     'stock_control'      => '1',
-//     'tax_id'             => 'ISE',
-//     'tax_exemption'      => 'M40',
-//     'tax_exemption_law'  => 'Artigo 6.º n.º 6 alínea a) do CIVA, a contrário',
-//     'category_id'        => 1,
-//     'status'             => 'on',
-//     'lot_control'        => '1',
+//     'lot_control' => '1',
 // ]
 ```
 
 > [!NOTE]
-> Fields that the package explicitly maps (`name`, `description`) are never duplicated in `getAdditionalData()`. Only provider fields without a first-class mapping on `ItemData` appear there.
+> Fields that the package explicitly maps (`name`, `description`, `reference`, `barcode`) are never duplicated in `getAdditionalData()`.
 
 ## Complete example
 
@@ -89,11 +82,10 @@ $item = Item::get($itemData)->execute()->getItem();
 // Use the mapped fields directly
 echo $item->name;        // e.g. "Widget Pro"
 echo $item->description; // e.g. "High-quality widget for professional use"
+echo $item->reference;   // e.g. "WGT-001"
 
 // Access provider-specific fields via additional data
 $additionalData = $item->getAdditionalData();
-$grossPrice = $additionalData['gross_price'] ?? null; // e.g. 29.99
-$taxId      = $additionalData['tax_id'] ?? null;      // e.g. "NOR"
 ```
 
 ## Error handling

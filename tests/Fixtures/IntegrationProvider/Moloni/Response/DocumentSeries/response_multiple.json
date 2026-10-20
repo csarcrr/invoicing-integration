@@ -1,0 +1,23 @@
+[
+    {
+        "document_set_id": 8001,
+        "name": "A",
+        "cash_vat_scheme_indicator": 0,
+        "active_by_default": 0,
+        "template_id": 1
+    },
+    {
+        "document_set_id": 8002,
+        "name": "B",
+        "cash_vat_scheme_indicator": 0,
+        "active_by_default": 1,
+        "template_id": 1
+    },
+    {
+        "document_set_id": 8003,
+        "name": "C",
+        "cash_vat_scheme_indicator": 1,
+        "active_by_default": 0,
+        "template_id": 1
+    }
+]

@@ -1,0 +1,45 @@
+[
+    {
+        "iso_3166_1": "pt",
+        "country_id": 1,
+        "order": 1,
+        "name": "Portugal",
+        "image": "",
+        "vies_vat_check_available": 1,
+        "languages": [
+            {
+                "country_id": 1,
+                "language_id": 1,
+                "name": "Portugal"
+            }
+        ],
+        "fiscal_zones": [
+            {
+                "fiscal_zone_id": 1,
+                "country_id": 1,
+                "name": "Portugal Continental",
+                "code": "PT"
+            }
+        ]
+    },
+    {
+        "iso_3166_1": "es",
+        "country_id": 70,
+        "order": 2,
+        "name": "Espanha",
+        "image": "",
+        "vies_vat_check_available": 1,
+        "languages": [],
+        "fiscal_zones": []
+    },
+    {
+        "iso_3166_1": "fr",
+        "country_id": 75,
+        "order": 3,
+        "name": "França",
+        "image": "",
+        "vies_vat_check_available": 1,
+        "languages": [],
+        "fiscal_zones": []
+    }
+]

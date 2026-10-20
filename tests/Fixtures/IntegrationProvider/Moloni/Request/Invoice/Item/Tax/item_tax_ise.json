@@ -1,0 +1,11 @@
+{
+    "products": [
+        {
+            "product_id": 0,
+            "name": "",
+            "qty": 1,
+            "price": 0,
+            "exemption_reason": "M04"
+        }
+    ]
+}

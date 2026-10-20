@@ -46,11 +46,11 @@ class Create extends Item implements ShouldCreateItem
 
         Http::handleUnwantedFailures($response);
 
-        $this->data = ItemData::make([
-            'id' => $response['id'],
-        ] + $this->data->toArray());
+        $data = $response->json();
 
-        $this->fillAdditionalProperties($response->json());
+        $this->data->id = $data['id'];
+
+        $this->fillAdditionalProperties($data);
 
         return $this;
     }

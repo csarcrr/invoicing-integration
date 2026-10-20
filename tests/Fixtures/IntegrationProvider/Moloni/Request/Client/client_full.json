@@ -1,0 +1,19 @@
+{
+    "name": "Alberto Albertino",
+    "vat": "223098091",
+    "address": "Rua das Flores 125",
+    "city": "Porto",
+    "zip_code": "4100-100",
+    "email": "alberto.albertino@aa.pt",
+    "phone": "222333444",
+    "notes": "Client Notes",
+    "country_id": 1,
+    "language_id": 1,
+    "payment_day": 15,
+    "discount": 0,
+    "credit_limit": 0,
+    "delivery_method_id": 0,
+    "maturity_date_id": 0,
+    "payment_method_id": 0,
+    "salesman_id": 0
+}

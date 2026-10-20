@@ -27,7 +27,8 @@ foreach ($results->getList() as $item) {
 ```
 
 - `getList()` returns a `Collection` of `ItemData` instances populated by the
-  provider response.
+  provider response. Cegid Vendus items carry `id`, `name`, `description`,
+  `reference` and `barcode`.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
 
@@ -52,7 +53,8 @@ $filters = ItemData::make(['barcode' => '5601234567890']);
 $results = Item::find($filters)->execute();
 ```
 
-Supported filter fields on `ItemData` for Cegid Vendus:
+Supported filter fields on `ItemData` (see [Moloni](#moloni) for how Moloni
+combines them):
 
 | Field       | Type      | Description               |
 | ----------- | --------- | ------------------------- |
@@ -63,6 +65,40 @@ Supported filter fields on `ItemData` for Cegid Vendus:
 > [!NOTE]
 > Cegid Vendus maps `name` to the `title` query parameter internally. This is
 > handled transparently by the package — pass `name` on `ItemData` as usual.
+
+## Moloni
+
+Moloni searches all products when you set `name`, `reference` or `barcode`.
+Moloni accepts one search term only. When you set several fields, the package
+sends the first one set, in this order: `barcode`, `reference`, `name`. A
+search needs no category.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Item;
+
+$filters = ItemData::make(['reference' => 'WGT-001']);
+$results = Item::find($filters)->execute();
+```
+
+With no search field set, Moloni lists the items of one category. Pass an
+`ItemData` with a `category` id.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\CategoryData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Item;
+
+$filters = ItemData::make(['category' => CategoryData::make(['id' => 12])]);
+$results = Item::find($filters)->execute();
+```
+
+- With no search field set, a missing category id throws `MissingCategoryException`.
+- Each page holds up to 50 items.
+- Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
+  `reference`, `barcode`, `type`, `tax` and the gross `price`. Moloni does not
+  return the category, description or stock control in the list, so those
+  fields keep their defaults.
 
 ## Pagination API
 
@@ -80,8 +116,10 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
 }
 ```
 
-- `getTotalPages()` reads the provider's `X-Paginator-Pages` header (defaults
-  to `1` if absent).
+- `getTotalPages()` reads the provider's `X-Paginator-Pages` header (defaults to
+  `1` if absent). It returns `null` when the provider does not report a total
+  (Moloni), and before the first `execute()`: keep calling `next()` until a page
+  comes back empty.
 - Calling `next()` beyond the last page, `previous()` before page 1, or
   `page()` with an invalid value raises `NoMorePagesException`.
 

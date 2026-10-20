@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Data;
 
-use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
+use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\Validation\Sometimes;
 use Spatie\LaravelData\Data;
@@ -16,6 +17,7 @@ use Spatie\LaravelData\Optional;
 class InvoiceData extends Data implements DataNeedsValidation
 {
     use HasMakeValidation;
+    use HidesAdditionalData;
 
     public function __construct(
         public Optional|int $id,
@@ -35,7 +37,7 @@ class InvoiceData extends Data implements DataNeedsValidation
         public Optional|null|string $relatedDocument = null,
         public ?OutputData $output = null,
         public Optional|null|string $notes = null,
-        public Optional|null|Carbon $dueDate = null,
+        public Optional|null|DueDateTerm $dueDate = null,
         #[Sometimes]
         public InvoiceType $type = InvoiceType::Invoice,
     ) {

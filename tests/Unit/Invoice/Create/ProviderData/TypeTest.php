@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -10,6 +11,10 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+beforeEach(function () {
+    Carbon::setTestNow('2025-06-15');
+});
 
 it('transforms to provider payload with default invoice type', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
@@ -22,6 +27,8 @@ it('transforms to provider payload with default invoice type', function (Provide
 })->with('providers', ['default_type']);
 
 it('transforms to provider payload with correct invoice type', function (Provider $provider, string $fixtureName, InvoiceType $type) {
+    fakeProviderPaymentMethods($provider);
+
     $data = fixtures()->request()->invoice()->type()->files($fixtureName);
 
     $attributes = ['reference' => 'reference-1'];

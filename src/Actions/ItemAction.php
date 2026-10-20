@@ -10,10 +10,12 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Create;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Create as VendusCreate;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Get;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Create as MoloniCreate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Find as MoloniFind;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Get as MoloniGet;
 
 /**
  * Orchestrates item operations by routing them to the correct provider implementation.
@@ -30,8 +32,8 @@ final class ItemAction
     public function create(ItemData $item): ShouldCreateItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => (new Create($item))->config($this->provider->getConfig()),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::CEGID_VENDUS => (new VendusCreate($item))->config($this->provider->getConfig()),
+            Provider::MOLONI => (new MoloniCreate($item))->config($this->provider->getConfig()),
         };
     }
 
@@ -39,7 +41,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Get($item),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniGet($item),
         };
     }
 
@@ -47,7 +49,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Find($item),
-            Provider::MOLONI => throw new OperationNotSupportedException,
+            Provider::MOLONI => new MoloniFind($item),
         };
     }
 }
