@@ -53,7 +53,7 @@ final class HttpConfiguration
             ->asForm()
             ->withMiddleware(Middleware::mapRequest(function (RequestInterface $request) use ($config) {
                 $body = [];
-                parse_str($request->getBody()->getContents(), $body) ?? [];
+                parse_str($request->getBody()->getContents(), $body);
                 $body['company_id'] = (int) $config['company_id'];
 
                 $stream = Utils::streamFor(http_build_query($body));

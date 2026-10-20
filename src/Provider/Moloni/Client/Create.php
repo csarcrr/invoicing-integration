@@ -101,9 +101,12 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildNumber(): void
     {
+        /** @var string|int $vat */
+        $vat = $this->data->vat;
+
         $number = Properties::isValid($this->data->id)
             ? $this->data->id
-            : $this->data->vat.Str::random(8);
+            : $vat.Str::random(8);
 
         $this->payload->put('number', $number);
     }
@@ -115,7 +118,10 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildVat(): void
     {
-        $this->payload->put('vat', (string) $this->data->vat);
+        /** @var string|int $vat */
+        $vat = $this->data->vat;
+
+        $this->payload->put('vat', (string) $vat);
     }
 
     protected function buildAddress(): void

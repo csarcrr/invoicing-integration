@@ -79,7 +79,9 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
             $messages = [];
 
             if(!empty($body['errors'])) {
-                $messages = collect($body['errors'])->map(function (array $error): string {
+                /** @var array<int, array{code?: string, message?: string}> $errors */
+                $errors = $body['errors'];
+                $messages = collect($errors)->map(function (array $error): string {
                     return isset($error['message']) ? ($error['code'] ?? '').' - '.$error['message'] : 'Unknown error';
                 })->toArray();
             }
