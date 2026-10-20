@@ -73,6 +73,7 @@ function mockConfiguration(Provider $provider): void
             ]),
             '*documentSets/getAll*' => mockResponse(fixtures()->response()->documentSeries()->files('response_multiple')),
             '*countries/getAll*' => mockResponse(fixtures()->response()->country()->files('response_multiple')),
+            '*languages/getAll*' => mockResponse(fixtures()->response()->language()->files('response_multiple')),
         ]);
 
         Cache::put('invoicing_integration_moloni_access_token', [

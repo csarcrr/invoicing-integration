@@ -1,0 +1,17 @@
+[
+    {
+        "language_id": 1,
+        "code": "pt",
+        "title": "Português"
+    },
+    {
+        "language_id": 2,
+        "code": "en",
+        "title": "English"
+    },
+    {
+        "language_id": 3,
+        "code": "es",
+        "title": "Español"
+    }
+]

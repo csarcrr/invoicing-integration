@@ -368,6 +368,9 @@ ClientData::make([
 | `phone`             | `Optional<string>` | Phone number                        |
 | `notes`             | `Optional<string>` | Internal notes                      |
 | `defaultPayDue`     | `Optional<int>`    | Default payment due (days)          |
+| `discount`          | `Optional<float>`  | Discount percentage (0 to 100)      |
+| `creditLimit`       | `Optional<float>`  | Credit limit (0 or more)            |
+| `deliveryMethodId`  | `Optional<int>`    | Delivery method id (0 or more)      |
 | `externalReference` | `Optional<string>` | Provider-specific reference         |
 | `status`            | `Optional<string>` | Provider status                     |
 | `emailNotification` | `Optional<bool>`   | Whether to send documents via email |

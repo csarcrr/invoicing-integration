@@ -22,7 +22,7 @@ class Get
     public function execute(): self
     {
         $response = Http::provider()->post('countries/getAll');
-dd($response->json()[0]);
+
         Http::handleUnwantedFailures($response);
 
         /** @var array<int, array<string, mixed>> $countries */

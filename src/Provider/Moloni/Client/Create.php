@@ -7,16 +7,20 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\CountryData;
+use CsarCrr\InvoicingIntegration\Data\LanguageData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Client;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get as GetLanguage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Spatie\LaravelData\Optional;
 
 use function collect;
 use function throw_if;
@@ -36,6 +40,7 @@ class Create extends Client implements ShouldCreateClient
     /**
      * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
+     * @throws CouldNotGetLanguageIdException
      */
     public function execute(): self
     {
@@ -59,6 +64,7 @@ class Create extends Client implements ShouldCreateClient
      *
      * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
+     * @throws CouldNotGetLanguageIdException
      */
     public function getPayload(): Collection
     {
@@ -69,6 +75,9 @@ class Create extends Client implements ShouldCreateClient
         $this->buildVat();
         $this->buildAddress();
         $this->buildCountry();
+        $this->buildLanguage();
+        $this->buildPaymentDay();
+        $this->buildCommercialTerms();
         $this->buildContacts();
         $this->buildNotes();
         $this->buildPendingIds();
@@ -133,6 +142,32 @@ class Create extends Client implements ShouldCreateClient
         $this->payload->put('country_id', $country->id);
     }
 
+    /**
+     * @throws CouldNotGetLanguageIdException
+     */
+    protected function buildLanguage(): void
+    {
+        $language = $this->data->language instanceof LanguageData
+            ? $this->data->language
+            : LanguageData::from(['code' => 'pt']);
+
+        $this->payload->put('language_id', (new GetLanguage($language))->execute()->getLanguage()->id);
+    }
+
+    protected function buildPaymentDay(): void
+    {
+        $paymentDay = $this->data->defaultPayDue instanceof Optional ? 15 : $this->data->defaultPayDue;
+
+        $this->payload->put('payment_day', $paymentDay);
+    }
+
+    protected function buildCommercialTerms(): void
+    {
+        $this->payload->put('discount', $this->data->discount instanceof Optional ? 0.0 : $this->data->discount);
+        $this->payload->put('credit_limit', $this->data->creditLimit instanceof Optional ? 0.0 : $this->data->creditLimit);
+        $this->payload->put('delivery_method_id', $this->data->deliveryMethodId instanceof Optional ? 0 : $this->data->deliveryMethodId);
+    }
+
     protected function buildContacts(): void
     {
         Properties::isValid($this->data->email) && $this->payload->put('email', $this->data->email);
@@ -150,8 +185,8 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildPendingIds(): void
     {
-        $this->payload->put('language_id', 0);
         $this->payload->put('maturity_date_id', 0);
         $this->payload->put('payment_method_id', 0);
+        $this->payload->put('salesman_id', 0);
     }
 }

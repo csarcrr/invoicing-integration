@@ -9,6 +9,11 @@
     "notes": "Client Notes",
     "country_id": 0,
     "language_id": 0,
+    "payment_day": 15,
+    "discount": 0,
+    "credit_limit": 0,
+    "delivery_method_id": 0,
     "maturity_date_id": 0,
-    "payment_method_id": 0
+    "payment_method_id": 0,
+    "salesman_id": 0
 }

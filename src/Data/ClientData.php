@@ -30,6 +30,7 @@ class ClientData extends Data implements DataNeedsValidation
         #[Rule('nullable|email')]
         public Optional|string $email,
         public Optional|string $country,
+        public Optional|LanguageData $language,
         public Optional|string $city,
         public Optional|string $address,
         #[MapName(SnakeCaseMapper::class)]
@@ -38,6 +39,12 @@ class ClientData extends Data implements DataNeedsValidation
         public Optional|string $notes,
 
         public Optional|int $defaultPayDue,
+        #[Rule('numeric|min:0|max:100')]
+        public Optional|float $discount,
+        #[Rule('numeric|min:0')]
+        public Optional|float $creditLimit,
+        #[Rule('integer|min:0')]
+        public Optional|int $deliveryMethodId,
 
         public Optional|string|int $vat,
         public Optional|string $id,

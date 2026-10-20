@@ -113,6 +113,13 @@ class Fixtures
         return $this;
     }
 
+    public function language(): self
+    {
+        $this->path[] = 'Language';
+
+        return $this;
+    }
+
     public function tax(): self
     {
         $this->path[] = 'Tax';
