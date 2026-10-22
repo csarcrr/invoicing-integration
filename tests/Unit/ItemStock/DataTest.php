@@ -28,7 +28,7 @@ it('defaults every field to null', function () {
 });
 
 it('keeps the item stock quantity as int or float', function (int|float $quantity) {
-    $stock = ItemStockData::make(['itemId' => 1542, 'quantity' => $quantity]);
+    $stock = ItemStockData::make(['itemId' => 1542, 'warehouseId' => 1, 'quantity' => $quantity]);
 
     expect($stock->quantity)->toBe($quantity);
 })->with([42, 42.5]);

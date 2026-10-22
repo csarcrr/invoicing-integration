@@ -12,5 +12,17 @@
     "tax_exemption_law": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
     "category_id": 1,
     "status": "on",
-    "lot_control": "1"
+    "lot_control": "1",
+    "stock": [
+        {
+            "stock": 40,
+            "store_id": 1,
+            "stock_alert": 5
+        },
+        {
+            "stock": 2,
+            "store_id": 2,
+            "stock_alert": 0
+        }
+    ]
 }

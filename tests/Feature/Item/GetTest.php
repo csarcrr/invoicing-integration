@@ -1,6 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
@@ -37,4 +38,27 @@ test('supported properties are not filled in additional data', function (Provide
     expect($data->getAdditionalData())
         ->not->toHaveKey('title')
         ->not->toHaveKey('description');
+})->with('providers', ['get']);
+
+test('maps the stock of each warehouse', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $item = ItemData::make(['id' => 1542]);
+
+    $data = Item::get($item)->execute()->getItem();
+
+    [$secondQuantity, $stockKey] = match ($provider) {
+        Provider::CEGID_VENDUS => [2, 'stock'],
+        Provider::MOLONI => [2.5, 'warehouses'],
+    };
+
+    expect($data->stock)->toHaveCount(2)
+        ->each->toBeInstanceOf(ItemStockData::class)
+        ->and($data->stock->first()->itemId)->toBe(1542)
+        ->and($data->stock->first()->warehouseId)->toBe(1)
+        ->and($data->stock->first()->quantity)->toBe(40)
+        ->and($data->stock->last()->itemId)->toBe(1542)
+        ->and($data->stock->last()->warehouseId)->toBe(2)
+        ->and($data->stock->last()->quantity)->toBe($secondQuantity)
+        ->and($data->getAdditionalData())->not->toHaveKey($stockKey);
 })->with('providers', ['get']);

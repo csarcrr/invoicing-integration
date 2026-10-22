@@ -3,9 +3,7 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldDeleteItemStock;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldGetItemStock;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldMoveItemStock;
-use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
@@ -19,5 +17,4 @@ it('is an instance of the correct contract for each operation', function (Provid
 })->with('providers')->with([
     'move' => [fn () => ItemStock::move(StockMovementData::make([])), ShouldMoveItemStock::class],
     'delete' => [fn () => ItemStock::delete(StockMovementData::make([])), ShouldDeleteItemStock::class],
-    'get' => [fn () => ItemStock::get(ItemData::make(['id' => 1542])), ShouldGetItemStock::class],
 ]);
