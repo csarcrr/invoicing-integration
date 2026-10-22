@@ -16,6 +16,7 @@ class ItemStockData extends Data implements DataNeedsValidation
 
     public function __construct(
         public int $itemId,
+        public int $warehouseId,
         public int|float $quantity,
     ) {}
 }

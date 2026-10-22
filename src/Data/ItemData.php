@@ -14,6 +14,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeU
 use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
 class ItemData extends Data implements DataNeedsValidation
@@ -44,7 +45,9 @@ class ItemData extends Data implements DataNeedsValidation
         public ?ShouldBeUnit $unit = null,
 
         public bool $controlStock = true,
-        public bool $enabled = true
+        public bool $enabled = true,
+        /** @var Collection<int, ItemStockData>|null */
+        public ?Collection $stock = null
     ) {
         $this->ensureValidQuantity();
         $this->ensureTaxExemptionConsistency();
