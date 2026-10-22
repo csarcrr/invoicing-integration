@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 ItemStock::delete(StockMovementData::make(['id' => 777]))->execute();
 ```
 
-Only `id` (the movement ID) is used. `getPayload()` and `execute()` throw `InvalidArgumentException` (`Movement ID is required.`) when it is missing. The item stock is not fetched after a delete; use [Getting Stock](getting-stock.md) to read it.
+Only `id` (the movement ID) is used. `getPayload()` and `execute()` throw `InvalidArgumentException` (`Movement ID is required.`) when it is missing. The item stock is not fetched after a delete; use `Item::get()` to read it. See [Getting an Item](../items/getting-an-item.md#stock).
 
 ## Moloni
 

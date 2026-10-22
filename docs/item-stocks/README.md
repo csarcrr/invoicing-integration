@@ -14,7 +14,6 @@ $move = ItemStock::move(StockMovementData::make([
 ]))->execute();
 
 echo $move->getMovement()->id;           // provider-assigned movement ID
-echo $move->getItemStock()->quantity; // item stock after the movement
 ```
 
 ## Available operations
@@ -22,7 +21,6 @@ echo $move->getItemStock()->quantity; // item stock after the movement
 | Operation               | Docs                                              |
 | ----------------------- | ------------------------------------------------- |
 | Move stock              | [Moving Stock](moving-stock.md)                   |
-| Get the stock           | [Getting Stock](getting-stock.md)                 |
 | Delete a stock movement | [Deleting a Movement](deleting-a-movement.md)     |
 
 ## Provider support
@@ -30,7 +28,8 @@ echo $move->getItemStock()->quantity; // item stock after the movement
 | Operation       | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Move Stock      | ❌           | ✅     | ❌              |
-| Get Stock       | ❌           | ✅     | ❌              |
 | Delete Movement | ❌           | ✅     | ❌              |
 
 On Cegid Vendus every operation throws `OperationNotSupportedException`.
+
+To read the current stock, use `Item::get()`. See [Getting an Item](../items/getting-an-item.md#stock).

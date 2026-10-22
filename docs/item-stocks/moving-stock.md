@@ -1,6 +1,6 @@
 # Moving Stock
 
-Use `ItemStock::move()` to add or remove stock of an item. After the movement is created, the item is fetched again and its stock is returned.
+Use `ItemStock::move()` to add or remove stock of an item.
 
 ## Example
 
@@ -19,8 +19,7 @@ $movement = StockMovementData::make([
 
 $move = ItemStock::move($movement)->execute();
 
-$move->getMovement()->id;           // provider-assigned movement ID
-$move->getItemStock()->quantity; // item stock after the movement
+$move->getMovement()->id; // provider-assigned movement ID
 ```
 
 ## Available fields
@@ -49,7 +48,7 @@ The movement is sent to `productStocks/insert`:
 | `warehouseId`          | `warehouse_id` (only sent when set)      |
 | `notes`                | `notes` (only sent when set)             |
 
-The returned `product_stock_id` is set as `id`. The item stock is then read from `products/getOne` (`stock` field). See [Getting Stock](getting-stock.md).
+The returned `product_stock_id` is set as `id`. To read the stock after the movement, use `Item::get()`. See [Getting an Item](../items/getting-an-item.md#stock).
 
 ## Cegid Vendus
 

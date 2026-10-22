@@ -204,7 +204,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ## ItemStock
 
-Entry point for moving and reading item stock. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for moving item stock and deleting movements. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\ItemStock;
@@ -214,7 +214,6 @@ use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 | ---------------------------------------------------- | -------------------------- | ------------------------------------ |
 | `ItemStock::move(StockMovementData $movement)`   | `ShouldMoveItemStock`   | Adds or removes stock of an item   |
 | `ItemStock::delete(StockMovementData $movement)` | `ShouldDeleteItemStock` | Deletes a stock movement             |
-| `ItemStock::get(ItemData $item)`                    | `ShouldGetItemStock`    | Reads the current stock of an item |
 
 ## ShouldMoveItemStock Contract
 
@@ -226,9 +225,8 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 
 | Method              | Return Type            | Description                                                   |
 | ------------------- | ---------------------- | ------------------------------------------------------------- |
-| `execute()`         | `self`                 | Send the movement, then fetch the item stock               |
+| `execute()`         | `self`                 | Send the movement                                             |
 | `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
-| `getItemStock()` | `ItemStockData`     | Item stock after the movement                              |
 | `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
 
 ## ShouldDeleteItemStock Contract
@@ -243,20 +241,6 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldD
 | -------------- | ------------ | ---------------------------------------------------- |
 | `execute()`    | `self`       | Send the delete request                              |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging) |
-
-## ShouldGetItemStock Contract
-
-The interface returned by `ItemStock::get()`.
-
-```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldGetItemStock;
-```
-
-| Method              | Return Type        | Description                                          |
-| ------------------- | ------------------ | ---------------------------------------------------- |
-| `execute()`         | `self`             | Fetch the item stock                              |
-| `getItemStock()` | `ItemStockData` | Current stock of the item                         |
-| `getPayload()`      | `Collection`       | Inspect the payload sent to the provider (debugging) |
 
 ---
 
@@ -489,6 +473,7 @@ $item = ItemData::make([
 | `controlStock`       | `bool`                          | `true`               | Whether to track stock for this item               | -                                                                         |
 | `enabled`            | `bool`                          | `true`               | Whether the item is active in the provider         | -                                                                         |
 | `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
+| `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::get()`       | -                                                                         |
 
 ---
 
@@ -560,12 +545,13 @@ $movement = StockMovementData::make([
 
 ### ItemStockData
 
-The stock of an item, returned by `ItemStock::move()` and `get()`.
+The stock of an item in one warehouse, returned in `ItemData->stock` by `Item::get()`.
 
-| Property    | Type         | Description                |
-| ----------- | ------------ | -------------------------- |
-| `itemId` | `int`        | ID of the item          |
-| `quantity`  | `int\|float` | Total stock of the item |
+| Property      | Type         | Description                                                   |
+| ------------- | ------------ | ------------------------------------------------------------- |
+| `itemId`      | `int`        | ID of the item                                                |
+| `warehouseId` | `int`        | Warehouse (Moloni `warehouse_id`, Cegid Vendus `store_id`)    |
+| `quantity`    | `int\|float` | Stock of the item in that warehouse                           |
 
 ---
 
