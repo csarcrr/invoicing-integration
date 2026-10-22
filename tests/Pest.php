@@ -40,6 +40,16 @@ function moloniProvider(): Provider
 
 uses(TestCase::class)->in('Unit', 'Feature');
 
+uses()->group('ClientTestingGroup')->in('Unit/Client', 'Feature/Client');
+uses()->group('DueDateTestingGroup')->in('Unit/DueDate', 'Feature/DueDate');
+uses()->group('InvoiceTestingGroup')->in('Unit/Invoice', 'Feature/Invoice');
+uses()->group('ItemTestingGroup')->in('Unit/Item', 'Feature/Item');
+uses()->group('PaymentMethodTestingGroup')->in('Unit/PaymentMethod', 'Feature/PaymentMethod');
+uses()->group('ProductStockTestingGroup')->in('Unit/ProductStock', 'Feature/ProductStock');
+uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Unit/HttpRequestTest.php');
+uses()->group('TraitTestingGroup')->in('Unit/Traits');
+uses()->group('ArchTestingGroup')->in('Arch');
+
 function mockConfiguration(Provider $provider): void
 {
     if ($provider === Provider::MOLONI) {
