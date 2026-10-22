@@ -25,6 +25,7 @@
     "require-dev": {
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.14",
+        "laravel/prompts": "^0.1.18||^0.2||^0.3",
         "nunomaduro/collision": "^8.8",
         "orchestra/testbench": "^11.0||^10.3.0||^9.3.0",
         "pestphp/pest": "^3.0||^4.0",
@@ -52,6 +53,10 @@
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "analyse": "rm -rf build/phpstan && vendor/bin/phpstan analyse --memory-limit=2G",
         "test": "vendor/bin/pest --parallel",
+        "test:group": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php bin/test-group.php"
+        ],
         "format": "vendor/bin/pint",
         "complete": "vendor/bin/pest && vendor/bin/pint && vendor/bin/phpstan analyse --memory-limit=2G"
     },
