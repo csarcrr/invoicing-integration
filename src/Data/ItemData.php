@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
-use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
+use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use Spatie\LaravelData\Data;

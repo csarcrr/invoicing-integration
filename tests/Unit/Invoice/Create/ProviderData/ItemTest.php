@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
-use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
+use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 it('transforms to provider payload with all item properties', function (Provider $provider, string $fixtureName) {
