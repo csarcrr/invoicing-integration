@@ -42,6 +42,18 @@ it('defaults the movement date to now and omits optional fields', function (Prov
     ]);
 })->with('providers');
 
+it('sends a float quantity unchanged', function (Provider $provider) {
+    if ($provider === Provider::CEGID_VENDUS) {
+        $this->markTestSkipped('Cegid Vendus does not support product stocks.');
+    }
+
+    $payload = ProductStock::move(StockMovementData::make(['productId' => 1542, 'quantity' => -0.5]))
+        ->getPayload()
+        ->toArray();
+
+    expect($payload['qty'])->toBe(-0.5);
+})->with('providers');
+
 it('fails when a required field is missing', function (Provider $provider, array $data, string $message) {
     if ($provider === Provider::CEGID_VENDUS) {
         $this->markTestSkipped('Cegid Vendus does not support product stocks.');

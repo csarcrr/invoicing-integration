@@ -39,7 +39,6 @@ Features for moving and reading product stock.
 | --------------- | ------------ | ------ | --------------- |
 | Move Stock      | ❌           | ✅     | ❌              |
 | Get Stock       | ❌           | ✅     | ❌              |
-| Update Movement | ❌           | ✅     | ❌              |
 | Delete Movement | ❌           | ✅     | ❌              |
 
 ## Client Management

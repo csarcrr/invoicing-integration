@@ -213,17 +213,15 @@ use CsarCrr\InvoicingIntegration\Facades\ProductStock;
 | Method                                               | Return Type                | Description                          |
 | ---------------------------------------------------- | -------------------------- | ------------------------------------ |
 | `ProductStock::move(StockMovementData $movement)`   | `ShouldMoveProductStock`   | Adds or removes stock of a product   |
-| `ProductStock::update(StockMovementData $movement)` | `ShouldUpdateProductStock` | Updates an existing stock movement   |
 | `ProductStock::delete(StockMovementData $movement)` | `ShouldDeleteProductStock` | Deletes a stock movement             |
 | `ProductStock::get(ItemData $item)`                    | `ShouldGetProductStock`    | Reads the current stock of a product |
 
-## ShouldMoveProductStock / ShouldUpdateProductStock Contracts
+## ShouldMoveProductStock Contract
 
-The interfaces returned by `ProductStock::move()` and `ProductStock::update()`.
+The interface returned by `ProductStock::move()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldMoveProductStock;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldUpdateProductStock;
 ```
 
 | Method              | Return Type            | Description                                                   |
@@ -536,7 +534,7 @@ $dueDate = DueDateData::make([
 
 ### StockMovementData
 
-Represents a stock movement. Used to move stock and to update or delete a movement.
+Represents a stock movement. Used to move stock and to delete a movement.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
@@ -549,8 +547,8 @@ $movement = StockMovementData::make([
 
 | Property      | Type              | Description                                                         |
 | ------------- | ----------------- | ------------------------------------------------------------------- |
-| `id`          | `?int`            | Provider-assigned movement ID; required to update or delete         |
-| `productId`   | `?int`            | Product ID; required to move or update                              |
+| `id`          | `?int`            | Provider-assigned movement ID; required to delete                   |
+| `productId`   | `?int`            | Product ID; required to move                                        |
 | `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
 | `date`        | `?Carbon`         | Movement date and time; the current time when moving with `null`    |
 | `warehouseId` | `?int`            | Warehouse of the movement                                           |
@@ -562,7 +560,7 @@ $movement = StockMovementData::make([
 
 ### ProductStockData
 
-The stock of a product, returned by `ProductStock::move()`, `update()` and `get()`.
+The stock of a product, returned by `ProductStock::move()` and `get()`.
 
 | Property    | Type         | Description                |
 | ----------- | ------------ | -------------------------- |
