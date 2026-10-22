@@ -6,18 +6,17 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock;
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldMoveItemStock;
-use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 use function collect;
 
-class Move extends ItemStock implements ShouldMoveItemStock
+class Move implements ShouldMoveItemStock
 {
-    protected ItemStockData $itemStock;
+    /** @var Collection<string, mixed> */
+    protected Collection $payload;
 
     public function __construct(protected StockMovementData $movement)
     {
@@ -31,7 +30,6 @@ class Move extends ItemStock implements ShouldMoveItemStock
         Http::handleUnwantedFailures($response);
 
         $this->movement->id = $response->json('product_stock_id');
-        $this->itemStock = $this->fetchItemStock($this->movement->itemId);
 
         return $this;
     }
@@ -41,23 +39,25 @@ class Move extends ItemStock implements ShouldMoveItemStock
         return $this->movement;
     }
 
-    public function getItemStock(): ItemStockData
-    {
-        return $this->itemStock;
-    }
-
     /**
      * @return Collection<string, mixed>
      */
     public function getPayload(): Collection
     {
-        $this->buildItemId($this->movement->itemId);
+        $this->buildItemId();
         $this->buildQuantity();
         $this->buildDate();
         $this->buildOptional('warehouse_id', $this->movement->warehouseId);
         $this->buildOptional('notes', $this->movement->notes);
 
         return $this->payload;
+    }
+
+    protected function buildItemId(): void
+    {
+        throw_if(is_null($this->movement->itemId), InvalidArgumentException::class, 'Item ID is required.');
+
+        $this->payload->put('product_id', $this->movement->itemId);
     }
 
     protected function buildQuantity(): void
