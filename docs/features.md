@@ -31,9 +31,9 @@ Features for managing items (product catalog) independently of invoices.
 | Delete Item   | ❌           | ❌     | ❌              |
 | List Items    | ✅           | ✅     | ❌              |
 
-## Product Stock Management
+## Item Stock Management
 
-Features for moving and reading product stock.
+Features for moving and reading item stock.
 
 |                 | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Provider\Moloni\ProductStock;
+namespace CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldDeleteProductStock;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldDeleteItemStock;
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -12,7 +12,7 @@ use InvalidArgumentException;
 
 use function collect;
 
-class Delete implements ShouldDeleteProductStock
+class Delete implements ShouldDeleteItemStock
 {
     /** @var Collection<string, mixed> */
     protected Collection $payload;

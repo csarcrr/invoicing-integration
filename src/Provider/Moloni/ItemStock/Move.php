@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Provider\Moloni\ProductStock;
+namespace CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock;
 
 use Carbon\Carbon;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldMoveProductStock;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldMoveItemStock;
+use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
-use CsarCrr\InvoicingIntegration\Data\ProductStockData;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\ProductStock;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 use function collect;
 
-class Move extends ProductStock implements ShouldMoveProductStock
+class Move extends ItemStock implements ShouldMoveItemStock
 {
-    protected ProductStockData $productStock;
+    protected ItemStockData $itemStock;
 
     public function __construct(protected StockMovementData $movement)
     {
@@ -31,7 +31,7 @@ class Move extends ProductStock implements ShouldMoveProductStock
         Http::handleUnwantedFailures($response);
 
         $this->movement->id = $response->json('product_stock_id');
-        $this->productStock = $this->fetchProductStock($this->movement->productId);
+        $this->itemStock = $this->fetchItemStock($this->movement->itemId);
 
         return $this;
     }
@@ -41,9 +41,9 @@ class Move extends ProductStock implements ShouldMoveProductStock
         return $this->movement;
     }
 
-    public function getProductStock(): ProductStockData
+    public function getItemStock(): ItemStockData
     {
-        return $this->productStock;
+        return $this->itemStock;
     }
 
     /**
@@ -51,7 +51,7 @@ class Move extends ProductStock implements ShouldMoveProductStock
      */
     public function getPayload(): Collection
     {
-        $this->buildProductId($this->movement->productId);
+        $this->buildItemId($this->movement->itemId);
         $this->buildQuantity();
         $this->buildDate();
         $this->buildOptional('warehouse_id', $this->movement->warehouseId);

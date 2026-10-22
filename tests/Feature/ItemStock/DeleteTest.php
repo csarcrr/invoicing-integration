@@ -5,13 +5,13 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
-use CsarCrr\InvoicingIntegration\Facades\ProductStock;
+use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 test('deletes a stock movement', function (Provider $provider) {
-    $delete = fn () => ProductStock::delete(StockMovementData::make(['id' => 777]));
+    $delete = fn () => ItemStock::delete(StockMovementData::make(['id' => 777]));
 
     if ($provider === Provider::CEGID_VENDUS) {
         expect($delete)->toThrow(OperationNotSupportedException::class);
@@ -20,7 +20,7 @@ test('deletes a stock movement', function (Provider $provider) {
     }
 
     Http::fake([
-        '*productStocks/delete*' => mockResponse(fixtures()->response()->productStock()->files('delete')),
+        '*productStocks/delete*' => mockResponse(fixtures()->response()->itemStock()->files('delete')),
     ]);
 
     $delete()->execute();

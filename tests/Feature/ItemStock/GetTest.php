@@ -5,13 +5,13 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
-use CsarCrr\InvoicingIntegration\Facades\ProductStock;
+use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-test('gets the stock of a product', function (Provider $provider) {
-    $get = fn () => ProductStock::get(ItemData::make(['id' => 1542]));
+test('gets the stock of an item', function (Provider $provider) {
+    $get = fn () => ItemStock::get(ItemData::make(['id' => 1542]));
 
     if ($provider === Provider::CEGID_VENDUS) {
         expect($get)->toThrow(OperationNotSupportedException::class);
@@ -23,9 +23,9 @@ test('gets the stock of a product', function (Provider $provider) {
         '*products/getOne*' => mockResponse(fixtures()->response()->item()->files('get')),
     ]);
 
-    $stock = $get()->execute()->getProductStock();
+    $stock = $get()->execute()->getItemStock();
 
-    expect($stock->productId)->toBe(1542)
+    expect($stock->itemId)->toBe(1542)
         ->and($stock->quantity)->toBe(42);
 
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'products/getOne')

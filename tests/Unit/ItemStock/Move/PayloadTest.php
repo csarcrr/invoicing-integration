@@ -6,11 +6,11 @@ use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
-use CsarCrr\InvoicingIntegration\Facades\ProductStock;
+use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 
 it('transforms the stock movement to provider payload', function (Provider $provider) {
-    $move = fn () => ProductStock::move(StockMovementData::make([
-        'productId' => 1542,
+    $move = fn () => ItemStock::move(StockMovementData::make([
+        'itemId' => 1542,
         'quantity' => -5,
         'date' => Carbon::create(2026, 10, 22, 10),
         'warehouseId' => 3,
@@ -20,18 +20,18 @@ it('transforms the stock movement to provider payload', function (Provider $prov
     match ($provider) {
         Provider::CEGID_VENDUS => expect($move)->toThrow(OperationNotSupportedException::class),
         Provider::MOLONI => expect($move()->getPayload()->sortKeys()->toArray())
-            ->toBe(fixtures()->request()->productStock()->files('move')),
+            ->toBe(fixtures()->request()->itemStock()->files('move')),
     };
 })->with('providers');
 
 it('defaults the movement date to now and omits optional fields', function (Provider $provider) {
     if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support product stocks.');
+        $this->markTestSkipped('Cegid Vendus does not support item stocks.');
     }
 
     Carbon::setTestNow(Carbon::create(2026, 10, 22, 10));
 
-    $payload = ProductStock::move(StockMovementData::make(['productId' => 1542, 'quantity' => 5]))
+    $payload = ItemStock::move(StockMovementData::make(['itemId' => 1542, 'quantity' => 5]))
         ->getPayload()
         ->toArray();
 
@@ -44,10 +44,10 @@ it('defaults the movement date to now and omits optional fields', function (Prov
 
 it('sends a float quantity unchanged', function (Provider $provider) {
     if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support product stocks.');
+        $this->markTestSkipped('Cegid Vendus does not support item stocks.');
     }
 
-    $payload = ProductStock::move(StockMovementData::make(['productId' => 1542, 'quantity' => -0.5]))
+    $payload = ItemStock::move(StockMovementData::make(['itemId' => 1542, 'quantity' => -0.5]))
         ->getPayload()
         ->toArray();
 
@@ -56,12 +56,12 @@ it('sends a float quantity unchanged', function (Provider $provider) {
 
 it('fails when a required field is missing', function (Provider $provider, array $data, string $message) {
     if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support product stocks.');
+        $this->markTestSkipped('Cegid Vendus does not support item stocks.');
     }
 
-    expect(fn () => ProductStock::move(StockMovementData::make($data))->getPayload())
+    expect(fn () => ItemStock::move(StockMovementData::make($data))->getPayload())
         ->toThrow(InvalidArgumentException::class, $message);
 })->with('providers')->with([
-    'missing product id' => [['quantity' => 5], 'Product ID is required.'],
-    'missing quantity' => [['productId' => 1542], 'Quantity is required.'],
+    'missing item id' => [['quantity' => 5], 'Item ID is required.'],
+    'missing quantity' => [['itemId' => 1542], 'Quantity is required.'],
 ]);

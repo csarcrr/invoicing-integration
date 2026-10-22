@@ -202,41 +202,41 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ---
 
-## ProductStock
+## ItemStock
 
-Entry point for moving and reading product stock. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for moving and reading item stock. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Facades\ProductStock;
+use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 ```
 
 | Method                                               | Return Type                | Description                          |
 | ---------------------------------------------------- | -------------------------- | ------------------------------------ |
-| `ProductStock::move(StockMovementData $movement)`   | `ShouldMoveProductStock`   | Adds or removes stock of a product   |
-| `ProductStock::delete(StockMovementData $movement)` | `ShouldDeleteProductStock` | Deletes a stock movement             |
-| `ProductStock::get(ItemData $item)`                    | `ShouldGetProductStock`    | Reads the current stock of a product |
+| `ItemStock::move(StockMovementData $movement)`   | `ShouldMoveItemStock`   | Adds or removes stock of an item   |
+| `ItemStock::delete(StockMovementData $movement)` | `ShouldDeleteItemStock` | Deletes a stock movement             |
+| `ItemStock::get(ItemData $item)`                    | `ShouldGetItemStock`    | Reads the current stock of an item |
 
-## ShouldMoveProductStock Contract
+## ShouldMoveItemStock Contract
 
-The interface returned by `ProductStock::move()`.
+The interface returned by `ItemStock::move()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldMoveProductStock;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldMoveItemStock;
 ```
 
 | Method              | Return Type            | Description                                                   |
 | ------------------- | ---------------------- | ------------------------------------------------------------- |
-| `execute()`         | `self`                 | Send the movement, then fetch the product stock               |
+| `execute()`         | `self`                 | Send the movement, then fetch the item stock               |
 | `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
-| `getProductStock()` | `ProductStockData`     | Product stock after the movement                              |
+| `getItemStock()` | `ItemStockData`     | Item stock after the movement                              |
 | `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
 
-## ShouldDeleteProductStock Contract
+## ShouldDeleteItemStock Contract
 
-The interface returned by `ProductStock::delete()`.
+The interface returned by `ItemStock::delete()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldDeleteProductStock;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldDeleteItemStock;
 ```
 
 | Method         | Return Type  | Description                                          |
@@ -244,18 +244,18 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\Shou
 | `execute()`    | `self`       | Send the delete request                              |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging) |
 
-## ShouldGetProductStock Contract
+## ShouldGetItemStock Contract
 
-The interface returned by `ProductStock::get()`.
+The interface returned by `ItemStock::get()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldGetProductStock;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldGetItemStock;
 ```
 
 | Method              | Return Type        | Description                                          |
 | ------------------- | ------------------ | ---------------------------------------------------- |
-| `execute()`         | `self`             | Fetch the product stock                              |
-| `getProductStock()` | `ProductStockData` | Current stock of the product                         |
+| `execute()`         | `self`             | Fetch the item stock                              |
+| `getItemStock()` | `ItemStockData` | Current stock of the item                         |
 | `getPayload()`      | `Collection`       | Inspect the payload sent to the provider (debugging) |
 
 ---
@@ -540,7 +540,7 @@ Represents a stock movement. Used to move stock and to delete a movement.
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 
 $movement = StockMovementData::make([
-    'productId' => 1542,
+    'itemId' => 1542,
     'quantity' => -5,
 ]);
 ```
@@ -548,7 +548,7 @@ $movement = StockMovementData::make([
 | Property      | Type              | Description                                                         |
 | ------------- | ----------------- | ------------------------------------------------------------------- |
 | `id`          | `?int`            | Provider-assigned movement ID; required to delete                   |
-| `productId`   | `?int`            | Product ID; required to move                                        |
+| `itemId`   | `?int`            | Item ID; required to move                                        |
 | `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
 | `date`        | `?Carbon`         | Movement date and time; the current time when moving with `null`    |
 | `warehouseId` | `?int`            | Warehouse of the movement                                           |
@@ -558,14 +558,14 @@ $movement = StockMovementData::make([
 
 ---
 
-### ProductStockData
+### ItemStockData
 
-The stock of a product, returned by `ProductStock::move()` and `get()`.
+The stock of an item, returned by `ItemStock::move()` and `get()`.
 
 | Property    | Type         | Description                |
 | ----------- | ------------ | -------------------------- |
-| `productId` | `int`        | ID of the product          |
-| `quantity`  | `int\|float` | Total stock of the product |
+| `itemId` | `int`        | ID of the item          |
+| `quantity`  | `int\|float` | Total stock of the item |
 
 ---
 

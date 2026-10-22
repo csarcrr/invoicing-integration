@@ -8,11 +8,11 @@
     - [Getting an Item](items/getting-an-item.md)
     - [Finding Items](items/finding-an-item.md)
 
-- **Product Stocks**
-    - [Overview](product-stocks/README.md)
-    - [Moving Stock](product-stocks/moving-stock.md)
-    - [Getting Stock](product-stocks/getting-stock.md)
-    - [Deleting a Movement](product-stocks/deleting-a-movement.md)
+- **Item Stocks**
+    - [Overview](item-stocks/README.md)
+    - [Moving Stock](item-stocks/moving-stock.md)
+    - [Getting Stock](item-stocks/getting-stock.md)
+    - [Deleting a Movement](item-stocks/deleting-a-movement.md)
 
 - **Clients**
     - [Overview](clients/README.md)

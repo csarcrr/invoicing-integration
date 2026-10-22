@@ -92,9 +92,9 @@ class Fixtures
         return $this;
     }
 
-    public function productStock(): self
+    public function itemStock(): self
     {
-        $this->path[] = 'ProductStock';
+        $this->path[] = 'ItemStock';
 
         return $this;
     }

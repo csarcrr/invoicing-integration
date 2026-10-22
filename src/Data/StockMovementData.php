@@ -18,7 +18,7 @@ class StockMovementData extends Data implements DataNeedsValidation
 
     public function __construct(
         public ?int $id = null,
-        public ?int $productId = null,
+        public ?int $itemId = null,
         public null|int|float $quantity = null,
         public ?Carbon $date = null,
         public ?int $warehouseId = null,

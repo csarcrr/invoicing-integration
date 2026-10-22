@@ -45,7 +45,7 @@ uses()->group('DueDateTestingGroup')->in('Unit/DueDate', 'Feature/DueDate');
 uses()->group('InvoiceTestingGroup')->in('Unit/Invoice', 'Feature/Invoice');
 uses()->group('ItemTestingGroup')->in('Unit/Item', 'Feature/Item');
 uses()->group('PaymentMethodTestingGroup')->in('Unit/PaymentMethod', 'Feature/PaymentMethod');
-uses()->group('ProductStockTestingGroup')->in('Unit/ProductStock', 'Feature/ProductStock');
+uses()->group('ItemStockTestingGroup')->in('Unit/ItemStock', 'Feature/ItemStock');
 uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Unit/HttpRequestTest.php');
 uses()->group('TraitTestingGroup')->in('Unit/Traits');
 uses()->group('ArchTestingGroup')->in('Arch');

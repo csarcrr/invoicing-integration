@@ -1,20 +1,20 @@
-# Product Stocks
+# Item Stocks
 
-Product stock is changed through stock movements. A movement adds (positive quantity) or removes (negative quantity) units of a product. Moloni calls them _movimentos de stock_.
+Item stock is changed through stock movements. A movement adds (positive quantity) or removes (negative quantity) units of an item. Moloni calls them _movimentos de stock_.
 
 ## Quick example
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
-use CsarCrr\InvoicingIntegration\Facades\ProductStock;
+use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 
-$move = ProductStock::move(StockMovementData::make([
-    'productId' => 1542,
+$move = ItemStock::move(StockMovementData::make([
+    'itemId' => 1542,
     'quantity' => -5,
 ]))->execute();
 
 echo $move->getMovement()->id;           // provider-assigned movement ID
-echo $move->getProductStock()->quantity; // product stock after the movement
+echo $move->getItemStock()->quantity; // item stock after the movement
 ```
 
 ## Available operations
