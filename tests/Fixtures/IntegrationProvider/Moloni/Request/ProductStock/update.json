@@ -1,0 +1,8 @@
+{
+    "product_stock_id": 777,
+    "product_id": 1542,
+    "qty": 10,
+    "movement_date": "2026-10-22 10:00:00",
+    "warehouse_id": 3,
+    "notes": "Stock recount"
+}
