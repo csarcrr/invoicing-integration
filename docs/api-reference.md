@@ -202,6 +202,66 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ---
 
+## ProductStock
+
+Entry point for moving and reading product stock. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\ProductStock;
+```
+
+| Method                                               | Return Type                | Description                          |
+| ---------------------------------------------------- | -------------------------- | ------------------------------------ |
+| `ProductStock::move(StockMovementData $movement)`   | `ShouldMoveProductStock`   | Adds or removes stock of a product   |
+| `ProductStock::update(StockMovementData $movement)` | `ShouldUpdateProductStock` | Updates an existing stock movement   |
+| `ProductStock::delete(StockMovementData $movement)` | `ShouldDeleteProductStock` | Deletes a stock movement             |
+| `ProductStock::get(ItemData $item)`                    | `ShouldGetProductStock`    | Reads the current stock of a product |
+
+## ShouldMoveProductStock / ShouldUpdateProductStock Contracts
+
+The interfaces returned by `ProductStock::move()` and `ProductStock::update()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldMoveProductStock;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldUpdateProductStock;
+```
+
+| Method              | Return Type            | Description                                                   |
+| ------------------- | ---------------------- | ------------------------------------------------------------- |
+| `execute()`         | `self`                 | Send the movement, then fetch the product stock               |
+| `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
+| `getProductStock()` | `ProductStockData`     | Product stock after the movement                              |
+| `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
+
+## ShouldDeleteProductStock Contract
+
+The interface returned by `ProductStock::delete()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldDeleteProductStock;
+```
+
+| Method         | Return Type  | Description                                          |
+| -------------- | ------------ | ---------------------------------------------------- |
+| `execute()`    | `self`       | Send the delete request                              |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging) |
+
+## ShouldGetProductStock Contract
+
+The interface returned by `ProductStock::get()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ProductStock\ShouldGetProductStock;
+```
+
+| Method              | Return Type        | Description                                          |
+| ------------------- | ------------------ | ---------------------------------------------------- |
+| `execute()`         | `self`             | Fetch the product stock                              |
+| `getProductStock()` | `ProductStockData` | Current stock of the product                         |
+| `getPayload()`      | `Collection`       | Inspect the payload sent to the provider (debugging) |
+
+---
+
 ## PaymentMethod (Facade)
 
 Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
@@ -471,6 +531,43 @@ $dueDate = DueDateData::make([
 | `name`   | `string` | Required. Name of the payment term     |
 | `days`   | `int`    | Required. Number of days until payment |
 | `id`     | `?int`   | Provider-assigned due date ID          |
+
+---
+
+### StockMovementData
+
+Represents a stock movement. Used to move stock and to update or delete a movement.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\StockMovementData;
+
+$movement = StockMovementData::make([
+    'productId' => 1542,
+    'quantity' => -5,
+]);
+```
+
+| Property      | Type              | Description                                                         |
+| ------------- | ----------------- | ------------------------------------------------------------------- |
+| `id`          | `?int`            | Provider-assigned movement ID; required to update or delete         |
+| `productId`   | `?int`            | Product ID; required to move or update                              |
+| `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
+| `date`        | `?Carbon`         | Movement date and time; the current time when moving with `null`    |
+| `warehouseId` | `?int`            | Warehouse of the movement                                           |
+| `notes`       | `?string`         | Notes for the movement                                              |
+
+`make()` throws `UnsupportedQuantityException` when `quantity` is `0`.
+
+---
+
+### ProductStockData
+
+The stock of a product, returned by `ProductStock::move()`, `update()` and `get()`.
+
+| Property    | Type         | Description                |
+| ----------- | ------------ | -------------------------- |
+| `productId` | `int`        | ID of the product          |
+| `quantity`  | `int\|float` | Total stock of the product |
 
 ---
 

@@ -31,6 +31,17 @@ Features for managing items (product catalog) independently of invoices.
 | Delete Item   | ❌           | ❌     | ❌              |
 | List Items    | ✅           | ✅     | ❌              |
 
+## Product Stock Management
+
+Features for moving and reading product stock.
+
+|                 | Cegid Vendus | Moloni | Invoice Express |
+| --------------- | ------------ | ------ | --------------- |
+| Move Stock      | ❌           | ✅     | ❌              |
+| Get Stock       | ❌           | ✅     | ❌              |
+| Update Movement | ❌           | ✅     | ❌              |
+| Delete Movement | ❌           | ✅     | ❌              |
+
 ## Client Management
 
 Features for managing clients independently of invoices.

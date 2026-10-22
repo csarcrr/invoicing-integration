@@ -8,6 +8,13 @@
     - [Getting an Item](items/getting-an-item.md)
     - [Finding Items](items/finding-an-item.md)
 
+- **Product Stocks**
+    - [Overview](product-stocks/README.md)
+    - [Moving Stock](product-stocks/moving-stock.md)
+    - [Getting Stock](product-stocks/getting-stock.md)
+    - [Updating a Movement](product-stocks/updating-a-movement.md)
+    - [Deleting a Movement](product-stocks/deleting-a-movement.md)
+
 - **Clients**
     - [Overview](clients/README.md)
     - [Creating a Client](clients/creating-a-client.md)

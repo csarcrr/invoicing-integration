@@ -202,7 +202,7 @@ Invoice::create($invoiceData)->execute()->getInvoice();
 
 | Exception                                         | Meaning                           | How to Fix                     |
 | ------------------------------------------------- | --------------------------------- | ------------------------------ |
-| `UnsupportedQuantityException`                    | Quantity is zero or negative      | Use a positive quantity        |
+| `UnsupportedQuantityException`                    | Quantity is zero or negative (a `StockMovementData` quantity only fails when zero) | Use a positive quantity (non-zero for stock movements) |
 | `ExemptionCanOnlyBeUsedWithExemptTaxException`    | Tax exemption without EXEMPT rate | Set `tax` to `ItemTax::EXEMPT` |
 | `ExemptionLawCanOnlyBeUsedWithExemptionException` | Exemption law without reason      | Set `taxExemptionReason` first |
 
