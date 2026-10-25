@@ -69,7 +69,7 @@ $client->country;          // Country code
 $client->notes;            // Internal notes
 $client->irsRetention;     // IRS retention flag (bool)
 $client->emailNotification;// Email notification flag (bool)
-$client->defaultPayDue;    // Default payment due days (int)
+$client->defaultPayDue;    // Default payment due (DueDateTerm)
 $client->externalReference;// External reference
 $client->status;           // Client status
 $client->date;             // Creation date (Carbon)
@@ -78,8 +78,8 @@ $client->date;             // Creation date (Carbon)
 > [!NOTE]
 > Properties not set in the provider will return `null`.
 >
-> `id` is always a string. On Cegid Vendus, `defaultPayDue` is an int (`now` is
-> returned as `0`) and
+> `id` is always a string. On Cegid Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
+> returned as `Days0`) and
 > `externalReference`, `status` and `date` are mapped; Moloni does not return them.
 > Response fields the package does not map, such as `balance`, `mobile`,
 > `website` and `price_group` on Cegid Vendus, are available in

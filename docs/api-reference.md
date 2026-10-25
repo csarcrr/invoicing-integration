@@ -395,7 +395,7 @@ ClientData::make([
 | `postalCode`        | `Optional<string>` | Postal/ZIP code                     |
 | `phone`             | `Optional<string>` | Phone number                        |
 | `notes`             | `Optional<string>` | Internal notes                      |
-| `defaultPayDue`     | `Optional<int>`    | Default payment due (days)          |
+| `defaultPayDue`     | `Optional<DueDateTerm>` | Default payment due (days)     |
 | `discount`          | `Optional<float>`  | Discount percentage (0 to 100)      |
 | `creditLimit`       | `Optional<float>`  | Credit limit (0 or more)            |
 | `deliveryMethodId`  | `Optional<int>`    | Delivery method id (0 or more)      |
@@ -705,21 +705,22 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 ### DueDateTerm
 
-Payment terms for `InvoiceData->dueDate`. The invoice is due today plus the term's days.
+Payment terms for `InvoiceData->dueDate` and `ClientData->defaultPayDue`. The values are the ones Cegid Vendus accepts. An invoice is due today plus the term's days; `Days0` is today.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 ```
 
-| Value     | Days |
-| --------- | ---- |
-| `Days0`   | 0    |
-| `Days10`  | 10   |
-| `Days15`  | 15   |
-| `Days30`  | 30   |
-| `Days60`  | 60   |
-| `Days90`  | 90   |
-| `Days120` | 120  |
+| Value    | Days |
+| -------- | ---- |
+| `Days0`  | 0    |
+| `Days1`  | 1    |
+| `Days7`  | 7    |
+| `Days15` | 15   |
+| `Days30` | 30   |
+| `Days45` | 45   |
+| `Days60` | 60   |
+| `Days90` | 90   |
 
 ### PaymentMethod
 

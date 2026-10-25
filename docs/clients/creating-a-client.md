@@ -52,7 +52,7 @@ $clientData = ClientData::make([
     'country' => 'PT',
 
     // Billing settings
-    'defaultPayDue' => 30,          // NET30 payment terms
+    'defaultPayDue' => DueDateTerm::Days30, // NET30 payment terms
     'emailNotification' => true,    // Auto-send invoices via email
     'irsRetention' => false,        // IRS withholding (for services)
 
@@ -77,7 +77,7 @@ $clientData = ClientData::make([
 | `notes`             | Internal notes (not on invoices)       |
 | `irsRetention`      | Portuguese IRS withholding flag        |
 | `emailNotification` | Auto-send invoices via email           |
-| `defaultPayDue`     | Default payment due (days). On Cegid Vendus, `0` is sent as `now` |
+| `defaultPayDue`     | Default payment due, a [`DueDateTerm`](../api-reference.md#duedateterm). On Cegid Vendus, `Days0` is sent as `now` |
 | `discount`          | Discount percentage (0 to 100)         |
 | `creditLimit`       | Credit limit (0 or more)               |
 | `deliveryMethodId`  | Provider delivery method id (0 or more) |
@@ -92,9 +92,9 @@ $clientData = ClientData::make([
 - After `execute()`, `id` holds that number. The Moloni `customer_id` (the one `Client::get()` expects) is in `getAdditionalData()`.
 - `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, Portugal (`PT`) is used. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
 - `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, Portuguese (`pt`) is used. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
-- `defaultPayDue` is sent as the Moloni `payment_day`. Without it, `15` is used.
+- `defaultPayDue` is sent as the Moloni `maturity_date_id`: the account due date with the same or closest number of days (a tie picks the shorter one), found with a `maturityDates/getAll` lookup. Without it, or when the account has no due dates, `0` is sent. `payment_day` is not sent.
 - `discount`, `creditLimit` and `deliveryMethodId` are sent as `discount`, `credit_limit` and `delivery_method_id`. Without them, `0` is used. Cegid Vendus does not send them.
-- `irsRetention` and `emailNotification` are not sent. The payment method, maturity date and salesman ids are sent as `0` for now.
+- `irsRetention` and `emailNotification` are not sent. The payment method and salesman ids are sent as `0` for now.
 
 ## Complete Example
 
@@ -102,6 +102,7 @@ Here's a full example with all available fields:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Collect customer information from your form
@@ -114,7 +115,7 @@ $clientData = ClientData::make([
     'city' => 'Lisboa',
     'postalCode' => '1050-190',
     'country' => 'PT',
-    'defaultPayDue' => 30,
+    'defaultPayDue' => DueDateTerm::Days30,
     'emailNotification' => true,
     'notes' => 'Contract #2025-001',
 ]);
@@ -235,7 +236,7 @@ try {
 
 ---
 
-Store the provider-assigned `id` in your database for future reference. Use `emailNotification: true` to have the provider send invoices automatically and `defaultPayDue` to set payment terms (e.g., 30 days). Country codes must be valid ISO 3166-1 alpha-2 codes. The `notes` field is internal-only and not shown on invoices.
+Store the provider-assigned `id` in your database for future reference. Use `emailNotification: true` to have the provider send invoices automatically and `defaultPayDue` to set payment terms (e.g., `DueDateTerm::Days30`). Country codes must be valid ISO 3166-1 alpha-2 codes. The `notes` field is internal-only and not shown on invoices.
 
 ---
 
