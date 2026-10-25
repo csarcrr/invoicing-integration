@@ -29,7 +29,15 @@ it('sends the client default pay due', function (Provider $provider) {
     };
 })->with('providers');
 
-it('sends no default pay due when the client has none', function (Provider $provider) {
+it('sends the 15 day term as the moloni default pay due when the client has none', function (Provider $provider) {
+    if ($provider === Provider::MOLONI) {
+        Http::fake(mockResponse([
+            ['maturity_date_id' => 4321, 'name' => 'Pronto Pagamento', 'days' => 0],
+            ['maturity_date_id' => 4323, 'name' => '15 dias', 'days' => 15],
+            ['maturity_date_id' => 4322, 'name' => '30 dias', 'days' => 30],
+        ]));
+    }
+
     $payload = Client::create(ClientData::from([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',
@@ -38,7 +46,7 @@ it('sends no default pay due when the client has none', function (Provider $prov
     ]))->getPayload();
 
     match ($provider) {
-        Provider::MOLONI => expect($payload->get('maturity_date_id'))->toBe(0)
+        Provider::MOLONI => expect($payload->get('maturity_date_id'))->toBe(4323)
             ->and($payload->has('payment_day'))->toBeFalse(),
         Provider::CEGID_VENDUS => expect($payload->has('default_pay_due'))->toBeFalse(),
     };

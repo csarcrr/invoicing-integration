@@ -8,6 +8,8 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Support\Str;
 
 it('uses the client id as the number', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
     $payload = Client::create(ClientData::from([
         'id' => 'CLIENT-1',
         'name' => 'Alberto Albertino',
@@ -24,6 +26,8 @@ it('uses the client id as the number', function (Provider $provider) {
 })->with('providers');
 
 it('builds the number from the vat and a random string when no id is given', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
     $payload = Client::create(ClientData::from([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',

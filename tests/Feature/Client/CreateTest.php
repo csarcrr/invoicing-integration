@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
 test('create client request is successful', function (Provider $provider, string $createFixture, $responseFixture) {
+    fakeProviderDueDates($provider);
+
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
@@ -18,12 +20,14 @@ test('create client request is successful', function (Provider $provider, string
         ->and($data->vat)->toBeInt();
 
     match ($provider) {
-        Provider::MOLONI => Http::assertSentCount(3),
+        Provider::MOLONI => Http::assertSentCount(4),
         default => Http::assertSentCount(1)
     };
 })->with('providers', ['create'], ['response_simple']);
 
 test('unsupported properties are kept in additional data', function (Provider $provider, string $responseFixture) {
+    fakeProviderDueDates($provider);
+
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
@@ -39,6 +43,8 @@ test('unsupported properties are kept in additional data', function (Provider $p
 ]);
 
 test('client create returns the id as a string and the default pay due as a due date term', function (Provider $provider, string $responseFixture) {
+    fakeProviderDueDates($provider);
+
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
