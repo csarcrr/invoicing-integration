@@ -7,6 +7,8 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Provider\Client as BaseClient;
 
+use function is_numeric;
+
 abstract class Client extends BaseClient
 {
     /**
@@ -24,7 +26,7 @@ abstract class Client extends BaseClient
         ! empty($client['address']) && $data['address'] = $client['address'];
         ! empty($client['postalcode']) && $data['postalCode'] = $client['postalcode'];
         ! empty($client['country']) && $data['country'] = $client['country'];
-        ! empty($client['default_pay_due']) && $data['defaultPayDue'] = (int) $client['default_pay_due'];
+        is_numeric($client['default_pay_due'] ?? null) && $data['defaultPayDue'] = (int) $client['default_pay_due'];
         ! empty($client['notes']) && $data['notes'] = $client['notes'];
         ! empty($client['phone']) && $data['phone'] = $client['phone'];
         ! empty($client['external_reference']) && $data['externalReference'] = $client['external_reference'];

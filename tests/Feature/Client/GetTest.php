@@ -83,3 +83,13 @@ test('external reference and status are mapped properties', function (Provider $
             ->and($data->status)->toBeInstanceOf(Optional::class),
     };
 })->with('providers', ['response']);
+
+test('cegid vendus client get keeps a default pay due of zero', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    Http::fake(mockResponse(['id' => 99999, 'default_pay_due' => 0]));
+
+    $data = Client::get(ClientData::from(['id' => 99999]))->execute()->getClient();
+
+    expect($data->defaultPayDue)->toBe(0);
+});
