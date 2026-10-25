@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
@@ -163,13 +164,9 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildMaturityDate(): void
     {
-        if ($this->data->defaultPayDue instanceof Optional) {
-            $this->payload->put('maturity_date_id', 0);
+        $term = $this->data->defaultPayDue instanceof Optional ? DueDateTerm::Days15 : $this->data->defaultPayDue;
 
-            return;
-        }
-
-        $this->payload->put('maturity_date_id', (new FindDueDate)->execute()->closestTo($this->data->defaultPayDue) ?? 0);
+        $this->payload->put('maturity_date_id', (new FindDueDate)->execute()->closestTo($term) ?? 0);
     }
 
     protected function buildCommercialTerms(): void
