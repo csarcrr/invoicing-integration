@@ -8,8 +8,8 @@ use CsarCrr\InvoicingIntegration\Actions\ClientAction;
 use CsarCrr\InvoicingIntegration\Actions\DueDateAction;
 use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
-use CsarCrr\InvoicingIntegration\Actions\PaymentMethodAction;
 use CsarCrr\InvoicingIntegration\Actions\ItemStockAction;
+use CsarCrr\InvoicingIntegration\Actions\PaymentMethodAction;
 use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
@@ -79,7 +79,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
 
             $messages = [];
 
-            if(!empty($body['errors'])) {
+            if (! empty($body['errors'])) {
                 /** @var array<int, array{code?: string, message?: string}> $errors */
                 $errors = $body['errors'];
                 $messages = collect($errors)->map(function (array $error): string {
@@ -87,7 +87,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
                 })->toArray();
             }
 
-            if(!empty($body['error']) && !empty($body['error_description'])) {
+            if (! empty($body['error']) && ! empty($body['error_description'])) {
                 $messages = ["{$body['error']}: {$body['error_description']}"];
             }
 

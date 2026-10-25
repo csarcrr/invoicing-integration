@@ -54,7 +54,7 @@ class Create extends Invoice implements ShouldCreateInvoice
 
     /**
      * @throws \Throwable
-     * @throws \Exception
+     * @throws Exception
      * @throws MissingRelatedDocumentException
      * @throws NeedsDateToSetLoadPointException
      */
@@ -96,7 +96,7 @@ class Create extends Invoice implements ShouldCreateInvoice
      *
      * @throws MissingRelatedDocumentException
      * @throws NeedsDateToSetLoadPointException
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function getPayload(): Collection
