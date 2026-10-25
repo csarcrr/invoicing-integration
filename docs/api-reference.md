@@ -401,7 +401,7 @@ ClientData::make([
 | ------------------- | ------------------ | ----------------------------------- |
 | `id`                | `Optional<string>` | Provider-assigned identifier        |
 | `name`              | `Optional<string>` | Client name (auto-trimmed)          |
-| `vat`               | `Optional<string>` | VAT / fiscal ID                     |
+| `vat`               | `Optional<string\|int>` | VAT / fiscal ID                |
 | `email`             | `Optional<string>` | Email (validated)                   |
 | `country`           | `Optional<string>` | ISO 3166-1 alpha-2 code             |
 | `city`              | `Optional<string>` | City name                           |
@@ -423,7 +423,8 @@ ClientData::make([
 > `$client->toArray()` when you need a payload-friendly structure. Provider
 > response fields the package does not map are left out of `toArray()` and
 > `toJson()`; read them with `getAdditionalData()`. This applies to every DTO
-> the package hydrates from a provider response.
+> the package hydrates from a provider response, except the clients in a
+> `Client::find()` list.
 
 ---
 

@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Client;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
@@ -16,9 +16,6 @@ use Illuminate\Support\Facades\Http;
 
 use function collect;
 
-/**
- * Handles paginated client search against the Cegid Vendus API.
- */
 class Find extends Client implements ShouldFindClient
 {
     use HasPaginator;
@@ -36,9 +33,6 @@ class Find extends Client implements ShouldFindClient
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
 
-    /**
-     * Sends the search request and populates the result list and pagination details.
-     */
     public function execute(): self
     {
         $request = Http::provider()->get('/clients', $this->getPayload());
@@ -105,26 +99,6 @@ class Find extends Client implements ShouldFindClient
      */
     protected function updateResults(array $results): void
     {
-        $this->list = collect($results)->map(function (array $item) {
-            $data = [];
-
-            ! empty($item['id']) && $data['id'] = (string) $item['id'];
-            ! empty($item['name']) && $data['name'] = $item['name'];
-            ! empty($item['email']) && $data['email'] = $item['email'];
-            ! empty($item['fiscal_id']) && $data['vat'] = $item['fiscal_id'];
-            ! empty($item['city']) && $data['city'] = $item['city'];
-            ! empty($item['address']) && $data['address'] = $item['address'];
-            ! empty($item['postalcode']) && $data['postalCode'] = $item['postalcode'];
-            ! empty($item['country']) && $data['country'] = $item['country'];
-            ! empty($item['default_pay_due']) && $data['defaultPayDue'] = (int) $item['default_pay_due'];
-            ! empty($item['notes']) && $data['notes'] = $item['notes'];
-            ! empty($item['phone']) && $data['phone'] = $item['phone'];
-            ! empty($item['external_reference']) && $data['externalReference'] = $item['external_reference'];
-            ! empty($item['send_email']) && $data['emailNotification'] = $item['send_email'] === 'yes';
-            ! empty($item['irs_retention']) && $data['irsRetention'] = $item['irs_retention'] === 'yes';
-            ! empty($item['status']) && $data['status'] = $item['status'];
-
-            return ClientData::from($data);
-        })->values();
+        $this->list = collect($results)->map(fn (array $item) => $this->toClientData($item))->values();
     }
 }

@@ -144,10 +144,11 @@ $client->emailNotification; // true
 Some providers return additional fields not explicitly mapped. Access them via `getAdditionalData()`. They are not part of `toArray()` or `toJson()`:
 
 ```php
+$status = $client->status;
+
 $additional = $client->getAdditionalData();
 
-$status = $additional['status'] ?? null;
-$priceGroup = $additional['price_group']['name'] ?? null;
+$priceGroup = $additional['price_group']['title'] ?? null;
 $balance = $additional['balance'] ?? null;
 ```
 
