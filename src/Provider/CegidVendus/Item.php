@@ -20,11 +20,11 @@ abstract class Item extends BaseItem
             'description' => $item['description'] ?? null,
             'reference' => $item['reference'] ?? null,
             'barcode' => $item['barcode'] ?? null,
-            'stock' => collect($item['stock'] ?? [])->map(fn (array $store) => [
+            'stock' => array_map(fn (array $store) => [
                 'itemId' => $id,
                 'warehouseId' => $store['store_id'],
                 'quantity' => $store['stock'],
-            ])->all(),
+            ], $item['stock'] ?? []),
         ]);
     }
 }
