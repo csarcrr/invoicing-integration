@@ -11,7 +11,6 @@
 - **Item Stocks**
     - [Overview](item-stocks/README.md)
     - [Moving Stock](item-stocks/moving-stock.md)
-    - [Deleting a Movement](item-stocks/deleting-a-movement.md)
 
 - **Clients**
     - [Overview](clients/README.md)

@@ -122,6 +122,17 @@ function fakeProviderPaymentMethods(Provider $provider): void
     ]);
 }
 
+function fakeProviderDueDates(Provider $provider): void
+{
+    if ($provider !== Provider::MOLONI) {
+        return;
+    }
+
+    Http::fake([
+        '*maturityDates/getAll*' => mockResponse(fixtures()->response()->dueDate()->files('response_multiple')),
+    ]);
+}
+
 function mockResponse(
     $jsonFixture,
     $status = 200,

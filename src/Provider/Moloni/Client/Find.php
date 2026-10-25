@@ -9,11 +9,10 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
-use CsarCrr\InvoicingIntegration\Provider\Client;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 use function collect;
 
@@ -101,17 +100,9 @@ class Find extends Client implements ShouldFindClient
      */
     protected function updateResults(array $results): void
     {
-        $this->list = collect($results)->map(fn (array $item) => ClientData::from(collect([
-            'id' => isset($item['customer_id']) ? (string) $item['customer_id'] : null,
-            'name' => $item['name'] ?? null,
-            'vat' => $item['vat'] ?? null,
-            'address' => $item['address'] ?? null,
-            'city' => $item['city'] ?? null,
-            'postal_code' => $item['zip_code'] ?? null,
-            'email' => $item['email'] ?? null,
-            'phone' => $item['phone'] ?? null,
-            'notes' => $item['notes'] ?? null,
-            'country' => Str::upper($item['country']['iso_3166_1'] ?? ''),
-        ])->filter()->toArray()))->values();
+        $this->list = collect($results)->map(fn (array $item) => $this->toClientData(
+            isset($item['customer_id']) ? (string) $item['customer_id'] : null,
+            $item,
+        ))->values();
     }
 }

@@ -31,6 +31,9 @@ foreach ($results->getList() as $client) {
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
+- On Cegid Vendus, each returned client has the same fields as a client from
+  `Client::get()`, including `date`.
+- Returned clients do not carry `getAdditionalData()`.
 
 ## Filtering by Email
 

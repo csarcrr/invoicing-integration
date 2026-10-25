@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
-use CsarCrr\InvoicingIntegration\Actions\ClientAction;
-use CsarCrr\InvoicingIntegration\Actions\DueDateAction;
-use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
-use CsarCrr\InvoicingIntegration\Actions\ItemAction;
-use CsarCrr\InvoicingIntegration\Actions\PaymentMethodAction;
-use CsarCrr\InvoicingIntegration\Actions\ItemStockAction;
 use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
-use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
-use CsarCrr\InvoicingIntegration\Facades\ProviderConfiguration;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -35,12 +27,6 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         $this->setupHttpMacros();
-
-        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class, DueDateAction::class, PaymentMethodAction::class, ItemStockAction::class])
-            ->needs(Provider::class)
-            ->give(function () {
-                return ProviderConfiguration::getProvider();
-            });
     }
 
     public function configurePackage(Package $package): void

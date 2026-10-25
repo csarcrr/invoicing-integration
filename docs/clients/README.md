@@ -26,6 +26,7 @@ Register clients in the invoicing provider to reuse their details across invoice
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
 // Register the customer
@@ -39,7 +40,7 @@ $clientData = ClientData::make([
     'country' => 'PT',
     'phone' => '220123456',
     'emailNotification' => true, // Auto-send invoices to their email
-    'defaultPayDue' => 30,       // Payment due in 30 days
+    'defaultPayDue' => DueDateTerm::Days30, // Payment due in 30 days
 ]);
 
 $client = Client::create($clientData)->execute()->getClient();
@@ -135,7 +136,7 @@ $client = Client::get(ClientData::make(['id' => 12345]))->execute()->getClient()
 $client->name;             // "TechStore Portugal Lda"
 $client->vat;              // "PT509876543"
 $client->email;            // "invoices@techstore.pt"
-$client->defaultPayDue;    // 30
+$client->defaultPayDue;    // DueDateTerm::Days30
 $client->emailNotification; // true
 ```
 
@@ -144,10 +145,11 @@ $client->emailNotification; // true
 Some providers return additional fields not explicitly mapped. Access them via `getAdditionalData()`. They are not part of `toArray()` or `toJson()`:
 
 ```php
+$status = $client->status;
+
 $additional = $client->getAdditionalData();
 
-$status = $additional['status'] ?? null;
-$priceGroup = $additional['price_group']['name'] ?? null;
+$priceGroup = $additional['price_group']['title'] ?? null;
 $balance = $additional['balance'] ?? null;
 ```
 
@@ -184,7 +186,7 @@ $reseller = Client::create(ClientData::make([
     'name' => 'Distribuidor Norte Lda',
     'vat' => 'PT509999888',
     'email' => 'orders@distrinorte.pt',
-    'defaultPayDue' => 60,  // 60 days payment terms
+    'defaultPayDue' => DueDateTerm::Days60, // 60 days payment terms
     'notes' => '60-day terms approved',
     'emailNotification' => true,
 ]))->execute()->getClient();
@@ -192,7 +194,7 @@ $reseller = Client::create(ClientData::make([
 
 ---
 
-Store the provider-assigned `id` in your database for future reference. Use `emailNotification: true` to have invoices sent automatically and `defaultPayDue` to set payment terms. The `notes` field is for internal reference only and is not shown on invoices.
+Store the provider-assigned `id` in your database for future reference. Use `emailNotification: true` to have invoices sent automatically and `defaultPayDue` (a `DueDateTerm`) to set payment terms. The `notes` field is for internal reference only and is not shown on invoices.
 
 ---
 

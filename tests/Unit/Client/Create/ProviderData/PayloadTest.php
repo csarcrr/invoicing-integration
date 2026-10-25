@@ -3,10 +3,16 @@
 declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
+use Illuminate\Support\Facades\Http;
 
 it('transforms to provider payload with all client fields', function (Provider $provider) {
+    if ($provider === Provider::MOLONI) {
+        Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
+    }
+
     $data = fixtures()->request()->client()->files('client_full');
 
     $client = ClientData::from([
@@ -20,7 +26,7 @@ it('transforms to provider payload with all client fields', function (Provider $
         'email' => 'alberto.albertino@aa.pt',
         'country' => 'PT',
         'emailNotification' => true,
-        'defaultPayDue' => 15,
+        'defaultPayDue' => DueDateTerm::Days15,
         'irsRetention' => true,
     ]);
 

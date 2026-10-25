@@ -204,7 +204,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ## ItemStock
 
-Entry point for moving item stock and deleting movements. Moving is supported on Cegid Vendus and Moloni; deleting is Moloni-only, and Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for moving item stock. Supported on Cegid Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\ItemStock;
@@ -213,7 +213,6 @@ use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 | Method                                               | Return Type                | Description                          |
 | ---------------------------------------------------- | -------------------------- | ------------------------------------ |
 | `ItemStock::move(StockMovementData $movement)`   | `ShouldMoveItemStock`   | Adds or removes stock of an item   |
-| `ItemStock::delete(StockMovementData $movement)` | `ShouldDeleteItemStock` | Deletes a stock movement             |
 
 ## ShouldMoveItemStock Contract
 
@@ -228,19 +227,6 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 | `execute()`         | `self`                 | Send the movement                                             |
 | `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
 | `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
-
-## ShouldDeleteItemStock Contract
-
-The interface returned by `ItemStock::delete()`.
-
-```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldDeleteItemStock;
-```
-
-| Method         | Return Type  | Description                                          |
-| -------------- | ------------ | ---------------------------------------------------- |
-| `execute()`    | `self`       | Send the delete request                              |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging) |
 
 ---
 
@@ -401,7 +387,7 @@ ClientData::make([
 | ------------------- | ------------------ | ----------------------------------- |
 | `id`                | `Optional<string>` | Provider-assigned identifier        |
 | `name`              | `Optional<string>` | Client name (auto-trimmed)          |
-| `vat`               | `Optional<string>` | VAT / fiscal ID                     |
+| `vat`               | `Optional<string\|int>` | VAT / fiscal ID                |
 | `email`             | `Optional<string>` | Email (validated)                   |
 | `country`           | `Optional<string>` | ISO 3166-1 alpha-2 code             |
 | `city`              | `Optional<string>` | City name                           |
@@ -409,7 +395,7 @@ ClientData::make([
 | `postalCode`        | `Optional<string>` | Postal/ZIP code                     |
 | `phone`             | `Optional<string>` | Phone number                        |
 | `notes`             | `Optional<string>` | Internal notes                      |
-| `defaultPayDue`     | `Optional<int>`    | Default payment due (days)          |
+| `defaultPayDue`     | `Optional<DueDateTerm>` | Default payment due (days)     |
 | `discount`          | `Optional<float>`  | Discount percentage (0 to 100)      |
 | `creditLimit`       | `Optional<float>`  | Credit limit (0 or more)            |
 | `deliveryMethodId`  | `Optional<int>`    | Delivery method id (0 or more)      |
@@ -423,7 +409,8 @@ ClientData::make([
 > `$client->toArray()` when you need a payload-friendly structure. Provider
 > response fields the package does not map are left out of `toArray()` and
 > `toJson()`; read them with `getAdditionalData()`. This applies to every DTO
-> the package hydrates from a provider response.
+> the package hydrates from a provider response, except the clients in a
+> `Client::find()` list.
 
 ---
 
@@ -519,7 +506,7 @@ $dueDate = DueDateData::make([
 
 ### StockMovementData
 
-Represents a stock movement. Used to move stock and to delete a movement.
+Represents a stock movement. Used to move stock.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
@@ -532,7 +519,7 @@ $movement = StockMovementData::make([
 
 | Property      | Type              | Description                                                         |
 | ------------- | ----------------- | ------------------------------------------------------------------- |
-| `id`          | `?int`            | Provider-assigned movement ID; required to delete; stays `null` on Cegid Vendus |
+| `id`          | `?int`            | Provider-assigned movement ID; stays `null` on Cegid Vendus |
 | `itemId`   | `?int`            | Item ID; required to move                                        |
 | `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
 | `date`        | `?Carbon`         | Movement date and time; the current time on Moloni when `null`; sent in `obs` on Cegid Vendus |
@@ -718,21 +705,22 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 ### DueDateTerm
 
-Payment terms for `InvoiceData->dueDate`. The invoice is due today plus the term's days.
+Payment terms for `InvoiceData->dueDate` and `ClientData->defaultPayDue`. The values are the ones Cegid Vendus accepts. An invoice is due today plus the term's days; `Days0` is today.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 ```
 
-| Value     | Days |
-| --------- | ---- |
-| `Days0`   | 0    |
-| `Days10`  | 10   |
-| `Days15`  | 15   |
-| `Days30`  | 30   |
-| `Days60`  | 60   |
-| `Days90`  | 90   |
-| `Days120` | 120  |
+| Value    | Days |
+| -------- | ---- |
+| `Days0`  | 0    |
+| `Days1`  | 1    |
+| `Days7`  | 7    |
+| `Days15` | 15   |
+| `Days30` | 30   |
+| `Days45` | 45   |
+| `Days60` | 60   |
+| `Days90` | 90   |
 
 ### PaymentMethod
 

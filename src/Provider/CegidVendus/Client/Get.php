@@ -8,16 +8,13 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetC
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Client;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 use function is_string;
 use function throw_if;
 
-/**
- * Handles retrieval of a single client by ID from the Cegid Vendus API.
- */
 class Get extends Client implements ShouldGetClient
 {
     public function __construct(protected ?ClientData $client)
@@ -39,15 +36,8 @@ class Get extends Client implements ShouldGetClient
 
         $data = $request->json();
 
+        $this->data = $this->toClientData($data);
         $this->fillAdditionalProperties($data);
-
-        ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
-        ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
-        ! empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
-        ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
-        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
-
-        $this->data = $this->data->from($data);
 
         return $this;
     }

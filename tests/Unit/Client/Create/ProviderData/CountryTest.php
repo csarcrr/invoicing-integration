@@ -7,6 +7,8 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
 it('sends the client country', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
     $payload = Client::create(ClientData::from([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',
@@ -23,6 +25,8 @@ it('sends the client country', function (Provider $provider) {
 })->with('providers');
 
 it('sends portugal as the moloni country when the client has none', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
     $payload = Client::create(ClientData::from([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',

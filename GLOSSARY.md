@@ -130,5 +130,5 @@ A reusable, account-level payment term stored in the provider, made of a name an
 _Avoid_: Maturity date, payment term
 
 **Due Date Term**:
-The number of days a single invoice is due in after issue.
+The number of days, from a fixed list (0, 1, 7, 15, 30, 45, 60 or 90), a single invoice or a client's invoices are due in after issue. A term of 0 days means the invoice is due on the day of issue.
 _Avoid_: Due date (when meaning one invoice)

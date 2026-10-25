@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use CsarCrr\InvoicingIntegration\Data\DueDateData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -33,7 +32,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
-use function abs;
 use function collect;
 use function is_null;
 use function throw_if;
@@ -360,21 +358,11 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         $this->payload->put('expiration_date', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
 
-        $maturityDateId = $this->maturityDateId($this->data->dueDate);
+        $maturityDateId = (new FindDueDate)->execute()->closestTo($this->data->dueDate);
 
         if (! is_null($maturityDateId)) {
             $this->payload->put('maturity_date_id', $maturityDateId);
         }
-    }
-
-    protected function maturityDateId(DueDateTerm $term): ?int
-    {
-        return (new FindDueDate)->execute()->getList()
-            ->sortBy([
-                fn (DueDateData $a, DueDateData $b): int => abs($a->days - $term->value) <=> abs($b->days - $term->value),
-                fn (DueDateData $a, DueDateData $b): int => $a->days <=> $b->days,
-            ])
-            ->first()?->id;
     }
 
     protected function buildNotes(): void

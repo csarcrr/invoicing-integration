@@ -8,10 +8,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetC
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Client;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 use function collect;
@@ -66,17 +65,9 @@ class Get extends Client implements ShouldGetClient
      */
     protected function fillProperties(array $data): void
     {
-        $this->data = ClientData::from(collect([
-            'id' => $this->data->id,
-            'name' => $data['name'] ?? null,
-            'vat' => $data['vat'] ?? null,
-            'address' => $data['address'] ?? null,
-            'city' => $data['city'] ?? null,
-            'postal_code' => $data['zip_code'] ?? null,
-            'email' => $data['email'] ?? null,
-            'phone' => $data['phone'] ?? null,
-            'notes' => $data['notes'] ?? null,
-            'country' => Str::upper($data['country']['iso_3166_1'] ?? ''),
-        ])->filter()->toArray());
+        /** @var string $id */
+        $id = $this->data->id;
+
+        $this->data = $this->toClientData($id, $data);
     }
 }

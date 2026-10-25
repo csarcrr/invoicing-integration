@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
@@ -16,6 +17,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataEx
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Client;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get as GetLanguage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -76,7 +78,7 @@ class Create extends Client implements ShouldCreateClient
         $this->buildAddress();
         $this->buildCountry();
         $this->buildLanguage();
-        $this->buildPaymentDay();
+        $this->buildMaturityDate();
         $this->buildCommercialTerms();
         $this->buildContacts();
         $this->buildNotes();
@@ -160,11 +162,11 @@ class Create extends Client implements ShouldCreateClient
         $this->payload->put('language_id', (new GetLanguage($language))->execute()->getLanguage()->id);
     }
 
-    protected function buildPaymentDay(): void
+    protected function buildMaturityDate(): void
     {
-        $paymentDay = $this->data->defaultPayDue instanceof Optional ? 15 : $this->data->defaultPayDue;
+        $term = $this->data->defaultPayDue instanceof Optional ? DueDateTerm::Days15 : $this->data->defaultPayDue;
 
-        $this->payload->put('payment_day', $paymentDay);
+        $this->payload->put('maturity_date_id', (new FindDueDate)->execute()->closestTo($term) ?? 0);
     }
 
     protected function buildCommercialTerms(): void
@@ -191,7 +193,6 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildPendingIds(): void
     {
-        $this->payload->put('maturity_date_id', 0);
         $this->payload->put('payment_method_id', 0);
         $this->payload->put('salesman_id', 0);
     }

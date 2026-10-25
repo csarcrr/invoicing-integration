@@ -6,16 +6,14 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Client;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
-/**
- * Handles client creation against the Cegid Vendus API.
- */
 class Create extends Client implements ShouldCreateClient
 {
     /** @var Collection<string, mixed> */
@@ -29,8 +27,6 @@ class Create extends Client implements ShouldCreateClient
     }
 
     /**
-     * Sends the create request and populates the client DTO with the API response.
-     *
      * @throws \Throwable
      */
     public function execute(): self
@@ -40,15 +36,9 @@ class Create extends Client implements ShouldCreateClient
         Http::handleUnwantedFailures($request);
 
         $data = $request->json();
+
+        $this->data = $this->toClientData($data);
         $this->fillAdditionalProperties($data);
-
-        ! empty($data['postalcode']) && $data['postalCode'] = $data['postalcode'];
-        ! empty($data['default_pay_due']) && $data['defaultPayDue'] = $data['default_pay_due'];
-        ! empty($data['fiscal_id']) && $data['vat'] = $data['fiscal_id'];
-        ! empty($data['send_email']) && $data['email_notification'] = $data['send_email'] === 'yes';
-        ! empty($data['irs_retention']) && $data['irs_retention'] = $data['irs_retention'] === 'yes';
-
-        $this->data = $this->data->from($data);
 
         return $this;
     }
@@ -116,6 +106,10 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildDefaultPayDue(): void
     {
-        ! ($this->data->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->data->defaultPayDue);
+        if ($this->data->defaultPayDue instanceof Optional) {
+            return;
+        }
+
+        $this->payload->put('default_pay_due', $this->data->defaultPayDue === DueDateTerm::Days0 ? 'now' : (string) $this->data->defaultPayDue->value);
     }
 }

@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Data;
 
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use CsarCrr\InvoicingIntegration\Transformers\Name;
@@ -38,7 +39,7 @@ class ClientData extends Data implements DataNeedsValidation
         public Optional|string $phone,
         public Optional|string $notes,
 
-        public Optional|int $defaultPayDue,
+        public Optional|DueDateTerm $defaultPayDue,
         #[Rule('numeric|min:0|max:100')]
         public Optional|float $discount,
         #[Rule('numeric|min:0')]

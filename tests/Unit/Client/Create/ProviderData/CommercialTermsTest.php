@@ -8,6 +8,8 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Validation\ValidationException;
 
 it('sends the client discount, credit limit and delivery method', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
     $payload = Client::create(ClientData::from([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',
@@ -29,6 +31,8 @@ it('sends the client discount, credit limit and delivery method', function (Prov
 })->with('providers');
 
 it('sends zero as the moloni discount, credit limit and delivery method when the client has none', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
     $payload = Client::create(ClientData::from([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',

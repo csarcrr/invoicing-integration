@@ -104,6 +104,17 @@ test('maps all response fields onto the returned ClientData', function (Provider
     };
 })->with('providers', ['response_multiple']);
 
+test('maps the client date onto the returned ClientData', function (Provider $provider, string $fixtureName) {
+    Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
+
+    $client = Client::find($this->filters)->execute()->getList()->first();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($client->date->format('Y-m-d'))->toBe('2024-05-14'),
+        Provider::MOLONI => expect($client->date)->toBeInstanceOf(Optional::class),
+    };
+})->with('providers', ['response_multiple']);
+
 test('absent response fields remain Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
