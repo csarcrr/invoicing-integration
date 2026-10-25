@@ -103,6 +103,6 @@ What changes per provider:
 | Provider     | Before                                          | Now                                                                |
 | ------------ | ----------------------------------------------- | ------------------------------------------------------------------ |
 | Cegid Vendus | `default_pay_due` = the days you passed (`0` → `now`) | Same, but only for the term's days (`Days0` → `now`)          |
-| Moloni       | `payment_day` = the days you passed, `maturity_date_id` = `0` | `maturity_date_id` = the closest account due date; `payment_day` is not sent |
+| Moloni       | `payment_day` = the days you passed, `maturity_date_id` = `0` | `maturity_date_id` = the closest account due date (`Days15` when not set); `payment_day` is not sent |
 
 See [Creating a Client](clients/creating-a-client.md) and [API Reference – DueDateTerm](api-reference.md#duedateterm).
