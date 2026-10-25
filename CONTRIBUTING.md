@@ -72,6 +72,7 @@ composer install
 | ------------------ | ----------------------------------------------- |
 | `composer install` | Install PHP dependencies                        |
 | `composer test`    | Run the Pest test suite in parallel             |
+| `composer test:group` | Pick a test group interactively and run it (needs an interactive terminal) |
 | `composer analyse` | Run PHPStan static analysis (level 7)           |
 | `composer format`  | Run Laravel Pint code formatter                 |
 | `composer complete`| Run format + analyse + test (full quality pass) |

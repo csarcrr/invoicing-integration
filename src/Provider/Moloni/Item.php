@@ -35,6 +35,11 @@ abstract class Item extends BaseItem
             },
             'tax' => $tax ? ItemTax::from($tax['tax']['vat_type']) : null,
             'price' => $tax ? $this->toCents((float) $item['price']) + $this->toCents((float) $tax['value']) : null,
+            'stock' => array_map(fn (array $warehouse) => [
+                'itemId' => $warehouse['product_id'],
+                'warehouseId' => $warehouse['warehouse_id'],
+                'quantity' => $warehouse['stock'],
+            ], $item['warehouses'] ?? []),
         ]);
     }
 }

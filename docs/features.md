@@ -31,6 +31,15 @@ Features for managing items (product catalog) independently of invoices.
 | Delete Item   | ❌           | ❌     | ❌              |
 | List Items    | ✅           | ✅     | ❌              |
 
+## Item Stock Management
+
+Features for moving item stock. Current stock is read through `Item::get()`; see [Getting an Item](items/getting-an-item.md#stock).
+
+|                 | Cegid Vendus | Moloni | Invoice Express |
+| --------------- | ------------ | ------ | --------------- |
+| Move Stock      | ✅           | ✅     | ❌              |
+| Delete Movement | ❌           | ✅     | ❌              |
+
 ## Client Management
 
 Features for managing clients independently of invoices.

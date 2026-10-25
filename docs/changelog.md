@@ -4,6 +4,25 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Breaking: `UnsupportedQuantityException` moved
+
+`UnsupportedQuantityException` moved from `Exceptions\Invoice\Items` to `Exceptions\Items`, since it is now also thrown by `StockMovementData`.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that catches the exception by its old class name must update the import.
+
+Before:
+
+```php
+use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\UnsupportedQuantityException;
+```
+
+After:
+
+```php
+use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
+```
+
 ### Breaking: unmapped provider fields are no longer serialized
 
 `toArray()`, `toJson()` and JSON responses of `InvoiceData`, `ItemData`, `ClientData`, `DueDateData` and `PaymentMethodData` no longer include unmapped provider response fields. Read them with `getAdditionalData()`, which is unchanged.

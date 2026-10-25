@@ -20,7 +20,7 @@ enum SupportedMoloniProperties: string
             self::Invoice => ['document_id', 'number', 'net_value', 'taxes_value', 'products'],
             self::DueDate => ['maturity_date_id', 'name', 'days'],
             self::PaymentMethod => ['payment_method_id', 'name', 'is_numerary', 'is_mb', 'is_credit'],
-            self::Item => ['product_id', 'category_id', 'type', 'name', 'summary', 'reference', 'ean', 'price', 'has_stock', 'taxes', 'exemption_reason'],
+            self::Item => ['product_id', 'category_id', 'type', 'name', 'summary', 'reference', 'ean', 'price', 'has_stock', 'taxes', 'exemption_reason', 'warehouses'],
         };
     }
 }

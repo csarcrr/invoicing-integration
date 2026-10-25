@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items;
+namespace CsarCrr\InvoicingIntegration\Exceptions\Items;
 
 use Exception;
 

@@ -51,6 +51,29 @@ $item->reference;   // Product SKU / code
 $item->barcode;     // EAN or barcode identifier
 ```
 
+### Stock
+
+`stock` is a `Collection` of `ItemStockData`, one entry per warehouse:
+
+```php
+$item = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+foreach ($item->stock as $stock) {
+    $stock->itemId;      // 123
+    $stock->warehouseId; // warehouse of this entry
+    $stock->quantity;    // stock in that warehouse
+}
+
+$item->stock->sum('quantity'); // total stock
+```
+
+| Provider     | Response field | `warehouseId` from | `quantity` from |
+| ------------ | -------------- | ------------------ | --------------- |
+| Moloni       | `warehouses[]` | `warehouse_id`     | `stock`         |
+| Cegid Vendus | `stock[]`      | `store_id`         | `stock`         |
+
+When the response has no stock entries, `stock` is an empty `Collection`.
+
 ### Additional response data
 
 Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Cegid Vendus, that is any field outside the provider's supported item properties:

@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Actions\DueDateAction;
 use CsarCrr\InvoicingIntegration\Actions\InvoiceAction;
 use CsarCrr\InvoicingIntegration\Actions\ItemAction;
 use CsarCrr\InvoicingIntegration\Actions\PaymentMethodAction;
+use CsarCrr\InvoicingIntegration\Actions\ItemStockAction;
 use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
@@ -35,7 +36,7 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     {
         $this->setupHttpMacros();
 
-        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class, DueDateAction::class, PaymentMethodAction::class])
+        $this->app->when([InvoiceAction::class, ClientAction::class, ItemAction::class, DueDateAction::class, PaymentMethodAction::class, ItemStockAction::class])
             ->needs(Provider::class)
             ->give(function () {
                 return ProviderConfiguration::getProvider();

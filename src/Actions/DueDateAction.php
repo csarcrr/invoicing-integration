@@ -13,9 +13,6 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedExcep
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Create;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find;
 
-/**
- * Orchestrates due date operations by routing them to the correct provider implementation.
- */
 final class DueDateAction
 {
     public function __construct(

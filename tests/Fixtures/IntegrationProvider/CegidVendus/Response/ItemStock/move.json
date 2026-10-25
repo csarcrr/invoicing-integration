@@ -1,0 +1,14 @@
+{
+    "total": 37,
+    "stores": [
+        {
+            "store_id": 3,
+            "store_title": "Main Store",
+            "is_warehouse": "true",
+            "stock": 37,
+            "stock_alert": 5,
+            "lot": 0
+        }
+    ],
+    "variants_stock": []
+}

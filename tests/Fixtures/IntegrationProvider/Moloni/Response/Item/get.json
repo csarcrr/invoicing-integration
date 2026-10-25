@@ -10,6 +10,18 @@
     "unit_id": 3,
     "has_stock": 1,
     "stock": 42,
+    "warehouses": [
+        {
+            "product_id": 1542,
+            "warehouse_id": 1,
+            "stock": 40
+        },
+        {
+            "product_id": 1542,
+            "warehouse_id": 2,
+            "stock": 2.5
+        }
+    ],
     "image": "https://example.com/images/products/headphones.jpg",
     "exemption_reason": "",
     "category": {

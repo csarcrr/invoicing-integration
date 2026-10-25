@@ -202,6 +202,48 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ---
 
+## ItemStock
+
+Entry point for moving item stock and deleting movements. Moving is supported on Cegid Vendus and Moloni; deleting is Moloni-only, and Cegid Vendus throws `OperationNotSupportedException`.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\ItemStock;
+```
+
+| Method                                               | Return Type                | Description                          |
+| ---------------------------------------------------- | -------------------------- | ------------------------------------ |
+| `ItemStock::move(StockMovementData $movement)`   | `ShouldMoveItemStock`   | Adds or removes stock of an item   |
+| `ItemStock::delete(StockMovementData $movement)` | `ShouldDeleteItemStock` | Deletes a stock movement             |
+
+## ShouldMoveItemStock Contract
+
+The interface returned by `ItemStock::move()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldMoveItemStock;
+```
+
+| Method              | Return Type            | Description                                                   |
+| ------------------- | ---------------------- | ------------------------------------------------------------- |
+| `execute()`         | `self`                 | Send the movement                                             |
+| `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
+| `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
+
+## ShouldDeleteItemStock Contract
+
+The interface returned by `ItemStock::delete()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldDeleteItemStock;
+```
+
+| Method         | Return Type  | Description                                          |
+| -------------- | ------------ | ---------------------------------------------------- |
+| `execute()`    | `self`       | Send the delete request                              |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging) |
+
+---
+
 ## PaymentMethod (Facade)
 
 Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
@@ -431,6 +473,7 @@ $item = ItemData::make([
 | `controlStock`       | `bool`                          | `true`               | Whether to track stock for this item               | -                                                                         |
 | `enabled`            | `bool`                          | `true`               | Whether the item is active in the provider         | -                                                                         |
 | `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
+| `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::get()`       | -                                                                         |
 
 ---
 
@@ -471,6 +514,44 @@ $dueDate = DueDateData::make([
 | `name`   | `string` | Required. Name of the payment term     |
 | `days`   | `int`    | Required. Number of days until payment |
 | `id`     | `?int`   | Provider-assigned due date ID          |
+
+---
+
+### StockMovementData
+
+Represents a stock movement. Used to move stock and to delete a movement.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\StockMovementData;
+
+$movement = StockMovementData::make([
+    'itemId' => 1542,
+    'quantity' => -5,
+]);
+```
+
+| Property      | Type              | Description                                                         |
+| ------------- | ----------------- | ------------------------------------------------------------------- |
+| `id`          | `?int`            | Provider-assigned movement ID; required to delete; stays `null` on Cegid Vendus |
+| `itemId`   | `?int`            | Item ID; required to move                                        |
+| `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
+| `date`        | `?Carbon`         | Movement date and time; the current time on Moloni when `null`; sent in `obs` on Cegid Vendus |
+| `warehouseId` | `?int`            | Warehouse of the movement                                           |
+| `notes`       | `?string`         | Notes for the movement                                              |
+
+`make()` throws `UnsupportedQuantityException` when `quantity` is `0`.
+
+---
+
+### ItemStockData
+
+The stock of an item in one warehouse, returned in `ItemData->stock` by `Item::get()`.
+
+| Property      | Type         | Description                                                   |
+| ------------- | ------------ | ------------------------------------------------------------- |
+| `itemId`      | `int`        | ID of the item                                                |
+| `warehouseId` | `int`        | Warehouse (Moloni `warehouse_id`, Cegid Vendus `store_id`)    |
+| `quantity`    | `int\|float` | Stock of the item in that warehouse                           |
 
 ---
 

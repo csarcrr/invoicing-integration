@@ -238,6 +238,7 @@ Refer to [docs/handling-errors.md](docs/handling-errors.md) for the full excepti
 
 ```bash
 composer test        # Pest (parallel) test suite
+composer test:group  # Pick a test group interactively and run it
 composer analyse     # PHPStan (Larastan) analysis
 composer format      # Laravel Pint code style
 composer complete    # Format + analyse + test
