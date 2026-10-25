@@ -38,7 +38,6 @@ Features for moving item stock. Current stock is read through `Item::get()`; see
 |                 | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Move Stock      | ✅           | ✅     | ❌              |
-| Delete Movement | ❌           | ✅     | ❌              |
 
 ## Client Management
 

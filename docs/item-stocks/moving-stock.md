@@ -63,7 +63,7 @@ The movement is sent to `products/stocks`:
 
 - `obs` is `Y-m-d H:i:s - notes` when both are set, otherwise whichever one is set. The date is not defaulted to the current time.
 - Without `warehouseId`, Vendus chooses the store; its API docs do not say which one.
-- Cegid Vendus returns no movement ID, so `id` stays `null` and the movement cannot be deleted.
+- Cegid Vendus returns no movement ID, so `id` stays `null`.
 - The `reset` and `transfer` operation types are not supported.
 
 ## Error handling

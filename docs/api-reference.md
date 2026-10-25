@@ -204,7 +204,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ## ItemStock
 
-Entry point for moving item stock and deleting movements. Moving is supported on Cegid Vendus and Moloni; deleting is Moloni-only, and Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for moving item stock. Supported on Cegid Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\ItemStock;
@@ -213,7 +213,6 @@ use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 | Method                                               | Return Type                | Description                          |
 | ---------------------------------------------------- | -------------------------- | ------------------------------------ |
 | `ItemStock::move(StockMovementData $movement)`   | `ShouldMoveItemStock`   | Adds or removes stock of an item   |
-| `ItemStock::delete(StockMovementData $movement)` | `ShouldDeleteItemStock` | Deletes a stock movement             |
 
 ## ShouldMoveItemStock Contract
 
@@ -228,19 +227,6 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 | `execute()`         | `self`                 | Send the movement                                             |
 | `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
 | `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
-
-## ShouldDeleteItemStock Contract
-
-The interface returned by `ItemStock::delete()`.
-
-```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldDeleteItemStock;
-```
-
-| Method         | Return Type  | Description                                          |
-| -------------- | ------------ | ---------------------------------------------------- |
-| `execute()`    | `self`       | Send the delete request                              |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging) |
 
 ---
 
@@ -520,7 +506,7 @@ $dueDate = DueDateData::make([
 
 ### StockMovementData
 
-Represents a stock movement. Used to move stock and to delete a movement.
+Represents a stock movement. Used to move stock.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
@@ -533,7 +519,7 @@ $movement = StockMovementData::make([
 
 | Property      | Type              | Description                                                         |
 | ------------- | ----------------- | ------------------------------------------------------------------- |
-| `id`          | `?int`            | Provider-assigned movement ID; required to delete; stays `null` on Cegid Vendus |
+| `id`          | `?int`            | Provider-assigned movement ID; stays `null` on Cegid Vendus |
 | `itemId`   | `?int`            | Item ID; required to move                                        |
 | `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
 | `date`        | `?Carbon`         | Movement date and time; the current time on Moloni when `null`; sent in `obs` on Cegid Vendus |
