@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus;
 
 use CsarCrr\InvoicingIntegration\Data\ItemData;
-use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
 
 abstract class Item extends BaseItem
@@ -21,11 +20,11 @@ abstract class Item extends BaseItem
             'description' => $item['description'] ?? null,
             'reference' => $item['reference'] ?? null,
             'barcode' => $item['barcode'] ?? null,
-            'stock' => collect($item['stock'] ?? [])->map(fn (array $store) => ItemStockData::make([
+            'stock' => collect($item['stock'] ?? [])->map(fn (array $store) => [
                 'itemId' => $id,
                 'warehouseId' => $store['store_id'],
                 'quantity' => $store['stock'],
-            ])),
+            ])->all(),
         ]);
     }
 }
