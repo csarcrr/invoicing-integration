@@ -1,6 +1,7 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Support\Facades\Http;
@@ -37,7 +38,7 @@ test('unsupported properties are kept in additional data', function (Provider $p
     'moloni' => [fn () => moloniProvider(), 'response_simple'],
 ]);
 
-test('client create returns the id as a string and the default pay due as an int', function (Provider $provider, string $responseFixture) {
+test('client create returns the id as a string and the default pay due as a due date term', function (Provider $provider, string $responseFixture) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
@@ -45,7 +46,7 @@ test('client create returns the id as a string and the default pay due as an int
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($data->id)->toBe('99999')
-            ->and($data->defaultPayDue)->toBe(15),
+            ->and($data->defaultPayDue)->toBe(DueDateTerm::Days15),
         Provider::MOLONI => expect($data->id)->toBeString()
             ->and($data->defaultPayDue)->toBeInstanceOf(Optional::class),
     };
