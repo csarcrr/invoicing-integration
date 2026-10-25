@@ -34,3 +34,18 @@ it('sends 15 days as the moloni payment day when the client has no default pay d
         Provider::CEGID_VENDUS => expect($payload->has('default_pay_due'))->toBeFalse(),
     };
 })->with('providers');
+
+it('sends now as the cegid vendus default pay due when the client default pay due is zero', function (Provider $provider) {
+    $payload = Client::create(ClientData::from([
+        'name' => 'Alberto Albertino',
+        'vat' => '223098091',
+        'address' => 'Rua das Flores 125',
+        'city' => 'Porto',
+        'defaultPayDue' => 0,
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::MOLONI => expect($payload->get('payment_day'))->toBe(0),
+        Provider::CEGID_VENDUS => expect($payload->get('default_pay_due'))->toBe('now'),
+    };
+})->with('providers');

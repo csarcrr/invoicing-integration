@@ -77,7 +77,7 @@ $clientData = ClientData::make([
 | `notes`             | Internal notes (not on invoices)       |
 | `irsRetention`      | Portuguese IRS withholding flag        |
 | `emailNotification` | Auto-send invoices via email           |
-| `defaultPayDue`     | Default payment due (days)             |
+| `defaultPayDue`     | Default payment due (days). On Cegid Vendus, `0` is sent as `now` |
 | `discount`          | Discount percentage (0 to 100)         |
 | `creditLimit`       | Credit limit (0 or more)               |
 | `deliveryMethodId`  | Provider delivery method id (0 or more) |

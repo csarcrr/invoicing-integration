@@ -105,6 +105,10 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildDefaultPayDue(): void
     {
-        ! ($this->data->defaultPayDue instanceof Optional) && $this->payload->put('default_pay_due', (string) $this->data->defaultPayDue);
+        if ($this->data->defaultPayDue instanceof Optional) {
+            return;
+        }
+
+        $this->payload->put('default_pay_due', $this->data->defaultPayDue === 0 ? 'now' : (string) $this->data->defaultPayDue);
     }
 }
