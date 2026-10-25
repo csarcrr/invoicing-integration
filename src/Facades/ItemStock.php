@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static ShouldMoveItemStock move(StockMovementData $movement)
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\ItemStockAction
+ * @see ItemStockAction
  */
 class ItemStock extends Facade
 {

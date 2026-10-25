@@ -22,7 +22,7 @@ it('has the payload properly defined in the request', function () {
         return Str::contains($request->url(), 'access_token') && Str::contains($request->body(), 'company_id=123') && $response->successful();
     });
 
-    expect(!empty($recorded->first()[0]))->toBeTrue();
+    expect(! empty($recorded->first()[0]))->toBeTrue();
 });
 
 it('asks for human readable errors', function () {
@@ -34,5 +34,5 @@ it('asks for human readable errors', function () {
         return Str::contains($request->url(), 'human_errors=true');
     });
 
-    expect(!empty($recorded->first()[0]))->toBeTrue();
+    expect(! empty($recorded->first()[0]))->toBeTrue();
 });

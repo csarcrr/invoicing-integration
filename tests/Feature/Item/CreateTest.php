@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 
 test('creates an item', function (Provider $provider, string $fixture) {
@@ -17,7 +18,7 @@ test('creates an item', function (Provider $provider, string $fixture) {
         'barcode' => 'barcode-1',
         'category' => CategoryData::make(['id' => 1]),
         'price' => 2000,
-        'tax' => CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax::NORMAL,
+        'tax' => ItemTax::NORMAL,
     ]))->execute()->getItem();
 
     expect($data->id)->toBeInt()
