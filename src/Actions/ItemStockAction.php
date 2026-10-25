@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\ItemStock\Move as VendusMove;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock\Delete;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock\Move;
 
@@ -22,7 +23,7 @@ final class ItemStockAction
     public function move(StockMovementData $movement): ShouldMoveItemStock
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
+            Provider::CEGID_VENDUS => new VendusMove($movement),
             Provider::MOLONI => new Move($movement),
         };
     }

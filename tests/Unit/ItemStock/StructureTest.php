@@ -9,12 +9,15 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Facades\ItemStock;
 
-it('is an instance of the correct contract for each operation', function (Provider $provider, Closure $operation, string $contract) {
+it('is an instance of the move contract', function (Provider $provider) {
+    expect(ItemStock::move(StockMovementData::make([])))->toBeInstanceOf(ShouldMoveItemStock::class);
+})->with('providers');
+
+it('is an instance of the delete contract', function (Provider $provider) {
+    $delete = fn () => ItemStock::delete(StockMovementData::make([]));
+
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($operation)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($operation())->toBeInstanceOf($contract),
+        Provider::CEGID_VENDUS => expect($delete)->toThrow(OperationNotSupportedException::class),
+        Provider::MOLONI => expect($delete())->toBeInstanceOf(ShouldDeleteItemStock::class),
     };
-})->with('providers')->with([
-    'move' => [fn () => ItemStock::move(StockMovementData::make([])), ShouldMoveItemStock::class],
-    'delete' => [fn () => ItemStock::delete(StockMovementData::make([])), ShouldDeleteItemStock::class],
-]);
+})->with('providers');

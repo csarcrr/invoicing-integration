@@ -52,7 +52,19 @@ The returned `product_stock_id` is set as `id`. To read the stock after the move
 
 ## Cegid Vendus
 
-Not supported: `ItemStock::move()` throws `OperationNotSupportedException`.
+The movement is sent to `products/stocks`:
+
+| `StockMovementData` | Cegid Vendus field                                                        |
+| ------------------- | ------------------------------------------------------------------------- |
+| `itemId`            | `product_id`                                                              |
+| `quantity`          | `type` (`add` when positive, `remove` when negative) and `amount` (absolute value) |
+| `warehouseId`       | `store_id` (only sent when set)                                           |
+| `date` and `notes`  | `obs` (only sent when either is set)                                      |
+
+- `obs` is `Y-m-d H:i:s - notes` when both are set, otherwise whichever one is set. The date is not defaulted to the current time.
+- Without `warehouseId`, Vendus chooses the store; its API docs do not say which one.
+- Cegid Vendus returns no movement ID, so `id` stays `null` and the movement cannot be deleted.
+- The `reset` and `transfer` operation types are not supported.
 
 ## Error handling
 

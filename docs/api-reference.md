@@ -204,7 +204,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ## ItemStock
 
-Entry point for moving item stock and deleting movements. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for moving item stock and deleting movements. Moving is supported on Cegid Vendus and Moloni; deleting is Moloni-only, and Cegid Vendus throws `OperationNotSupportedException`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\ItemStock;
@@ -532,10 +532,10 @@ $movement = StockMovementData::make([
 
 | Property      | Type              | Description                                                         |
 | ------------- | ----------------- | ------------------------------------------------------------------- |
-| `id`          | `?int`            | Provider-assigned movement ID; required to delete                   |
+| `id`          | `?int`            | Provider-assigned movement ID; required to delete; stays `null` on Cegid Vendus |
 | `itemId`   | `?int`            | Item ID; required to move                                        |
 | `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
-| `date`        | `?Carbon`         | Movement date and time; the current time when moving with `null`    |
+| `date`        | `?Carbon`         | Movement date and time; the current time on Moloni when `null`; sent in `obs` on Cegid Vendus |
 | `warehouseId` | `?int`            | Warehouse of the movement                                           |
 | `notes`       | `?string`         | Notes for the movement                                              |
 

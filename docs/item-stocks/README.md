@@ -27,9 +27,9 @@ echo $move->getMovement()->id;           // provider-assigned movement ID
 
 | Operation       | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
-| Move Stock      | ❌           | ✅     | ❌              |
+| Move Stock      | ✅           | ✅     | ❌              |
 | Delete Movement | ❌           | ✅     | ❌              |
 
-On Cegid Vendus every operation throws `OperationNotSupportedException`.
+On Cegid Vendus `ItemStock::delete()` throws `OperationNotSupportedException`.
 
 To read the current stock, use `Item::get()`. See [Getting an Item](../items/getting-an-item.md#stock).
