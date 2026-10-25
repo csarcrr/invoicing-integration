@@ -6,6 +6,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
@@ -109,6 +110,6 @@ class Create extends Client implements ShouldCreateClient
             return;
         }
 
-        $this->payload->put('default_pay_due', $this->data->defaultPayDue === 0 ? 'now' : (string) $this->data->defaultPayDue);
+        $this->payload->put('default_pay_due', $this->data->defaultPayDue === DueDateTerm::Days0 ? 'now' : (string) $this->data->defaultPayDue->value);
     }
 }

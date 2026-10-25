@@ -6,10 +6,12 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFindDueDate;
 use CsarCrr\InvoicingIntegration\Data\DueDateData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
+use function abs;
 use function collect;
 
 class Find implements ShouldFindDueDate
@@ -45,6 +47,16 @@ class Find implements ShouldFindDueDate
     public function getList(): Collection
     {
         return $this->list;
+    }
+
+    public function closestTo(DueDateTerm $term): ?int
+    {
+        return $this->list
+            ->sortBy([
+                fn (DueDateData $a, DueDateData $b): int => abs($a->days - $term->value) <=> abs($b->days - $term->value),
+                fn (DueDateData $a, DueDateData $b): int => $a->days <=> $b->days,
+            ])
+            ->first()?->id;
     }
 
     /**
