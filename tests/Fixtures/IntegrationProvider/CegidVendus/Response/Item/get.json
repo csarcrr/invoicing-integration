@@ -13,16 +13,24 @@
     "category_id": 1,
     "status": "on",
     "lot_control": "1",
-    "stock": [
-        {
-            "stock": 40,
-            "store_id": 1,
-            "stock_alert": 5
-        },
-        {
-            "stock": 2,
-            "store_id": 2,
-            "stock_alert": 0
-        }
-    ]
+    "stock": {
+        "control": 1,
+        "type": "M",
+        "stores": [
+            {
+                "title": "Store 1",
+                "store_id": 1,
+                "product_variant_id": 0,
+                "stock": 40,
+                "alert": 5
+            },
+            {
+                "title": "Store 2",
+                "store_id": 2,
+                "product_variant_id": 0,
+                "stock": 2,
+                "alert": 0
+            }
+        ]
+    }
 }

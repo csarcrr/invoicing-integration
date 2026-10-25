@@ -24,7 +24,7 @@ abstract class Item extends BaseItem
                 'itemId' => $id,
                 'warehouseId' => $store['store_id'],
                 'quantity' => $store['stock'],
-            ], $item['stock'] ?? []),
+            ], $item['stock']['stores'] ?? []),
         ]);
     }
 }
