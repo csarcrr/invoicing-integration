@@ -10,20 +10,21 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 test('moves stock', function (Provider $provider) {
-    [$endpoint, $movementId, $sentBody] = match ($provider) {
-        Provider::CEGID_VENDUS => ['products/stocks', null, ['"type":"remove"', '"amount":5']],
-        Provider::MOLONI => ['productStocks/insert', 777, ['qty=-5']],
-    };
-
-    Http::fake([
-        "*{$endpoint}*" => mockResponse(fixtures()->response()->itemStock()->files('move')),
-    ]);
+    Http::fake(mockResponse(fixtures()->response()->itemStock()->files('move')));
 
     $result = ItemStock::move(StockMovementData::make(['itemId' => 1542, 'quantity' => -5]))->execute();
 
-    expect($result->getMovement()->id)->toBe($movementId);
+    expect($result->getMovement()->id)->toBe(match ($provider) {
+        Provider::CEGID_VENDUS => null,
+        Provider::MOLONI => 777,
+    });
 
-    Http::assertSent(fn (Request $request) => Str::contains($request->url(), $endpoint)
-        && Str::containsAll($request->body(), $sentBody));
+    Http::assertSent(fn (Request $request) => match ($provider) {
+        Provider::CEGID_VENDUS => Str::contains($request->url(), 'products/stocks')
+            && $request['type'] === 'remove'
+            && $request['amount'] === 5,
+        Provider::MOLONI => Str::contains($request->url(), 'productStocks/insert')
+            && Str::contains($request->body(), 'qty=-5'),
+    });
     Http::assertSentCount(1);
 })->with('providers');

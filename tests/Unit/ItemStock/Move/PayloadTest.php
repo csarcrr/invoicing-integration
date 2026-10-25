@@ -63,6 +63,10 @@ it('builds the observations from the date and the notes', function (array $data,
 })->with([
     'date only' => [['date' => Carbon::create(2026, 10, 22, 10)], '2026-10-22 10:00:00'],
     'notes only' => [['notes' => 'Supplier delivery'], 'Supplier delivery'],
+    'date and notes' => [
+        ['date' => Carbon::create(2026, 10, 22, 10), 'notes' => 'Supplier delivery'],
+        '2026-10-22 10:00:00 - Supplier delivery',
+    ],
 ]);
 
 it('fails when a required field is missing', function (Provider $provider, array $data, string $message) {

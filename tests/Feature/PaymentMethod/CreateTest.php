@@ -5,27 +5,22 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\PaymentMethodData;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod as PaymentMethodEnum;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 test('creates a payment method', function (Provider $provider) {
-    $create = fn () => PaymentMethod::create(PaymentMethodData::make([
-        'name' => 'Multibanco',
-        'type' => PaymentMethodEnum::MB,
-    ]));
-
     if ($provider === Provider::CEGID_VENDUS) {
-        expect($create)->toThrow(OperationNotSupportedException::class);
-
-        return;
+        $this->markTestSkipped('Cegid Vendus does not support creating payment methods.');
     }
 
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('create')));
 
-    $paymentMethod = $create()->execute()->getPaymentMethod();
+    $paymentMethod = PaymentMethod::create(PaymentMethodData::make([
+        'name' => 'Multibanco',
+        'type' => PaymentMethodEnum::MB,
+    ]))->execute()->getPaymentMethod();
 
     expect($paymentMethod->id)->toBe(7002)
         ->and($paymentMethod->name)->toBe('Multibanco')

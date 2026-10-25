@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\DueDateData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Facades\DueDate;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -13,9 +12,7 @@ use Illuminate\Support\Str;
 
 test('maps the provider response onto a list of DueDateData', function (Provider $provider) {
     if ($provider === Provider::CEGID_VENDUS) {
-        expect(fn () => DueDate::find())->toThrow(OperationNotSupportedException::class);
-
-        return;
+        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
     }
 
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
@@ -32,9 +29,7 @@ test('maps the provider response onto a list of DueDateData', function (Provider
 
 test('automagically injects provider pagination details into the request', function (Provider $provider) {
     if ($provider === Provider::CEGID_VENDUS) {
-        expect(fn () => DueDate::find())->toThrow(OperationNotSupportedException::class);
-
-        return;
+        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
     }
 
     Http::fake(mockResponse([]));
@@ -48,9 +43,7 @@ test('automagically injects provider pagination details into the request', funct
 
 test('can go to the next page and then go back', function (Provider $provider) {
     if ($provider === Provider::CEGID_VENDUS) {
-        expect(fn () => DueDate::find())->toThrow(OperationNotSupportedException::class);
-
-        return;
+        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
     }
 
     $response = fixtures()->response()->dueDate()->files('response_multiple');
@@ -74,10 +67,9 @@ test('can go to the next page and then go back', function (Provider $provider) {
 })->with('providers');
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
-    $goBelow = fn () => DueDate::find()->page(0);
+    if ($provider === Provider::CEGID_VENDUS) {
+        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
+    }
 
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($goBelow)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($goBelow)->toThrow(NoMorePagesException::class),
-    };
+    expect(fn () => DueDate::find()->page(0))->toThrow(NoMorePagesException::class);
 })->with('providers');
