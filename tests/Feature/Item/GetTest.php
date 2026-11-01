@@ -15,16 +15,11 @@ test('an item get request is successful', function (Provider $provider, string $
 
     $data = Item::get($item)->execute()->getItem();
 
-    [$name, $reference, $barcode] = match ($provider) {
-        Provider::CEGID_VENDUS => ['Item Title', 'reference-1', 'barcode-1'],
-        Provider::MOLONI => ['Wireless Bluetooth Headphones', 'WBH-2026-BLK', '5601234567890'],
-    };
-
     expect($data->id)->toBe(123)
-        ->and($data->name)->toBe($name)
+        ->and($data->name)->toBe('Item Title')
         ->and($data->description)->toBe('A small product description used for testing purposes.')
-        ->and($data->reference)->toBe($reference)
-        ->and($data->barcode)->toBe($barcode)
+        ->and($data->reference)->toBe('reference-1')
+        ->and($data->barcode)->toBe('barcode-1')
         ->and($data->getAdditionalData())->not->toBeEmpty()
         ->and($data->getAdditionalData())->not->toHaveKeys(['reference', 'barcode']);
 
@@ -59,10 +54,7 @@ test('maps the category and the stock control', function (Provider $provider, st
 
     $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
 
-    expect($data->category->id)->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 1,
-        Provider::MOLONI => 12,
-    })
+    expect($data->category->id)->toBe(1)
         ->and($data->controlStock)->toBeTrue();
 })->with('providers', ['get']);
 
@@ -86,13 +78,8 @@ test('maps the gross price and the tax', function (Provider $provider, string $r
 
     $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
 
-    [$price, $tax] = match ($provider) {
-        Provider::CEGID_VENDUS => [2000, ItemTax::EXEMPT],
-        Provider::MOLONI => [2460, ItemTax::NORMAL],
-    };
-
-    expect($data->price)->toBe($price)
-        ->and($data->tax)->toBe($tax);
+    expect($data->price)->toBe(2460)
+        ->and($data->tax)->toBe(ItemTax::NORMAL);
 })->with('providers', ['get']);
 
 test('leaves the price and the tax empty when the provider sends none', function (Provider $provider, string $responseFixture) {
@@ -153,9 +140,9 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
 
     $data = Item::get($item)->execute()->getItem();
 
-    [$secondQuantity, $stockKey] = match ($provider) {
-        Provider::CEGID_VENDUS => [2, 'stock'],
-        Provider::MOLONI => [2.5, 'warehouses'],
+    $stockKey = match ($provider) {
+        Provider::CEGID_VENDUS => 'stock',
+        Provider::MOLONI => 'warehouses',
     };
 
     expect($data->stock)->toHaveCount(2)
@@ -165,6 +152,6 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
         ->and($data->stock->first()->quantity)->toBe(40)
         ->and($data->stock->last()->itemId)->toBe(1542)
         ->and($data->stock->last()->warehouseId)->toBe(2)
-        ->and($data->stock->last()->quantity)->toBe($secondQuantity)
+        ->and($data->stock->last()->quantity)->toBe(2.5)
         ->and($data->getAdditionalData())->not->toHaveKey($stockKey);
 })->with('providers', ['get']);

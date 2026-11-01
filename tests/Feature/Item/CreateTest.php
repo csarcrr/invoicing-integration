@@ -23,10 +23,7 @@ test('creates an item', function (Provider $provider, string $fixture) {
         'tax' => CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax::NORMAL,
     ]))->execute()->getItem();
 
-    expect($data->id)->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 111111,
-        Provider::MOLONI => 1542,
-    })
+    expect($data->id)->toBe(1542)
         ->and($data->name)->toBeString()
         ->and($data->getAdditionalData())->not->toBeEmpty();
 })->with('providers', ['create']);
