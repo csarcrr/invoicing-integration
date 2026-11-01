@@ -28,10 +28,14 @@ jobs:
           extensions: mbstring, fileinfo, sqlite, pdo_sqlite
           coverage: none
 
+      - name: Pin Laravel version
+        run: composer require "laravel/framework:12.*" "orchestra/testbench:10.*" --no-update
+
       - name: Install dependencies
-        run: |
-          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" --no-update
-          composer update --prefer-dist --no-interaction
+        uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+          composer-options: --prefer-dist
 
       - name: Run tests
-        run: vendor/bin/pest --ci
+        run: vendor/bin/pest --ci --parallel
