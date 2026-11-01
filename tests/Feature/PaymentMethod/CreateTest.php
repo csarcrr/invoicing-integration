@@ -10,11 +10,11 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-test('creates a payment method', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support creating payment methods.');
-    }
+beforeEach(function () {
+    mockConfiguration(Provider::MOLONI);
+});
 
+test('creates a payment method', function () {
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('create')));
 
     $paymentMethod = PaymentMethod::create(PaymentMethodData::make([
@@ -29,4 +29,4 @@ test('creates a payment method', function (Provider $provider) {
 
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'paymentMethods/insert')
         && Str::contains($request->body(), 'is_mb=1'));
-})->with('providers');
+});

@@ -11,11 +11,11 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-test('maps the provider response onto a list of PaymentMethodData', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding payment methods.');
-    }
+beforeEach(function () {
+    mockConfiguration(Provider::MOLONI);
+});
 
+test('maps the provider response onto a list of PaymentMethodData', function () {
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')));
 
     $list = PaymentMethod::find()->execute()->getList();
@@ -24,13 +24,9 @@ test('maps the provider response onto a list of PaymentMethodData', function (Pr
         ->and($list->first())->toBeInstanceOf(PaymentMethodData::class)
         ->and($list->first()->id)->toBe(7001)
         ->and($list->first()->name)->toBe('Numerário');
-})->with('providers');
+});
 
-test('maps the provider flags onto the payment method type', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding payment methods.');
-    }
-
+test('maps the provider flags onto the payment method type', function () {
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')));
 
     $list = PaymentMethod::find()->execute()->getList();
@@ -42,13 +38,9 @@ test('maps the provider flags onto the payment method type', function (Provider 
         null,
         null,
     ]);
-})->with('providers');
+});
 
-test('automagically injects provider pagination details into the request', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding payment methods.');
-    }
-
+test('automagically injects provider pagination details into the request', function () {
     Http::fake(mockResponse([]));
 
     PaymentMethod::find()->execute();
@@ -56,13 +48,9 @@ test('automagically injects provider pagination details into the request', funct
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'paymentMethods/getAll')
         && Str::contains($request->body(), 'qty=50')
         && Str::contains($request->body(), 'offset=0'));
-})->with('providers');
+});
 
-test('can go to the next page and then go back', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding payment methods.');
-    }
-
+test('can go to the next page and then go back', function () {
     $response = fixtures()->response()->paymentMethod()->files('response_multiple');
 
     Http::fakeSequence()
@@ -81,12 +69,8 @@ test('can go to the next page and then go back', function (Provider $provider) {
     expect($results->getCurrentPage())->toBe(1)
         ->and($results->getList())->toHaveCount(5)
         ->and($results->getTotalPages())->toBeNull();
-})->with('providers');
+});
 
-test('fails when attempting to go below the first page', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding payment methods.');
-    }
-
+test('fails when attempting to go below the first page', function () {
     expect(fn () => PaymentMethod::find()->page(0))->toThrow(NoMorePagesException::class);
-})->with('providers');
+});
