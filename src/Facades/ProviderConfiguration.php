@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<string, mixed> getConfig()
  * @method static mixed get(string $key, mixed $default = null)
  *
- * @see \CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService
+ * @see ProviderConfigurationService
  */
 class ProviderConfiguration extends Facade
 {

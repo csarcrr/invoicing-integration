@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ShouldCreateDueDate create(DueDateData $dueDate)
  * @method static ShouldFindDueDate find()
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\DueDateAction
+ * @see DueDateAction
  */
 class DueDate extends Facade
 {

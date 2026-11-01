@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ShouldGetItem get(ItemData $item)
  * @method static ShouldFindItem find(?ItemData $item = null)
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\ItemAction
+ * @see ItemAction
  */
 class Item extends Facade
 {

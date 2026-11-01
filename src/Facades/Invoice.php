@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static ShouldCreateInvoice create(InvoiceData $invoice)
  *
- * @see \CsarCrr\InvoicingIntegration\Actions\InvoiceAction
+ * @see InvoiceAction
  */
 class Invoice extends Facade
 {

@@ -20,5 +20,5 @@ it('asks for human readable errors', function () {
         return Str::contains($request->url(), 'human_errors=true');
     });
 
-    expect(!empty($recorded->first()[0]))->toBeTrue();
+    expect(! empty($recorded->first()[0]))->toBeTrue();
 });
