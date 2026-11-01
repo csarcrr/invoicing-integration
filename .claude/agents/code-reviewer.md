@@ -35,7 +35,7 @@ Review recently written or modified code (not the entire codebase unless explici
 
 ### 4. Testing
 - Tests must use Pest syntax exclusively: `it()`, `test()`, `expect()` — never raw PHPUnit assertions
-- Test files must mirror `src/` structure under `tests/Unit/`
+- Test files must be organized by operation under `tests/Unit/<Resource>/<Operation>/`, not by `src/` structure
 - Architecture tests should use `pestphp/pest-plugin-arch`
 - Verify test coverage for happy paths, edge cases, and exception scenarios
 - Check that HTTP calls in tests are properly faked/mocked
