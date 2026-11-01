@@ -131,7 +131,15 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->first()->name)->toBe('Item Title')
         ->and($list->first()->description)->toBe('Item Description')
         ->and($list->first()->reference)->toBe('reference-1')
-        ->and($list->first()->barcode)->toBe('barcode-1');
+        ->and($list->first()->barcode)->toBe('barcode-1')
+        ->and($list->first()->type)->toBe(ItemType::Product)
+        ->and($list->first()->tax)->toBe(ItemTax::EXEMPT)
+        ->and($list->first()->price)->toBe(2000)
+        ->and($list->first()->controlStock)->toBeTrue()
+        ->and($list->get(1)->type)->toBe(ItemType::Service)
+        ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
+        ->and($list->get(1)->price)->toBe(4500)
+        ->and($list->get(1)->controlStock)->toBeFalse();
 });
 
 test('maps the moloni products onto the item list', function () {

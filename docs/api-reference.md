@@ -90,7 +90,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetIte
 | Method      | Return Type | Description                                                  | Throws                                     |
 | ----------- | ----------- | ------------------------------------------------------------ | ------------------------------------------ |
 | `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing) |
-| `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, and additional data) | — |
+| `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `type`, `tax`, `price`, and additional data) | — |
 
 Provider response fields that the package does not explicitly map onto `ItemData` are accessible via `getAdditionalData()` on the returned DTO:
 
@@ -101,6 +101,7 @@ $item->name;                // mapped from provider's `title` field
 $item->description;         // mapped directly
 $item->reference;           // mapped directly
 $item->barcode;             // mapped from provider's `barcode` (Cegid Vendus) or `ean` (Moloni)
+$item->price;               // gross price in cents
 $item->getAdditionalData(); // provider fields the package does not handle
 ```
 
