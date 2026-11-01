@@ -155,33 +155,14 @@ class Fixtures
         return $this;
     }
 
-    public function files(?string $name = null): array
+    public function files(string $name): array
     {
-        $basePath = __DIR__.'/IntegrationProvider/';
-        $filesPath = "{$basePath}{$this->provider->value}/".implode('/', $this->path).'/';
+        $file = __DIR__."/IntegrationProvider/{$this->provider->value}/".implode('/', $this->path)."/{$name}.json";
 
-        if (! is_dir($filesPath)) {
-            throw new RuntimeException("Fixtures path not found: {$filesPath}");
+        if (! is_file($file)) {
+            throw new RuntimeException("Fixture file not found: {$file}");
         }
 
-        $files = [];
-
-        foreach (scandir($filesPath) as $file) {
-            if (str_ends_with($file, '.json') && is_file($filesPath.$file)) {
-                $key = str_replace('.json', '', $file);
-
-                $files[$key] = File::json($filesPath.$file);
-            }
-        }
-
-        if (! $name) {
-            return $files;
-        }
-
-        if (! array_key_exists($name, $files)) {
-            throw new RuntimeException("Fixture file not found: {$filesPath}{$name}.json");
-        }
-
-        return collect($files[$name])->sortKeys()->toArray();
+        return collect(File::json($file))->sortKeys()->toArray();
     }
 }
