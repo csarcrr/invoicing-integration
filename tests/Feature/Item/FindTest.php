@@ -56,6 +56,17 @@ test('searches moloni products when a search field is set', function () {
         && ! Str::contains($request->body(), 'category_id'));
 });
 
+test('reports the total pages the provider returns', function (Provider $provider, string $fixtureName) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($fixtureName), 200, $this->headers));
+
+    $results = Item::find($this->filters)->execute();
+
+    expect($results->getTotalPages())->toBe(match ($provider) {
+        Provider::CEGID_VENDUS => 5,
+        Provider::MOLONI => null,
+    });
+})->with('providers', ['response_multiple']);
+
 test('can fetch the next page', function (Provider $provider, string $fixtureName) {
     for ($i = 0; $i < 5; $i++) {
         $response[] = fixtures()->response()->item()->files($fixtureName)[0];
@@ -69,11 +80,7 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList()->count())->toBe(2)
-        ->and($results->getTotalPages())->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => 5,
-            Provider::MOLONI => null,
-        });
+        ->and($results->getList()->count())->toBe(2);
 })->with('providers', ['response_multiple']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
@@ -91,11 +98,7 @@ test('can go to the next page and then go back', function (Provider $provider, s
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList()->count())->toBe(5)
-        ->and($results->getTotalPages())->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => 5,
-            Provider::MOLONI => null,
-        });
+        ->and($results->getList()->count())->toBe(5);
 })->with('providers', ['response_multiple']);
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
