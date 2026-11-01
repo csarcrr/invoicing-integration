@@ -16,34 +16,25 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            php: 8.4
+            php: 8.5
             laravel: 13.*
             stability: prefer-stable
             testbench: 11.*
-
-          - os: ubuntu-latest
-            php: 8.2
-            laravel: 12.*
-            stability: prefer-stable
-            testbench: 10.*
+            dependencies: highest
 
           - os: ubuntu-latest
             php: 8.4
             laravel: 12.*
             stability: prefer-stable
             testbench: 10.*
+            dependencies: highest
 
           - os: ubuntu-latest
             php: 8.2
             laravel: 11.*
             stability: prefer-stable
             testbench: 9.*
-
-          - os: windows-latest
-            php: 8.2
-            laravel: 12.*
-            stability: prefer-stable
-            testbench: 10.*
+            dependencies: lowest
 
     steps:
       - name: Checkout code
@@ -53,14 +44,17 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: mbstring, fileinfo
           coverage: none
 
+      - name: Pin Laravel version
+        run: composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-update
+
       - name: Install dependencies
-        shell: bash
-        run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+        uses: ramsey/composer-install@v4
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: --${{ matrix.stability }} --prefer-dist
 
       - name: Run tests
-        run: vendor/bin/pest --ci
+        run: vendor/bin/pest --ci --parallel

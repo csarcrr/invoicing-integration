@@ -29,6 +29,6 @@
         </include>
     </source>
     <php>
-        <env name="CACHE_STORE" value="file" />
+        <env name="CACHE_STORE" value="array" />
     </php>
 </phpunit>

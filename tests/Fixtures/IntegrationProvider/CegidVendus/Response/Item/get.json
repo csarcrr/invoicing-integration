@@ -3,13 +3,11 @@
     "barcode": "barcode-1",
     "title": "Item Title",
     "description": "A small product description used for testing purposes.",
-    "gross_price": 20.00,
+    "gross_price": 24.60,
     "unit_id": 19999,
     "type_id": "P",
     "stock_control": "1",
-    "tax_id": "ISE",
-    "tax_exemption": "M40",
-    "tax_exemption_law": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
+    "tax_id": "NOR",
     "category_id": 1,
     "status": "on",
     "lot_control": "1",
@@ -28,7 +26,7 @@
                 "title": "Store 2",
                 "store_id": 2,
                 "product_variant_id": 0,
-                "stock": 2,
+                "stock": 2.5,
                 "alert": 0
             }
         ]

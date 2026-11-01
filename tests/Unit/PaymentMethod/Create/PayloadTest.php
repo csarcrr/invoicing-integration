@@ -7,27 +7,23 @@ use CsarCrr\InvoicingIntegration\Enums\PaymentMethod as PaymentMethodEnum;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 
-it('transforms payment method data to provider payload', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support creating payment methods.');
-    }
+beforeEach(function () {
+    mockConfiguration(Provider::MOLONI);
+});
 
+it('transforms payment method data to provider payload', function () {
     $payload = PaymentMethod::create(PaymentMethodData::make([
         'name' => 'Multibanco',
         'type' => PaymentMethodEnum::MB,
     ]))->getPayload()->toArray();
 
     expect($payload)->toMatchArray(fixtures()->request()->paymentMethod()->files('create'));
-})->with('providers');
+});
 
-it('maps the payment method type to the provider flags', function (Provider $provider, ?PaymentMethodEnum $type, array $flags) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support creating payment methods.');
-    }
-
+it('maps the payment method type to the provider flags', function (?PaymentMethodEnum $type, array $flags) {
     expect(PaymentMethod::create(PaymentMethodData::make(['name' => 'Método', 'type' => $type]))->getPayload()->toArray())
         ->toMatchArray($flags);
-})->with('providers')->with([
+})->with([
     'money' => [PaymentMethodEnum::MONEY, ['is_numerary' => 1, 'is_mb' => 0, 'is_credit' => 0]],
     'mb' => [PaymentMethodEnum::MB, ['is_numerary' => 0, 'is_mb' => 1, 'is_credit' => 0]],
     'credit card' => [PaymentMethodEnum::CREDIT_CARD, ['is_numerary' => 0, 'is_mb' => 0, 'is_credit' => 1]],

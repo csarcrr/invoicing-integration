@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
-    config()->set('cache.default', 'array');
     mockConfiguration(Provider::MOLONI);
     Cache::flush();
 });

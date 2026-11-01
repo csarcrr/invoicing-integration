@@ -9,11 +9,11 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-test('creates a due date', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support creating due dates.');
-    }
+beforeEach(function () {
+    mockConfiguration(Provider::MOLONI);
+});
 
+test('creates a due date', function () {
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('create')));
 
     $dueDate = DueDate::create(DueDateData::make(['name' => '30 dias', 'days' => 30]))->execute()->getDueDate();
@@ -25,4 +25,4 @@ test('creates a due date', function (Provider $provider) {
 
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'maturityDates/insert')
         && Str::contains($request->body(), 'days=30'));
-})->with('providers');
+});

@@ -10,11 +10,11 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-test('maps the provider response onto a list of DueDateData', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
-    }
+beforeEach(function () {
+    mockConfiguration(Provider::MOLONI);
+});
 
+test('maps the provider response onto a list of DueDateData', function () {
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
 
     $list = DueDate::find()->execute()->getList();
@@ -25,13 +25,9 @@ test('maps the provider response onto a list of DueDateData', function (Provider
         ->and($list->first()->name)->toBe('Pronto Pagamento')
         ->and($list->first()->days)->toBe(0)
         ->and($list->last()->days)->toBe(30);
-})->with('providers');
+});
 
-test('automagically injects provider pagination details into the request', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
-    }
-
+test('automagically injects provider pagination details into the request', function () {
     Http::fake(mockResponse([]));
 
     DueDate::find()->execute();
@@ -39,13 +35,9 @@ test('automagically injects provider pagination details into the request', funct
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'maturityDates/getAll')
         && Str::contains($request->body(), 'qty=50')
         && Str::contains($request->body(), 'offset=0'));
-})->with('providers');
+});
 
-test('can go to the next page and then go back', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
-    }
-
+test('can go to the next page and then go back', function () {
     $response = fixtures()->response()->dueDate()->files('response_multiple');
 
     Http::fakeSequence()
@@ -64,12 +56,8 @@ test('can go to the next page and then go back', function (Provider $provider) {
     expect($results->getCurrentPage())->toBe(1)
         ->and($results->getList())->toHaveCount(2)
         ->and($results->getTotalPages())->toBeNull();
-})->with('providers');
+});
 
-test('fails when attempting to go below the first page', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
-        $this->markTestSkipped('Cegid Vendus does not support finding due dates.');
-    }
-
+test('fails when attempting to go below the first page', function () {
     expect(fn () => DueDate::find()->page(0))->toThrow(NoMorePagesException::class);
-})->with('providers');
+});

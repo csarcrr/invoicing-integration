@@ -49,7 +49,22 @@ $item->name;        // Product name
 $item->description; // Product description
 $item->reference;   // Product SKU / code
 $item->barcode;     // EAN or barcode identifier
+$item->category;    // CategoryData with the category id
+$item->controlStock; // Whether the provider tracks stock for this item
+$item->type;        // ItemType
+$item->tax;         // ItemTax
+$item->price;       // Gross price in cents
 ```
+
+| Property       | Cegid Vendus field | Moloni field                         |
+| -------------- | ------------------ | ------------------------------------ |
+| `category`     | `category_id`      | `category_id`                        |
+| `controlStock` | `stock_control`    | `has_stock`                          |
+| `type`         | `type_id`          | `type`                               |
+| `tax`          | `tax_id`           | `taxes[0].tax.vat_type`              |
+| `price`        | `gross_price`      | `price` plus `taxes[0].value`        |
+
+`price` and `tax` are `null` when the provider sends no price or tax data. `type` is `null` when the provider sends an unknown type.
 
 ### Stock
 
@@ -88,7 +103,7 @@ $item->getAdditionalData();
 ```
 
 > [!NOTE]
-> Fields that the package explicitly maps (`name`, `description`, `reference`, `barcode`) are never duplicated in `getAdditionalData()`.
+> Fields that the package explicitly maps (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `type`, `tax`, `price`) are never duplicated in `getAdditionalData()`.
 
 ## Complete example
 

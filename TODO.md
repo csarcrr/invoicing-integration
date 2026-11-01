@@ -1,5 +1,16 @@
 # TODO
 
+## Operations not supported by a provider
+
+These operations throw `OperationNotSupportedException`. Their tests run on Moloni only. When a provider gains support for an operation, move that operation's tests to the `providers` dataset.
+
+| Operation | Provider | Provider endpoint | Status |
+| ----------------------- | ------------ | --------------------------------- | ------------------------------------------------- |
+| `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | To implement |
+| `PaymentMethod::find` | Cegid Vendus | `GET /documents/paymentmethods` | To implement |
+| `DueDate::find` | Cegid Vendus | `GET /documents/duedates` | To implement |
+| `DueDate::create` | Cegid Vendus | None in `providers-docs/vendus/openapi.json` | Cannot implement until Vendus adds an endpoint |
+
 ## Moloni client create
 
 These required fields are sent as `0` until real values are defined:

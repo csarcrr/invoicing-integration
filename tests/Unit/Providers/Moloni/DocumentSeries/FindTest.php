@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    config()->set('cache.default', 'array');
     Cache::flush();
     mockConfiguration(Provider::MOLONI);
 });

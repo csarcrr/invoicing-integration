@@ -43,6 +43,17 @@ test('automagically injects provider pagination details into the request', funct
     });
 })->with('providers', ['response']);
 
+test('reports the total pages the provider returns', function (Provider $provider, string $fixtureName) {
+    Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName), 200, $this->headers));
+
+    $results = Client::find($this->filters)->execute();
+
+    expect($results->getTotalPages())->toBe(match ($provider) {
+        Provider::CEGID_VENDUS => 5,
+        Provider::MOLONI => null,
+    });
+})->with('providers', ['response_multiple']);
+
 test('can fetch the next page', function (Provider $provider, string $fixtureName) {
     for ($i = 0; $i < 5; $i++) {
         $response[] = fixtures()->response()->client()->files($fixtureName);
@@ -57,11 +68,6 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
 
     expect($results->getCurrentPage())->toBe(2)
         ->and($results->getList()->count())->toBe(2);
-
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($results->getTotalPages())->toBe(5),
-        Provider::MOLONI => expect($results->getTotalPages())->toBeNull(),
-    };
 })->with('providers', ['response']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
@@ -80,11 +86,6 @@ test('can go to the next page and then go back', function (Provider $provider, s
 
     expect($results->getCurrentPage())->toBe(1)
         ->and($results->getList()->count())->toBe(5);
-
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($results->getTotalPages())->toBe(5),
-        Provider::MOLONI => expect($results->getTotalPages())->toBeNull(),
-    };
 })->with('providers', ['response']);
 
 test('maps all response fields onto the returned ClientData', function (Provider $provider, string $fixtureName) {
