@@ -1,0 +1,42 @@
+{
+    "product_id": 1542,
+    "category_id": 1,
+    "type": 1,
+    "name": "Item Title",
+    "summary": "A small product description used for testing purposes.",
+    "reference": "reference-1",
+    "ean": "barcode-1",
+    "price": 20,
+    "unit_id": 3,
+    "has_stock": 1,
+    "stock": 42,
+    "minimum_stock": 5,
+    "pos_favorite": 1,
+    "at_product_category": "M",
+    "exemption_reason": "M07",
+    "image": "https://example.com/images/products/headphones.jpg",
+    "taxes": [],
+    "suppliers": [
+        {
+            "product_id": 1542,
+            "supplier_id": 7,
+            "cost_price": 9.5,
+            "reference": 11,
+            "supplier": {
+                "supplier_id": 7,
+                "name": "Supplier"
+            }
+        }
+    ],
+    "properties": [
+        {
+            "product_id": 1542,
+            "property_id": 8,
+            "value": "Blue",
+            "property": {
+                "property_id": 8,
+                "title": "Colour"
+            }
+        }
+    ]
+}

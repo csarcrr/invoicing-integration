@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] — enhance-actions-structure
 
+### Added
+
+- `Item::update(ItemData)`: partial item update for Cegid Vendus and Moloni. `null` leaves a field alone and `''` clears it.
+
 ### Changed
 
+- `ItemData` built without `quantity`, `type`, `controlStock` or `enabled` now reads `null`. Item creation and invoice payloads still send the previous defaults.
 - Refactored action classes (`InvoiceAction`, `ClientAction`, `ItemAction`) to use a shared `data` property via the base provider classes, removing the need to inject `*Data` into individual formatting methods.
 - Contracts now extend one another to reduce boilerplate implementations across provider classes (`ShouldCreateInvoice`, `ShouldCreateClient`, `ShouldCreateItem`, etc.).
 - Provider base classes (`Provider/Invoice`, `Provider/Client`, `Provider/Item`) made more abstract so logic can be reused across future providers without duplication.

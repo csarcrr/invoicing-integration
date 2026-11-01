@@ -76,6 +76,7 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 | Method                              | Return Type        | Description                          |
 | ----------------------------------- | ------------------ | ------------------------------------ |
 | `Item::create(ItemData $item)`      | `ShouldCreateItem` | Creates a new item builder instance  |
+| `Item::update(ItemData $item)`      | `ShouldUpdateItem` | Creates a partial item update instance |
 | `Item::get(ItemData $item)`         | `ShouldGetItem`    | Creates an item retrieval instance   |
 | `Item::find(?ItemData $item = null)` | `ShouldFindItem`  | Lists/paginates provider catalog items |
 
@@ -150,6 +151,24 @@ $created = Item::create($item)->execute()->getItem();
 
 $created->getAdditionalData(); // fields from the provider response not handled by the package
 ```
+
+---
+
+## ShouldUpdateItem Contract
+
+The interface returned by `Item::update()`. Supported on Cegid Vendus and Moloni. See [Updating an Item](items/updating-an-item.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdateItem;
+```
+
+| Method         | Return Type  | Description                                                                                          |
+| -------------- | ------------ | ---------------------------------------------------------------------------------------------------- |
+| `execute()`    | `self`       | Send the update request and store unhandled response fields as additional data                       |
+| `getItem()`    | `ItemData`   | The caller's DTO, not refreshed from the provider                                                    |
+| `getPayload()` | `Collection` | Inspect the payload. On Moloni this requests the current product first                               |
+
+Throws `InvalidArgumentException` when `id` is missing. On Moloni, throws `OperationNotSupportedException` when `enabled` is set.
 
 ---
 
@@ -446,11 +465,11 @@ $item = ItemData::make([
 | `name`               | `?string`                       | `null`               | Item/product name                                  | Required for catalog item creation                                        |
 | `description`        | `?string`                       | `null`               | Longer description of the item                     | -                                                                         |
 | `reference`          | `null\|int\|string`             | `null`               | Product SKU or code                                | -                                                                         |
-| `quantity`           | `null\|int\|float`              | `1`                  | Quantity (invoice line use)                        | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
+| `quantity`           | `null\|int\|float`              | `null`               | Quantity; invoice lines send `1` when `null`                        | Must be `> 0`, otherwise `UnsupportedQuantityException`                   |
 | `price`              | `?int`                          | `null`               | Unit price in cents                                | -                                                                         |
 | `note`               | `?string`                       | `null`               | Optional line description (invoice use)            | -                                                                         |
 | `barcode`            | `?string`                       | `null`               | EAN/barcode                                        | -                                                                         |
-| `type`               | `?ItemType`                     | `ItemType::Product`  | Item classification                                | -                                                                         |
+| `type`               | `?ItemType`                     | `null`               | Item classification; create and Vendus invoice lines send `Product` when `null`                                | -                                                                         |
 | `tax`                | `?ItemTax`                      | `null`               | VAT rate                                           | Required for `taxExemptionReason`                                         |
 | `taxExemptionReason` | `?TaxExemptionReason`           | `null`               | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
 | `taxExemptionLaw`    | `?string`                       | `null`               | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
@@ -458,8 +477,8 @@ $item = ItemData::make([
 | `percentageDiscount` | `?int`                          | `null`               | Percentage discount                                | -                                                                         |
 | `category`           | `?CategoryData`                 | `null`               | Product category                                   | -                                                                         |
 | `unit`               | `?ShouldBeUnit`                 | `null`               | Unit of measure (use `Unit` enum or custom)        | Must be mapped in config; throws `CouldNotGetUnitIdException` if missing  |
-| `controlStock`       | `bool`                          | `true`               | Whether to track stock for this item               | -                                                                         |
-| `enabled`            | `bool`                          | `true`               | Whether the item is active in the provider         | -                                                                         |
+| `controlStock`       | `?bool`                         | `null`               | Whether to track stock; create sends `true` when `null`               | -                                                                         |
+| `enabled`            | `?bool`                         | `null`               | Whether the item is active; Vendus create sends `true` when `null`         | -                                                                         |
 | `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
 | `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::get()`       | -                                                                         |
 

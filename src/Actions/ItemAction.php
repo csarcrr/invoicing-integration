@@ -8,14 +8,17 @@ use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindItem;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdateItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Create as VendusCreate;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Get;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Update as VendusUpdate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Find as MoloniFind;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Get as MoloniGet;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Update as MoloniUpdate;
 
 /**
  * Orchestrates item operations by routing them to the correct provider implementation.
@@ -34,6 +37,14 @@ final class ItemAction
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => (new VendusCreate($item))->config($this->provider->getConfig()),
             Provider::MOLONI => (new MoloniCreate($item))->config($this->provider->getConfig()),
+        };
+    }
+
+    public function update(ItemData $item): ShouldUpdateItem
+    {
+        return match ($this->provider->getProvider()) {
+            Provider::CEGID_VENDUS => (new VendusUpdate($item))->config($this->provider->getConfig()),
+            Provider::MOLONI => (new MoloniUpdate($item))->config($this->provider->getConfig()),
         };
     }
 

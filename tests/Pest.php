@@ -133,6 +133,21 @@ function fakeProviderDueDates(Provider $provider): void
     ]);
 }
 
+function fakeItemUpdate(Provider $provider, string $currentFixture = 'get'): void
+{
+    $update = mockResponse(fixtures()->response()->item()->files('update'));
+
+    if ($provider === Provider::CEGID_VENDUS) {
+        Http::fake($update);
+
+        return;
+    }
+
+    Http::fakeSequence()
+        ->pushResponse(mockResponse(fixtures()->response()->item()->files($currentFixture)))
+        ->pushResponse($update);
+}
+
 function mockResponse(
     $jsonFixture,
     $status = 200,

@@ -4,6 +4,13 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: `ItemData` no longer has default values
+
+`ItemData` built without `quantity`, `type`, `controlStock` or `enabled` now reads `null` in those properties, instead of `1`, `ItemType::Product`, `true` and `true`. `controlStock` and `enabled` are now `?bool`. Provider payloads for item creation and invoices are unchanged.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that reads those properties from an `ItemData` it built must handle `null`.
+
 ### Breaking: `UnsupportedQuantityException` moved
 
 `UnsupportedQuantityException` moved from `Exceptions\Invoice\Items` to `Exceptions\Items`, since it is now also thrown by `StockMovementData`.

@@ -6,9 +6,9 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingCategoryException;
@@ -22,6 +22,7 @@ use function collect;
 class Create extends Item implements ShouldCreateItem
 {
     use HasConfig;
+    use ResolvesTaxConfig;
 
     /** @var Collection<string, mixed> */
     protected Collection $payload;
@@ -111,11 +112,7 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildType(): void
     {
-        if (! $this->data->type) {
-            return;
-        }
-
-        $this->payload->put('type', $this->data->type->moloni());
+        $this->payload->put('type', ($this->data->type ?? ItemType::Product)->moloni());
     }
 
     /**
@@ -144,7 +141,7 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildStock(): void
     {
-        $this->payload->put('has_stock', $this->data->controlStock ? 1 : 0);
+        $this->payload->put('has_stock', ($this->data->controlStock ?? true) ? 1 : 0);
         $this->payload->put('stock', 0);
     }
 
@@ -153,7 +150,7 @@ class Create extends Item implements ShouldCreateItem
      */
     protected function buildTax(): void
     {
-        $tax = $this->taxConfig();
+        $tax = $this->taxConfig($this->data->tax);
 
         if (is_null($tax)) {
             return;
@@ -185,29 +182,8 @@ class Create extends Item implements ShouldCreateItem
             return;
         }
 
-        $rate = $this->taxConfig()['rate'] ?? 0;
+        $rate = $this->taxConfig($this->data->tax)['rate'] ?? 0;
 
         $this->payload->put('price', round($this->data->price / 100 / (1 + $rate / 100), 4));
-    }
-
-    /**
-     * @return array{id: int, rate: float}|null
-     *
-     * @throws CouldNotGetTaxIdException
-     */
-    protected function taxConfig(): ?array
-    {
-        if (! $this->data->tax || $this->data->tax === ItemTax::EXEMPT) {
-            return null;
-        }
-
-        $tax = $this->getConfig()->get('taxes')[$this->data->tax->value] ?? null;
-
-        throw_if(empty($tax['id']), CouldNotGetTaxIdException::class);
-
-        return [
-            'id' => (int) $tax['id'],
-            'rate' => (float) ($tax['rate'] ?? 0),
-        ];
     }
 }

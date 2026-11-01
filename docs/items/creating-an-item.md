@@ -49,6 +49,8 @@ $created = Item::create($item)->execute()->getItem();
 
 ## Available fields
 
+The `Default` column shows what is sent when a field is omitted on create. `ItemData` itself holds `null` for omitted fields.
+
 | Field          | Type            | Default             | Description                                     |
 | -------------- | --------------- | ------------------- | ----------------------------------------------- |
 | `name`         | `?string`       | `null`              | Product name (sent as `title` to provider)      |
@@ -62,8 +64,8 @@ $created = Item::create($item)->execute()->getItem();
 | `barcode`      | `?string`       | `null`              | EAN/barcode                                     |
 | `category`     | `?CategoryData` | `null`              | Product category (must have provider `id`)      |
 | `unit`         | `?ShouldBeUnit` | `null`              | Unit of measure — use `Unit` enum               |
-| `controlStock` | `bool`          | `true`              | Track stock for this item                       |
-| `enabled`      | `bool`          | `true`              | Whether the item is active in the provider      |
+| `controlStock` | `?bool`         | `true`              | Track stock for this item                       |
+| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider      |
 
 ## Units
 

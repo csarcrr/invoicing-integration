@@ -40,6 +40,7 @@ echo $created->id; // provider-assigned ID
 | Operation      | Docs                                        |
 | -------------- | ------------------------------------------- |
 | Create an item | [Creating an Item](creating-an-item.md)     |
+| Update an item | [Updating an Item](updating-an-item.md)     |
 | Get an item    | [Getting an Item](getting-an-item.md)       |
 | Find items     | [Finding Items](finding-an-item.md)         |
 
@@ -47,6 +48,7 @@ echo $created->id; // provider-assigned ID
 
 | Operation   | Cegid Vendus | Moloni | Invoice Express |
 | ----------- | ------------ | ------ | --------------- |
-| Create Item | ✅           | ❌     | ❌              |
-| Get Item    | ✅           | ❌     | ❌              |
-| Find Items  | ✅           | ❌     | ❌              |
+| Create Item | ✅           | ✅     | ❌              |
+| Update Item | ✅           | ✅     | ❌              |
+| Get Item    | ✅           | ✅     | ❌              |
+| Find Items  | ✅           | ✅     | ❌              |
