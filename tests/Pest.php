@@ -70,6 +70,7 @@ function mockConfiguration(Provider $provider): void
                 ItemTax::INTERMEDIATE->value => ['id' => 2, 'rate' => 13],
                 ItemTax::REDUCED->value => ['id' => 3, 'rate' => 6],
                 ItemTax::OTHER->value => ['id' => 4, 'rate' => 0],
+                ItemTax::EXEMPT->value => ['id' => 5, 'rate' => 0],
             ],
         ]);
 

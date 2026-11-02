@@ -16,7 +16,7 @@ trait ResolvesTaxConfig
      */
     protected function taxConfig(?ItemTax $itemTax): ?array
     {
-        if (! $itemTax || $itemTax === ItemTax::EXEMPT) {
+        if (! $itemTax) {
             return null;
         }
 

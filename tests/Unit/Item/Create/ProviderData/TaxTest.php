@@ -43,17 +43,22 @@ it('sends the price of an exempt item', function (Provider $provider) {
         Provider::CEGID_VENDUS => expect($payload->get('gross_price'))->toBe(20)
             ->and($payload->get('tax_id'))->toBe('ISE'),
         Provider::MOLONI => expect($payload->get('price'))->toBe(20.0)
-            ->and($payload->has('taxes'))->toBeFalse(),
+            ->and($payload->get('taxes'))->toBe([[
+                'tax_id' => 5,
+                'value' => 0.0,
+                'order' => 0,
+                'cumulative' => 0,
+            ]]),
     };
 })->with('providers');
 
-it('fails when the moloni tax is not configured', function () {
+it('fails when the moloni tax is not configured', function (ItemTax $tax) {
     mockConfiguration(Provider::MOLONI);
 
     config()->set('invoicing-integration.providers.'.Provider::MOLONI->value.'.taxes', []);
 
     Item::create(ItemData::make([
         'category' => CategoryData::make(['id' => 1]),
-        'tax' => ItemTax::NORMAL,
+        'tax' => $tax,
     ]))->getPayload();
-})->throws(CouldNotGetTaxIdException::class);
+})->with([ItemTax::NORMAL, ItemTax::EXEMPT])->throws(CouldNotGetTaxIdException::class);

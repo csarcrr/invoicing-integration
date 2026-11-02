@@ -182,12 +182,8 @@ class Update extends Item implements ShouldUpdateItem
      */
     protected function taxes(?array $tax): ?array
     {
-        if (is_null($this->data->tax)) {
-            return null;
-        }
-
         if (is_null($tax)) {
-            return [];
+            return null;
         }
 
         return [[

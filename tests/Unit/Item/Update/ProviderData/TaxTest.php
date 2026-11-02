@@ -55,7 +55,7 @@ it('keeps the gross price when the tax changes to exempt', function (Provider $p
     match ($provider) {
         Provider::CEGID_VENDUS => expect($payload->get('tax_id'))->toBe('ISE'),
         Provider::MOLONI => expect($payload->get('price'))->toBe(24.6)
-            ->and($payload->get('taxes'))->toBe([]),
+            ->and($payload->get('taxes'))->toBe([['tax_id' => 5, 'value' => 0.0, 'order' => 0, 'cumulative' => 0]]),
     };
 })->with('providers');
 
@@ -79,7 +79,7 @@ it('sends the price without tax when both change to exempt', function () {
     $payload = Item::update(ItemData::make(['id' => 1542, 'price' => 1000, 'tax' => ItemTax::EXEMPT]))->getPayload();
 
     expect($payload->get('price'))->toBe(10.0)
-        ->and($payload->get('taxes'))->toBe([]);
+        ->and($payload->get('taxes'))->toBe([['tax_id' => 5, 'value' => 0.0, 'order' => 0, 'cumulative' => 0]]);
 });
 
 it('sends the exemption reason', function (Provider $provider) {
@@ -115,13 +115,13 @@ it('resolves the moloni exemption reason from the tax', function (array $data, s
     'no tax' => [[], 'M07'],
 ]);
 
-it('fails when the moloni tax is not configured, without any request', function () {
+it('fails when the moloni tax is not configured, without any request', function (ItemTax $tax) {
     mockConfiguration(Provider::MOLONI);
     fakeItemUpdate(Provider::MOLONI);
     config()->set('invoicing-integration.providers.'.Provider::MOLONI->value.'.taxes', []);
 
-    expect(fn () => Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::NORMAL]))->execute())
+    expect(fn () => Item::update(ItemData::make(['id' => 1542, 'tax' => $tax]))->execute())
         ->toThrow(CouldNotGetTaxIdException::class);
 
     Http::assertNothingSent();
-});
+})->with([ItemTax::NORMAL, ItemTax::EXEMPT]);

@@ -63,6 +63,6 @@ Moloni only replaces whole products, so an update makes two requests: `products/
 
 - **`enabled`:** Moloni has no such field. Setting it throws `OperationNotSupportedException` before any request.
 - **`price`:** stays gross in `ItemData`. The net price is calculated with the new tax, or with the current tax when `tax` is not set.
-- **`tax` without `price`:** the gross price stays the same and the net price is recalculated. `ItemTax::EXEMPT` removes the taxes.
+- **`tax` without `price`:** the gross price stays the same and the net price is recalculated. `ItemTax::EXEMPT` replaces the tax with the configured 0% exempt tax.
 - **`tax` other than `EXEMPT`:** clears the exemption reason, unless you set a new one. An unconfigured tax throws `CouldNotGetTaxIdException` before any request.
 - **Products with several taxes:** the gross price is derived from the first tax only.
