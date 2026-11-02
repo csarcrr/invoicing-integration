@@ -165,3 +165,18 @@ test('maps the moloni products onto the item list', function () {
         ->and($list->last()->tax)->toBeNull()
         ->and($list->last()->price)->toBeNull();
 });
+
+test('maps a moloni tax by its configured tax id when finding items', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    $response = fixtures()->response()->item()->files('response_multiple');
+    $response[0]['taxes'][0]['tax_id'] = 5;
+    $response[0]['taxes'][0]['tax']['tax_id'] = 5;
+    $response[0]['taxes'][0]['tax']['vat_type'] = '0';
+
+    Http::fake(mockResponse($response));
+
+    $results = Item::find($this->filters)->execute();
+
+    expect($results->getList()->first()->tax)->toBe(ItemTax::EXEMPT);
+});

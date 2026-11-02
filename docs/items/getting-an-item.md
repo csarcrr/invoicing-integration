@@ -61,8 +61,10 @@ $item->price;       // Gross price in cents
 | `category`     | `category_id`      | `category_id`                        |
 | `controlStock` | `stock_control`    | `has_stock`                          |
 | `type`         | `type_id`          | `type`                               |
-| `tax`          | `tax_id`           | `taxes[0].tax.vat_type`              |
+| `tax`          | `tax_id`           | `taxes[0].tax_id`, see below         |
 | `price`        | `gross_price`      | `price` plus `taxes[0].value`        |
+
+On Moloni, `tax` is the `ItemTax` whose `MOLONI_TAX_*_ID` matches `taxes[0].tax_id`, so a configured tax with no VAT type, such as a 0% exempt tax, still maps to its `ItemTax`. A tax that is not configured falls back to `taxes[0].tax.vat_type`, and is `null` when that is not an `ItemTax` value.
 
 `price` and `tax` are `null` when the provider sends no price or tax data. `type` is `null` when the provider sends an unknown type.
 

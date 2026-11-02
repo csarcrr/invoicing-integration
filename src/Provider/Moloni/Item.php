@@ -9,9 +9,15 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
+use Illuminate\Support\Collection;
 
 abstract class Item extends BaseItem
 {
+    /**
+     * @return Collection<string, mixed>
+     */
+    abstract public function getConfig(): Collection;
+
     /**
      * @param  array<string, mixed>  $item
      */
@@ -33,7 +39,7 @@ abstract class Item extends BaseItem
                 3 => ItemType::Other,
                 default => null,
             },
-            'tax' => $tax ? ItemTax::from($tax['tax']['vat_type']) : null,
+            'tax' => $tax ? $this->toItemTax($tax) : null,
             'price' => $tax ? $this->toCents((float) $item['price']) + $this->toCents((float) $tax['value']) : null,
             'stock' => array_map(fn (array $warehouse) => [
                 'itemId' => $warehouse['product_id'],
@@ -41,5 +47,26 @@ abstract class Item extends BaseItem
                 'quantity' => $warehouse['stock'],
             ], $item['warehouses'] ?? []),
         ]);
+    }
+
+    /**
+     * Resolves the tax by its configured Moloni tax id, falling back to the
+     * Moloni vat_type for taxes that are not configured.
+     *
+     * @param  array<string, mixed>  $tax
+     */
+    protected function toItemTax(array $tax): ?ItemTax
+    {
+        /** @var array<string, array{id: mixed}> $configuredTaxes */
+        $configuredTaxes = $this->getConfig()->get('taxes', []);
+
+        $configuredKey = collect($configuredTaxes)
+            ->search(fn (array $configured): bool => (int) $configured['id'] === (int) $tax['tax_id']);
+
+        if ($configuredKey !== false) {
+            return ItemTax::from($configuredKey);
+        }
+
+        return ItemTax::tryFrom((string) $tax['tax']['vat_type']);
     }
 }

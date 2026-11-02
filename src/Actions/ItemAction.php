@@ -52,7 +52,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Get($item),
-            Provider::MOLONI => new MoloniGet($item),
+            Provider::MOLONI => (new MoloniGet($item))->config($this->provider->getConfig()),
         };
     }
 
@@ -60,7 +60,7 @@ final class ItemAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Find($item),
-            Provider::MOLONI => new MoloniFind($item),
+            Provider::MOLONI => (new MoloniFind($item))->config($this->provider->getConfig()),
         };
     }
 }

@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
+use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -16,6 +17,8 @@ use function collect;
 
 class Get extends Item implements ShouldGetItem
 {
+    use HasConfig;
+
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 

@@ -155,3 +155,23 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
         ->and($data->stock->last()->quantity)->toBe(2.5)
         ->and($data->getAdditionalData())->not->toHaveKey($stockKey);
 })->with('providers', ['get']);
+
+test('maps a moloni tax by its configured tax id', function (int $taxId, string $vatType, ?ItemTax $expected) {
+    mockConfiguration(Provider::MOLONI);
+
+    $response = fixtures()->response()->item()->files('get');
+    $response['taxes'][0]['tax_id'] = $taxId;
+    $response['taxes'][0]['tax']['tax_id'] = $taxId;
+    $response['taxes'][0]['tax']['vat_type'] = $vatType;
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->tax)->toBe($expected);
+})->with([
+    'configured exempt tax without a vat type' => [5, '0', ItemTax::EXEMPT],
+    'configured tax with another vat type' => [3, 'NOR', ItemTax::REDUCED],
+    'unconfigured tax with a known vat type' => [99, 'INT', ItemTax::INTERMEDIATE],
+    'unconfigured tax without a vat type' => [99, '0', null],
+]);
