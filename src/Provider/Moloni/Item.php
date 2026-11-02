@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
 use Illuminate\Support\Collection;
 
@@ -24,6 +25,7 @@ abstract class Item extends BaseItem
     protected function toItemData(?int $id, array $item): ItemData
     {
         $tax = $item['taxes'][0] ?? null;
+        $itemTax = $tax ? $this->toItemTax($tax) : null;
 
         return ItemData::make([
             'id' => $id,
@@ -39,7 +41,10 @@ abstract class Item extends BaseItem
                 3 => ItemType::Other,
                 default => null,
             },
-            'tax' => $tax ? $this->toItemTax($tax) : null,
+            'tax' => $itemTax,
+            'taxExemptionReason' => $itemTax === ItemTax::EXEMPT
+                ? TaxExemptionReason::tryFrom((string) ($item['exemption_reason'] ?? ''))
+                : null,
             'price' => $tax ? $this->toCents((float) $item['price']) + $this->toCents((float) $tax['value']) : null,
             'stock' => array_map(fn (array $warehouse) => [
                 'itemId' => $warehouse['product_id'],

@@ -7,6 +7,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
@@ -180,3 +181,19 @@ test('maps a moloni tax by its configured tax id when finding items', function (
 
     expect($results->getList()->first()->tax)->toBe(ItemTax::EXEMPT);
 });
+
+test('maps the tax exemption of exempt items when finding items', function (Provider $provider, string $fixtureName) {
+    $response = fixtures()->response()->item()->files($fixtureName);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response[0] = [...$response[0], 'tax_id' => 'ISE', 'tax_exemption' => 'M01'],
+        Provider::MOLONI => $response[0] = [...$response[0], 'exemption_reason' => 'M01', 'taxes' => [[...$response[0]['taxes'][0], 'tax_id' => 5]]],
+    };
+
+    Http::fake(mockResponse($response));
+
+    $item = Item::find($this->filters)->execute()->getList()->first();
+
+    expect($item->tax)->toBe(ItemTax::EXEMPT)
+        ->and($item->taxExemptionReason)->toBe(TaxExemptionReason::M01);
+})->with('providers', ['response_multiple']);

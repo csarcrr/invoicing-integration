@@ -5,6 +5,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
 
@@ -175,3 +176,40 @@ test('maps a moloni tax by its configured tax id', function (int $taxId, string 
     'unconfigured tax with a known vat type' => [99, 'INT', ItemTax::INTERMEDIATE],
     'unconfigured tax without a vat type' => [99, '0', null],
 ]);
+
+test('maps the tax exemption of an exempt item', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response = [...$response, 'tax_id' => 'ISE', 'tax_exemption' => 'M01', 'tax_exemption_law' => 'Artigo 16.º, n.º 6 do CIVA'],
+        Provider::MOLONI => $response = [...$response, 'exemption_reason' => 'M01', 'taxes' => [[...$response['taxes'][0], 'tax_id' => 5]]],
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->tax)->toBe(ItemTax::EXEMPT)
+        ->and($data->taxExemptionReason)->toBe(TaxExemptionReason::M01)
+        ->and($data->taxExemptionLaw)->toBe(match ($provider) {
+            Provider::CEGID_VENDUS => 'Artigo 16.º, n.º 6 do CIVA',
+            Provider::MOLONI => null,
+        });
+})->with('providers', ['get']);
+
+test('ignores a tax exemption on an item that is not exempt', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response = [...$response, 'tax_exemption' => 'M01', 'tax_exemption_law' => 'Artigo 16.º, n.º 6 do CIVA'],
+        Provider::MOLONI => $response['exemption_reason'] = 'M01',
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->tax)->toBe(ItemTax::NORMAL)
+        ->and($data->taxExemptionReason)->toBeNull()
+        ->and($data->taxExemptionLaw)->toBeNull();
+})->with('providers', ['get']);

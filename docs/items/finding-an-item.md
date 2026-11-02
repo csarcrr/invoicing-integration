@@ -97,7 +97,7 @@ $results = Item::find($filters)->execute();
 - With no search field set, a missing category id throws `MissingCategoryException`.
 - Each page holds up to 50 items.
 - Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
-  `reference`, `barcode`, `type`, `tax` and the gross `price`. Moloni does not
+  `reference`, `barcode`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
   return the category, description or stock control in the list, so those
   fields keep their defaults.
 
