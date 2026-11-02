@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
-use CsarCrr\InvoicingIntegration\Provider\Item;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -37,6 +37,7 @@ class Update extends Item implements ShouldUpdateItem
 
         Http::handleUnwantedFailures($response);
 
+        $this->data = $this->toItemData($this->data->id, $response->json());
         $this->fillAdditionalProperties($response->json());
 
         return $this;

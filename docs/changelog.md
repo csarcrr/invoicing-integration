@@ -4,6 +4,15 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: `Item::update()` returns the updated item
+
+`Item::update()->execute()->getItem()` no longer returns the `ItemData` you passed. It returns the full updated item, mapped like `Item::get()`: from the response on Cegid Vendus, and from the current product with your fields merged over it on Moloni.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that expects the fields it did not set to be `null` after an update now reads the provider's values.
+
+See [Updating an Item](items/updating-an-item.md#return-value).
+
 ### Changed: `ItemData` no longer has default values
 
 `ItemData` built without `quantity`, `type`, `controlStock` or `enabled` now reads `null` in those properties, instead of `1`, `ItemType::Product`, `true` and `true`. `controlStock` and `enabled` are now `?bool`. Provider payloads for item creation and invoices are unchanged.

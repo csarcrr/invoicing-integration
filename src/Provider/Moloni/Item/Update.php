@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
-use CsarCrr\InvoicingIntegration\Provider\Item;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -49,6 +49,24 @@ class Update extends Item implements ShouldUpdateItem
         'properties' => ['property_id', 'value'],
     ];
 
+    /** @var array<int, string> */
+    protected array $updatableFields = [
+        'name',
+        'description',
+        'reference',
+        'barcode',
+        'price',
+        'type',
+        'tax',
+        'taxExemptionReason',
+        'category',
+        'unit',
+        'controlStock',
+    ];
+
+    /** @var array<string, mixed> */
+    protected array $current = [];
+
     public function __construct(ItemData $item)
     {
         $this->data = $item;
@@ -66,6 +84,7 @@ class Update extends Item implements ShouldUpdateItem
 
         Http::handleUnwantedFailures($response);
 
+        $this->data = $this->updatedItem();
         $this->fillAdditionalProperties($response->json());
 
         return $this;
@@ -85,7 +104,7 @@ class Update extends Item implements ShouldUpdateItem
 
         $unitId = $this->unitId();
         $tax = $this->taxConfig($this->data->tax);
-        $current = $this->currentProduct();
+        $current = $this->current = $this->currentProduct();
 
         return collect(Arr::only($current, $this->carriedFields))
             ->merge($this->carriedLists($current))
@@ -102,6 +121,25 @@ class Update extends Item implements ShouldUpdateItem
         Http::handleUnwantedFailures($response);
 
         return $response->json();
+    }
+
+    /**
+     * The product read before the update, with the fields the caller set
+     * merged over it, since Moloni does not return the updated product.
+     */
+    protected function updatedItem(): ItemData
+    {
+        $item = $this->toItemData($this->data->id, $this->current);
+
+        foreach ($this->updatableFields as $field) {
+            $item->{$field} = $this->data->{$field} ?? $item->{$field};
+        }
+
+        if ($item->tax !== ItemTax::EXEMPT) {
+            $item->taxExemptionReason = null;
+        }
+
+        return $item;
     }
 
     /**

@@ -26,7 +26,10 @@ $item = Item::update(ItemData::make([
 
 ## Return value
 
-`getItem()` returns the `ItemData` you passed. It is not refreshed from the provider, so unset fields stay `null`. Unhandled fields from the update response are in `getAdditionalData()`. Use `Item::get()` to read the full item.
+`getItem()` returns the updated item, mapped like [`Item::get()`](getting-an-item.md). Unhandled fields from the update response are in `getAdditionalData()`.
+
+- **Cegid Vendus:** the item is mapped from the `PATCH` response, which is the full product.
+- **Moloni:** `products/update` only returns the product id, so the item is the product read with `products/getOne` before the update, with the fields you set merged over it. A tax other than `EXEMPT` clears `taxExemptionReason`, and a new `tax` without `price` keeps the gross price. It is what was sent, not re-read from Moloni, so the net price Moloni stores can round the gross `price` of a later `Item::get()` by a cent.
 
 ## Stock
 

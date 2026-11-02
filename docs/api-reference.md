@@ -165,7 +165,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdate
 | Method         | Return Type  | Description                                                                                          |
 | -------------- | ------------ | ---------------------------------------------------------------------------------------------------- |
 | `execute()`    | `self`       | Send the update request and store unhandled response fields as additional data                       |
-| `getItem()`    | `ItemData`   | The caller's DTO, not refreshed from the provider                                                    |
+| `getItem()`    | `ItemData`   | The updated item. On Moloni, the current product with the updated fields merged over it              |
 | `getPayload()` | `Collection` | Inspect the payload. On Moloni this requests the current product first                               |
 
 Throws `InvalidArgumentException` when `id` is missing. On Moloni, throws `OperationNotSupportedException` when `enabled` is set.
