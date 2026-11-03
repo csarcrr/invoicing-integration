@@ -22,7 +22,7 @@ See [Updating an Item](items/updating-an-item.md#return-value).
 
 ### Changed: items read `enabled` from the provider
 
-`Item::get()`, `Item::find()`, `Item::update()` and `Item::create()` return `enabled` from the provider instead of a fixed `true`: Cegid Vendus `status` (`on` is `true`, `off` is `false`) and Moloni `visibility_id` (`1` is `true`, `0` is `false`). Moloni create returns `true`. `enabled` is `null` when the provider sends neither field. The top-level `quantity` of a read item is now `null` instead of `1`.
+`Item::get()`, `Item::find()`, `Item::update()` and `Item::create()` return `enabled` from the provider instead of a fixed `true`: Cegid Vendus `status` (`on` is `true`, `off` is `false`) and Moloni `visibility_id` (`1` is `true`, `0` is `false`). Moloni create sends `enabled` as `visibility_id` and returns the value it sent. `enabled` is `null` when the provider sends neither field. The top-level `quantity` of a read item is now `null` instead of `1`.
 
 Moloni `get`, `find` and the `getOne` call of `update` send `with_invisible=1`, so products with `visibility_id` `0` are returned too. `update` sends the current `visibility_id` back, so a hidden product stays hidden.
 

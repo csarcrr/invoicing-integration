@@ -478,7 +478,7 @@ $item = ItemData::make([
 | `category`           | `?CategoryData`                 | `null`               | Product category                                   | -                                                                         |
 | `unit`               | `?ShouldBeUnit`                 | `null`               | Unit of measure (use `Unit` enum or custom)        | Must be mapped in config; throws `CouldNotGetUnitIdException` if missing  |
 | `controlStock`       | `?bool`                         | `null`               | Whether to track stock; create sends `true` when `null`               | -                                                                         |
-| `enabled`            | `?bool`                         | `null`               | Whether the item is active; Vendus create sends `true` when `null`. Read from Vendus `status` and Moloni `visibility_id` | -                                                                         |
+| `enabled`            | `?bool`                         | `null`               | Whether the item is active; create sends `true` when `null`. Read from Vendus `status` and Moloni `visibility_id` | -                                                                         |
 | `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
 | `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::get()`       | -                                                                         |
 

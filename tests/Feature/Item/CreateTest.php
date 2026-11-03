@@ -39,18 +39,22 @@ test('reads the created item as enabled', function (Provider $provider, string $
     expect($data->enabled)->toBeTrue();
 })->with('providers', ['create']);
 
-test('reads a vendus item created as disabled', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
-
+test('reads an item created as disabled', function (Provider $provider) {
     $response = fixtures()->response()->item()->files('create');
-    $response['status'] = 'off';
 
-    Http::fake(mockResponse($response));
+    Http::fake(mockResponse(match ($provider) {
+        Provider::CEGID_VENDUS => [...$response, 'status' => 'off'],
+        Provider::MOLONI => $response,
+    }));
 
-    $data = Item::create(ItemData::make(['name' => 'Item Title', 'enabled' => false]))->execute()->getItem();
+    $data = Item::create(ItemData::make([
+        'name' => 'Item Title',
+        'category' => CategoryData::make(['id' => 1]),
+        'enabled' => false,
+    ]))->execute()->getItem();
 
     expect($data->enabled)->toBeFalse();
-});
+})->with('providers');
 
 test('sends the item to the provider', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->item()->files('create')));

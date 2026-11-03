@@ -39,3 +39,18 @@ it('sends the creation defaults for omitted fields', function (Provider $provide
             ->and($payload->get('has_stock'))->toBe(1),
     };
 })->with('providers');
+
+it('sends whether the item is enabled', function (Provider $provider, bool $enabled, string $vendusStatus, int $moloniVisibility) {
+    $payload = Item::create(ItemData::make([
+        'category' => CategoryData::make(['id' => 1]),
+        'enabled' => $enabled,
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('status'))->toBe($vendusStatus),
+        Provider::MOLONI => expect($payload->get('visibility_id'))->toBe($moloniVisibility),
+    };
+})->with('providers')->with([
+    [true, 'on', 1],
+    [false, 'off', 0],
+]);

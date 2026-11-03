@@ -48,7 +48,7 @@ class Create extends Item implements ShouldCreateItem
         $data = $response->json();
 
         $this->data->id = $data['product_id'];
-        $this->data->enabled = true;
+        $this->data->enabled ??= true;
 
         $this->fillAdditionalProperties($data);
 
@@ -72,6 +72,7 @@ class Create extends Item implements ShouldCreateItem
         $this->buildCategory();
         $this->buildUnit();
         $this->buildStock();
+        $this->buildEnabled();
         $this->buildTax();
         $this->buildExemptionReason();
         $this->buildPrice();
@@ -144,6 +145,11 @@ class Create extends Item implements ShouldCreateItem
     {
         $this->payload->put('has_stock', ($this->data->controlStock ?? true) ? 1 : 0);
         $this->payload->put('stock', 0);
+    }
+
+    protected function buildEnabled(): void
+    {
+        $this->payload->put('visibility_id', ($this->data->enabled ?? true) ? 1 : 0);
     }
 
     /**

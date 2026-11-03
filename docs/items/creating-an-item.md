@@ -65,7 +65,10 @@ The `Default` column shows what is sent when a field is omitted on create. `Item
 | `category`     | `?CategoryData` | `null`              | Product category (must have provider `id`)      |
 | `unit`         | `?ShouldBeUnit` | `null`              | Unit of measure — use `Unit` enum               |
 | `controlStock` | `?bool`         | `true`              | Track stock for this item                       |
-| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider. Cegid Vendus only; Moloni ignores it |
+| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider. Sent as `status` on Cegid Vendus and `visibility_id` on Moloni |
+
+> [!WARNING]
+> Moloni does not document `visibility_id` as a `products/insert` parameter. The package relies on Moloni accepting it, which was confirmed against the API, but Moloni can change this without notice.
 
 ## Units
 
@@ -130,7 +133,7 @@ $created->reference; // SKU
 $created->enabled;   // whether the item is active
 ```
 
-`enabled` comes from the response `status` on Cegid Vendus. Moloni does not return it, and creates every product visible, so `enabled` is `true`.
+`enabled` comes from the response `status` on Cegid Vendus. Moloni does not return it, so `enabled` is the value you sent, or `true` when you did not set it.
 
 ### Additional response data
 
