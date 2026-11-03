@@ -91,7 +91,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetIte
 | Method      | Return Type | Description                                                  | Throws                                     |
 | ----------- | ----------- | ------------------------------------------------------------ | ------------------------------------------ |
 | `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing) |
-| `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `type`, `tax`, `price`, and additional data) | — |
+| `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`, and additional data) | — |
 
 Provider response fields that the package does not explicitly map onto `ItemData` are accessible via `getAdditionalData()` on the returned DTO:
 
@@ -478,7 +478,7 @@ $item = ItemData::make([
 | `category`           | `?CategoryData`                 | `null`               | Product category                                   | -                                                                         |
 | `unit`               | `?ShouldBeUnit`                 | `null`               | Unit of measure (use `Unit` enum or custom)        | Must be mapped in config; throws `CouldNotGetUnitIdException` if missing  |
 | `controlStock`       | `?bool`                         | `null`               | Whether to track stock; create sends `true` when `null`               | -                                                                         |
-| `enabled`            | `?bool`                         | `null`               | Whether the item is active; Vendus create sends `true` when `null`         | -                                                                         |
+| `enabled`            | `?bool`                         | `null`               | Whether the item is active; Vendus create sends `true` when `null`. Read from Vendus `status` and Moloni `visibility_id` | -                                                                         |
 | `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
 | `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::get()`       | -                                                                         |
 

@@ -62,9 +62,9 @@ An unmapped `unit` throws `CouldNotGetUnitIdException`.
 
 ## Moloni behaviour
 
-Moloni only replaces whole products, so an update makes two requests: `products/getOne`, then `products/update` with your fields merged over the current values. Stock and warehouses are not sent.
+Moloni only replaces whole products, so an update makes two requests: `products/getOne` with `with_invisible=1`, then `products/update` with your fields merged over the current values. Stock and warehouses are not sent.
 
-- **`enabled`:** Moloni has no such field. Setting it throws `OperationNotSupportedException` before any request.
+- **`enabled`:** `products/update` does not accept `visibility_id`. Setting it throws `OperationNotSupportedException` before any request. The returned item still reads `enabled` from the current `visibility_id`.
 - **`price`:** stays gross in `ItemData`. The net price is calculated with the new tax, or with the current tax when `tax` is not set.
 - **`tax` without `price`:** the gross price stays the same and the net price is recalculated. `ItemTax::EXEMPT` replaces the tax with the configured 0% exempt tax.
 - **`tax` other than `EXEMPT`:** clears the exemption reason, unless you set a new one. An unconfigured tax throws `CouldNotGetTaxIdException` before any request.

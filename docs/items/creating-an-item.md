@@ -65,7 +65,7 @@ The `Default` column shows what is sent when a field is omitted on create. `Item
 | `category`     | `?CategoryData` | `null`              | Product category (must have provider `id`)      |
 | `unit`         | `?ShouldBeUnit` | `null`              | Unit of measure — use `Unit` enum               |
 | `controlStock` | `?bool`         | `true`              | Track stock for this item                       |
-| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider      |
+| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider. Cegid Vendus only; Moloni ignores it |
 
 ## Units
 
@@ -127,7 +127,10 @@ $created = Item::create($item)->execute()->getItem();
 $created->id;        // provider-assigned ID
 $created->name;      // item name
 $created->reference; // SKU
+$created->enabled;   // whether the item is active
 ```
+
+`enabled` comes from the response `status` on Cegid Vendus. Moloni does not return it, and creates every product visible, so `enabled` is `true`.
 
 ### Additional response data
 

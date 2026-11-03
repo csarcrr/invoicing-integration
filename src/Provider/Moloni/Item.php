@@ -35,6 +35,11 @@ abstract class Item extends BaseItem
             'barcode' => $item['ean'] ?? null,
             'category' => CategoryData::make(['id' => $item['category_id'] ?? null]),
             'controlStock' => (bool) ($item['has_stock'] ?? true),
+            'enabled' => match ($item['visibility_id'] ?? null) {
+                1 => true,
+                0 => false,
+                default => null,
+            },
             'type' => match ($item['type'] ?? null) {
                 1 => ItemType::Product,
                 2 => ItemType::Service,

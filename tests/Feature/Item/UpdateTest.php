@@ -26,6 +26,7 @@ test('returns the updated item', function (Provider $provider) {
         ->and($data->tax)->toBe(ItemTax::NORMAL)
         ->and($data->category->id)->toBe($categoryId)
         ->and($data->controlStock)->toBeTrue()
+        ->and($data->enabled)->toBeTrue()
         ->and($data->getAdditionalData())->not->toBeEmpty();
 })->with('providers');
 
@@ -67,7 +68,8 @@ test('sends the update to the provider', function (Provider $provider) {
         ],
         Provider::MOLONI => [
             fn (Request $request) => Str::contains($request->url(), 'products/getOne')
-                && Str::contains($request->body(), 'product_id=1542'),
+                && Str::contains($request->body(), 'product_id=1542')
+                && Str::contains($request->body(), 'with_invisible=1'),
             fn (Request $request) => Str::contains($request->url(), 'products/update')
                 && Str::contains($request->body(), 'product_id=1542')
                 && Str::contains($request->body(), 'name=New+Title')

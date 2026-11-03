@@ -58,6 +58,7 @@ class Get extends Item implements ShouldGetItem
         throw_if(! is_int($this->data->id), \InvalidArgumentException::class, 'Item ID is required.');
 
         $this->payload->put('product_id', $this->data->id);
+        $this->payload->put('with_invisible', 1);
     }
 
     /**

@@ -103,6 +103,7 @@ class Find extends Item implements ShouldFindItem
         $categoryId = $this->data->category->id ?? throw new MissingCategoryException;
 
         $this->payload->put('category_id', $categoryId);
+        $this->payload->put('with_invisible', 1);
     }
 
     protected function buildPagination(): void

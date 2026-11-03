@@ -23,7 +23,7 @@ it('builds the category and pagination payload for the first page', function (Pr
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 1]),
-        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'qty' => 50, 'offset' => 0]),
+        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'with_invisible' => 1, 'qty' => 50, 'offset' => 0]),
     };
 })->with('providers');
 
@@ -32,7 +32,7 @@ it('moves the offset when changing page', function (Provider $provider) {
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 2]),
-        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'qty' => 50, 'offset' => 50]),
+        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'with_invisible' => 1, 'qty' => 50, 'offset' => 50]),
     };
 })->with('providers');
 

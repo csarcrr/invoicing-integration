@@ -9,6 +9,7 @@
     "price": 20,
     "unit_id": 3,
     "has_stock": 1,
+    "visibility_id": 1,
     "stock": 42,
     "minimum_stock": 5,
     "pos_favorite": 1,

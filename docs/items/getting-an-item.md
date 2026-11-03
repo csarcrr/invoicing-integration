@@ -51,6 +51,7 @@ $item->reference;   // Product SKU / code
 $item->barcode;     // EAN or barcode identifier
 $item->category;    // CategoryData with the category id
 $item->controlStock; // Whether the provider tracks stock for this item
+$item->enabled;     // Whether the item is active in the provider
 $item->type;        // ItemType
 $item->tax;         // ItemTax
 $item->price;       // Gross price in cents
@@ -60,6 +61,7 @@ $item->price;       // Gross price in cents
 | -------------- | ------------------ | ------------------------------------ |
 | `category`     | `category_id`      | `category_id`                        |
 | `controlStock` | `stock_control`    | `has_stock`                          |
+| `enabled`      | `status` (`on`/`off`) | `visibility_id` (`1`/`0`)         |
 | `type`         | `type_id`          | `type`                               |
 | `tax`          | `tax_id`           | `taxes[0].tax_id`, see below         |
 | `taxExemptionReason` | `tax_exemption` | `exemption_reason`              |
@@ -68,7 +70,9 @@ $item->price;       // Gross price in cents
 
 On Moloni, `tax` is the `ItemTax` whose `MOLONI_TAX_*_ID` matches `taxes[0].tax_id`, so a configured tax with no VAT type, such as a 0% exempt tax, still maps to its `ItemTax`. A tax that is not configured falls back to `taxes[0].tax.vat_type`, and is `null` when that is not an `ItemTax` value.
 
-`price` and `tax` are `null` when the provider sends no price or tax data. `taxExemptionReason` and `taxExemptionLaw` are only set when `tax` is `ItemTax::EXEMPT`, and are `null` for an unknown exemption code. `type` is `null` when the provider sends an unknown type.
+`price` and `tax` are `null` when the provider sends no price or tax data. `taxExemptionReason` and `taxExemptionLaw` are only set when `tax` is `ItemTax::EXEMPT`, and are `null` for an unknown exemption code. `type` is `null` when the provider sends an unknown type. `enabled` is `null` when the provider sends no status or visibility.
+
+On Moloni, the request sends `with_invisible=1`, so products with `visibility_id` `0` are returned too.
 
 ### Stock
 
@@ -107,7 +111,7 @@ $item->getAdditionalData();
 ```
 
 > [!NOTE]
-> Fields that the package explicitly maps (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `type`, `tax`, `price`) are never duplicated in `getAdditionalData()`.
+> Fields that the package explicitly maps (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`) are never duplicated in `getAdditionalData()`.
 
 ## Complete example
 

@@ -28,8 +28,8 @@ foreach ($results->getList() as $item) {
 
 - `getList()` returns a `Collection` of `ItemData` instances populated by the
   provider response. Cegid Vendus items carry `id`, `name`, `description`,
-  `reference`, `barcode`, `category`, `controlStock`, `type`, `tax` and the
-  gross `price`.
+  `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`
+  and the gross `price`.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
 
@@ -96,8 +96,11 @@ $results = Item::find($filters)->execute();
 
 - With no search field set, a missing category id throws `MissingCategoryException`.
 - Each page holds up to 50 items.
+- A category listing sends `with_invisible=1`, so products with
+  `visibility_id` `0` are listed too, with `enabled` set to `false`. A search
+  does not send it, since `products/getBySearch` does not document it.
 - Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
-  `reference`, `barcode`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
+  `reference`, `barcode`, `enabled`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
   return the category, description or stock control in the list, so those
   fields keep their defaults.
 

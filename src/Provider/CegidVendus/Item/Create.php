@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
-use CsarCrr\InvoicingIntegration\Provider\Item;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -50,6 +50,7 @@ class Create extends Item implements ShouldCreateItem
         $data = $response->json();
 
         $this->data->id = $data['id'];
+        $this->data->enabled = $this->toEnabled($data['status'] ?? null);
 
         $this->fillAdditionalProperties($data);
 

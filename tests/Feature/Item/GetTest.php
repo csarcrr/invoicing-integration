@@ -37,11 +37,11 @@ test('supported properties are not filled in additional data', function (Provide
     [$unmapped, $mapped] = match ($provider) {
         Provider::CEGID_VENDUS => [
             ['lot_control'],
-            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control'],
+            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control', 'status'],
         ],
         Provider::MOLONI => [
             ['image', 'stock', 'unit_id', 'category'],
-            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock'],
+            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock', 'visibility_id'],
         ],
     };
 
@@ -72,6 +72,41 @@ test('maps a disabled stock control', function (Provider $provider, string $resp
     $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
 
     expect($data->controlStock)->toBeFalse();
+})->with('providers', ['get']);
+
+test('maps an enabled item', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->enabled)->toBeTrue();
+})->with('providers', ['get']);
+
+test('maps a disabled item', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response['status'] = 'off',
+        Provider::MOLONI => $response['visibility_id'] = 0,
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->enabled)->toBeFalse();
+})->with('providers', ['get']);
+
+test('leaves the enabled state empty when the provider sends none', function (Provider $provider, string $responseFixture) {
+    $response = collect(fixtures()->response()->item()->files($responseFixture))
+        ->except(['status', 'visibility_id'])
+        ->all();
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->enabled)->toBeNull();
 })->with('providers', ['get']);
 
 test('maps the gross price and the tax', function (Provider $provider, string $responseFixture) {

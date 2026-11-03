@@ -140,10 +140,12 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->first()->tax)->toBe(ItemTax::EXEMPT)
         ->and($list->first()->price)->toBe(2000)
         ->and($list->first()->controlStock)->toBeTrue()
+        ->and($list->first()->enabled)->toBeTrue()
         ->and($list->get(1)->type)->toBe(ItemType::Service)
         ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
         ->and($list->get(1)->price)->toBe(4500)
-        ->and($list->get(1)->controlStock)->toBeFalse();
+        ->and($list->get(1)->controlStock)->toBeFalse()
+        ->and($list->last()->enabled)->toBeFalse();
 });
 
 test('maps the moloni products onto the item list', function () {
@@ -161,10 +163,12 @@ test('maps the moloni products onto the item list', function () {
         ->and($list->first()->type)->toBe(ItemType::Product)
         ->and($list->first()->tax)->toBe(ItemTax::NORMAL)
         ->and($list->first()->price)->toBe(2460)
+        ->and($list->first()->enabled)->toBeTrue()
         ->and($list->last()->id)->toBe(1543)
         ->and($list->last()->type)->toBe(ItemType::Service)
         ->and($list->last()->tax)->toBeNull()
-        ->and($list->last()->price)->toBeNull();
+        ->and($list->last()->price)->toBeNull()
+        ->and($list->last()->enabled)->toBeFalse();
 });
 
 test('maps a moloni tax by its configured tax id when finding items', function () {

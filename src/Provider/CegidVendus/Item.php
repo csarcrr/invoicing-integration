@@ -31,6 +31,7 @@ abstract class Item extends BaseItem
             'barcode' => $item['barcode'] ?? null,
             'category' => CategoryData::make(['id' => isset($item['category_id']) ? (int) $item['category_id'] : null]),
             'controlStock' => (bool) ($item['stock_control'] ?? true),
+            'enabled' => $this->toEnabled($item['status'] ?? null),
             'type' => match ($item['type_id'] ?? null) {
                 'P' => ItemType::Product,
                 'S' => ItemType::Service,
@@ -49,5 +50,14 @@ abstract class Item extends BaseItem
                 'quantity' => $store['stock'],
             ], $item['stock']['stores'] ?? []),
         ]);
+    }
+
+    protected function toEnabled(?string $status): ?bool
+    {
+        return match ($status) {
+            'on' => true,
+            'off' => false,
+            default => null,
+        };
     }
 }
