@@ -9,10 +9,13 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
+use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Facades\Http;
 
 class Get extends Item implements ShouldGetItem
 {
+    use HasConfig;
+
     public function __construct(ItemData $itemData)
     {
         $this->data = $itemData;

@@ -30,6 +30,7 @@ abstract class Item extends BaseItem
             'reference' => $item['reference'] ?? null,
             'barcode' => $item['barcode'] ?? null,
             'category' => CategoryData::make(['id' => isset($item['category_id']) ? (int) $item['category_id'] : null]),
+            'unit' => $this->toUnit($item['unit_id'] ?? null),
             'controlStock' => (bool) ($item['stock_control'] ?? true),
             'enabled' => $this->toEnabled($item['status'] ?? null),
             'type' => match ($item['type_id'] ?? null) {

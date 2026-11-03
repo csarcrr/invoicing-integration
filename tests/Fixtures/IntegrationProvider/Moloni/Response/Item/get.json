@@ -7,7 +7,7 @@
     "reference": "reference-1",
     "ean": "barcode-1",
     "price": 20,
-    "unit_id": 3,
+    "unit_id": 19999,
     "has_stock": 1,
     "visibility_id": 1,
     "stock": 42,

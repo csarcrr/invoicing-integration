@@ -99,7 +99,7 @@ $results = Item::find($filters)->execute();
 - Both a search and a category listing send `with_invisible=1`, so products
   with `visibility_id` `0` are listed too, with `enabled` set to `false`.
 - Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
-  `reference`, `barcode`, `enabled`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
+  `reference`, `barcode`, `enabled`, `unit`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
   return the category, description or stock control in the list, so those
   fields keep their defaults.
 

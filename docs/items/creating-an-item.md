@@ -58,8 +58,8 @@ The `Default` column shows what is sent when a field is omitted on create. `Item
 | `description`  | `?string`       | `null`              | Longer description                              |
 | `price`        | `?int`          | `null`              | Gross price in cents (e.g. `2999` = €29.99)     |
 | `tax`          | `?ItemTax`      | `null`              | VAT rate                                        |
-| `taxExemptionReason` | `?TaxExemptionReason` | `null`  | Required when `tax` is `ItemTax::EXEMPT`        |
-| `taxExemptionLaw`    | `?string`       | `null`  | Legal reference for the exemption               |
+| `taxExemptionReason` | `?TaxExemptionReason` | `null`  | Exemption reason, only with `tax` `ItemTax::EXEMPT` |
+| `taxExemptionLaw`    | `?string`       | `null`  | Legal reference for the exemption. Cegid Vendus only; Moloni does not store it |
 | `type`         | `?ItemType`     | `ItemType::Product` | Product or service classification               |
 | `barcode`      | `?string`       | `null`              | EAN/barcode                                     |
 | `category`     | `?CategoryData` | `null`              | Product category (must have provider `id`)      |
@@ -69,6 +69,20 @@ The `Default` column shows what is sent when a field is omitted on create. `Item
 
 > [!WARNING]
 > Moloni does not document `visibility_id` as a `products/insert` parameter. The package relies on Moloni accepting it, which was confirmed against the API, but Moloni can change this without notice.
+
+## Fields the provider requires
+
+The package sends what you set and does not check these fields itself. When one is missing, the provider rejects the request and `execute()` throws `RequestFailedException` with the provider's message.
+
+| Field                | Cegid Vendus                     | Moloni                                         |
+| -------------------- | -------------------------------- | ---------------------------------------------- |
+| `unit`               | Required                         | Required                                       |
+| `reference`          | Optional, generated when omitted | Required, unique                               |
+| `price`              | Optional, `0` when omitted       | Required                                       |
+| `tax`                | Optional, `ItemTax::NORMAL` when omitted | Required, unless `taxExemptionReason` is set |
+| `taxExemptionReason` | Optional                         | Required when `tax` is `ItemTax::EXEMPT`       |
+
+On Moloni, a missing `category` throws `MissingCategoryException` before any request.
 
 ## Units
 
@@ -107,6 +121,8 @@ Every unit's string `value` must be mapped to a provider ID in your config. The 
 
 If the unit value has no matching key in the config, a `CouldNotGetUnitIdException` is thrown.
 
+The created item reads its unit back from the provider's unit id, so `unit` is always a `Unit` case. A custom unit, such as `MyUnit::LITRE`, reads back as `null`.
+
 ## Categories
 
 Pass a `CategoryData` with the provider-assigned category `id`:
@@ -122,7 +138,7 @@ $item = ItemData::make([
 
 ## Accessing the result
 
-After `execute()`, call `getItem()` to retrieve the populated DTO including the provider-assigned `id`:
+After `execute()`, `getItem()` returns the created item as the provider stored it, mapped like [`Item::get()`](getting-an-item.md). Fields you did not set hold the provider's values, such as a generated `reference` on Cegid Vendus.
 
 ```php
 $created = Item::create($item)->execute()->getItem();
@@ -130,10 +146,12 @@ $created = Item::create($item)->execute()->getItem();
 $created->id;        // provider-assigned ID
 $created->name;      // item name
 $created->reference; // SKU
+$created->unit;      // Unit enum, read back from the provider's unit id
 $created->enabled;   // whether the item is active
 ```
 
-`enabled` comes from the response `status` on Cegid Vendus. Moloni does not return it, so `enabled` is the value you sent, or `true` when you did not set it.
+- **Cegid Vendus:** the item is mapped from the create response, which is the full product.
+- **Moloni:** `products/insert` only returns the product id, so the package reads the product with `products/getOne` (a second request). Moloni does not store `taxExemptionLaw`, so it is `null`.
 
 ### Additional response data
 

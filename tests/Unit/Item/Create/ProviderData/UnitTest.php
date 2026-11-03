@@ -7,7 +7,6 @@ use CsarCrr\InvoicingIntegration\Enums\Unit;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException as VendusCouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException as MoloniCouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
-use Illuminate\Support\Facades\Http;
 
 it('fails when unit is not found', function (Provider $provider) {
     config()->set('invoicing-integration.providers.'.$provider->value.'.units', []);
@@ -23,15 +22,15 @@ it('fails when unit is not found', function (Provider $provider) {
     ]))->getPayload())->toThrow($expectedException);
 })->with('providers');
 
-it('keeps the unit after creating the item', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->item()->files('create')));
+it('reads the unit of the created item', function (Provider $provider) {
+    fakeItemCreate($provider);
 
     $item = Item::create(ItemData::make([
         'name' => 'Item Title',
         'category' => CategoryData::make(['id' => 1]),
-        'unit' => Unit::UNIT,
+        'unit' => Unit::KG,
     ]))->execute()->getItem();
 
     expect($item->id)->toBeInt()
-        ->and($item->unit)->toBe(Unit::UNIT);
+        ->and($item->unit)->toBe(Unit::KG);
 })->with('providers');

@@ -10,15 +10,9 @@ use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
-use Illuminate\Support\Collection;
 
 abstract class Item extends BaseItem
 {
-    /**
-     * @return Collection<string, mixed>
-     */
-    abstract public function getConfig(): Collection;
-
     /**
      * @param  array<string, mixed>  $item
      */
@@ -34,6 +28,7 @@ abstract class Item extends BaseItem
             'reference' => $item['reference'] ?? null,
             'barcode' => $item['ean'] ?? null,
             'category' => CategoryData::make(['id' => $item['category_id'] ?? null]),
+            'unit' => $this->toUnit($item['unit_id'] ?? null),
             'controlStock' => (bool) ($item['has_stock'] ?? true),
             'enabled' => match ($item['visibility_id'] ?? null) {
                 1 => true,

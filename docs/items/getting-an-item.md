@@ -62,6 +62,7 @@ $item->price;       // Gross price in cents
 | `category`     | `category_id`      | `category_id`                        |
 | `controlStock` | `stock_control`    | `has_stock`                          |
 | `enabled`      | `status` (`on`/`off`) | `visibility_id` (`1`/`0`)         |
+| `unit`         | `unit_id`          | `unit_id`                            |
 | `type`         | `type_id`          | `type`                               |
 | `tax`          | `tax_id`           | `taxes[0].tax_id`, see below         |
 | `taxExemptionReason` | `tax_exemption` | `exemption_reason`              |
@@ -70,7 +71,7 @@ $item->price;       // Gross price in cents
 
 On Moloni, `tax` is the `ItemTax` whose `MOLONI_TAX_*_ID` matches `taxes[0].tax_id`, so a configured tax with no VAT type, such as a 0% exempt tax, still maps to its `ItemTax`. A tax that is not configured falls back to `taxes[0].tax.vat_type`, and is `null` when that is not an `ItemTax` value.
 
-`price` and `tax` are `null` when the provider sends no price or tax data. `taxExemptionReason` and `taxExemptionLaw` are only set when `tax` is `ItemTax::EXEMPT`, and are `null` for an unknown exemption code. `type` is `null` when the provider sends an unknown type. `enabled` is `null` when the provider sends no status or visibility.
+`price` and `tax` are `null` when the provider sends no price or tax data. `taxExemptionReason` and `taxExemptionLaw` are only set when `tax` is `ItemTax::EXEMPT`, and are `null` for an unknown exemption code. `type` is `null` when the provider sends an unknown type. `enabled` is `null` when the provider sends no status or visibility. `unit` is the `Unit` case whose configured unit id matches `unit_id`, and is `null` when no configured unit matches or the key is a custom unit.
 
 On Moloni, the request sends `with_invisible=1`, so products with `visibility_id` `0` are returned too.
 

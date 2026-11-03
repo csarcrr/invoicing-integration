@@ -6,6 +6,7 @@ use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Enums\Unit;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
 
@@ -37,11 +38,11 @@ test('supported properties are not filled in additional data', function (Provide
     [$unmapped, $mapped] = match ($provider) {
         Provider::CEGID_VENDUS => [
             ['lot_control'],
-            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control', 'status'],
+            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control', 'status', 'unit_id'],
         ],
         Provider::MOLONI => [
-            ['image', 'stock', 'unit_id', 'category'],
-            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock', 'visibility_id'],
+            ['image', 'stock', 'category'],
+            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock', 'visibility_id', 'unit_id'],
         ],
     };
 
@@ -58,6 +59,18 @@ test('maps the category and the stock control', function (Provider $provider, st
     expect($data->category->id)->toBe(1)
         ->and($data->controlStock)->toBeTrue();
 })->with('providers', ['get']);
+
+test('maps the unit by its configured unit id', function (Provider $provider, int $unitId, ?Unit $expected) {
+    Http::fake(mockResponse([...fixtures()->response()->item()->files('get'), 'unit_id' => $unitId]));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->unit)->toBe($expected);
+})->with('providers')->with([
+    'kg' => [19999, Unit::KG],
+    'unit' => [29999, Unit::UNIT],
+    'unconfigured unit' => [99, null],
+]);
 
 test('maps a disabled stock control', function (Provider $provider, string $responseFixture) {
     $response = fixtures()->response()->item()->files($responseFixture);
