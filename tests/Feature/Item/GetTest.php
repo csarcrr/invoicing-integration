@@ -177,7 +177,7 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
     $data = Item::get($item)->execute()->getItem();
 
     $stockKey = match ($provider) {
-        Provider::CEGID_VENDUS => 'stock',
+        Provider::CEGID_VENDUS => 'stock_store',
         Provider::MOLONI => 'warehouses',
     };
 

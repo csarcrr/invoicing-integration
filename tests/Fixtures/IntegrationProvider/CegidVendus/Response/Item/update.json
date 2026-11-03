@@ -48,7 +48,7 @@
     "stock_store": [
         {
             "store": "Loja Principal",
-            "store_id": "1234",
+            "store_id": 1234,
             "qty": 22,
             "alert": 3
         }

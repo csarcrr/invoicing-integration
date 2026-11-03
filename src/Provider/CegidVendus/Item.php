@@ -47,8 +47,8 @@ abstract class Item extends BaseItem
             'stock' => array_map(fn (array $store) => [
                 'itemId' => $id,
                 'warehouseId' => $store['store_id'],
-                'quantity' => $store['stock'],
-            ], $item['stock']['stores'] ?? []),
+                'quantity' => $store['qty'],
+            ], $item['stock_store'] ?? []),
         ]);
     }
 

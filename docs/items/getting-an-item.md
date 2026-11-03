@@ -93,7 +93,7 @@ $item->stock->sum('quantity'); // total stock
 | Provider     | Response field | `warehouseId` from | `quantity` from |
 | ------------ | -------------- | ------------------ | --------------- |
 | Moloni       | `warehouses[]` | `warehouse_id`     | `stock`         |
-| Cegid Vendus | `stock.stores[]` | `store_id`       | `stock`         |
+| Cegid Vendus | `stock_store[]` | `store_id`        | `qty`           |
 
 When the response has no stock entries, `stock` is an empty `Collection`.
 
