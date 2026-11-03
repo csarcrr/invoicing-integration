@@ -70,6 +70,7 @@ function mockConfiguration(Provider $provider): void
                 ItemTax::INTERMEDIATE->value => ['id' => 2, 'rate' => 13],
                 ItemTax::REDUCED->value => ['id' => 3, 'rate' => 6],
                 ItemTax::OTHER->value => ['id' => 4, 'rate' => 0],
+                ItemTax::EXEMPT->value => ['id' => 5, 'rate' => 0],
             ],
         ]);
 
@@ -131,6 +132,21 @@ function fakeProviderDueDates(Provider $provider): void
     Http::fake([
         '*maturityDates/getAll*' => mockResponse(fixtures()->response()->dueDate()->files('response_multiple')),
     ]);
+}
+
+function fakeItemUpdate(Provider $provider, string $currentFixture = 'get'): void
+{
+    $update = mockResponse(fixtures()->response()->item()->files('update'));
+
+    if ($provider === Provider::CEGID_VENDUS) {
+        Http::fake($update);
+
+        return;
+    }
+
+    Http::fakeSequence()
+        ->pushResponse(mockResponse(fixtures()->response()->item()->files($currentFixture)))
+        ->pushResponse($update);
 }
 
 function mockResponse(

@@ -18,6 +18,7 @@ it('sends the item id in the request', function (Provider $provider) {
         Provider::CEGID_VENDUS => Str::contains($request->url(), '999999'),
         Provider::MOLONI => Str::contains($request->url(), 'products/getOne')
             && Str::contains($request->body(), 'product_id=999999')
+            && Str::contains($request->body(), 'with_invisible=1')
             && Str::contains($request->body(), 'company_id=123456'),
     });
 })->with('providers');

@@ -27,7 +27,7 @@ Features for managing items (product catalog) independently of invoices.
 |               | Cegid Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
 | Create Item   | ✅           | ✅     | ❌              |
-| Update Item   | ❌           | ❌     | ❌              |
+| Update Item   | ✅           | ✅     | ❌              |
 | Delete Item   | ❌           | ❌     | ❌              |
 | List Items    | ✅           | ✅     | ❌              |
 

@@ -23,7 +23,7 @@ it('builds the category and pagination payload for the first page', function (Pr
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 1]),
-        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'qty' => 50, 'offset' => 0]),
+        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'with_invisible' => 1, 'qty' => 50, 'offset' => 0]),
     };
 })->with('providers');
 
@@ -32,7 +32,7 @@ it('moves the offset when changing page', function (Provider $provider) {
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 2]),
-        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'qty' => 50, 'offset' => 50]),
+        Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'with_invisible' => 1, 'qty' => 50, 'offset' => 50]),
     };
 })->with('providers');
 
@@ -41,7 +41,7 @@ it('searches moloni by reference before name', function () {
 
     $find = Item::find(ItemData::make(['name' => 'Item Title', 'reference' => 'reference-1']));
 
-    expect($find->getPayload()->toArray())->toBe(['search' => 'reference-1', 'qty' => 50, 'offset' => 0]);
+    expect($find->getPayload()->toArray())->toBe(['search' => 'reference-1', 'with_invisible' => 1, 'qty' => 50, 'offset' => 0]);
 });
 
 it('searches moloni by name without a category', function () {
@@ -49,7 +49,15 @@ it('searches moloni by name without a category', function () {
 
     $find = Item::find(ItemData::make(['name' => 'Item Title']));
 
-    expect($find->getPayload()->toArray())->toBe(['search' => 'Item Title', 'qty' => 50, 'offset' => 0]);
+    expect($find->getPayload()->toArray())->toBe(['search' => 'Item Title', 'with_invisible' => 1, 'qty' => 50, 'offset' => 0]);
+});
+
+it('includes hidden products in a moloni search', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    $find = Item::find(ItemData::make(['name' => 'Item Title']));
+
+    expect($find->getPayload()->get('with_invisible'))->toBe(1);
 });
 
 it('fails when moloni has no category to list', function () {

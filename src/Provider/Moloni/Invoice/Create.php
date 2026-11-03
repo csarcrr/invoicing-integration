@@ -195,7 +195,7 @@ class Create extends Invoice implements ShouldCreateInvoice
         $product = [
             'product_id' => (int) $item->id,
             'name' => (string) $item->name,
-            'qty' => $item->quantity,
+            'qty' => $item->quantity ?? 1,
             'price' => $this->unitPriceWithoutTax($item, $tax),
         ];
 
@@ -449,7 +449,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     protected function itemsTotal(Collection $items): float
     {
         return (float) $items->sum(
-            fn (ItemData $item): float => ($item->price ?? 0) / 100 * $item->quantity * (1 - ($item->percentageDiscount ?? 0) / 100)
+            fn (ItemData $item): float => ($item->price ?? 0) / 100 * ($item->quantity ?? 1) * (1 - ($item->percentageDiscount ?? 0) / 100)
         );
     }
 }

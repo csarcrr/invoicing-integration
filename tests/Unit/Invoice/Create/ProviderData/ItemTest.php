@@ -102,10 +102,34 @@ it('sends the item id to the provider when it identifies items by id', function 
     };
 })->with('providers');
 
-it('has the item always with the default quantity of one', function () {
-    $item = ItemData::from(['reference' => 'reference-1']);
+it('sends a quantity of one when the item has no quantity', function (Provider $provider) {
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+    ]))->getPayload();
 
-    expect($item->quantity)->toBe(1);
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['qty'])->toBe(1),
+        Provider::MOLONI => expect($payload->get('products')[0]['qty'])->toBe(1),
+    };
+})->with('providers');
+
+it('sends the product type on vendus invoice lines when the item has no type', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+    ]))->getPayload();
+
+    expect($payload->get('items')->first()['type_id'])->toBe('P');
+});
+
+it('holds null in the fields without a value and does not throw', function () {
+    $item = ItemData::from([]);
+
+    expect($item->quantity)->toBeNull()
+        ->and($item->type)->toBeNull()
+        ->and($item->controlStock)->toBeNull()
+        ->and($item->enabled)->toBeNull();
 });
 
 it('fails when unsupported quantities are provided', function (mixed $invalidQuantity) {

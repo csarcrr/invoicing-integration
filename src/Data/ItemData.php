@@ -33,19 +33,19 @@ class ItemData extends Data implements DataNeedsValidation
         public ?string $barcode = null,
 
         public mixed $reference = null,
-        public null|int|float $quantity = 1,
+        public null|int|float $quantity = null,
 
         public ?ItemTax $tax = null,
         public ?TaxExemptionReason $taxExemptionReason = null,
         public ?string $taxExemptionLaw = null,
 
-        public ?ItemType $type = ItemType::Product,
+        public ?ItemType $type = null,
         public ?RelatedDocumentReferenceData $relatedDocument = null,
         public ?CategoryData $category = null,
         public ?ShouldBeUnit $unit = null,
 
-        public bool $controlStock = true,
-        public bool $enabled = true,
+        public ?bool $controlStock = null,
+        public ?bool $enabled = null,
         /** @var Collection<int, ItemStockData>|null */
         public ?Collection $stock = null
     ) {
@@ -56,6 +56,10 @@ class ItemData extends Data implements DataNeedsValidation
 
     protected function ensureValidQuantity(): void
     {
+        if (is_null($this->quantity)) {
+            return;
+        }
+
         throw_if($this->quantity <= 0, UnsupportedQuantityException::class);
     }
 

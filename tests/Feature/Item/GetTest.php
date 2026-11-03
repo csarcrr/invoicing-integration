@@ -5,6 +5,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
 
@@ -36,11 +37,11 @@ test('supported properties are not filled in additional data', function (Provide
     [$unmapped, $mapped] = match ($provider) {
         Provider::CEGID_VENDUS => [
             ['lot_control'],
-            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control'],
+            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control', 'status'],
         ],
         Provider::MOLONI => [
             ['image', 'stock', 'unit_id', 'category'],
-            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock'],
+            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock', 'visibility_id'],
         ],
     };
 
@@ -71,6 +72,41 @@ test('maps a disabled stock control', function (Provider $provider, string $resp
     $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
 
     expect($data->controlStock)->toBeFalse();
+})->with('providers', ['get']);
+
+test('maps an enabled item', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->enabled)->toBeTrue();
+})->with('providers', ['get']);
+
+test('maps a disabled item', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response['status'] = 'off',
+        Provider::MOLONI => $response['visibility_id'] = 0,
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->enabled)->toBeFalse();
+})->with('providers', ['get']);
+
+test('leaves the enabled state empty when the provider sends none', function (Provider $provider, string $responseFixture) {
+    $response = collect(fixtures()->response()->item()->files($responseFixture))
+        ->except(['status', 'visibility_id'])
+        ->all();
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->enabled)->toBeNull();
 })->with('providers', ['get']);
 
 test('maps the gross price and the tax', function (Provider $provider, string $responseFixture) {
@@ -141,7 +177,7 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
     $data = Item::get($item)->execute()->getItem();
 
     $stockKey = match ($provider) {
-        Provider::CEGID_VENDUS => 'stock',
+        Provider::CEGID_VENDUS => 'stock_store',
         Provider::MOLONI => 'warehouses',
     };
 
@@ -154,4 +190,61 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
         ->and($data->stock->last()->warehouseId)->toBe(2)
         ->and($data->stock->last()->quantity)->toBe(2.5)
         ->and($data->getAdditionalData())->not->toHaveKey($stockKey);
+})->with('providers', ['get']);
+
+test('maps a moloni tax by its configured tax id', function (int $taxId, string $vatType, ?ItemTax $expected) {
+    mockConfiguration(Provider::MOLONI);
+
+    $response = fixtures()->response()->item()->files('get');
+    $response['taxes'][0]['tax_id'] = $taxId;
+    $response['taxes'][0]['tax']['tax_id'] = $taxId;
+    $response['taxes'][0]['tax']['vat_type'] = $vatType;
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->tax)->toBe($expected);
+})->with([
+    'configured exempt tax without a vat type' => [5, '0', ItemTax::EXEMPT],
+    'configured tax with another vat type' => [3, 'NOR', ItemTax::REDUCED],
+    'unconfigured tax with a known vat type' => [99, 'INT', ItemTax::INTERMEDIATE],
+    'unconfigured tax without a vat type' => [99, '0', null],
+]);
+
+test('maps the tax exemption of an exempt item', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response = [...$response, 'tax_id' => 'ISE', 'tax_exemption' => 'M01', 'tax_exemption_law' => 'Artigo 16.º, n.º 6 do CIVA'],
+        Provider::MOLONI => $response = [...$response, 'exemption_reason' => 'M01', 'taxes' => [[...$response['taxes'][0], 'tax_id' => 5]]],
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->tax)->toBe(ItemTax::EXEMPT)
+        ->and($data->taxExemptionReason)->toBe(TaxExemptionReason::M01)
+        ->and($data->taxExemptionLaw)->toBe(match ($provider) {
+            Provider::CEGID_VENDUS => 'Artigo 16.º, n.º 6 do CIVA',
+            Provider::MOLONI => null,
+        });
+})->with('providers', ['get']);
+
+test('ignores a tax exemption on an item that is not exempt', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response = [...$response, 'tax_exemption' => 'M01', 'tax_exemption_law' => 'Artigo 16.º, n.º 6 do CIVA'],
+        Provider::MOLONI => $response['exemption_reason'] = 'M01',
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->tax)->toBe(ItemTax::NORMAL)
+        ->and($data->taxExemptionReason)->toBeNull()
+        ->and($data->taxExemptionLaw)->toBeNull();
 })->with('providers', ['get']);

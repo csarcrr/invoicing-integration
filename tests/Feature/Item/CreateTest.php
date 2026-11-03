@@ -28,6 +28,30 @@ test('creates an item', function (Provider $provider, string $fixture) {
         ->and($data->getAdditionalData())->not->toBeEmpty();
 })->with('providers', ['create']);
 
+test('reads the created item as enabled', function (Provider $provider, string $fixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($fixture)));
+
+    $data = Item::create(ItemData::make([
+        'name' => 'Item Title',
+        'category' => CategoryData::make(['id' => 1]),
+    ]))->execute()->getItem();
+
+    expect($data->enabled)->toBeTrue();
+})->with('providers', ['create']);
+
+test('reads a vendus item created as disabled', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    $response = fixtures()->response()->item()->files('create');
+    $response['status'] = 'off';
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::create(ItemData::make(['name' => 'Item Title', 'enabled' => false]))->execute()->getItem();
+
+    expect($data->enabled)->toBeFalse();
+});
+
 test('sends the item to the provider', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->item()->files('create')));
 

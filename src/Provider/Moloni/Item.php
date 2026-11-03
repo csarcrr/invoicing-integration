@@ -8,16 +8,24 @@ use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
+use Illuminate\Support\Collection;
 
 abstract class Item extends BaseItem
 {
+    /**
+     * @return Collection<string, mixed>
+     */
+    abstract public function getConfig(): Collection;
+
     /**
      * @param  array<string, mixed>  $item
      */
     protected function toItemData(?int $id, array $item): ItemData
     {
         $tax = $item['taxes'][0] ?? null;
+        $itemTax = $tax ? $this->toItemTax($tax) : null;
 
         return ItemData::make([
             'id' => $id,
@@ -27,13 +35,21 @@ abstract class Item extends BaseItem
             'barcode' => $item['ean'] ?? null,
             'category' => CategoryData::make(['id' => $item['category_id'] ?? null]),
             'controlStock' => (bool) ($item['has_stock'] ?? true),
+            'enabled' => match ($item['visibility_id'] ?? null) {
+                1 => true,
+                0 => false,
+                default => null,
+            },
             'type' => match ($item['type'] ?? null) {
                 1 => ItemType::Product,
                 2 => ItemType::Service,
                 3 => ItemType::Other,
                 default => null,
             },
-            'tax' => $tax ? ItemTax::from($tax['tax']['vat_type']) : null,
+            'tax' => $itemTax,
+            'taxExemptionReason' => $itemTax === ItemTax::EXEMPT
+                ? TaxExemptionReason::tryFrom((string) ($item['exemption_reason'] ?? ''))
+                : null,
             'price' => $tax ? $this->toCents((float) $item['price']) + $this->toCents((float) $tax['value']) : null,
             'stock' => array_map(fn (array $warehouse) => [
                 'itemId' => $warehouse['product_id'],
@@ -41,5 +57,26 @@ abstract class Item extends BaseItem
                 'quantity' => $warehouse['stock'],
             ], $item['warehouses'] ?? []),
         ]);
+    }
+
+    /**
+     * Resolves the tax by its configured Moloni tax id, falling back to the
+     * Moloni vat_type for taxes that are not configured.
+     *
+     * @param  array<string, mixed>  $tax
+     */
+    protected function toItemTax(array $tax): ?ItemTax
+    {
+        /** @var array<string, array{id: mixed}> $configuredTaxes */
+        $configuredTaxes = $this->getConfig()->get('taxes', []);
+
+        $configuredKey = collect($configuredTaxes)
+            ->search(fn (array $configured): bool => (int) $configured['id'] === (int) $tax['tax_id']);
+
+        if ($configuredKey !== false) {
+            return ItemTax::from($configuredKey);
+        }
+
+        return ItemTax::tryFrom((string) $tax['tax']['vat_type']);
     }
 }

@@ -6,10 +6,11 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
-use CsarCrr\InvoicingIntegration\Provider\Item;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -49,6 +50,7 @@ class Create extends Item implements ShouldCreateItem
         $data = $response->json();
 
         $this->data->id = $data['id'];
+        $this->data->enabled = $this->toEnabled($data['status'] ?? null);
 
         $this->fillAdditionalProperties($data);
 
@@ -112,11 +114,7 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildType(): void
     {
-        if (! $this->data->type) {
-            return;
-        }
-
-        $this->payload->put('type_id', $this->data->type->vendus());
+        $this->payload->put('type_id', ($this->data->type ?? ItemType::Product)->vendus());
     }
 
     protected function buildTax(): void
@@ -161,12 +159,12 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildControlStock(): void
     {
-        $this->payload->put('stock_control', $this->data->controlStock ? '1' : '0');
+        $this->payload->put('stock_control', ($this->data->controlStock ?? true) ? '1' : '0');
     }
 
     protected function buildEnabled(): void
     {
-        $this->payload->put('status', $this->data->enabled ? 'on' : 'off');
+        $this->payload->put('status', ($this->data->enabled ?? true) ? 'on' : 'off');
     }
 
     /**

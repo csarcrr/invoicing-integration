@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingCategoryException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
+use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -18,6 +19,7 @@ use function collect;
 
 class Find extends Item implements ShouldFindItem
 {
+    use HasConfig;
     use HasPaginator;
 
     /** @var Collection<string, mixed> */
@@ -70,6 +72,7 @@ class Find extends Item implements ShouldFindItem
     {
         $this->buildSearch();
         $this->buildCategory();
+        $this->buildVisibility();
         $this->buildPagination();
 
         return $this->payload;
@@ -101,6 +104,11 @@ class Find extends Item implements ShouldFindItem
         $categoryId = $this->data->category->id ?? throw new MissingCategoryException;
 
         $this->payload->put('category_id', $categoryId);
+    }
+
+    protected function buildVisibility(): void
+    {
+        $this->payload->put('with_invisible', 1);
     }
 
     protected function buildPagination(): void

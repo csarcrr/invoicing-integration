@@ -88,6 +88,7 @@ MOLONI_TAX_INTERMEDIATE_ID=
 MOLONI_TAX_REDUCED_ID=
 MOLONI_TAX_OTHER_ID=
 MOLONI_TAX_OTHER_RATE=0
+MOLONI_TAX_EXEMPT_ID=
 ```
 
 #### `MOLONI_DEVELOPER_ID`
@@ -120,7 +121,7 @@ Moloni measurement unit IDs, mapped to the values of the `Unit` enum (or any cus
 
 #### `MOLONI_TAX_*_ID`
 
-Moloni tax IDs, mapped to the values of the `ItemTax` enum. Each entry also holds the tax rate, which is used to convert the gross `price` of an item into the net price Moloni expects. Exempt items (`ItemTax::EXEMPT`) send no taxes and use `taxExemptionReason` instead. A missing mapping throws `CouldNotGetTaxIdException`.
+Moloni tax IDs, mapped to the values of the `ItemTax` enum. Each entry also holds the tax rate, which is used to convert the gross `price` of an item into the net price Moloni expects. Created and updated exempt items (`ItemTax::EXEMPT`) send the 0% tax set in `MOLONI_TAX_EXEMPT_ID`, together with `taxExemptionReason`. A missing mapping throws `CouldNotGetTaxIdException`.
 
 #### Payment methods
 
@@ -156,6 +157,7 @@ The published configuration file (`config/invoicing-integration.php`) includes a
         ItemTax::INTERMEDIATE->value => ['id' => env('MOLONI_TAX_INTERMEDIATE_ID', null), 'rate' => 13],
         ItemTax::REDUCED->value => ['id' => env('MOLONI_TAX_REDUCED_ID', null), 'rate' => 6],
         ItemTax::OTHER->value => ['id' => env('MOLONI_TAX_OTHER_ID', null), 'rate' => env('MOLONI_TAX_OTHER_RATE', 0)],
+        ItemTax::EXEMPT->value => ['id' => env('MOLONI_TAX_EXEMPT_ID', null), 'rate' => 0],
     ],
 ],
 ```

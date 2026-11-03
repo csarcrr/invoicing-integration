@@ -4,6 +4,33 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: `Item::update()` returns the updated item
+
+`Item::update()->execute()->getItem()` no longer returns the `ItemData` you passed. It returns the full updated item, mapped like `Item::get()`: from the response on Cegid Vendus, and from the current product with your fields merged over it on Moloni.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that expects the fields it did not set to be `null` after an update now reads the provider's values.
+
+See [Updating an Item](items/updating-an-item.md#return-value).
+
+### Changed: `ItemData` no longer has default values
+
+`ItemData` built without `quantity`, `type`, `controlStock` or `enabled` now reads `null` in those properties, instead of `1`, `ItemType::Product`, `true` and `true`. `controlStock` and `enabled` are now `?bool`. Provider payloads for item creation and invoices are unchanged.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that reads those properties from an `ItemData` it built must handle `null`.
+
+### Changed: items read `enabled` from the provider
+
+`Item::get()`, `Item::find()`, `Item::update()` and `Item::create()` return `enabled` from the provider instead of a fixed `true`: Cegid Vendus `status` (`on` is `true`, `off` is `false`) and Moloni `visibility_id` (`1` is `true`, `0` is `false`). Moloni create returns `true`. `enabled` is `null` when the provider sends neither field. The top-level `quantity` of a read item is now `null` instead of `1`.
+
+Moloni `get`, `find` and the `getOne` call of `update` send `with_invisible=1`, so products with `visibility_id` `0` are returned too. `update` sends the current `visibility_id` back, so a hidden product stays hidden.
+
+Moloni `Item::update()` now accepts `enabled` and sends it as `visibility_id`, instead of throwing `OperationNotSupportedException`. Moloni does not document this parameter; see [Updating an Item](items/updating-an-item.md#moloni-behaviour).
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that relied on read items always being `enabled` must handle `false` and `null`.
+
 ### Breaking: `UnsupportedQuantityException` moved
 
 `UnsupportedQuantityException` moved from `Exceptions\Invoice\Items` to `Exceptions\Items`, since it is now also thrown by `StockMovementData`.

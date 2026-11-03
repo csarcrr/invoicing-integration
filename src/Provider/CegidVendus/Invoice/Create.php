@@ -13,6 +13,7 @@ use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
@@ -283,17 +284,13 @@ class Create extends Invoice implements ShouldCreateInvoice
                 $data['gross_price'] = $item->price / 100;
             }
 
-            if ($item->quantity) {
-                $data['qty'] = $item->quantity;
-            }
+            $data['qty'] = $item->quantity ?? 1;
 
             if ($item->note) {
                 $data['note'] = $item->note;
             }
 
-            if ($item->type) {
-                $data['type_id'] = $item->type->vendus();
-            }
+            $data['type_id'] = ($item->type ?? ItemType::Product)->vendus();
 
             if ($item->percentageDiscount) {
                 $data['discount_percent'] = $item->percentageDiscount;

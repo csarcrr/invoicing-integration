@@ -7,6 +7,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
@@ -139,10 +140,12 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->first()->tax)->toBe(ItemTax::EXEMPT)
         ->and($list->first()->price)->toBe(2000)
         ->and($list->first()->controlStock)->toBeTrue()
+        ->and($list->first()->enabled)->toBeTrue()
         ->and($list->get(1)->type)->toBe(ItemType::Service)
         ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
         ->and($list->get(1)->price)->toBe(4500)
-        ->and($list->get(1)->controlStock)->toBeFalse();
+        ->and($list->get(1)->controlStock)->toBeFalse()
+        ->and($list->last()->enabled)->toBeFalse();
 });
 
 test('maps the moloni products onto the item list', function () {
@@ -160,8 +163,41 @@ test('maps the moloni products onto the item list', function () {
         ->and($list->first()->type)->toBe(ItemType::Product)
         ->and($list->first()->tax)->toBe(ItemTax::NORMAL)
         ->and($list->first()->price)->toBe(2460)
+        ->and($list->first()->enabled)->toBeTrue()
         ->and($list->last()->id)->toBe(1543)
         ->and($list->last()->type)->toBe(ItemType::Service)
         ->and($list->last()->tax)->toBeNull()
-        ->and($list->last()->price)->toBeNull();
+        ->and($list->last()->price)->toBeNull()
+        ->and($list->last()->enabled)->toBeFalse();
 });
+
+test('maps a moloni tax by its configured tax id when finding items', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    $response = fixtures()->response()->item()->files('response_multiple');
+    $response[0]['taxes'][0]['tax_id'] = 5;
+    $response[0]['taxes'][0]['tax']['tax_id'] = 5;
+    $response[0]['taxes'][0]['tax']['vat_type'] = '0';
+
+    Http::fake(mockResponse($response));
+
+    $results = Item::find($this->filters)->execute();
+
+    expect($results->getList()->first()->tax)->toBe(ItemTax::EXEMPT);
+});
+
+test('maps the tax exemption of exempt items when finding items', function (Provider $provider, string $fixtureName) {
+    $response = fixtures()->response()->item()->files($fixtureName);
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => $response[0] = [...$response[0], 'tax_id' => 'ISE', 'tax_exemption' => 'M01'],
+        Provider::MOLONI => $response[0] = [...$response[0], 'exemption_reason' => 'M01', 'taxes' => [[...$response[0]['taxes'][0], 'tax_id' => 5]]],
+    };
+
+    Http::fake(mockResponse($response));
+
+    $item = Item::find($this->filters)->execute()->getList()->first();
+
+    expect($item->tax)->toBe(ItemTax::EXEMPT)
+        ->and($item->taxExemptionReason)->toBe(TaxExemptionReason::M01);
+})->with('providers', ['response_multiple']);

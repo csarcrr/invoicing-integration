@@ -8,11 +8,13 @@ use CsarCrr\InvoicingIntegration\Actions\ItemAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindItem;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdateItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static ShouldCreateItem create(ItemData $item)
+ * @method static ShouldUpdateItem update(ItemData $item)
  * @method static ShouldGetItem get(ItemData $item)
  * @method static ShouldFindItem find(?ItemData $item = null)
  *

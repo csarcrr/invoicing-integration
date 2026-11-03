@@ -191,7 +191,7 @@ return [
             |
             | Maps each ItemTax enum value to its Moloni tax ID and rate (%).
             | The rate is used to convert gross prices into the net price
-            | Moloni expects. Exempt items (ISE) send no taxes.
+            | Moloni expects. Exempt items (ISE) send a 0% tax.
             |
             */
 
@@ -200,6 +200,7 @@ return [
                 ItemTax::INTERMEDIATE->value => ['id' => env('MOLONI_TAX_INTERMEDIATE_ID', null), 'rate' => 13],
                 ItemTax::REDUCED->value => ['id' => env('MOLONI_TAX_REDUCED_ID', null), 'rate' => 6],
                 ItemTax::OTHER->value => ['id' => env('MOLONI_TAX_OTHER_ID', null), 'rate' => env('MOLONI_TAX_OTHER_RATE', 0)],
+                ItemTax::EXEMPT->value => ['id' => env('MOLONI_TAX_EXEMPT_ID', null), 'rate' => 0],
             ],
 
         ],

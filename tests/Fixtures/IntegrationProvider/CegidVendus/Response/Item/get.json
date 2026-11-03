@@ -11,24 +11,17 @@
     "category_id": 1,
     "status": "on",
     "lot_control": "1",
-    "stock": {
-        "control": 1,
-        "type": "M",
-        "stores": [
-            {
-                "title": "Store 1",
-                "store_id": 1,
-                "product_variant_id": 0,
-                "stock": 40,
-                "alert": 5
-            },
-            {
-                "title": "Store 2",
-                "store_id": 2,
-                "product_variant_id": 0,
-                "stock": 2.5,
-                "alert": 0
-            }
-        ]
-    }
+    "stock": 0,
+    "stock_store": [
+        {
+            "store": "Store 1",
+            "store_id": 1,
+            "qty": 40
+        },
+        {
+            "store": "Store 2",
+            "store_id": 2,
+            "qty": 2.5
+        }
+    ]
 }
