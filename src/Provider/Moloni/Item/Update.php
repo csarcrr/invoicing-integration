@@ -11,7 +11,6 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Arr;
@@ -36,6 +35,7 @@ class Update extends Item implements ShouldUpdateItem
         'price',
         'unit_id',
         'has_stock',
+        'visibility_id',
         'minimum_stock',
         'pos_favorite',
         'at_product_category',
@@ -62,6 +62,7 @@ class Update extends Item implements ShouldUpdateItem
         'category',
         'unit',
         'controlStock',
+        'enabled',
     ];
 
     /** @var array<string, mixed> */
@@ -76,7 +77,6 @@ class Update extends Item implements ShouldUpdateItem
     /**
      * @throws CouldNotGetUnitIdException
      * @throws CouldNotGetTaxIdException
-     * @throws OperationNotSupportedException
      */
     public function execute(): self
     {
@@ -95,12 +95,10 @@ class Update extends Item implements ShouldUpdateItem
      *
      * @throws CouldNotGetUnitIdException
      * @throws CouldNotGetTaxIdException
-     * @throws OperationNotSupportedException
      */
     public function getPayload(): Collection
     {
         throw_if(! is_int($this->data->id), \InvalidArgumentException::class, 'Item ID is required.');
-        throw_if(! is_null($this->data->enabled), OperationNotSupportedException::class);
 
         $unitId = $this->unitId();
         $tax = $this->taxConfig($this->data->tax);
@@ -174,6 +172,7 @@ class Update extends Item implements ShouldUpdateItem
             'category_id' => $this->data->category?->id,
             'unit_id' => $unitId,
             'has_stock' => is_null($this->data->controlStock) ? null : (int) $this->data->controlStock,
+            'visibility_id' => is_null($this->data->enabled) ? null : (int) $this->data->enabled,
             'price' => $this->netPrice($current, $tax),
             'taxes' => $this->taxes($tax),
             'exemption_reason' => $this->exemptionReason(),

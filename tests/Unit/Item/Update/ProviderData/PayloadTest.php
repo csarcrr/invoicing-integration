@@ -9,7 +9,6 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException as VendusCouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException as MoloniCouldNotGetUnitIdException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
 
@@ -31,6 +30,7 @@ it('sends only the set fields and keeps the current values', function (Provider 
             'price' => 20,
             'unit_id' => 3,
             'has_stock' => 1,
+            'visibility_id' => 1,
             'exemption_reason' => '',
             'taxes' => [['tax_id' => 1, 'value' => 4.6, 'order' => 0, 'cumulative' => 0]],
         ]),
@@ -124,26 +124,19 @@ it('never sends the stock or the invoice line fields', function (Provider $provi
     expect($payload->keys()->intersect(['stock', 'warehouses', 'qty', 'note', 'discount']))->toBeEmpty();
 })->with('providers');
 
-it('sends the vendus status', function (bool $enabled, string $status) {
-    mockConfiguration(Provider::CEGID_VENDUS);
+it('sends the enabled state', function (Provider $provider, bool $enabled, string $vendusStatus, int $moloniVisibility) {
+    fakeItemUpdate($provider);
 
     $payload = Item::update(ItemData::make(['id' => 1542, 'enabled' => $enabled]))->getPayload();
 
-    expect($payload->get('status'))->toBe($status);
-})->with([
-    [true, 'on'],
-    [false, 'off'],
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('status'))->toBe($vendusStatus),
+        Provider::MOLONI => expect($payload->get('visibility_id'))->toBe($moloniVisibility),
+    };
+})->with('providers')->with([
+    [true, 'on', 1],
+    [false, 'off', 0],
 ]);
-
-it('fails on moloni when enabled is set, without any request', function (bool $enabled) {
-    mockConfiguration(Provider::MOLONI);
-    fakeItemUpdate(Provider::MOLONI);
-
-    expect(fn () => Item::update(ItemData::make(['id' => 1542, 'enabled' => $enabled]))->execute())
-        ->toThrow(OperationNotSupportedException::class);
-
-    Http::assertNothingSent();
-})->with([true, false]);
 
 it('does not send moloni read-only or nested fields', function () {
     mockConfiguration(Provider::MOLONI);
@@ -153,6 +146,20 @@ it('does not send moloni read-only or nested fields', function () {
 
     expect($payload->keys()->intersect(['category', 'image', 'stock', 'warehouses']))->toBeEmpty()
         ->and($payload->get('taxes')[0])->not->toHaveKeys(['tax', 'product_id']);
+});
+
+it('carries the moloni visibility so a hidden product stays hidden', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    $current = [...fixtures()->response()->item()->files('get'), 'visibility_id' => 0];
+
+    Http::fakeSequence()
+        ->pushResponse(mockResponse($current))
+        ->pushResponse(mockResponse(fixtures()->response()->item()->files('update')));
+
+    $payload = Item::update(ItemData::make(['id' => 1542, 'name' => 'New Title']))->getPayload();
+
+    expect($payload->get('visibility_id'))->toBe(0);
 });
 
 it('reduces the moloni suppliers and properties to their documented keys', function () {

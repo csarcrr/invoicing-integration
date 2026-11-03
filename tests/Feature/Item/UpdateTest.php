@@ -40,6 +40,15 @@ test('keeps the moloni gross price when only the tax changes', function () {
         ->and($data->price)->toBe(2460);
 });
 
+test('returns the moloni enabled state that was set', function () {
+    mockConfiguration(Provider::MOLONI);
+    fakeItemUpdate(Provider::MOLONI);
+
+    $data = Item::update(ItemData::make(['id' => 1542, 'enabled' => false]))->execute()->getItem();
+
+    expect($data->enabled)->toBeFalse();
+});
+
 test('clears the moloni exemption reason when the tax is no longer exempt', function () {
     mockConfiguration(Provider::MOLONI);
 

@@ -168,7 +168,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdate
 | `getItem()`    | `ItemData`   | The updated item. On Moloni, the current product with the updated fields merged over it              |
 | `getPayload()` | `Collection` | Inspect the payload. On Moloni this requests the current product first                               |
 
-Throws `InvalidArgumentException` when `id` is missing. On Moloni, throws `OperationNotSupportedException` when `enabled` is set.
+Throws `InvalidArgumentException` when `id` is missing.
 
 ---
 
