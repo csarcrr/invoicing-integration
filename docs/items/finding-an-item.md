@@ -96,9 +96,8 @@ $results = Item::find($filters)->execute();
 
 - With no search field set, a missing category id throws `MissingCategoryException`.
 - Each page holds up to 50 items.
-- A category listing sends `with_invisible=1`, so products with
-  `visibility_id` `0` are listed too, with `enabled` set to `false`. A search
-  does not send it, since `products/getBySearch` does not document it.
+- Both a search and a category listing send `with_invisible=1`, so products
+  with `visibility_id` `0` are listed too, with `enabled` set to `false`.
 - Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
   `reference`, `barcode`, `enabled`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
   return the category, description or stock control in the list, so those
