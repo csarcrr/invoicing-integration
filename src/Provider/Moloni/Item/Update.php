@@ -144,16 +144,17 @@ class Update extends Item implements ShouldUpdateItem
 
     /**
      * @param  array<string, mixed>  $current
-     * @return Collection<string, array<int, array<string, mixed>>>
+     * @return array<string, array<mixed>>
      */
-    protected function carriedLists(array $current): Collection
+    protected function carriedLists(array $current): array
     {
         return collect($this->carriedLists)
             ->filter(fn (array $keys, string $list): bool => isset($current[$list]))
             ->map(fn (array $keys, string $list): array => array_map(
                 fn (array $row): array => Arr::only($row, $keys),
                 $current[$list]
-            ));
+            ))
+            ->all();
     }
 
     /**
