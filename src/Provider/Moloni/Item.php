@@ -9,10 +9,29 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
+use Illuminate\Support\Facades\Http;
 
 abstract class Item extends BaseItem
 {
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    protected function getProduct(array $payload): array
+    {
+        $response = Http::provider()->post('products/getOne', $payload);
+
+        Http::handleUnwantedFailures($response);
+
+        $product = $response->json();
+
+        throw_if(empty($product), RequestFailedException::class, 'Item not found.');
+
+        return $product;
+    }
+
     /**
      * @param  array<string, mixed>  $item
      */

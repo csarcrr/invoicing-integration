@@ -155,6 +155,8 @@ try {
 }
 ```
 
+An unknown `id` throws `RequestFailedException` on both providers. Moloni answers an unknown `product_id` with an empty response instead of an error, so the package throws `RequestFailedException` with the message `Item not found.`
+
 For a full list of exceptions, see [Handling Errors](../handling-errors.md).
 
 ---

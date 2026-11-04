@@ -7,6 +7,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
 
@@ -272,3 +273,11 @@ test('ignores a tax exemption on an item that is not exempt', function (Provider
         ->and($data->taxExemptionReason)->toBeNull()
         ->and($data->taxExemptionLaw)->toBeNull();
 })->with('providers', ['get']);
+
+test('fails when moloni has no item with the id', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake(mockResponse([]));
+
+    Item::get(ItemData::make(['id' => 1]))->execute();
+})->throws(RequestFailedException::class);

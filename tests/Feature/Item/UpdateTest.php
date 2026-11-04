@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -81,3 +82,11 @@ test('sends the update to the provider', function (Provider $provider) {
         ],
     });
 })->with('providers');
+
+test('fails when moloni has no item to update with the id', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake(mockResponse([]));
+
+    Item::update(ItemData::make(['id' => 1, 'name' => 'New Title']))->execute();
+})->throws(RequestFailedException::class, 'Item not found.');
