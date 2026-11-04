@@ -60,6 +60,17 @@ test('maps the category and the stock control', function (Provider $provider, st
         ->and($data->controlStock)->toBeTrue();
 })->with('providers', ['get']);
 
+test('builds the category without an id when the provider sends no category id', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+    unset($response['category_id']);
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+
+    expect($data->category->id)->toBeNull();
+})->with('providers', ['get']);
+
 test('maps the unit by its configured unit id', function (Provider $provider, int $unitId, ?Unit $expected) {
     Http::fake(mockResponse([...fixtures()->response()->item()->files('get'), 'unit_id' => $unitId]));
 

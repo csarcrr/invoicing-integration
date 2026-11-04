@@ -143,6 +143,7 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->first()->price)->toBe(2000)
         ->and($list->first()->controlStock)->toBeTrue()
         ->and($list->first()->enabled)->toBeTrue()
+        ->and($list->first()->category->id)->toBe(0)
         ->and($list->get(1)->type)->toBe(ItemType::Service)
         ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
         ->and($list->get(1)->price)->toBe(4500)
