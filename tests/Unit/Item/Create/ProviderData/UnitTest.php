@@ -21,16 +21,3 @@ it('fails when unit is not found', function (Provider $provider) {
         'unit' => Unit::KG,
     ]))->getPayload())->toThrow($expectedException);
 })->with('providers');
-
-it('reads the unit of the created item', function (Provider $provider) {
-    fakeItemCreate($provider);
-
-    $item = Item::create(ItemData::make([
-        'name' => 'Item Title',
-        'category' => CategoryData::make(['id' => 1]),
-        'unit' => Unit::KG,
-    ]))->execute()->getItem();
-
-    expect($item->id)->toBeInt()
-        ->and($item->unit)->toBe(Unit::KG);
-})->with('providers');

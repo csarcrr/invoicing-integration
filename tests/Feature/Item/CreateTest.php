@@ -46,18 +46,8 @@ test('reads the created item from the provider', function (Provider $provider) {
         ->and($data->tax)->toBe(ItemTax::NORMAL)
         ->and($data->type)->toBe(ItemType::Product)
         ->and($data->unit)->toBe(Unit::KG)
-        ->and($data->controlStock)->toBeTrue();
-})->with('providers');
-
-test('reads the created item as enabled', function (Provider $provider) {
-    fakeItemCreate($provider);
-
-    $data = Item::create(ItemData::make([
-        'name' => 'Item Title',
-        'category' => CategoryData::make(['id' => 1]),
-    ]))->execute()->getItem();
-
-    expect($data->enabled)->toBeTrue();
+        ->and($data->controlStock)->toBeTrue()
+        ->and($data->enabled)->toBeTrue();
 })->with('providers');
 
 test('reads an item created as disabled', function (Provider $provider) {
