@@ -114,11 +114,7 @@ class Update extends Item implements ShouldUpdateItem
      */
     protected function currentProduct(): array
     {
-        $response = Http::provider()->post('products/getOne', ['product_id' => $this->data->id, 'with_invisible' => 1]);
-
-        Http::handleUnwantedFailures($response);
-
-        return $response->json();
+        return $this->getProduct(['product_id' => $this->data->id, 'with_invisible' => 1]);
     }
 
     /**

@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -13,18 +14,13 @@ test('returns the updated item', function (Provider $provider) {
 
     $data = Item::update(ItemData::make(['id' => 1542, 'name' => 'New Title']))->execute()->getItem();
 
-    [$name, $reference, $barcode, $price, $categoryId] = match ($provider) {
-        Provider::CEGID_VENDUS => ['Book XPTO', 'XBD001', 'P000000XBD001', 12300, 123],
-        Provider::MOLONI => ['New Title', 'reference-1', 'barcode-1', 2460, 1],
-    };
-
     expect($data->id)->toBe(1542)
-        ->and($data->name)->toBe($name)
-        ->and($data->reference)->toBe($reference)
-        ->and($data->barcode)->toBe($barcode)
-        ->and($data->price)->toBe($price)
+        ->and($data->name)->toBe('New Title')
+        ->and($data->reference)->toBe('reference-1')
+        ->and($data->barcode)->toBe('barcode-1')
+        ->and($data->price)->toBe(2460)
         ->and($data->tax)->toBe(ItemTax::NORMAL)
-        ->and($data->category->id)->toBe($categoryId)
+        ->and($data->category->id)->toBe(1)
         ->and($data->controlStock)->toBeTrue()
         ->and($data->enabled)->toBeTrue()
         ->and($data->getAdditionalData())->not->toBeEmpty();
@@ -86,3 +82,11 @@ test('sends the update to the provider', function (Provider $provider) {
         ],
     });
 })->with('providers');
+
+test('fails when moloni has no item to update with the id', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake(mockResponse([]));
+
+    Item::update(ItemData::make(['id' => 1, 'name' => 'New Title']))->execute();
+})->throws(RequestFailedException::class, 'Item not found.');

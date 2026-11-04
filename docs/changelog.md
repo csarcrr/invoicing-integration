@@ -4,6 +4,31 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus `Item::find()` lists disabled items and returns an empty list when nothing matches
+
+Cegid Vendus `Item::find()` sends `status=all`, so disabled items are listed too, with `enabled` set to `false`. Before, only enabled items were listed. A search that matches nothing (`404` with error code `A001`) returns an empty list instead of throwing `RequestFailedException` with `A001 - No data`. Any other `404` still throws. A `category` id on the filters is now sent as `category_id` and narrows the list; before, it was ignored.
+
+> [!WARNING]
+> This affects **Cegid Vendus**. Code that expects only enabled items from `find()` must filter on `enabled`. Code that catches `RequestFailedException` to detect an empty search must check for an empty list.
+
+See [Finding Items](items/finding-an-item.md#cegid-vendus).
+
+### Changed: `Item::create()` returns the created item
+
+`Item::create()->execute()->getItem()` no longer returns the `ItemData` you passed with the new `id`. It returns the created item, mapped like `Item::get()`: from the create response on Cegid Vendus, and from a `products/getOne` request after the insert on Moloni. Fields you did not set hold the provider's values, such as the generated `reference` and the default `tax` on Cegid Vendus. On Moloni, `taxExemptionLaw` is `null`.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that expects the fields it did not set to be `null` after a create now reads the provider's values.
+
+See [Creating an Item](items/creating-an-item.md#accessing-the-result).
+
+### Changed: read items map `unit`
+
+`Item::get()`, `Item::find()`, `Item::update()` and `Item::create()` set `unit` from the provider's `unit_id`, matched against the configured `units`. It is a `Unit` case, or `null` when no configured unit matches or the matching key is a custom unit. `unit_id` is no longer in `getAdditionalData()` on Moloni.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. A created item with a custom `ShouldBeUnit` reads back `unit` as `null`.
+
 ### Changed: `Item::update()` returns the updated item
 
 `Item::update()->execute()->getItem()` no longer returns the `ItemData` you passed. It returns the full updated item, mapped like `Item::get()`: from the response on Cegid Vendus, and from the current product with your fields merged over it on Moloni.
@@ -22,7 +47,7 @@ See [Updating an Item](items/updating-an-item.md#return-value).
 
 ### Changed: items read `enabled` from the provider
 
-`Item::get()`, `Item::find()`, `Item::update()` and `Item::create()` return `enabled` from the provider instead of a fixed `true`: Cegid Vendus `status` (`on` is `true`, `off` is `false`) and Moloni `visibility_id` (`1` is `true`, `0` is `false`). Moloni create returns `true`. `enabled` is `null` when the provider sends neither field. The top-level `quantity` of a read item is now `null` instead of `1`.
+`Item::get()`, `Item::find()`, `Item::update()` and `Item::create()` return `enabled` from the provider instead of a fixed `true`: Cegid Vendus `status` (`on` is `true`, `off` is `false`) and Moloni `visibility_id` (`1` is `true`, `0` is `false`). Moloni create sends `enabled` as `visibility_id`. `enabled` is `null` when the provider sends neither field. The top-level `quantity` of a read item is now `null` instead of `1`.
 
 Moloni `get`, `find` and the `getOne` call of `update` send `with_invisible=1`, so products with `visibility_id` `0` are returned too. `update` sends the current `visibility_id` back, so a hidden product stays hidden.
 

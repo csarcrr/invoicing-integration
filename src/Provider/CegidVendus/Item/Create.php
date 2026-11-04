@@ -49,9 +49,7 @@ class Create extends Item implements ShouldCreateItem
 
         $data = $response->json();
 
-        $this->data->id = $data['id'];
-        $this->data->enabled = $this->toEnabled($data['status'] ?? null);
-
+        $this->data = $this->toItemData($data['id'], $data);
         $this->fillAdditionalProperties($data);
 
         return $this;

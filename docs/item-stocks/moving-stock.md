@@ -64,6 +64,7 @@ The movement is sent to `products/stocks`:
 - `obs` is `Y-m-d H:i:s - notes` when both are set, otherwise whichever one is set. The date is not defaulted to the current time.
 - Without `warehouseId`, Vendus chooses the store; its API docs do not say which one.
 - Cegid Vendus returns no movement ID, so `id` stays `null`.
+- Decimal quantities, such as `2.5` for an item sold by the kg, are accepted. Cegid Vendus stores stock with 2 decimals, so `0.125` is stored as `0.13`.
 - The `reset` and `transfer` operation types are not supported.
 
 ## Error handling

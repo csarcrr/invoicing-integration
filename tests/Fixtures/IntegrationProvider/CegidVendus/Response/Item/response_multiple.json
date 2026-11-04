@@ -1,42 +1,149 @@
 [
     {
         "id": 1001,
-        "title": "Item Title",
+        "order": 0,
         "reference": "reference-1",
         "barcode": "barcode-1",
+        "supplier_code": "",
+        "title": "Item Title",
         "description": "Item Description",
-        "gross_price": 20.00,
+        "include_description": "",
+        "supply_price": "0.00",
+        "gross_price": "20.00",
+        "price_without_tax": "20.00",
+        "prices": [
+            {
+                "id": 1,
+                "price": "20.00",
+                "price_without_tax": "20.00"
+            }
+        ],
         "unit_id": 19999,
+        "class_name": "",
         "type_id": "P",
-        "stock_control": "1",
+        "compound": {
+            "stock": {
+                "stock": 1,
+                "store_id": 0,
+                "stock_alert": 0
+            }
+        },
+        "lot_control": 0,
+        "stock_control": 1,
+        "stock_type": "M",
         "tax_id": "ISE",
         "tax_exemption": "M40",
-        "status": "on"
+        "tax_exemption_law": "",
+        "category_id": 0,
+        "brand_id": 0,
+        "status": "on",
+        "stock": 42.5,
+        "stock_store": [
+            {
+                "store": "Store 1",
+                "store_id": 1,
+                "qty": 40
+            },
+            {
+                "store": "Store 2",
+                "store_id": 2,
+                "qty": 2.5
+            }
+        ],
+        "stock_alert": 0,
+        "stores": {
+            "store": "",
+            "store_id": 0
+        }
     },
     {
         "id": 1002,
-        "title": "Another Item",
+        "order": 0,
         "reference": "reference-2",
         "barcode": "barcode-2",
+        "supplier_code": "",
+        "title": "Another Item",
         "description": "Another Description",
-        "gross_price": 45.00,
-        "unit_id": 19999,
+        "include_description": "",
+        "supply_price": "0.00",
+        "gross_price": "45.00",
+        "price_without_tax": "36.59",
+        "prices": [
+            {
+                "id": 1,
+                "price": "45.00",
+                "price_without_tax": "36.59"
+            }
+        ],
+        "unit_id": 29999,
+        "class_name": "",
         "type_id": "S",
-        "stock_control": "0",
+        "compound": {
+            "stock": {
+                "stock": 1,
+                "store_id": 0,
+                "stock_alert": 0
+            }
+        },
+        "lot_control": 0,
+        "stock_control": 0,
+        "stock_type": "M",
         "tax_id": "NOR",
-        "status": "on"
+        "tax_exemption": "",
+        "tax_exemption_law": "",
+        "category_id": 0,
+        "brand_id": 0,
+        "status": "on",
+        "stock": 0,
+        "stock_alert": 0,
+        "stores": {
+            "store": "",
+            "store_id": 0
+        }
     },
     {
         "id": 1003,
-        "title": "Third Item",
+        "order": 0,
         "reference": "reference-3",
         "barcode": "barcode-3",
+        "supplier_code": "",
+        "title": "Third Item",
         "description": "Third Description",
-        "gross_price": 10.50,
-        "unit_id": 19999,
+        "include_description": "",
+        "supply_price": "0.00",
+        "gross_price": "10.50",
+        "price_without_tax": "9.29",
+        "prices": [
+            {
+                "id": 1,
+                "price": "10.50",
+                "price_without_tax": "9.29"
+            }
+        ],
+        "unit_id": 29999,
+        "class_name": "",
         "type_id": "P",
-        "stock_control": "1",
+        "compound": {
+            "stock": {
+                "stock": 1,
+                "store_id": 0,
+                "stock_alert": 0
+            }
+        },
+        "lot_control": 0,
+        "stock_control": 1,
+        "stock_type": "M",
         "tax_id": "INT",
-        "status": "off"
+        "tax_exemption": "",
+        "tax_exemption_law": "",
+        "category_id": 0,
+        "brand_id": 0,
+        "status": "off",
+        "stock": 0,
+        "stock_alert": 0,
+        "stores": {
+            "store": "",
+            "store_id": 0
+        }
     }
 ]

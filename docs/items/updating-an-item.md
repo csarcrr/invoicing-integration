@@ -62,7 +62,7 @@ An unmapped `unit` throws `CouldNotGetUnitIdException`.
 
 ## Moloni behaviour
 
-Moloni only replaces whole products, so an update makes two requests: `products/getOne` with `with_invisible=1`, then `products/update` with your fields merged over the current values. Stock and warehouses are not sent.
+Moloni only replaces whole products, so an update makes two requests: `products/getOne` with `with_invisible=1`, then `products/update` with your fields merged over the current values. Stock and warehouses are not sent. Moloni answers an unknown `product_id` with an empty response, so the package throws `RequestFailedException` with the message `Item not found.` and sends no update.
 
 - **`enabled`:** sent as `visibility_id`, `1` for `true` and `0` for `false`. When `enabled` is not set, the current `visibility_id` is sent back unchanged, so a hidden product stays hidden.
 

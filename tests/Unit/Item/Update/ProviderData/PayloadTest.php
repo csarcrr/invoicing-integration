@@ -28,11 +28,16 @@ it('sends only the set fields and keeps the current values', function (Provider 
             'reference' => 'reference-1',
             'ean' => 'barcode-1',
             'price' => 20,
-            'unit_id' => 3,
+            'unit_id' => 19999,
             'has_stock' => 1,
             'visibility_id' => 1,
+            'minimum_stock' => 0,
+            'pos_favorite' => 0,
+            'at_product_category' => '',
             'exemption_reason' => '',
             'taxes' => [['tax_id' => 1, 'value' => 4.6, 'order' => 0, 'cumulative' => 0]],
+            'suppliers' => [],
+            'properties' => [],
         ]),
     };
 })->with('providers');
@@ -48,7 +53,7 @@ it('maps each set field to the provider field', function (Provider $provider) {
         'barcode' => 'new-barcode',
         'type' => ItemType::Service,
         'category' => CategoryData::make(['id' => 5]),
-        'unit' => Unit::KG,
+        'unit' => Unit::UNIT,
     ]))->getPayload();
 
     match ($provider) {
@@ -59,7 +64,7 @@ it('maps each set field to the provider field', function (Provider $provider) {
             'barcode' => 'new-barcode',
             'type_id' => 'S',
             'category_id' => 5,
-            'unit_id' => 19999,
+            'unit_id' => 29999,
         ]),
         Provider::MOLONI => expect($payload->toArray())->toMatchArray([
             'product_id' => 1542,
@@ -69,7 +74,7 @@ it('maps each set field to the provider field', function (Provider $provider) {
             'ean' => 'new-barcode',
             'type' => 2,
             'category_id' => 5,
-            'unit_id' => 19999,
+            'unit_id' => 29999,
         ]),
     };
 })->with('providers');

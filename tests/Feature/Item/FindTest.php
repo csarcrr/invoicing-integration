@@ -9,6 +9,8 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
@@ -141,6 +143,7 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->first()->price)->toBe(2000)
         ->and($list->first()->controlStock)->toBeTrue()
         ->and($list->first()->enabled)->toBeTrue()
+        ->and($list->first()->category->id)->toBe(0)
         ->and($list->get(1)->type)->toBe(ItemType::Service)
         ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
         ->and($list->get(1)->price)->toBe(4500)
@@ -164,7 +167,11 @@ test('maps the moloni products onto the item list', function () {
         ->and($list->first()->tax)->toBe(ItemTax::NORMAL)
         ->and($list->first()->price)->toBe(2460)
         ->and($list->first()->enabled)->toBeTrue()
+        ->and($list->first()->description)->toBe('Over-ear headphones with noise cancelling.')
+        ->and($list->first()->category->id)->toBe(1)
+        ->and($list->first()->controlStock)->toBeTrue()
         ->and($list->last()->id)->toBe(1543)
+        ->and($list->last()->controlStock)->toBeFalse()
         ->and($list->last()->type)->toBe(ItemType::Service)
         ->and($list->last()->tax)->toBeNull()
         ->and($list->last()->price)->toBeNull()
@@ -201,3 +208,34 @@ test('maps the tax exemption of exempt items when finding items', function (Prov
     expect($item->tax)->toBe(ItemTax::EXEMPT)
         ->and($item->taxExemptionReason)->toBe(TaxExemptionReason::M01);
 })->with('providers', ['response_multiple']);
+
+test('returns an empty list when cegid vendus finds no items', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
+
+    $results = Item::find(ItemData::make(['reference' => 'missing']))->execute();
+
+    expect($results->getList())->toBeEmpty();
+});
+
+test('fails when cegid vendus answers 404 with an error other than no data', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    Http::fake(mockResponse(['errors' => [['code' => 'A002', 'message' => 'Not found']]], 404));
+
+    Item::find(ItemData::make(['reference' => 'missing']))->execute();
+})->throws(RequestFailedException::class);
+
+test('keeps the cegid vendus total pages when a page request fails', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    Http::fakeSequence()
+        ->push([], 200, $this->headers)
+        ->push([], 500);
+
+    $results = Item::find($this->filters)->execute();
+
+    expect(fn () => $results->next()->execute())->toThrow(FailedReachingProviderException::class)
+        ->and($results->getTotalPages())->toBe(5);
+});

@@ -1,115 +1,56 @@
 {
     "id": 1542,
-    "order": "1",
-    "reference": "XBD001",
-    "barcode": "P000000XBD001",
-    "supplier_code": "AHSG102X",
-    "title": "Book XPTO",
-    "description": "Book XPTO 2006 Edition",
-    "include_description": "no",
-    "supply_price": "10.12",
-    "gross_price": "123.00",
-    "price_without_tax": "100.00",
+    "order": 0,
+    "reference": "reference-1",
+    "barcode": "barcode-1",
+    "supplier_code": "",
+    "title": "New Title",
+    "description": "A small product description used for testing purposes.",
+    "include_description": "",
+    "supply_price": "0.00",
+    "gross_price": "24.60",
+    "price_without_tax": "20.00",
     "prices": [
         {
-            "id": "1234",
-            "price": "123.00",
-            "price_without_tax": "100.00"
+            "id": 1,
+            "price": "24.60",
+            "price_without_tax": "20.00"
         }
     ],
-    "unit_id": "123",
-    "class_name": "Alimentar",
-    "type_id": "N",
-    "compound": [
-        {
-            "id": "id",
-            "title": "title",
-            "gross_price": "gross_price",
-            "type": "type",
-            "stock": [
-                {
-                    "stock": "stock",
-                    "store_id": "store_id",
-                    "stock_alert": "stock_alert"
-                }
-            ]
-        }
-    ],
-    "lot_control": "1",
-    "stock_control": "1",
+    "unit_id": 19999,
+    "class_name": "",
+    "type_id": "P",
+    "lot_control": 0,
+    "stock_control": 1,
     "stock_type": "M",
     "tax_id": "NOR",
-    "tax_exemption": "M40",
-    "tax_exemption_law": "Artigo 13.º do CIVA",
-    "category_id": "123",
-    "brand_id": "123",
+    "tax_exemption": "",
+    "tax_exemption_law": "",
+    "category_id": 1,
+    "brand_id": 0,
     "status": "on",
-    "stock": "on",
+    "stock": 0,
     "stock_store": [
         {
-            "store": "Loja Principal",
-            "store_id": 1234,
-            "qty": 22,
-            "alert": 3
-        }
-    ],
-    "stock_alert": "on",
-    "variant_id": "1234",
-    "variants": [
+            "store": "Store 1",
+            "store_id": 1,
+            "qty": 40
+        },
         {
-            "variant": {
-                "id": "1234",
-                "title": "title",
-                "code": "code"
-            },
-            "product_variants": [
-                {
-                    "id": "1234",
-                    "text": "Black / XS",
-                    "barcode": "barcode",
-                    "code": "code",
-                    "price": "price",
-                    "composite_ids": [
-                        {}
-                    ],
-                    "stock": [
-                        {
-                            "store_id": 123,
-                            "qty": "qty"
-                        }
-                    ]
-                }
-            ]
+            "store": "Store 2",
+            "store_id": 2,
+            "qty": 2.5
         }
     ],
-    "images": {
-        "xs": "/foto/b906f77_xs.png",
-        "m": "/foto/b906f77_m.png"
-    },
+    "stock_alert": 0,
     "stores": [
         {
-            "store": "Loja Principal",
-            "store_id": "1234"
-        }
-    ],
-    "modifiers": [
+            "store": "Store 1",
+            "store_id": 1
+        },
         {
-            "id": "id",
-            "title": "title",
-            "min": "min",
-            "max": "max",
-            "options": [
-                {}
-            ]
-        }
-    ],
-    "lots": [
-        {
-            "id": "1234",
-            "title": "012-10002",
-            "status": "active",
-            "expiration_date": "2023-01-01",
-            "barcode": "1234567890"
+            "store": "Store 2",
+            "store_id": 2
         }
     ]
 }

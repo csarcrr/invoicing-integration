@@ -7,8 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreateItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
-use CsarCrr\InvoicingIntegration\Enums\Property;
-use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingCategoryException;
@@ -31,7 +29,6 @@ class Create extends Item implements ShouldCreateItem
     {
         $this->data = $item;
         $this->payload = collect();
-        $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
     }
 
     /**
@@ -45,12 +42,10 @@ class Create extends Item implements ShouldCreateItem
 
         Http::handleUnwantedFailures($response);
 
-        $data = $response->json();
-
-        $this->data->id = $data['product_id'];
-        $this->data->enabled = true;
-
-        $this->fillAdditionalProperties($data);
+        $this->data = (new Get(ItemData::make(['id' => $response->json('product_id')])))
+            ->config($this->getConfig())
+            ->execute()
+            ->getItem();
 
         return $this;
     }
@@ -72,6 +67,7 @@ class Create extends Item implements ShouldCreateItem
         $this->buildCategory();
         $this->buildUnit();
         $this->buildStock();
+        $this->buildEnabled();
         $this->buildTax();
         $this->buildExemptionReason();
         $this->buildPrice();
@@ -144,6 +140,11 @@ class Create extends Item implements ShouldCreateItem
     {
         $this->payload->put('has_stock', ($this->data->controlStock ?? true) ? 1 : 0);
         $this->payload->put('stock', 0);
+    }
+
+    protected function buildEnabled(): void
+    {
+        $this->payload->put('visibility_id', (int) ($this->data->enabled ?? true));
     }
 
     /**

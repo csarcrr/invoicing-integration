@@ -1,39 +1,42 @@
 {
+    "ean": "barcode-1",
+    "stock": 42.5,
+    "created": "2026-11-03T22:44:08+0000",
     "product_id": 1542,
+    "visibility_id": 1,
+    "company_id": 123456,
     "category_id": 1,
     "type": 1,
     "name": "Item Title",
     "summary": "A small product description used for testing purposes.",
+    "notes": "",
     "reference": "reference-1",
-    "ean": "barcode-1",
     "price": 20,
-    "unit_id": 3,
+    "unit_id": 19999,
     "has_stock": 1,
-    "visibility_id": 1,
-    "stock": 42,
-    "warehouses": [
-        {
-            "product_id": 1542,
-            "warehouse_id": 1,
-            "stock": 40
-        },
-        {
-            "product_id": 1542,
-            "warehouse_id": 2,
-            "stock": 2.5
-        }
-    ],
+    "minimum_stock": 0,
     "image": "https://example.com/images/products/headphones.jpg",
     "exemption_reason": "",
+    "pos_favorite": 0,
+    "at_product_category": "",
+    "composition_type": 0,
+    "warehouse_id": 0,
     "category": {
         "category_id": 1,
-        "parent_id": 2,
+        "parent_id": 0,
         "name": "Audio Equipment",
-        "summary": "Speakers, headphones, microphones and other audio accessories.",
-        "image": "https://example.com/images/categories/audio-equipment.jpg"
+        "description": "",
+        "image": ""
     },
+    "measurement_unit": {
+        "unit_id": 19999,
+        "name": "Quilograma",
+        "short_name": "Kg"
+    },
+    "suppliers": [],
     "taxes": [
         {
+            "product_tax_id": 9001,
             "product_id": 1542,
             "tax_id": 1,
             "value": 4.6,
@@ -52,5 +55,22 @@
                 "exemption_reason": ""
             }
         }
-    ]
+    ],
+    "properties": [],
+    "price_classes": [],
+    "warehouses": [
+        {
+            "product_id": 1542,
+            "warehouse_id": 1,
+            "stock": 40,
+            "minimum_stock": 0
+        },
+        {
+            "product_id": 1542,
+            "warehouse_id": 2,
+            "stock": 2.5,
+            "minimum_stock": 0
+        }
+    ],
+    "child_products": []
 }

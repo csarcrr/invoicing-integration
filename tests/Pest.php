@@ -149,6 +149,19 @@ function fakeItemUpdate(Provider $provider, string $currentFixture = 'get'): voi
         ->pushResponse($update);
 }
 
+function fakeItemCreate(Provider $provider, array $changes = []): void
+{
+    if ($provider === Provider::CEGID_VENDUS) {
+        Http::fake(mockResponse([...fixtures()->response()->item()->files('create'), ...$changes]));
+
+        return;
+    }
+
+    Http::fakeSequence()
+        ->pushResponse(mockResponse(fixtures()->response()->item()->files('create')))
+        ->pushResponse(mockResponse([...fixtures()->response()->item()->files('get'), ...$changes]));
+}
+
 function mockResponse(
     $jsonFixture,
     $status = 200,

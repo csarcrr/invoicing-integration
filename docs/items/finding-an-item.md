@@ -62,15 +62,43 @@ combines them):
 | `name`      | `?string` | Product name              |
 | `reference` | `?string` | Product SKU / code        |
 | `barcode`   | `?string` | EAN or barcode identifier |
+| `category`  | `?CategoryData` | Category to list; see each provider below |
 
 > [!NOTE]
 > Cegid Vendus maps `name` to the `title` query parameter internally. This is
 > handled transparently by the package — pass `name` on `ItemData` as usual.
 
+## Cegid Vendus
+
+Cegid Vendus sends every filter you set, so several fields narrow the search
+together.
+
+- `name`, `reference` and `barcode` match the whole value only. A partial value
+  finds nothing.
+- A `category` id is sent as `category_id` and narrows the list to that
+  category. Without one, all categories are listed.
+- The request sends `status=all`, so disabled items are listed too, with
+  `enabled` set to `false`.
+- When nothing matches, Cegid Vendus answers `404` with error code `A001`
+  (`No data`). The package returns an empty list instead of throwing. Any
+  other `404` throws.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\CategoryData;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Facades\Item;
+
+$filters = ItemData::make([
+    'reference' => 'WGT-001',
+    'category' => CategoryData::make(['id' => 12]),
+]);
+$results = Item::find($filters)->execute();
+```
+
 ## Moloni
 
-Moloni searches all products when you set `name`, `reference` or `barcode`.
-Moloni accepts one search term only. When you set several fields, the package
+Moloni searches all products when you set `name`, `reference` or `barcode`,
+and matches part of the value. Moloni accepts one search term only. When you set several fields, the package
 sends the first one set, in this order: `barcode`, `reference`, `name`. A
 search needs no category.
 
@@ -98,10 +126,14 @@ $results = Item::find($filters)->execute();
 - Each page holds up to 50 items.
 - Both a search and a category listing send `with_invisible=1`, so products
   with `visibility_id` `0` are listed too, with `enabled` set to `false`.
-- Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
-  `reference`, `barcode`, `enabled`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
-  return the category, description or stock control in the list, so those
-  fields keep their defaults.
+- Each item is mapped like [`Item::get()`](getting-an-item.md), including the
+  category, description, stock control and stock.
+- When nothing matches, the list is empty.
+
+> [!WARNING]
+> Moloni documents `with_invisible` for `products/getAll` but not for
+> `products/getBySearch`. The package sends it to both because it works on
+> both: without it, a search leaves out hidden products.
 
 ## Pagination API
 

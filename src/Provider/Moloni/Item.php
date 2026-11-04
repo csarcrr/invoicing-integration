@@ -9,15 +9,28 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 
 abstract class Item extends BaseItem
 {
     /**
-     * @return Collection<string, mixed>
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
      */
-    abstract public function getConfig(): Collection;
+    protected function getProduct(array $payload): array
+    {
+        $response = Http::provider()->post('products/getOne', $payload);
+
+        Http::handleUnwantedFailures($response);
+
+        $product = $response->json();
+
+        throw_if(empty($product), RequestFailedException::class, 'Item not found.');
+
+        return $product;
+    }
 
     /**
      * @param  array<string, mixed>  $item
@@ -34,6 +47,7 @@ abstract class Item extends BaseItem
             'reference' => $item['reference'] ?? null,
             'barcode' => $item['ean'] ?? null,
             'category' => CategoryData::make(['id' => $item['category_id'] ?? null]),
+            'unit' => $this->toUnit($item['unit_id'] ?? null),
             'controlStock' => (bool) ($item['has_stock'] ?? true),
             'enabled' => match ($item['visibility_id'] ?? null) {
                 1 => true,
