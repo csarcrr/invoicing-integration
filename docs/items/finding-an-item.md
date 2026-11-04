@@ -69,8 +69,8 @@ combines them):
 
 ## Moloni
 
-Moloni searches all products when you set `name`, `reference` or `barcode`.
-Moloni accepts one search term only. When you set several fields, the package
+Moloni searches all products when you set `name`, `reference` or `barcode`,
+and matches part of the value. Moloni accepts one search term only. When you set several fields, the package
 sends the first one set, in this order: `barcode`, `reference`, `name`. A
 search needs no category.
 
@@ -98,10 +98,14 @@ $results = Item::find($filters)->execute();
 - Each page holds up to 50 items.
 - Both a search and a category listing send `with_invisible=1`, so products
   with `visibility_id` `0` are listed too, with `enabled` set to `false`.
-- Each item is mapped like [`Item::get()`](getting-an-item.md): `id`, `name`,
-  `reference`, `barcode`, `enabled`, `unit`, `type`, `tax`, `taxExemptionReason` and the gross `price`. Moloni does not
-  return the category, description or stock control in the list, so those
-  fields keep their defaults.
+- Each item is mapped like [`Item::get()`](getting-an-item.md), including the
+  category, description, stock control and stock.
+- When nothing matches, the list is empty.
+
+> [!WARNING]
+> Moloni documents `with_invisible` for `products/getAll` but not for
+> `products/getBySearch`. The package sends it to both because it works on
+> both: without it, a search leaves out hidden products.
 
 ## Pagination API
 

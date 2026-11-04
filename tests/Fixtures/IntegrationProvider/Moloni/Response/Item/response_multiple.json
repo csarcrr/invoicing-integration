@@ -1,24 +1,43 @@
 [
     {
+        "ean": "5601234567890",
+        "stock": 42,
+        "created": "2026-11-03T22:44:08+0000",
         "product_id": 1542,
+        "visibility_id": 1,
+        "company_id": 123456,
+        "category_id": 1,
         "type": 1,
         "name": "Wireless Bluetooth Headphones",
+        "summary": "Over-ear headphones with noise cancelling.",
+        "notes": "",
         "reference": "WBH-2026-BLK",
-        "ean": "5601234567890",
         "price": 20,
-        "visibility_id": 1,
-        "stock": 42,
         "unit_id": 3,
+        "has_stock": 1,
+        "minimum_stock": 0,
+        "image": "https://example.com/images/products/headphones.jpg",
+        "exemption_reason": "",
         "pos_favorite": 0,
         "at_product_category": "M",
-        "image": "https://example.com/images/products/headphones.jpg",
+        "composition_type": 0,
+        "warehouse_id": 0,
+        "category": {
+            "category_id": 1,
+            "parent_id": 0,
+            "name": "Audio Equipment",
+            "description": "",
+            "image": ""
+        },
         "measurement_unit": {
             "unit_id": 3,
             "name": "Unidade",
-            "short_name": "Un"
+            "short_name": "Uni."
         },
+        "suppliers": [],
         "taxes": [
             {
+                "product_tax_id": 9001,
                 "product_id": 1542,
                 "tax_id": 1,
                 "value": 4.6,
@@ -40,29 +59,49 @@
         ],
         "properties": [],
         "price_classes": [],
-        "warehouses": []
+        "warehouses": [],
+        "child_products": []
     },
     {
+        "ean": "",
+        "stock": 0,
+        "created": "2026-11-03T22:44:08+0000",
         "product_id": 1543,
+        "visibility_id": 0,
+        "company_id": 123456,
+        "category_id": 1,
         "type": 2,
         "name": "Installation Service",
+        "summary": "",
+        "notes": "",
         "reference": "SRV-INSTALL",
-        "ean": "",
         "price": 50,
-        "visibility_id": 0,
-        "stock": 0,
         "unit_id": 3,
+        "has_stock": 0,
+        "minimum_stock": 0,
+        "image": "",
+        "exemption_reason": "",
         "pos_favorite": 0,
         "at_product_category": "S",
-        "image": "",
+        "composition_type": 0,
+        "warehouse_id": 0,
+        "category": {
+            "category_id": 1,
+            "parent_id": 0,
+            "name": "Audio Equipment",
+            "description": "",
+            "image": ""
+        },
         "measurement_unit": {
             "unit_id": 3,
             "name": "Unidade",
-            "short_name": "Un"
+            "short_name": "Uni."
         },
+        "suppliers": [],
         "taxes": [],
         "properties": [],
         "price_classes": [],
-        "warehouses": []
+        "warehouses": [],
+        "child_products": []
     }
 ]

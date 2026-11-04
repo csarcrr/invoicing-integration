@@ -31,8 +31,13 @@ it('sends only the set fields and keeps the current values', function (Provider 
             'unit_id' => 19999,
             'has_stock' => 1,
             'visibility_id' => 1,
+            'minimum_stock' => 0,
+            'pos_favorite' => 0,
+            'at_product_category' => '',
             'exemption_reason' => '',
             'taxes' => [['tax_id' => 1, 'value' => 4.6, 'order' => 0, 'cumulative' => 0]],
+            'suppliers' => [],
+            'properties' => [],
         ]),
     };
 })->with('providers');
