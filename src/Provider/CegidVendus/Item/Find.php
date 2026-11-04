@@ -45,10 +45,14 @@ class Find extends Item implements ShouldFindItem
     {
         $request = Http::provider()->get('/products/', $this->getPayload());
 
-        Http::handleUnwantedFailures($request);
+        $hasNoData = $this->hasNoData($request);
+
+        if (! $hasNoData) {
+            Http::handleUnwantedFailures($request);
+        }
 
         $this->updatePaginationDetails($request);
-        $this->updateResults($request->json());
+        $this->updateResults($hasNoData ? [] : $request->json());
 
         return $this;
     }
@@ -71,6 +75,8 @@ class Find extends Item implements ShouldFindItem
         $this->buildName();
         $this->buildReference();
         $this->buildBarcode();
+        $this->buildCategory();
+        $this->buildStatus();
 
         return $this->payload;
     }
@@ -93,6 +99,24 @@ class Find extends Item implements ShouldFindItem
     private function buildBarcode(): void
     {
         is_string($this->data->barcode) && $this->payload->put('barcode', $this->data->barcode);
+    }
+
+    private function buildCategory(): void
+    {
+        $categoryId = $this->data->category?->id;
+
+        ! is_null($categoryId) && $this->payload->put('category_id', $categoryId);
+    }
+
+    private function buildStatus(): void
+    {
+        $this->payload->put('status', 'all');
+    }
+
+    protected function hasNoData(Response $response): bool
+    {
+        return $response->notFound()
+            && collect($response->json('errors', []))->contains('code', 'A001');
     }
 
     protected function updatePaginationDetails(Response $results): void

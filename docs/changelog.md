@@ -4,6 +4,15 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus `Item::find()` lists disabled items and returns an empty list when nothing matches
+
+Cegid Vendus `Item::find()` sends `status=all`, so disabled items are listed too, with `enabled` set to `false`. Before, only enabled items were listed. A search that matches nothing (`404` with error code `A001`) returns an empty list instead of throwing `RequestFailedException` with `A001 - No data`. Any other `404` still throws. A `category` id on the filters is now sent as `category_id` and narrows the list; before, it was ignored.
+
+> [!WARNING]
+> This affects **Cegid Vendus**. Code that expects only enabled items from `find()` must filter on `enabled`. Code that catches `RequestFailedException` to detect an empty search must check for an empty list.
+
+See [Finding Items](items/finding-an-item.md#cegid-vendus).
+
 ### Changed: `Item::create()` returns the created item
 
 `Item::create()->execute()->getItem()` no longer returns the `ItemData` you passed with the new `id`. It returns the created item, mapped like `Item::get()`: from the create response on Cegid Vendus, and from a `products/getOne` request after the insert on Moloni. Fields you did not set hold the provider's values, such as the generated `reference` and the default `tax` on Cegid Vendus. On Moloni, `taxExemptionLaw` is `null`.
