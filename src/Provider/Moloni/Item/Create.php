@@ -144,7 +144,7 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildEnabled(): void
     {
-        $this->payload->put('visibility_id', ($this->data->enabled ?? true) ? 1 : 0);
+        $this->payload->put('visibility_id', (int) ($this->data->enabled ?? true));
     }
 
     /**

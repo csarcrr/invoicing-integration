@@ -45,14 +45,17 @@ class Find extends Item implements ShouldFindItem
     {
         $request = Http::provider()->get('/products/', $this->getPayload());
 
-        $hasNoData = $this->hasNoData($request);
+        if ($this->hasNoData($request)) {
+            $this->updatePaginationDetails($request);
+            $this->updateResults([]);
 
-        if (! $hasNoData) {
-            Http::handleUnwantedFailures($request);
+            return $this;
         }
 
+        Http::handleUnwantedFailures($request);
+
         $this->updatePaginationDetails($request);
-        $this->updateResults($hasNoData ? [] : $request->json());
+        $this->updateResults($request->json());
 
         return $this;
     }
@@ -113,7 +116,7 @@ class Find extends Item implements ShouldFindItem
         $this->payload->put('status', 'all');
     }
 
-    protected function hasNoData(Response $response): bool
+    private function hasNoData(Response $response): bool
     {
         return $response->notFound()
             && collect($response->json('errors', []))->contains('code', 'A001');
