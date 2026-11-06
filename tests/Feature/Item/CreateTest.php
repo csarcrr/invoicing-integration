@@ -7,6 +7,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -129,3 +130,26 @@ test('reads the created moloni item back with getOne', function () {
         && Str::contains($request->body(), 'product_id=1542')
         && Str::contains($request->body(), 'with_invisible=1'));
 });
+
+test('fails when the provider rejects the item', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse([
+            'errors' => [
+                ['code' => 'P003', 'message' => 'Param unit_id is required for this action. Please add it.'],
+            ],
+        ], 400),
+        Provider::MOLONI => mockResponse([
+            ['code' => '1 exemption_reason', 'description' => "Field 'exemption_reason' is required"],
+        ]),
+    });
+
+    expect(fn () => Item::create(ItemData::make([
+        'name' => 'Item Title',
+        'reference' => 'reference-1',
+        'category' => CategoryData::make(['id' => 1]),
+        'price' => 2000,
+    ]))->execute())->toThrow(RequestFailedException::class, match ($provider) {
+        Provider::CEGID_VENDUS => 'P003 - Param unit_id is required for this action. Please add it.',
+        Provider::MOLONI => "1 exemption_reason - Field 'exemption_reason' is required",
+    });
+})->with('providers');
