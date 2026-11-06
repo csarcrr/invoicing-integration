@@ -49,7 +49,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
-        'vat' => 'PT987654321',
+        'vat' => '987654321',
         'email' => 'ana.rodrigues@email.pt',
         'address' => 'Rua do Comércio, 88',
         'city' => 'Porto',
@@ -315,7 +315,7 @@ $transport = TransportData::make([
 $invoiceData = InvoiceData::make([
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
-        'vat' => 'PT987654321',
+        'vat' => '987654321',
     ]),
     'transport' => $transport,
 ]);
@@ -388,7 +388,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Carlos Ferreira',
-        'vat' => 'PT567890123',
+        'vat' => '567890123',
         'email' => 'carlos@empresa.pt',
         'address' => 'Av. da República, 200',
         'city' => 'Lisboa',

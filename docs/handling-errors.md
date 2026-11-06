@@ -168,7 +168,7 @@ $client = ClientData::make([
 // Right: either provide VAT or don't set client
 $client = ClientData::make([
     'name' => 'TechStore',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
 ]);
 // Or for final consumer, leave the 'client' field unset on InvoiceData
 ```

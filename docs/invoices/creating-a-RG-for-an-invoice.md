@@ -67,7 +67,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
     'client' => ClientData::make([
         'name' => 'TechStore Portugal Lda',
-        'vat' => 'PT509876543',
+        'vat' => '509876543',
         'email' => 'accounts@techstore.pt',
     ]),
     'items' => [

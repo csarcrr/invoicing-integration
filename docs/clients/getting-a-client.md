@@ -29,7 +29,7 @@ Example payload:
 {
     "id": 12345,
     "name": "John Doe",
-    "vat": "PT123456789",
+    "vat": "123456789",
     "email": "john@example.com"
 }
 ```
@@ -107,7 +107,7 @@ Example provider payload (`$client->toArray()`):
 {
     "id": 12345,
     "name": "John Doe",
-    "vat": "PT123456789",
+    "vat": "123456789",
     "email": "john@example.com",
     "address": "Av. da Liberdade, 1",
     "city": "Lisbon",

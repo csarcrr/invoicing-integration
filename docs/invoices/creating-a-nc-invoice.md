@@ -34,7 +34,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Maria Silva',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
     ]),
     'items' => [
         ItemData::make([
@@ -89,7 +89,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Carlos Ferreira',
-        'vat' => 'PT567890123',
+        'vat' => '567890123',
     ]),
     'items' => [
         ItemData::make([
@@ -131,7 +131,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
-        'vat' => 'PT987654321',
+        'vat' => '987654321',
     ]),
     'items' => [
         ItemData::make([
@@ -239,7 +239,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Pedro Santos',
-        'vat' => 'PT234567890',
+        'vat' => '234567890',
         'email' => 'pedro.santos@email.pt',
     ]),
     'items' => [

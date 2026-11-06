@@ -183,7 +183,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Maria Silva',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
         'email' => 'maria.silva@email.pt',
     ]),
     'items' => [

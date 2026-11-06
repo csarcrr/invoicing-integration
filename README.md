@@ -117,7 +117,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Maria Silva',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
         'email' => 'maria.silva@email.pt',
         'address' => 'Rua Augusta, 25',
         'city' => 'Lisboa',
@@ -186,7 +186,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 $client = Client::create(
     ClientData::make([
         'name' => 'TechStore Portugal Lda',
-        'vat' => 'PT509876543',
+        'vat' => '509876543',
         'email' => 'invoices@techstore.pt',
         'address' => 'Zona Industrial do Porto, Lote 15',
         'city' => 'Porto',

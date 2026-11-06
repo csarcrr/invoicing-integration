@@ -32,7 +32,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 // Register the customer
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
     'email' => 'invoices@techstore.pt',
     'address' => 'Zona Industrial do Porto, Lote 15',
     'city' => 'Porto',
@@ -56,7 +56,7 @@ Sample response (`$client->toArray()`):
 {
     "id": 98765,
     "name": "TechStore Portugal Lda",
-    "vat": "PT509876543",
+    "vat": "509876543",
     "email": "invoices@techstore.pt",
     "address": "Zona Industrial do Porto, Lote 15",
     "city": "Porto",
@@ -108,7 +108,7 @@ You don't have to register every customer. Here's when to use each approach:
 $invoiceData = InvoiceData::make([
     'client' => ClientData::make([
         'name' => 'Individual Buyer',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
     ]),
     'items' => [...],
 ]);
@@ -134,7 +134,7 @@ $client = Client::get(ClientData::make(['id' => 12345]))->execute()->getClient()
 
 // Access values directly
 $client->name;             // "TechStore Portugal Lda"
-$client->vat;              // "PT509876543"
+$client->vat;              // "509876543"
 $client->email;            // "invoices@techstore.pt"
 $client->defaultPayDue;    // DueDateTerm::Days30
 $client->emailNotification; // true
@@ -161,7 +161,7 @@ $balance = $additional['balance'] ?? null;
 // Main office
 $headquarters = Client::create(ClientData::make([
     'name' => 'Empresa ABC - Sede',
-    'vat' => 'PT501234567',
+    'vat' => '501234567',
     'email' => 'finance@empresaabc.pt',
     'address' => 'Av. da Liberdade, 100',
     'city' => 'Lisboa',
@@ -171,7 +171,7 @@ $headquarters = Client::create(ClientData::make([
 // Porto branch (same VAT, different billing address)
 $portoBranch = Client::create(ClientData::make([
     'name' => 'Empresa ABC - Porto',
-    'vat' => 'PT501234567',
+    'vat' => '501234567',
     'email' => 'porto@empresaabc.pt',
     'address' => 'Rua de Cedofeita, 200',
     'city' => 'Porto',
@@ -184,7 +184,7 @@ $portoBranch = Client::create(ClientData::make([
 ```php
 $reseller = Client::create(ClientData::make([
     'name' => 'Distribuidor Norte Lda',
-    'vat' => 'PT509999888',
+    'vat' => '509999888',
     'email' => 'orders@distrinorte.pt',
     'defaultPayDue' => DueDateTerm::Days60, // 60 days payment terms
     'notes' => '60-day terms approved',

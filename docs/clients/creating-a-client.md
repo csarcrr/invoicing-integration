@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
     'email' => 'invoices@techstore.pt',
 ]);
 
@@ -26,7 +26,7 @@ Example response (`$client->toArray()`):
 {
     "id": 12345,
     "name": "TechStore Portugal Lda",
-    "vat": "PT509876543",
+    "vat": "509876543",
     "email": "invoices@techstore.pt"
 }
 ```
@@ -39,7 +39,7 @@ Build complete customer profiles with all available fields:
 $clientData = ClientData::make([
     // Business identity
     'name' => 'Distribuidor Norte Lda',
-    'vat' => 'PT509999888',
+    'vat' => '509999888',
 
     // Contact information
     'email' => 'finance@distrinorte.pt',
@@ -113,7 +113,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 // Collect customer information from your form
 $clientData = ClientData::make([
     'name' => 'Empresa ABC - Comércio de Eletrónica Lda',
-    'vat' => 'PT501234567',
+    'vat' => '501234567',
     'email' => 'accounting@empresaabc.pt',
     'phone' => '210000000',
     'address' => 'Avenida da República, 50 - 3º Andar',
@@ -142,7 +142,7 @@ Example provider response:
 {
     "id": 54321,
     "name": "Empresa ABC - Comércio de Eletrónica Lda",
-    "vat": "PT501234567",
+    "vat": "501234567",
     "email": "accounting@empresaabc.pt",
     "phone": "210000000",
     "address": "Avenida da República, 50 - 3º Andar",
@@ -201,7 +201,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
     'email' => 'invoices@techstore.pt',
 ]);
 
@@ -211,7 +211,7 @@ try {
     // Check if it's a duplicate error
     if (str_contains($e->getMessage(), 'duplicate') || str_contains($e->getMessage(), 'already exists')) {
         // Search for existing client
-        $results = Client::find(ClientData::make(['vat' => 'PT509876543']))->execute();
+        $results = Client::find(ClientData::make(['vat' => '509876543']))->execute();
         $client = $results->getList()->first();
     } else {
         throw $e;
