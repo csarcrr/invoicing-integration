@@ -24,7 +24,7 @@ it('sends the client default pay due', function (Provider $provider) {
 
     match ($provider) {
         Provider::MOLONI => expect($payload->get('maturity_date_id'))->toBe(4322)
-            ->and($payload->has('payment_day'))->toBeFalse(),
+            ->and($payload->get('payment_day'))->toBe(0),
         Provider::CEGID_VENDUS => expect($payload->get('default_pay_due'))->toBe('30'),
     };
 })->with('providers');
@@ -47,7 +47,7 @@ it('sends the 15 day term as the moloni default pay due when the client has none
 
     match ($provider) {
         Provider::MOLONI => expect($payload->get('maturity_date_id'))->toBe(4323)
-            ->and($payload->has('payment_day'))->toBeFalse(),
+            ->and($payload->get('payment_day'))->toBe(0),
         Provider::CEGID_VENDUS => expect($payload->has('default_pay_due'))->toBeFalse(),
     };
 })->with('providers');

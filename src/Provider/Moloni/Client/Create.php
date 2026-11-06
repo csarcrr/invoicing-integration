@@ -79,6 +79,7 @@ class Create extends Client implements ShouldCreateClient
         $this->buildCountry();
         $this->buildLanguage();
         $this->buildMaturityDate();
+        $this->buildPaymentDay();
         $this->buildCommercialTerms();
         $this->buildContacts();
         $this->buildNotes();
@@ -167,6 +168,11 @@ class Create extends Client implements ShouldCreateClient
         $term = $this->data->defaultPayDue instanceof Optional ? DueDateTerm::Days15 : $this->data->defaultPayDue;
 
         $this->payload->put('maturity_date_id', (new FindDueDate)->execute()->closestTo($term) ?? 0);
+    }
+
+    protected function buildPaymentDay(): void
+    {
+        $this->payload->put('payment_day', 0);
     }
 
     protected function buildCommercialTerms(): void
