@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -63,45 +64,53 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildName(): void
     {
-        $this->data->name && $this->payload->put('name', $this->data->name);
+        Properties::isValid($this->data->name) && $this->payload->put('name', $this->data->name);
     }
 
     protected function buildEmail(): void
     {
-        $this->data->email && $this->payload->put('email', $this->data->email);
+        Properties::isValid($this->data->email) && $this->payload->put('email', $this->data->email);
     }
 
     protected function buildCompleteAddress(): void
     {
-        $this->data->address && $this->payload->put('address', $this->data->address);
-        $this->data->city && $this->payload->put('city', $this->data->city);
-        $this->data->postalCode && $this->payload->put('postalcode', $this->data->postalCode);
-        $this->data->country && $this->payload->put('country', $this->data->country);
+        Properties::isValid($this->data->address) && $this->payload->put('address', $this->data->address);
+        Properties::isValid($this->data->city) && $this->payload->put('city', $this->data->city);
+        Properties::isValid($this->data->postalCode) && $this->payload->put('postalcode', $this->data->postalCode);
+        Properties::isValid($this->data->country) && $this->payload->put('country', $this->data->country);
     }
 
     protected function buildVat(): void
     {
-        $this->data->vat && $this->payload->put('fiscal_id', $this->data->vat);
+        Properties::isValid($this->data->vat) && $this->payload->put('fiscal_id', $this->data->vat);
     }
 
     protected function buildNotes(): void
     {
-        $this->data->notes && $this->payload->put('notes', $this->data->notes);
+        Properties::isValid($this->data->notes) && $this->payload->put('notes', $this->data->notes);
     }
 
     protected function buildIrsRetention(): void
     {
-        $this->data->irsRetention ? $this->payload->put('irs_retention', 'yes') : $this->payload->put('irs_retention', 'no');
+        if (! is_bool($this->data->irsRetention)) {
+            return;
+        }
+
+        $this->payload->put('irs_retention', $this->data->irsRetention ? 'yes' : 'no');
     }
 
     protected function buildEmailNotification(): void
     {
-        $this->data->emailNotification ? $this->payload->put('send_email', 'yes') : $this->payload->put('send_email', 'no');
+        if (! is_bool($this->data->emailNotification)) {
+            return;
+        }
+
+        $this->payload->put('send_email', $this->data->emailNotification ? 'yes' : 'no');
     }
 
     protected function buildContacts(): void
     {
-        $this->data->phone && $this->payload->put('phone', $this->data->phone);
+        Properties::isValid($this->data->phone) && $this->payload->put('phone', $this->data->phone);
     }
 
     protected function buildDefaultPayDue(): void

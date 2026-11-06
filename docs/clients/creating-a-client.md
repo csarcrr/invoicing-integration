@@ -96,6 +96,11 @@ $clientData = ClientData::make([
 - `discount`, `creditLimit` and `deliveryMethodId` are sent as `discount`, `credit_limit` and `delivery_method_id`. Without them, `0` is used. Cegid Vendus does not send them.
 - `irsRetention` and `emailNotification` are not sent. The payment method and salesman ids are sent as `0` for now.
 
+### Cegid Vendus
+
+- Fields you do not set are not sent.
+- `irsRetention` and `emailNotification` are sent as `irs_retention` and `send_email` (`yes` or `no`) only when you set them. Without them, Cegid Vendus stores `no`.
+
 ## Complete Example
 
 Here's a full example with all available fields:

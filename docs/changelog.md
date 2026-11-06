@@ -4,6 +4,15 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus `Client::create()` sends only the fields you set
+
+Cegid Vendus `Client::create()` no longer sends the fields you did not set. Before, they were sent as empty objects, and Cegid Vendus stored `Array` in `address`, `city`, `postalcode`, `phone` and `email`, and `Ar` in `country`. `irsRetention` and `emailNotification` are sent only when you set them. Before, leaving them out sent `yes`, so IRS retention and email sending were switched on.
+
+> [!WARNING]
+> This affects **Cegid Vendus**. A client created without `irsRetention` or `emailNotification` now has both switched off. Set them to `true` to switch them on.
+
+See [Creating a Client](clients/creating-a-client.md#cegid-vendus).
+
 ### Changed: Cegid Vendus `Item::find()` lists disabled items and returns an empty list when nothing matches
 
 Cegid Vendus `Item::find()` sends `status=all`, so disabled items are listed too, with `enabled` set to `false`. Before, only enabled items were listed. A search that matches nothing (`404` with error code `A001`) returns an empty list instead of throwing `RequestFailedException` with `A001 - No data`. Any other `404` still throws. A `category` id on the filters is now sent as `category_id` and narrows the list; before, it was ignored.
