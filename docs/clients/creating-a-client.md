@@ -194,7 +194,7 @@ Invoice::create($invoiceData)->execute();
 
 ## Handling Duplicate Clients
 
-Some providers reject duplicate VAT numbers. Handle this gracefully:
+Providers reject a client whose VAT number already exists, and the package throws `RequestFailedException`. The message comes from the provider and differs per provider, so do not match on it. Look the client up by VAT instead:
 
 ```php
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
@@ -202,23 +202,18 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
     'vat' => '509876543',
+    'address' => 'Rua das Flores 125',
+    'city' => 'Porto',
     'email' => 'invoices@techstore.pt',
 ]);
 
 try {
     $client = Client::create($clientData)->execute()->getClient();
 } catch (RequestFailedException $e) {
-    // Check if it's a duplicate error
-    if (str_contains($e->getMessage(), 'duplicate') || str_contains($e->getMessage(), 'already exists')) {
-        // Search for existing client
-        $results = Client::find(ClientData::make(['vat' => '509876543']))->execute();
-        $client = $results->getList()->first();
-    } else {
-        throw $e;
-    }
-}
+    $client = Client::find(ClientData::make(['vat' => '509876543']))->execute()->getList()->first();
 
-// Now you have the client, whether new or existing
+    throw_if(is_null($client), $e);
+}
 ```
 
 ## Error Handling
