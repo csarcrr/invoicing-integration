@@ -119,7 +119,7 @@ class Find extends Item implements ShouldFindItem
     private function hasNoData(Response $response): bool
     {
         return $response->notFound()
-            && collect($response->json('errors', []))->contains('code', 'A001');
+            && collect((array) $response->json('errors', []))->contains('code', 'A001');
     }
 
     protected function updatePaginationDetails(Response $results): void
