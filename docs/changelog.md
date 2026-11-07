@@ -4,6 +4,10 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus `Client::find()` returns an empty list when nothing matches
+
+Cegid Vendus `Client::find()` no longer throws `RequestFailedException` when no client matches. It returns an empty list, as `Item::find()` does and as Moloni already did.
+
 ### Changed: Cegid Vendus `Client::create()` sends only the fields you set
 
 Cegid Vendus `Client::create()` no longer sends the fields you did not set. Before, they were sent as empty objects, and Cegid Vendus stored `Array` in `address`, `city`, `postalcode`, `phone` and `email`, and `Ar` in `country`. `irsRetention` and `emailNotification` are sent only when you set them. Before, leaving them out sent `yes`, so IRS retention and email sending were switched on.

@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
+use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
@@ -20,6 +21,8 @@ use function throw_if;
 
 class Get extends Client implements ShouldGetClient
 {
+    use DetectsNoData;
+
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
@@ -36,9 +39,9 @@ class Get extends Client implements ShouldGetClient
 
         Http::handleUnwantedFailures($request);
 
-        $data = $request->json();
+        throw_if($this->hasNoData($request), RequestFailedException::class, 'Client not found.');
 
-        throw_if(empty($data), RequestFailedException::class, 'Client not found.');
+        $data = $request->json();
 
         $this->fillProperties($data);
         $this->fillAdditionalProperties($data);

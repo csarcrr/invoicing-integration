@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
+use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
@@ -18,6 +19,7 @@ use function collect;
 
 class Find extends Client implements ShouldFindClient
 {
+    use DetectsNoData;
     use HasPaginator;
 
     /** @var Collection<string, mixed> */
@@ -35,6 +37,13 @@ class Find extends Client implements ShouldFindClient
     public function execute(): self
     {
         $request = Http::provider()->get('/clients', $this->getPayload());
+
+        if ($this->hasNoData($request)) {
+            $this->updatePaginationDetails($request);
+            $this->updateResults([]);
+
+            return $this;
+        }
 
         Http::handleUnwantedFailures($request);
 

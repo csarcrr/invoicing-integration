@@ -9,6 +9,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
+use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
@@ -22,6 +23,7 @@ use function collect;
  */
 class Find extends Item implements ShouldFindItem
 {
+    use DetectsNoData;
     use HasConfig;
     use HasPaginator;
 
@@ -114,12 +116,6 @@ class Find extends Item implements ShouldFindItem
     private function buildStatus(): void
     {
         $this->payload->put('status', 'all');
-    }
-
-    private function hasNoData(Response $response): bool
-    {
-        return $response->notFound()
-            && collect((array) $response->json('errors', []))->contains('code', 'A001');
     }
 
     protected function updatePaginationDetails(Response $results): void

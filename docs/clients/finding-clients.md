@@ -85,6 +85,9 @@ $results = Client::find(ClientData::make(['name' => 'Acme', 'status' => 'active'
 
 - Other filters (`id`, `city`, `address`, `phone`, `notes`, `country`,
   `irsRetention`, ...) are not sent.
+- When nothing matches, Cegid Vendus answers `404` with error code `A001`
+  (`No data`). The package returns an empty list instead of throwing. Any
+  other `404` throws.
 
 ## Pagination API
 

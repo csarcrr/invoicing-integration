@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
@@ -176,3 +177,22 @@ test('searches moloni clients on the endpoint of the search field', function (ar
     'number' => [['id' => '12001'], 'customers/getByNumber', 'number=12001'],
     'name' => [['name' => 'Marta'], 'customers/getByName', 'name=Marta'],
 ]);
+
+test('returns an empty list when the provider finds no clients', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
+
+    $results = Client::find(ClientData::from(['name' => 'missing']))->execute();
+
+    expect($results->getList())->toBeEmpty();
+})->with('providers');
+
+test('fails when cegid vendus answers 404 with an error other than no data', function () {
+    mockConfiguration(Provider::CEGID_VENDUS);
+
+    Http::fake(mockResponse(['errors' => [['code' => 'A002', 'message' => 'Not found']]], 404));
+
+    Client::find(ClientData::from(['name' => 'missing']))->execute();
+})->throws(RequestFailedException::class);

@@ -11,10 +11,13 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
+use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
 use Illuminate\Support\Facades\Http;
 
 abstract class Item extends BaseItem
 {
+    use DetectsNoData;
+
     /**
      * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
@@ -25,11 +28,9 @@ abstract class Item extends BaseItem
 
         Http::handleUnwantedFailures($response);
 
-        $product = $response->json();
+        throw_if($this->hasNoData($response), RequestFailedException::class, 'Item not found.');
 
-        throw_if(empty($product), RequestFailedException::class, 'Item not found.');
-
-        return $product;
+        return $response->json();
     }
 
     /**
