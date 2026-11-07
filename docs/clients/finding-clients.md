@@ -117,8 +117,9 @@ while ($results->getList()->isNotEmpty()) {
   (Moloni), and before the first `execute()`: keep calling `next()` until a page
   comes back empty.
 - Calling `previous()` before page 1, or `page()` below 1, raises
-  `NoMorePagesException`. On Cegid Vendus, `next()` beyond the last page and
-  `page()` above the total also raise it. On Moloni they return an empty list.
+  `NoMorePagesException`. On Cegid Vendus, after the first `execute()`,
+  `next()` beyond the last page and `page()` above the total also raise it. On
+  Moloni they return an empty list.
 
 ## Putting It Together
 
