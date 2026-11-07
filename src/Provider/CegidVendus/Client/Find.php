@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
-use CsarCrr\InvoicingIntegration\Enums\Property;
-use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Http\Client\Response;
@@ -30,7 +30,6 @@ class Find extends Client implements ShouldFindClient
     {
         $this->data = $client ?? ClientData::from([]);
         $this->payload = collect();
-        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
 
     public function execute(): self
@@ -59,12 +58,12 @@ class Find extends Client implements ShouldFindClient
     public function getPayload(): Collection
     {
         $this->buildPagination();
-
-        $this->getAllowedProperties()->each(fn (mixed $item, string $key) => $this->payload->put($key, $item));
-
         $this->buildVat();
+        $this->buildName();
+        $this->buildEmail();
         $this->buildExternalReference();
         $this->buildStatus();
+        $this->buildDate();
 
         return $this->payload;
     }
@@ -76,17 +75,32 @@ class Find extends Client implements ShouldFindClient
 
     private function buildVat(): void
     {
-        (is_string($this->data->vat) || is_int($this->data->vat)) && $this->payload->put('fiscal_id', $this->data->vat);
+        Properties::isValid($this->data->vat) && $this->payload->put('fiscal_id', $this->data->vat);
+    }
+
+    private function buildName(): void
+    {
+        Properties::isValid($this->data->name) && $this->payload->put('name', $this->data->name);
+    }
+
+    private function buildEmail(): void
+    {
+        Properties::isValid($this->data->email) && $this->payload->put('email', $this->data->email);
     }
 
     private function buildExternalReference(): void
     {
-        is_string($this->data->externalReference) && $this->payload->put('external_reference', $this->data->externalReference);
+        Properties::isValid($this->data->externalReference) && $this->payload->put('external_reference', $this->data->externalReference);
     }
 
     private function buildStatus(): void
     {
-        is_string($this->data->status) && $this->payload->put('status', $this->data->status);
+        Properties::isValid($this->data->status) && $this->payload->put('status', $this->data->status);
+    }
+
+    private function buildDate(): void
+    {
+        $this->data->date instanceof Carbon && $this->payload->put('date', $this->data->date->format('Y-m-d'));
     }
 
     protected function updatePaginationDetails(Response $results): void

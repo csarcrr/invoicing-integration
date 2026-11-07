@@ -67,6 +67,25 @@ $results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
 - Each returned client has `id` set to the Moloni `customer_id`, ready for
   `Client::get()`.
 
+## Searching on Cegid Vendus
+
+Cegid Vendus combines every filter set. The package sends only the fields
+Cegid Vendus can search by:
+
+- `vat` (sent as `fiscal_id`)
+- `name`
+- `email`
+- `externalReference`
+- `status`
+- `date` (sent as `Y-m-d`)
+
+```php
+$results = Client::find(ClientData::make(['name' => 'Acme', 'status' => 'active']))->execute();
+```
+
+- Other filters (`id`, `city`, `address`, `phone`, `notes`, `country`,
+  `irsRetention`, ...) are not sent.
+
 ## Pagination API
 
 `Client::find()` implements `next()`, `previous()`, and `page()` helpers through

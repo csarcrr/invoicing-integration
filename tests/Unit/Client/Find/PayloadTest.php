@@ -20,3 +20,34 @@ it('transforms client search filters to provider payload', function (Provider $p
 
     expect($data->getPayload())->toMatchArray($payload);
 })->with('providers', ['search']);
+
+it('does not send filters the provider cannot search by', function (Provider $provider) {
+    $payload = Client::find(ClientData::from([
+        'id' => '1234567',
+        'city' => 'Porto',
+        'address' => 'Rua das Flores 125',
+        'phone' => '912345678',
+        'notes' => 'Notes',
+        'country' => 'PT',
+        'irs_retention' => true,
+    ]))->getPayload();
+
+    expect($payload->keys()->intersect(['city', 'address', 'phone', 'notes', 'country', 'irs_retention']))->toBeEmpty();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->toArray())->not->toHaveKey('id'),
+        Provider::MOLONI => expect($payload->get('number'))->toBe('1234567'),
+    };
+})->with('providers');
+
+it('does not send empty filters', function (Provider $provider) {
+    $payload = Client::find(ClientData::from([
+        'vat' => '',
+        'name' => '',
+        'email' => '',
+        'external_reference' => '',
+        'status' => '',
+    ]))->getPayload();
+
+    expect($payload->keys()->intersect(['vat', 'fiscal_id', 'name', 'email', 'external_reference', 'status']))->toBeEmpty();
+})->with('providers');
