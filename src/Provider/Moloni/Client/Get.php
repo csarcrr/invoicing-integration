@@ -8,6 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetC
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -36,6 +37,8 @@ class Get extends Client implements ShouldGetClient
         Http::handleUnwantedFailures($request);
 
         $data = $request->json();
+
+        throw_if(empty($data), RequestFailedException::class, 'Client not found.');
 
         $this->fillProperties($data);
         $this->fillAdditionalProperties($data);
