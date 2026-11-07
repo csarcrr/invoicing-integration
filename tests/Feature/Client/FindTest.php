@@ -196,3 +196,12 @@ test('fails when cegid vendus answers 404 with an error other than no data', fun
 
     Client::find(ClientData::from(['name' => 'missing']))->execute();
 })->throws(RequestFailedException::class);
+
+test('fails when the provider rejects the search', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'P005', 'message' => 'Allowed values for param status are active, inactive']]], 403),
+        Provider::MOLONI => mockResponse([['code' => 'invalid', 'description' => 'Invalid field']]),
+    });
+
+    Client::find(ClientData::from(['status' => 'unknown']))->execute();
+})->with('providers')->throws(RequestFailedException::class);
