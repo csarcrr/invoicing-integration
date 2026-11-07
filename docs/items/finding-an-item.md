@@ -143,10 +143,13 @@ the `HasPaginator` trait.
 ```php
 $results = Item::find()->execute();
 
-while ($results->getCurrentPage() < $results->getTotalPages()) {
+while ($results->getList()->isNotEmpty()) {
     // do stuff
 
-    // Move to the next provider page
+    if ($results->getCurrentPage() === $results->getTotalPages()) {
+        break;
+    }
+
     $results->next()->execute();
 }
 ```
@@ -155,31 +158,29 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
   `1` if absent). It returns `null` when the provider does not report a total
   (Moloni), and before the first `execute()`: keep calling `next()` until a page
   comes back empty.
-- Calling `next()` beyond the last page, `previous()` before page 1, or
-  `page()` with an invalid value raises `NoMorePagesException`.
+- Calling `previous()` before page 1, or `page()` below 1, raises
+  `NoMorePagesException`. On Cegid Vendus, `next()` beyond the last page and
+  `page()` above the total also raise it. On Moloni they return an empty list.
 
 ## Putting It Together
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ItemData;
-use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 
-try {
-    $filters = ItemData::make(['name' => 'Widget']);
-    $items = Item::find($filters)->execute();
+$filters = ItemData::make(['name' => 'Widget']);
+$items = Item::find($filters)->execute();
 
-    do {
-        foreach ($items->getList() as $item) {
-            // do stuff
-        }
+while ($items->getList()->isNotEmpty()) {
+    foreach ($items->getList() as $item) {
+        // do stuff
+    }
 
-        if ($items->getCurrentPage() < $items->getTotalPages()) {
-            $items->next()->execute();
-        }
-    } while ($items->getCurrentPage() < $items->getTotalPages());
-} catch (NoMorePagesException $e) {
-    report($e);
+    if ($items->getCurrentPage() === $items->getTotalPages()) {
+        break;
+    }
+
+    $items->next()->execute();
 }
 ```
 

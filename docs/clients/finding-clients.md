@@ -45,6 +45,10 @@ $filters = ClientData::make(['email' => 'billing@example.com']);
 $results = Client::find($filters)->execute();
 ```
 
+Moloni matches part of the value and ignores case. Cegid Vendus matches the
+whole value: `email` must be the full address with the same case, and `name`
+the full name in any case.
+
 Filterable fields depend on the provider, but the `ClientData` DTO supports
 common attributes such as `email`, `vat`, `status`, and `externalReference`.
 
@@ -97,10 +101,13 @@ the `HasPaginator` trait.
 ```php
 $results = Client::find()->execute();
 
-while ($results->getCurrentPage() < $results->getTotalPages()) {
+while ($results->getList()->isNotEmpty()) {
     // do stuff
 
-    // Move to the next provider page
+    if ($results->getCurrentPage() === $results->getTotalPages()) {
+        break;
+    }
+
     $results->next()->execute();
 }
 ```
@@ -109,30 +116,29 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
   `1` if absent). It returns `null` when the provider does not report a total
   (Moloni), and before the first `execute()`: keep calling `next()` until a page
   comes back empty.
-- Calling `next()` beyond the last page, `previous()` before page 1, or
-  `page()` with an invalid value raises `NoMorePagesException`.
+- Calling `previous()` before page 1, or `page()` below 1, raises
+  `NoMorePagesException`. On Cegid Vendus, `next()` beyond the last page and
+  `page()` above the total also raise it. On Moloni they return an empty list.
 
 ## Putting It Together
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 
-try {
-    $filters = ClientData::make(['email' => 'acme.com']);
-    $clients = Client::find($filters)->execute();
+$filters = ClientData::make(['email' => 'billing@example.com']);
+$clients = Client::find($filters)->execute();
 
-    do {
-        foreach ($clients->getList() as $client) {
-            // do stuff
-        }
+while ($clients->getList()->isNotEmpty()) {
+    foreach ($clients->getList() as $client) {
+        // do stuff
+    }
 
-        if ($clients->getCurrentPage() < $clients->getTotalPages()) {
-            $clients->next()->execute();
-        }
-    } while ($clients->getCurrentPage() < $clients->getTotalPages());
-} catch (NoMorePagesException $e) {
-    report($e);
+    if ($clients->getCurrentPage() === $clients->getTotalPages()) {
+        break;
+    }
+
+    $clients->next()->execute();
 }
 ```
 
