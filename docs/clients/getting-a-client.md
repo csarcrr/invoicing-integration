@@ -20,7 +20,7 @@ $payload = $client->toArray();
 
 > [!NOTE]
 > On Moloni, `id` is the `customer_id`. `irsRetention`, `emailNotification`,
-> `defaultPayDue`, `externalReference` and `status` are not returned; the
+> `defaultPayDue`, `externalReference`, `status` and `date` are not returned; the
 > customer `number` is available in `getAdditionalData()`.
 
 Example payload:
@@ -76,7 +76,7 @@ $client->date;             // Creation date (Carbon)
 ```
 
 > [!NOTE]
-> Properties not set in the provider will return `null`.
+> Properties not set in the provider are `Spatie\LaravelData\Optional`, not `null`.
 >
 > `id` is always a string. On Cegid Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
 > returned as `Days0`) and
@@ -168,7 +168,7 @@ An unknown `id` throws `RequestFailedException` on both providers. Moloni answer
 
 ---
 
-Always store the provider-assigned `id` when creating clients for later retrieval. The returned `ClientData` object is the same instance passed to `get()`, now populated with provider data. Use retrieved clients to ensure invoice data matches the provider's records.
+Always store the provider-assigned `id` when creating clients for later retrieval. `get()` returns a new `ClientData` object built from the provider data; the object you passed in is not changed. Use retrieved clients to ensure invoice data matches the provider's records.
 
 ---
 
