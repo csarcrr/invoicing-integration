@@ -4,6 +4,15 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus sends the configured mode
+
+`CEGID_VENDUS_MODE` is now sent as `mode` when it is set. Before, it was ignored and documents always used the register's mode.
+
+> [!WARNING]
+> This affects **Cegid Vendus**. The valid values are `normal` and `tests`. Users who set `production`, as the docs said, get their documents rejected until they set `normal`. Users who set `tests` now really issue test documents.
+
+See [Cegid Vendus configuration](providers/cegid-vendus/configuration.md#mode).
+
 ### Changed: Cegid Vendus `Client::find()` returns an empty list when nothing matches
 
 Cegid Vendus `Client::find()` no longer throws `RequestFailedException` when no client matches. It returns an empty list, as `Item::find()` does and as Moloni already did.

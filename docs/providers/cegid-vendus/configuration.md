@@ -1,6 +1,6 @@
 # Providers - Cegid Vendus - Configuration
 
-Let's get your Cegid Vendus account connected to the invoicing integration. You'll need your API key, choose a mode (test or production), and map your payment methods.
+Let's get your Cegid Vendus account connected to the invoicing integration. You'll need your API key, choose a mode (tests or normal), and map your payment methods.
 
 Here's what the complete configuration looks like
 
@@ -48,9 +48,11 @@ Cegid Vendus has two modes:
 | Mode           | Value        | Documents are fiscally valid? | Use for               |
 | -------------- | ------------ | ----------------------------- | --------------------- |
 | **Tests**      | `tests`      | No                            | Development & testing |
-| **Production** | `production` | Yes (with AT CUD configured)  | Live invoicing        |
+| **Normal**     | `normal`     | Yes (with AT CUD configured)  | Live invoicing        |
 
-**Recommendation:** Start with `tests` mode during development. Switch to `production` only when you're ready to issue real invoices.
+When `CEGID_VENDUS_MODE` is not set, Cegid Vendus uses the register's mode.
+
+**Recommendation:** Start with `tests` mode during development. Switch to `normal` only when you're ready to issue real invoices.
 
 ```bash
 # .env

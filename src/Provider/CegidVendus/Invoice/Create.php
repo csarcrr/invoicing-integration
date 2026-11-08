@@ -112,6 +112,7 @@ class Create extends Invoice implements ShouldCreateInvoice
         $this->buildNotes();
         $this->buildCreditNoteReason();
         $this->buildRelatedDocument();
+        $this->buildMode();
 
         return $this->payload;
     }
@@ -119,6 +120,17 @@ class Create extends Invoice implements ShouldCreateInvoice
     protected function buildType(): void
     {
         $this->payload->put('type', $this->data->type->value);
+    }
+
+    protected function buildMode(): void
+    {
+        $mode = $this->getConfig()->get('mode');
+
+        if (Properties::isNotValid($mode)) {
+            return;
+        }
+
+        $this->payload->put('mode', $mode);
     }
 
     /**
