@@ -148,6 +148,9 @@ $item = ItemData::make([
 ]);
 ```
 
+> [!WARNING]
+> Moloni does not support `amountDiscount`. It is not sent, so the item is invoiced without that discount. Use `percentageDiscount` instead.
+
 ### Tax Configuration
 
 Set specific tax rates or exemptions:

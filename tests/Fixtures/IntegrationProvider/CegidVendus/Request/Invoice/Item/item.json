@@ -6,8 +6,7 @@
             "qty": 2,
             "type_id": "P",
             "text": "This is a test item",
-            "discount_percentage": 10,
-            "discount_amount": 0.5
+            "discount_percentage": 10
         }
     ]
 }

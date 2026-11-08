@@ -473,7 +473,7 @@ $item = ItemData::make([
 | `tax`                | `?ItemTax`                      | `null`               | VAT rate                                           | Required for `taxExemptionReason`                                         |
 | `taxExemptionReason` | `?TaxExemptionReason`           | `null`               | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
 | `taxExemptionLaw`    | `?string`                       | `null`               | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
-| `amountDiscount`     | `?int`                          | `null`               | Fixed discount in cents                            | -                                                                         |
+| `amountDiscount`     | `?int`                          | `null`               | Fixed discount in cents                            | Not sent on Moloni                                                        |
 | `percentageDiscount` | `?int`                          | `null`               | Percentage discount                                | -                                                                         |
 | `category`           | `?CategoryData`                 | `null`               | Product category                                   | -                                                                         |
 | `unit`               | `?ShouldBeUnit`                 | `null`               | Unit of measure (use `Unit` enum or custom). Read back from the provider's unit id as a `Unit` case | Must be mapped in config; throws `CouldNotGetUnitIdException` if missing  |

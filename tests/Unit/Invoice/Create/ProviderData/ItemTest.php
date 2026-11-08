@@ -22,7 +22,6 @@ it('transforms to provider payload with all item properties', function (Provider
         'price' => 1000,
         'note' => 'This is a test item',
         'percentageDiscount' => 10,
-        'amountDiscount' => 50,
     ]);
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -31,6 +30,17 @@ it('transforms to provider payload with all item properties', function (Provider
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['item']);
+
+it('sends the amount discount only to providers that support it', function (Provider $provider) {
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1', 'amountDiscount' => 50])],
+    ]));
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($invoice->getPayload()->get('items')->first()['discount_amount'])->toBe(0.5),
+        Provider::MOLONI => expect($invoice->getPayload()->get('products')[0])->not->toHaveKey('discount'),
+    };
+})->with('providers');
 
 it('transforms to provider payload with multiple items', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
