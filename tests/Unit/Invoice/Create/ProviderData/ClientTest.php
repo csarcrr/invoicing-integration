@@ -8,10 +8,13 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotFindCustomerByVatException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 it('transforms to provider payload with all client fields', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->client()->files($fixtureName);
+
+    fakeProviderCustomerByVat($provider, fixtures()->response()->client()->files('response_multiple'));
 
     $client = ClientData::from([
         'name' => 'John Doe',
@@ -106,6 +109,36 @@ it('sends the client id to the provider', function (Provider $provider) {
     match ($provider) {
         Provider::CEGID_VENDUS => expect($payload->get('client')['id'])->toBe('12001'),
         Provider::MOLONI => expect($payload->get('customer_id'))->toBe(12001),
+    };
+})->with('providers');
+
+it('sends the customer found by the client vat', function (Provider $provider) {
+    $customers = fixtures()->response()->client()->files('response_multiple');
+
+    fakeProviderCustomerByVat($provider, $customers);
+
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+        'client' => ClientData::from(['vat' => '215783920']),
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('client')['fiscal_id'])->toBe('215783920'),
+        Provider::MOLONI => expect($payload->get('customer_id'))->toBe($customers[0]['customer_id']),
+    };
+})->with('providers');
+
+it('fails when no customer has the client vat', function (Provider $provider) {
+    fakeProviderCustomerByVat($provider, []);
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+        'client' => ClientData::from(['vat' => '215783920']),
+    ]));
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($invoice->getPayload()->get('client')['fiscal_id'])->toBe('215783920'),
+        Provider::MOLONI => expect(fn () => $invoice->getPayload())->toThrow(CouldNotFindCustomerByVatException::class),
     };
 })->with('providers');
 

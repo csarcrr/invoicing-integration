@@ -113,7 +113,7 @@ The ID of the Moloni company to operate on. It is sent automatically with every 
 
 #### `MOLONI_NO_VAT_CLIENT_ID`
 
-The ID of the Moloni customer used on invoices that have no client, or whose client has no `id`. When it is not set, `customer_id` is sent as `0` and Moloni rejects the document.
+The ID of the Moloni customer used on invoices that have no client. When it is not set, `customer_id` is sent as `0` and Moloni rejects the document.
 
 #### `MOLONI_UNIT_*_ID`
 

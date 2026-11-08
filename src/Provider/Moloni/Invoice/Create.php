@@ -19,10 +19,12 @@ use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocument
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotFindCustomerByVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentMethodIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Invoice;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as FindClient;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
@@ -137,7 +139,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     }
 
     /**
-     * @throws InvoiceRequiresClientVatException|\Throwable
+     * @throws InvoiceRequiresClientVatException|CouldNotFindCustomerByVatException|\Throwable
      */
     protected function buildClient(): void
     {
@@ -153,7 +155,15 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         if (is_string($client->id)) {
             $this->payload->put('customer_id', (int) $client->id);
+
+            return;
         }
+
+        $customer = (new FindClient(ClientData::from(['vat' => $client->vat])))->execute()->getList()->first();
+
+        throw_if(is_null($customer), CouldNotFindCustomerByVatException::class);
+
+        $this->payload->put('customer_id', (int) $customer->id);
     }
 
     /**

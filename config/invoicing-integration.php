@@ -161,8 +161,7 @@ return [
             | No VAT Client ID
             |----------------------------------------------------------------------
             |
-            | The ID of the Moloni customer used on invoices that have no client,
-            | or whose client has no ID.
+            | The ID of the Moloni customer used when the invoice has no client.
             |
             */
 
