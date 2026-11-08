@@ -341,7 +341,7 @@ Moloni creates the document with `status` `0` (documents are issued, `status` `1
 
 All document types are sent to the `documents` endpoint, with the document type as `type`.
 
-- **Items**: `reference` is sent as `reference`; `price` as `gross_price`; `quantity` as `qty` (`1` when unset); `note` as `text`; `percentageDiscount` as `discount_percentage`; `amountDiscount` as `discount_amount`; `type` as `type_id` (product when unset); `tax` as `tax_id`; `taxExemptionReason` as `tax_exemption` and `taxExemptionLaw` as `tax_exemption_law`. `id` and `name` are not sent.
+- **Items**: `reference` is sent as `reference`; `id` as `id`; `name` as `title`; `price` as `gross_price`; `quantity` as `qty` (`1` when unset); `note` as `text`; `percentageDiscount` as `discount_percentage`; `amountDiscount` as `discount_amount`; `type` as `type_id` (product when unset); `tax` as `tax_id`; `taxExemptionReason` as `tax_exemption` and `taxExemptionLaw` as `tax_exemption_law`. Cegid Vendus needs `id` or `reference` to find the product; when the reference does not exist yet, Cegid Vendus creates the product and needs `name` as its title.
 - **Payments**: `payments`, with each payment's configured payment method `id` and `amount`.
 - **Due date**: sent as `date_due`.
 - **Mode**: `mode` is sent only when `CEGID_VENDUS_MODE` is set; otherwise Cegid Vendus uses the register's mode. See [Cegid Vendus configuration](../providers/cegid-vendus/configuration.md#mode).

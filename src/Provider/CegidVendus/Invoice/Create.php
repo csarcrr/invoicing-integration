@@ -292,6 +292,14 @@ class Create extends Invoice implements ShouldCreateInvoice
                 $data['reference'] = $item->reference;
             }
 
+            if ($item->id) {
+                $data['id'] = $item->id;
+            }
+
+            if ($item->name) {
+                $data['title'] = $item->name;
+            }
+
             if ($item->price) {
                 $data['gross_price'] = $item->price / 100;
             }

@@ -97,8 +97,19 @@ it('sends the item id to the provider when it identifies items by id', function 
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['reference'])->toBe('reference-1'),
+        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['id'])->toBe(1542),
         Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
+    };
+})->with('providers');
+
+it('sends the item name as the line name', function (Provider $provider) {
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1', 'name' => 'Bananas'])],
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['title'])->toBe('Bananas'),
+        Provider::MOLONI => expect($payload->get('products')[0]['name'])->toBe('Bananas'),
     };
 })->with('providers');
 

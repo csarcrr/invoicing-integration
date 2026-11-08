@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus sends the item id and name
+
+Cegid Vendus ignored the item `id` and `name`. An item identified only by `id` failed, and an item with a new `reference` failed because Cegid Vendus needs a title to create the product. `id` is now sent as `id` and `name` as `title`.
+
+See [Creating an Invoice – Cegid Vendus](invoices/creating-an-invoice.md#cegid-vendus).
+
 ### Changed: Cegid Vendus sends item notes, percentage discounts and due dates
 
 Cegid Vendus rejected invoices with an item `note`, an item `percentageDiscount` or a `dueDate`, because they were sent as `note`, `discount_percent` and `due_date`. They are now sent as `text`, `discount_percentage` and `date_due`.
