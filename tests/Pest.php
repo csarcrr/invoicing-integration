@@ -123,14 +123,14 @@ function fakeProviderPaymentMethods(Provider $provider): void
     ]);
 }
 
-function fakeProviderCustomerByVat(Provider $provider, array $customers): void
+function fakeProviderClientByVat(Provider $provider, array $clients): void
 {
     if ($provider !== Provider::MOLONI) {
         return;
     }
 
     Http::fake([
-        '*customers/getByVat*' => mockResponse($customers),
+        '*customers/getByVat*' => mockResponse($clients),
     ]);
 }
 

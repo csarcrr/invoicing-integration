@@ -21,7 +21,7 @@ beforeEach(function () {
 it('transforms to provider payload with transport details', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
 
-    fakeProviderCustomerByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
 
     $origin = AddressData::make([
         'dateTime' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025)->setHour(10)->setMinute(5),
@@ -57,7 +57,7 @@ it('transforms to provider payload with transport details', function (Provider $
 })->with('providers', ['transport']);
 
 it('only sends transport details on document types that accept them', function (Provider $provider) {
-    fakeProviderCustomerByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
 
     $origin = AddressData::make([
         'dateTime' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025)->setHour(10)->setMinute(5),
@@ -138,7 +138,7 @@ it('fails when no client is provided with transport', function (Provider $provid
     );
 
 it('fails when no load date is provided with transport', function (Provider $provider) {
-    fakeProviderCustomerByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
 
     $origin = AddressData::make([
         'address' => 'Rua das Flores, 125',

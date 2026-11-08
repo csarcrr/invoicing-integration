@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 it('transforms to provider payload with all client fields', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->client()->files($fixtureName);
 
-    fakeProviderCustomerByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
 
     $client = ClientData::from([
         'name' => 'John Doe',
@@ -115,10 +115,10 @@ it('sends the client id to the provider', function (Provider $provider) {
     };
 })->with('providers');
 
-it('sends the customer found by the client vat', function (Provider $provider) {
-    $customers = fixtures()->response()->client()->files('response_multiple');
+it('sends the client found by the client vat', function (Provider $provider) {
+    $clients = fixtures()->response()->client()->files('response_multiple');
 
-    fakeProviderCustomerByVat($provider, $customers);
+    fakeProviderClientByVat($provider, $clients);
 
     $payload = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'reference-1'])],
@@ -127,14 +127,14 @@ it('sends the customer found by the client vat', function (Provider $provider) {
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($payload->get('client')['fiscal_id'])->toBe('215783920'),
-        Provider::MOLONI => expect($payload->get('customer_id'))->toBe($customers[0]['customer_id'])
+        Provider::MOLONI => expect($payload->get('customer_id'))->toBe($clients[0]['customer_id'])
             ->and(Http::recorded(fn (Request $request) => Str::contains($request->url(), 'customers/getByVat')
                 && Str::contains($request->body(), 'vat=215783920')))->toHaveCount(1),
     };
 })->with('providers');
 
-it('sends the customer whose vat matches the client vat exactly', function (Provider $provider) {
-    fakeProviderCustomerByVat($provider, [
+it('sends the client whose vat matches the client vat exactly', function (Provider $provider) {
+    fakeProviderClientByVat($provider, [
         ['customer_id' => 12010, 'vat' => '2157839201'],
         ['customer_id' => 12001, 'vat' => '215783920'],
     ]);
@@ -150,8 +150,8 @@ it('sends the customer whose vat matches the client vat exactly', function (Prov
     };
 })->with('providers');
 
-it('fails when no customer has the client vat', function (Provider $provider) {
-    fakeProviderCustomerByVat($provider, []);
+it('fails when no client has the client vat', function (Provider $provider) {
+    fakeProviderClientByVat($provider, []);
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'reference-1'])],
@@ -164,8 +164,8 @@ it('fails when no customer has the client vat', function (Provider $provider) {
     };
 })->with('providers');
 
-it('fails when only customers with a different vat contain the client vat', function (Provider $provider) {
-    fakeProviderCustomerByVat($provider, [['customer_id' => 12010, 'vat' => '2157839201']]);
+it('fails when only clients with a different vat contain the client vat', function (Provider $provider) {
+    fakeProviderClientByVat($provider, [['customer_id' => 12010, 'vat' => '2157839201']]);
 
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'reference-1'])],
