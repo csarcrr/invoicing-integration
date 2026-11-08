@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus returns the ATCUD as atcudHash
+
+The ATCUD returned by Cegid Vendus was dropped, so `atcudHash` was missing from the created invoice. It is now set. Moloni does not return the ATCUD, so it stays `null`.
+
+See [Using Invoice Data](invoices/using-invoice-data.md).
+
 ### Changed: Cegid Vendus sends only the client fields it accepts on documents
 
 Cegid Vendus rejected every invoice with a client, because the client was sent with `email_notification` and with every other `ClientData` field you set. The client now sends only the fields Cegid Vendus accepts, and `emailNotification` is sent as `send_email`. Other `ClientData` fields, such as `defaultPayDue`, `discount`, `creditLimit`, `deliveryMethodId`, `status`, `date` and `language`, are not sent.

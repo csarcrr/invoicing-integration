@@ -53,6 +53,19 @@ test('fills the sequence and totals from the provider response', function (Provi
     };
 })->with('providers', ['full']);
 
+test('returns the atcud of the created invoice', function (Provider $provider, string $fixture) {
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]))->execute()->getInvoice();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($invoice->atcudHash)->toBe('INVALIDO-1'),
+        Provider::MOLONI => expect($invoice->atcudHash)->toBeNull(),
+    };
+})->with('providers', ['full']);
+
 test('does not keep the provider document lines as additional data', function (Provider $provider, string $fixture) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
 
