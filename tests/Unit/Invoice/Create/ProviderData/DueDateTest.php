@@ -50,7 +50,7 @@ it('resolves the due date term for the provider', function (Provider $provider, 
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('due_date'))->toBe($date),
+        Provider::CEGID_VENDUS => expect($payload->get('date_due'))->toBe($date),
         Provider::MOLONI => expect($payload->get('expiration_date'))->toBe($date)
             ->and($payload->get('maturity_date_id'))->toBe($maturityDateId),
     };

@@ -148,7 +148,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'Due date can only be set for FT document types.'
         );
 
-        $this->payload->put('due_date', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
+        $this->payload->put('date_due', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
     }
 
     protected function buildOutput(): void
@@ -299,13 +299,13 @@ class Create extends Invoice implements ShouldCreateInvoice
             $data['qty'] = $item->quantity ?? 1;
 
             if ($item->note) {
-                $data['note'] = $item->note;
+                $data['text'] = $item->note;
             }
 
             $data['type_id'] = ($item->type ?? ItemType::Product)->vendus();
 
             if ($item->percentageDiscount) {
-                $data['discount_percent'] = $item->percentageDiscount;
+                $data['discount_percentage'] = $item->percentageDiscount;
             }
 
             if ($item->amountDiscount) {

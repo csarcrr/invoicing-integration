@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus sends item notes, percentage discounts and due dates
+
+Cegid Vendus rejected invoices with an item `note`, an item `percentageDiscount` or a `dueDate`, because they were sent as `note`, `discount_percent` and `due_date`. They are now sent as `text`, `discount_percentage` and `date_due`.
+
+See [Creating an Invoice – Cegid Vendus](invoices/creating-an-invoice.md#cegid-vendus).
+
 ### Changed: Cegid Vendus sends the configured mode
 
 `CEGID_VENDUS_MODE` is now sent as `mode` when it is set. Before, it was ignored and documents always used the register's mode.
@@ -137,7 +143,7 @@ What changes per provider:
 
 | Provider     | Before                           | Now                                                                       |
 | ------------ | -------------------------------- | ------------------------------------------------------------------------- |
-| Cegid Vendus | `due_date` = the date you passed | `due_date` = today + the term's days                                      |
+| Cegid Vendus | `due_date` = the date you passed | `date_due` = today + the term's days                                      |
 | Moloni       | `expiration_date` = the date you passed | `expiration_date` = today + the term's days, plus `maturity_date_id` |
 
 Arbitrary due dates are no longer possible: only the eight terms above are supported.

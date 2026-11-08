@@ -337,6 +337,15 @@ $result = Invoice::create($invoiceData)->asDraft()->execute()->getInvoice();
 
 Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `asDraft()` and always issues the document.
 
+## Cegid Vendus
+
+All document types are sent to the `documents` endpoint, with the document type as `type`.
+
+- **Items**: `reference` is sent as `reference`; `price` as `gross_price`; `quantity` as `qty` (`1` when unset); `note` as `text`; `percentageDiscount` as `discount_percentage`; `amountDiscount` as `discount_amount`; `type` as `type_id` (product when unset); `tax` as `tax_id`; `taxExemptionReason` as `tax_exemption` and `taxExemptionLaw` as `tax_exemption_law`. `id` and `name` are not sent.
+- **Payments**: `payments`, with each payment's configured payment method `id` and `amount`.
+- **Due date**: sent as `date_due`.
+- **Mode**: `mode` is sent only when `CEGID_VENDUS_MODE` is set; otherwise Cegid Vendus uses the register's mode. See [Cegid Vendus configuration](../providers/cegid-vendus/configuration.md#mode).
+
 ## Moloni
 
 Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`.
