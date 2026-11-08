@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Cegid Vendus sends only the client fields it accepts on documents
+
+Cegid Vendus rejected every invoice with a client, because the client was sent with `email_notification` and with every other `ClientData` field you set. The client now sends only the fields Cegid Vendus accepts, and `emailNotification` is sent as `send_email`. Other `ClientData` fields, such as `defaultPayDue`, `discount`, `creditLimit`, `deliveryMethodId`, `status`, `date` and `language`, are not sent.
+
+See [Creating an Invoice – Cegid Vendus](invoices/creating-an-invoice.md#cegid-vendus).
+
 ### Changed: Cegid Vendus sends the item id and name
 
 Cegid Vendus ignored the item `id` and `name`. An item identified only by `id` failed, and an item with a new `reference` failed because Cegid Vendus needs a title to create the product. `id` is now sent as `id` and `name` as `title`.

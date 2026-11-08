@@ -367,20 +367,17 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         throw_if(Properties::isNotValid($client->vat), InvoiceRequiresClientVatException::class);
 
-        $data = $client->toArray();
-
-        $data['irs_retention'] = $this->booleanFlag($client->irsRetention);
-        $data['email_notification'] = $this->booleanFlag($client->emailNotification);
+        $data = collect($client->toArray())
+            ->only(['id', 'name', 'email', 'country', 'city', 'address', 'phone', 'notes', 'external_reference'])
+            ->all();
 
         $data['fiscal_id'] = $client->vat;
+        $data['irs_retention'] = $this->booleanFlag($client->irsRetention);
+        $data['send_email'] = $this->booleanFlag($client->emailNotification);
 
-        $postalCode = $client->postalCode;
-
-        if (Properties::isValid($postalCode)) {
-            $data['postalcode'] = $postalCode;
+        if (Properties::isValid($client->postalCode)) {
+            $data['postalcode'] = $client->postalCode;
         }
-
-        unset($data['vat'], $data['postal_code']);
 
         $this->payload->put('client', $data);
     }

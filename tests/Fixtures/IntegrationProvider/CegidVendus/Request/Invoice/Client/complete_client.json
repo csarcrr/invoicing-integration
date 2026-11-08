@@ -9,6 +9,6 @@
         "email": "john.doe@mail.com",
         "country": "PT",
         "irs_retention": "yes",
-        "email_notification": "yes"
+        "send_email": "yes"
     }
 }

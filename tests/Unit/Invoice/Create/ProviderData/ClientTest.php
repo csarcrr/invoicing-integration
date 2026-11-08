@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
@@ -34,6 +35,54 @@ it('transforms to provider payload with all client fields', function (Provider $
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['complete_client']);
+
+it('sends only the client fields the provider accepts on a document', function (Provider $provider) {
+    $client = ClientData::from([
+        'id' => '12001',
+        'name' => 'John Doe',
+        'vat' => '123456789',
+        'email' => 'john.doe@mail.com',
+        'country' => 'PT',
+        'city' => 'Porto',
+        'address' => 'Rua das Flores 125',
+        'postalCode' => '4410-000',
+        'phone' => '220123123',
+        'notes' => 'VIP client',
+        'defaultPayDue' => DueDateTerm::Days30,
+        'discount' => 5.0,
+        'creditLimit' => 1000.0,
+        'deliveryMethodId' => 1,
+        'externalReference' => 'EXT-1',
+        'status' => 'active',
+        'emailNotification' => true,
+        'irsRetention' => true,
+        'date' => '2025-06-15',
+    ]);
+
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['reference' => 'reference-1'])],
+        'client' => $client,
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('client'))->toEqual([
+            'id' => '12001',
+            'name' => 'John Doe',
+            'fiscal_id' => '123456789',
+            'email' => 'john.doe@mail.com',
+            'country' => 'PT',
+            'city' => 'Porto',
+            'address' => 'Rua das Flores 125',
+            'postalcode' => '4410-000',
+            'phone' => '220123123',
+            'notes' => 'VIP client',
+            'external_reference' => 'EXT-1',
+            'irs_retention' => 'yes',
+            'send_email' => 'yes',
+        ]),
+        Provider::MOLONI => expect($payload->get('customer_id'))->toBe(12001),
+    };
+})->with('providers');
 
 it('fails when vat is not valid', function (Provider $provider) {
     $invoice = Invoice::create(
