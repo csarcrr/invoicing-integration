@@ -112,6 +112,18 @@ it('sends the item id to the provider when it identifies items by id', function 
     };
 })->with('providers');
 
+it('sends the item id to the provider when the item has no reference', function (Provider $provider) {
+    $payload = Invoice::create(InvoiceData::make([
+        'items' => [ItemData::from(['id' => 1542])],
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('items')->first())->toHaveKey('id', 1542)
+            ->not->toHaveKey('reference'),
+        Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
+    };
+})->with('providers');
+
 it('sends the item name as the line name', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'reference-1', 'name' => 'Bananas'])],
