@@ -180,15 +180,21 @@ class Create extends Invoice implements ShouldCreateInvoice
             'address' => $this->data->transport->origin->address,
             'postalcode' => $this->data->transport->origin->postalCode,
             'city' => $this->data->transport->origin->city,
-            'country' => $this->data->transport->origin->country,
         ];
+
+        if (! is_null($this->data->transport->origin->country)) {
+            $data['loadpoint']['country'] = $this->data->transport->origin->country;
+        }
 
         $landpointData = [
             'address' => $this->data->transport->destination->address,
             'postalcode' => $this->data->transport->destination->postalCode,
             'city' => $this->data->transport->destination->city,
-            'country' => $this->data->transport->destination->country,
         ];
+
+        if (! is_null($this->data->transport->destination->country)) {
+            $landpointData['country'] = $this->data->transport->destination->country;
+        }
 
         if ($this->data->transport->destination->dateTime) {
             $landpointData['date'] = $this->data->transport->destination->dateTime->toDateString();

@@ -46,6 +46,15 @@ Cegid Vendus rejected every receipt (RG) with `Param invoices missing`, because 
 
 See [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md).
 
+### Changed: `AddressData` has no default country
+
+`AddressData::country` defaulted to `PT`, so every transport address was sent with a country even when you set none. It is now `null` by default, and an address without a country is sent without one.
+
+> [!WARNING]
+> This affects **Cegid Vendus** transport details. Set `country` on the origin and destination addresses (e.g. `'country' => 'PT'`) to keep sending it.
+
+See [Creating an Invoice – Transport Details](invoices/creating-an-invoice.md#transport-details).
+
 ### Changed: Cegid Vendus `Client::find()` returns an empty list when nothing matches
 
 Cegid Vendus `Client::find()` no longer throws `RequestFailedException` when no client matches. It returns an empty list, as `Item::find()` does and as Moloni already did.

@@ -657,7 +657,7 @@ $transport = TransportData::make([
 | `address`    | `?string` | Street and house number             |
 | `city`       | `?string` | City                                |
 | `postalCode` | `?string` | Postal code                         |
-| `country`    | `string`  | ISO 3166-1 alpha-2 code (validated) |
+| `country`    | `?string` | ISO 3166-1 alpha-2 code (validated); not sent when `null` |
 | `date`       | `?Carbon` | Optional load/unload date           |
 | `time`       | `?Carbon` | Optional load/unload time           |
 

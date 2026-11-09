@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -25,6 +26,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdExc
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Invoice;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as FindClient;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
@@ -347,7 +349,14 @@ class Create extends Invoice implements ShouldCreateInvoice
             'vehicle_number_plate' => $transport->vehicleLicensePlate,
         ])->filter(fn (mixed $value) => Properties::isValid($value));
 
-        $this->payload = $this->payload->merge($delivery);
+        $countries = collect([
+            'delivery_departure_country' => $transport->origin->country,
+            'delivery_destination_country' => $transport->destination->country,
+        ])
+            ->filter(fn (?string $iso) => ! is_null($iso))
+            ->map(fn (string $iso) => (new GetCountry(CountryData::from(['iso' => $iso])))->execute()->getCountry()->id);
+
+        $this->payload = $this->payload->merge($delivery)->merge($countries);
     }
 
     /**
