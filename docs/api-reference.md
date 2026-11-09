@@ -381,7 +381,7 @@ $invoiceData = InvoiceData::make([
 | `client`           | `?ClientData`             | Customer information                            |
 | `transport`        | `?TransportData`          | Transport/movement of goods info                |
 | `creditNoteReason` | `?string`                 | Required for credit notes                       |
-| `relatedDocument`  | `?string`                 | Used for non-credit-note document relationships |
+| `relatedDocument`  | `?string`                 | Related document of a non-credit-note document. On RG, the invoice it settles: its `sequence` on Cegid Vendus, its `id` on Moloni |
 | `notes`            | `?string`                 | Additional notes (printed on document)          |
 | `dueDate`          | `?DueDateTerm`            | Payment term (FT only); throws `Exception` if set on non-FT types |
 | `output`           | `OutputData`              | Preferred output format (PDF default)           |

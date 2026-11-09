@@ -61,18 +61,18 @@ $yourInvoiceRecord->save();
 
 ## Working with the ID
 
-The provider's internal ID is useful for API operations like creating receipts or credit notes:
+The provider's internal ID is useful for API operations like creating receipts or credit notes on Moloni. Cegid Vendus identifies the related invoice by its `sequence` instead:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 $result = Invoice::create($invoiceData)->execute()->getInvoice();
 
-$id = $result->id;
+$relatedDocument = $result->id; // Cegid Vendus: $result->sequence
 
 $receiptData = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => $id,
+    'relatedDocument' => $relatedDocument,
     'payments' => [...],
 ]);
 
@@ -177,7 +177,7 @@ function processInvoiceResult($result): array
 
 ---
 
-Always store both `sequence` and `id` in your database. Use `sequence` for display and official references, and `id` when making related API calls (receipts, credit notes). The output object handles both PDF and ESC/POS formats transparently.
+Always store both `sequence` and `id` in your database. Use `sequence` for display and official references, and `id` when making related API calls (receipts, credit notes) on Moloni; Cegid Vendus uses `sequence` for them. The output object handles both PDF and ESC/POS formats transparently.
 
 ---
 

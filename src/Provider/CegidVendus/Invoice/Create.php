@@ -233,9 +233,17 @@ class Create extends Invoice implements ShouldCreateInvoice
 
     protected function buildRelatedDocument(): void
     {
-        $relatedDocument = is_string($this->data->relatedDocument) ? (int) $this->data->relatedDocument : null;
+        if (! is_string($this->data->relatedDocument) || $this->data->type === InvoiceType::CreditNote) {
+            return;
+        }
 
-        if ($this->data->type === InvoiceType::CreditNote || ! $relatedDocument) {
+        if ($this->data->type === InvoiceType::Receipt) {
+            $this->payload->put('invoices', [['document_number' => $this->data->relatedDocument]]);
+
+            return;
+        }
+
+        if (! (int) $this->data->relatedDocument) {
             return;
         }
 

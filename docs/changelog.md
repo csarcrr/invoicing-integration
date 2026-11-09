@@ -37,6 +37,15 @@ See [Creating an Invoice – Cegid Vendus](invoices/creating-an-invoice.md#cegid
 
 See [Cegid Vendus configuration](providers/cegid-vendus/configuration.md#mode).
 
+### Changed: Cegid Vendus receipts take the invoice number as `relatedDocument`
+
+Cegid Vendus rejected every receipt (RG) with `Param invoices missing`, because `relatedDocument` was sent as `related_document_id`. It is now sent as the `document_number` of the invoice in `invoices`, so it must be the invoice number, not its `id`.
+
+> [!WARNING]
+> This affects **Cegid Vendus** receipts. Pass the invoice `sequence` (e.g. `FT 01P2025/1`) as `relatedDocument`. An `id` is sent as an invoice number, so it does not identify the invoice. Moloni still takes the invoice `id`.
+
+See [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md).
+
 ### Changed: Cegid Vendus `Client::find()` returns an empty list when nothing matches
 
 Cegid Vendus `Client::find()` no longer throws `RequestFailedException` when no client matches. It returns an empty list, as `Item::find()` does and as Moloni already did.
