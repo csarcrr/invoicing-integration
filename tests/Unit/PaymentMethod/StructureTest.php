@@ -19,10 +19,5 @@ it('is an instance of the correct when creating a payment method', function (Pro
 })->with('providers');
 
 it('is an instance of the correct when finding payment methods', function (Provider $provider) {
-    $find = fn () => PaymentMethod::find();
-
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($find())->toBeInstanceOf(ShouldFindPaymentMethod::class),
-    };
+    expect(PaymentMethod::find())->toBeInstanceOf(ShouldFindPaymentMethod::class);
 })->with('providers');

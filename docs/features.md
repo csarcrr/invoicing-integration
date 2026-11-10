@@ -67,7 +67,7 @@ Features for managing the payment methods stored in the provider.
 |                       | Cegid Vendus | Moloni | Invoice Express |
 | --------------------- | ------------ | ------ | --------------- |
 | Create Payment Method | ❌           | ✅     | ❌              |
-| List Payment Methods  | ❌           | ✅     | ❌              |
+| List Payment Methods  | ✅           | ✅     | ❌              |
 
 ## Company Management
 

@@ -348,7 +348,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 
 ## PaymentMethod (Facade)
 
-Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
+Entry point for managing the payment methods stored in the provider. `find()` is supported on Cegid Vendus and Moloni; `create()` is supported on Moloni, and Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;

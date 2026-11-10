@@ -60,7 +60,7 @@ The command matches taxes by `vat_type`, not by rate.
 | `name` | `title` | `name` |
 | `shortName` | — | `short_name` |
 
-## 4. PaymentMethod find on Vendus
+## ~~4. PaymentMethod find on Vendus~~ (done)
 
 - New class: `Provider/CegidVendus/PaymentMethod/Find` (`GET documents/paymentmethods`).
 - `PaymentMethodAction::find()`: the Vendus case no longer throws.

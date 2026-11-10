@@ -33,8 +33,8 @@ while ($results->getList()->isNotEmpty()) {
 }
 ```
 
-- Each page holds up to 50 payment methods.
-- `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
+- On Moloni each page holds up to 50 payment methods. `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
+- On Cegid Vendus every payment method comes back on one page. After `execute()`, `getTotalPages()` returns `1`, and `next()` raises `NoMorePagesException`.
 - `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException`.
 
 ## Moloni
@@ -60,7 +60,24 @@ A flag that is missing from the response counts as not set. `MONEY_TRANSFER` and
 
 ## Cegid Vendus
 
-Not supported: `PaymentMethod::find()` throws `OperationNotSupportedException`.
+The request is sent to `GET documents/paymentmethods`, with no parameters. Each row is mapped as:
+
+| Cegid Vendus field | `PaymentMethodData` |
+| ------------------ | ------------------- |
+| `id`               | `id`                |
+| `title`            | `name`              |
+| `type`             | `type`              |
+
+| Cegid Vendus `type` | `type`                           |
+| ------------------- | -------------------------------- |
+| `NU`                | `PaymentMethod::MONEY`           |
+| `CD`                | `PaymentMethod::MB`              |
+| `CC`                | `PaymentMethod::CREDIT_CARD`     |
+| `DNP`               | `PaymentMethod::CURRENT_ACCOUNT` |
+| `TB`                | `PaymentMethod::MONEY_TRANSFER`  |
+| any other           | `null`                           |
+
+When Cegid Vendus reports no data, `getList()` is empty.
 
 ## Reference
 

@@ -10,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\Sho
 use CsarCrr\InvoicingIntegration\Data\PaymentMethodData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\PaymentMethod\Find as VendusFind;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Create;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find;
 
@@ -33,7 +34,7 @@ final class PaymentMethodAction
     public function find(): ShouldFindPaymentMethod
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
+            Provider::CEGID_VENDUS => new VendusFind,
             Provider::MOLONI => new Find,
         };
     }
