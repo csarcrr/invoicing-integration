@@ -250,6 +250,33 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 
 ---
 
+## Company (Facade)
+
+Entry point for listing the companies the provider user has access to. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Company;
+```
+
+| Method            | Return Type         | Description                     |
+| ----------------- | ------------------- | ------------------------------- |
+| `Company::find()` | `ShouldFindCompany` | Lists the provider's companies  |
+
+## ShouldFindCompany Contract
+
+The interface returned by `Company::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Company\ShouldFindCompany;
+```
+
+| Method      | Return Type  | Description                       |
+| ----------- | ------------ | --------------------------------- |
+| `execute()` | `self`       | Send the request                  |
+| `getList()` | `Collection` | `Collection<CompanyData>` results |
+
+---
+
 ## PaymentMethod (Facade)
 
 Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
@@ -559,6 +586,22 @@ The stock of an item in one warehouse, returned in `ItemData->stock` by `Item::g
 | `itemId`      | `int`        | ID of the item                                                |
 | `warehouseId` | `int`        | Warehouse (Moloni `warehouse_id`, Cegid Vendus `store_id`)    |
 | `quantity`    | `int\|float` | Stock of the item in that warehouse                           |
+
+---
+
+### CompanyData
+
+Represents a company the provider user has access to.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\CompanyData;
+```
+
+| Property | Type      | Description                    |
+| -------- | --------- | ------------------------------ |
+| `name`   | `string`  | Required. Name of the company  |
+| `id`     | `?int`    | Provider-assigned company ID   |
+| `vat`    | `?string` | VAT number of the company      |
 
 ---
 

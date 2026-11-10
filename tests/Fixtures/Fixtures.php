@@ -99,6 +99,13 @@ class Fixtures
         return $this;
     }
 
+    public function company(): self
+    {
+        $this->path[] = 'Company';
+
+        return $this;
+    }
+
     public function paymentMethod(): self
     {
         $this->path[] = 'PaymentMethod';

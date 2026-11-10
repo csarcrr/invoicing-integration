@@ -19,6 +19,10 @@
     - [Getting a Client](clients/getting-a-client.md)
     - [Finding Clients](clients/finding-clients.md)
 
+- **Companies**
+    - [Overview](companies/README.md)
+    - [Finding Companies](companies/finding-companies.md)
+
 - **Due Dates**
     - [Overview](due-dates/README.md)
     - [Creating a Due Date](due-dates/creating-a-due-date.md)

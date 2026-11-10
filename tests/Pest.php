@@ -41,6 +41,7 @@ function moloniProvider(): Provider
 uses(TestCase::class)->in('Unit', 'Feature');
 
 uses()->group('ClientTestingGroup')->in('Unit/Client', 'Feature/Client');
+uses()->group('CompanyTestingGroup')->in('Unit/Company', 'Feature/Company');
 uses()->group('DueDateTestingGroup')->in('Unit/DueDate', 'Feature/DueDate');
 uses()->group('InvoiceTestingGroup')->in('Unit/Invoice', 'Feature/Invoice');
 uses()->group('ItemTestingGroup')->in('Unit/Item', 'Feature/Item');
