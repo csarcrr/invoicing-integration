@@ -346,6 +346,56 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 
 ---
 
+## Category (Facade)
+
+Entry point for the categories stored in the provider. Supported on Cegid Vendus and Moloni.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Category;
+```
+
+| Method                                         | Return Type          | Description                                          |
+| ---------------------------------------------- | -------------------- | ---------------------------------------------------- |
+| `Category::find(?CategoryData $category = null)` | `ShouldFindCategory` | Lists the provider's categories, by `parentId` level |
+| `Category::get(CategoryData $category)`        | `ShouldGetCategory`  | Fetches one category by `id`                         |
+
+## ShouldFindCategory Contract
+
+The interface returned by `Category::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFindCategory;
+```
+
+| Method             | Return Type  | Description                                  |
+| ------------------ | ------------ | -------------------------------------------- |
+| `execute()`        | `self`       | Execute the current page request             |
+| `getList()`        | `Collection` | `Collection<CategoryData>` results           |
+| `getPayload()`     | `Collection` | Current request payload (parent, pagination) |
+| `next()`           | `self`       | Move to the next page                        |
+| `previous()`       | `self`       | Go back one page                             |
+| `page(int $page)`  | `self`       | Jump to a specific page                      |
+| `getCurrentPage()` | `int`        | Current page index                           |
+| `getTotalPages()`  | `?int`       | Total pages; always `1` on Moloni            |
+
+> `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
+> outside the available range.
+
+## ShouldGetCategory Contract
+
+The interface returned by `Category::get()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGetCategory;
+```
+
+| Method          | Return Type    | Description                                                    |
+| --------------- | -------------- | -------------------------------------------------------------- |
+| `execute()`     | `self`         | Send the request; throws `InvalidArgumentException` without an `id` |
+| `getCategory()` | `CategoryData` | The fetched category                                           |
+
+---
+
 ## PaymentMethod (Facade)
 
 Entry point for managing the payment methods stored in the provider. `find()` is supported on Cegid Vendus and Moloni; `create()` is supported on Moloni, and Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
@@ -582,7 +632,7 @@ $item = ItemData::make([
 
 ### CategoryData
 
-Represents a product category for catalog items.
+Represents a product category for catalog items, and the categories returned by `Category::find()` and `Category::get()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
@@ -592,10 +642,11 @@ $category = CategoryData::make([
 ]);
 ```
 
-| Property | Type      | Description                  |
-| -------- | --------- | ---------------------------- |
-| `id`     | `?int`    | Provider-assigned category ID |
-| `name`   | `?string` | Category name                |
+| Property   | Type      | Description                                                                 |
+| ---------- | --------- | --------------------------------------------------------------------------- |
+| `id`       | `?int`    | Provider-assigned category ID                                               |
+| `name`     | `?string` | Category name                                                               |
+| `parentId` | `?int`    | Parent category ID (Moloni only); `null` for a top-level category and on Vendus |
 
 ---
 

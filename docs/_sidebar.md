@@ -9,6 +9,11 @@
     - [Getting an Item](items/getting-an-item.md)
     - [Finding Items](items/finding-an-item.md)
 
+- **Categories**
+    - [Overview](categories/README.md)
+    - [Finding Categories](categories/finding-categories.md)
+    - [Getting a Category](categories/getting-a-category.md)
+
 - **Item Stocks**
     - [Overview](item-stocks/README.md)
     - [Moving Stock](item-stocks/moving-stock.md)

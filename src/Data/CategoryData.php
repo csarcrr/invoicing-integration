@@ -15,5 +15,6 @@ class CategoryData extends Data implements DataNeedsValidation
     public function __construct(
         public ?int $id = null,
         public ?string $name = null,
+        public ?int $parentId = null,
     ) {}
 }

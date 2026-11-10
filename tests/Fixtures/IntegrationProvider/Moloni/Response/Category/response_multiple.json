@@ -1,0 +1,24 @@
+[
+    {
+        "num_categories": "2",
+        "num_products": "4",
+        "category_id": 29999,
+        "parent_id": 0,
+        "pos_enabled": 1,
+        "pos_favorite": 0,
+        "name": "Produtos",
+        "description": null,
+        "image": ""
+    },
+    {
+        "num_categories": "0",
+        "num_products": "1",
+        "category_id": 19999,
+        "parent_id": 0,
+        "pos_enabled": 1,
+        "pos_favorite": 0,
+        "name": "Serviços",
+        "description": "",
+        "image": ""
+    }
+]
