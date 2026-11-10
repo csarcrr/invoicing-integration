@@ -206,7 +206,7 @@ RG documents require the original invoice reference and at least one payment. No
 > [!NOTE]
 > On Cegid Vendus, `relatedDocument` must be the invoice number (`sequence`, e.g. `FT 01P2025/1`). It is sent as the `document_number` of the invoice in `invoices`.
 >
-> On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice.
+> On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice. Moloni names its receipts `RE` (Recibo), so the returned `sequence` starts with `RE` (e.g. `RE M/4`), not `RG`. It is the number Moloni shows and prints on the document.
 
 ---
 
