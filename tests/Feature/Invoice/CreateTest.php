@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -9,6 +10,7 @@ use CsarCrr\InvoicingIntegration\Data\RelatedDocumentReferenceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
@@ -127,3 +129,101 @@ test('sends each invoice type to the provider', function (Provider $provider, In
     [InvoiceType::Transport, 'billsOfLading/insert'],
     [InvoiceType::CreditNote, 'creditNotes/insert'],
 ]);
+
+test('records the credit note payments as a refund', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+    Http::fake(['*paymentReturns/insert*' => mockResponse(['valid' => 1, 'document_id' => 654321])]);
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::CreditNote,
+        'items' => [ItemData::from([
+            'reference' => 'reference-1',
+            'price' => 1000,
+            'relatedDocument' => RelatedDocumentReferenceData::from(['documentId' => '111111', 'row' => 1]),
+        ])],
+        'payments' => [PaymentData::from(['method' => PaymentMethod::MONEY, 'amount' => 1000])],
+        'creditNoteReason' => 'Broken product',
+    ]))->execute()->getInvoice();
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'documents')
+            && isset($request['payments'])),
+        Provider::MOLONI => Http::assertSent(fn (Request $request) => Str::contains($request->url(), '/v1/creditNotes/insert')
+            && ! isset($request['payments'])),
+    };
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentReturns')),
+        Provider::MOLONI => Http::assertSent(fn (Request $request) => Str::contains($request->url(), '/v1/paymentReturns/insert')
+            && $request['customer_id'] === 999999
+            && $request['document_set_id'] === 8002
+            && $request['net_value'] === 10.0
+            && $request['associated_documents'] === [['associated_id' => 123456, 'value' => 10.0]]
+            && $request['payments'] === [['payment_method_id' => 7001, 'date' => Carbon::now()->toDateString(), 'value' => 10]]
+            && $request['status'] === 1),
+    };
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($invoice->getAdditionalData())->not->toHaveKey('payment_return_id'),
+        Provider::MOLONI => expect($invoice->getAdditionalData()['payment_return_id'])->toBe(654321),
+    };
+})->with('providers');
+
+test('does not record a refund for a credit note without payments', function (Provider $provider) {
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
+
+    Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::CreditNote,
+        'items' => [ItemData::from([
+            'reference' => 'reference-1',
+            'relatedDocument' => RelatedDocumentReferenceData::from(['documentId' => '111111', 'row' => 1]),
+        ])],
+        'creditNoteReason' => 'Broken product',
+    ]))->execute();
+
+    Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentReturns'));
+})->with('providers');
+
+test('does not record a refund for a draft credit note', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
+
+    Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::CreditNote,
+        'items' => [ItemData::from([
+            'reference' => 'reference-1',
+            'relatedDocument' => RelatedDocumentReferenceData::from(['documentId' => '111111', 'row' => 1]),
+        ])],
+        'payments' => [PaymentData::from(['method' => PaymentMethod::MONEY, 'amount' => 1000])],
+        'creditNoteReason' => 'Broken product',
+    ]))->asDraft()->execute();
+
+    Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentReturns'));
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => Http::assertSent(fn (Request $request) => isset($request['payments'])),
+        Provider::MOLONI => Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentMethods/getAll')),
+    };
+})->with('providers');
+
+test('fails when the provider rejects the credit note refund', function (Provider $provider) {
+    fakeProviderPaymentMethods($provider);
+    Http::fake(['*paymentReturns/insert*' => mockResponse([['code' => '2 net_value', 'description' => 'Invalid value']])]);
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
+
+    $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::CreditNote,
+        'items' => [ItemData::from([
+            'reference' => 'reference-1',
+            'relatedDocument' => RelatedDocumentReferenceData::from(['documentId' => '111111', 'row' => 1]),
+        ])],
+        'payments' => [PaymentData::from(['method' => PaymentMethod::MONEY, 'amount' => 1000])],
+        'creditNoteReason' => 'Broken product',
+    ]));
+
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect(fn () => $invoice->execute())->not->toThrow(RequestFailedException::class),
+        Provider::MOLONI => expect(fn () => $invoice->execute())->toThrow(RequestFailedException::class, '2 net_value - Invalid value'),
+    };
+})->with('providers');

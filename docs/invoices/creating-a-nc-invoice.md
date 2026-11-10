@@ -291,6 +291,8 @@ Always provide a clear, descriptive reason for the credit note. Each item must r
 
 > [!NOTE]
 > On Moloni, `documentId` must be the numeric `document_id` of the original document and `row` the `document_product_id` of the line being credited. The credited documents are sent as `associated_documents`, each with the gross total of its items.
+>
+> Moloni credit notes have no payments. When the credit note has `payments`, the package issues a Payment Return (`paymentReturns/insert`) right after it, for the sum of the payments, linked to the credit note and closed. Its `document_id` is returned as `payment_return_id` in `getAdditionalData()`. A draft credit note gets no Payment Return, and its payments are not sent. If the Payment Return fails, the credit note is already created and the provider error is thrown as `RequestFailedException`; issue the refund in Moloni.
 
 ---
 

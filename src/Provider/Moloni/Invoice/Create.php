@@ -30,6 +30,7 @@ use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentReturn\Create as CreatePaymentReturn;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Exception;
 use Illuminate\Support\Collection;
@@ -46,6 +47,9 @@ class Create extends Invoice implements ShouldCreateInvoice
 
     /** @var Collection<string, mixed> */
     protected Collection $payload;
+
+    /** @var array<int, array{payment_method_id: int, date: string, value: float|int}> */
+    protected array $refundPayments = [];
 
     public function __construct(protected InvoiceData $invoice)
     {
@@ -86,7 +90,28 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         $this->fillAdditionalProperties($data);
 
+        $this->createPaymentReturn($id);
+
         return $this;
+    }
+
+    protected function createPaymentReturn(int $creditNoteId): void
+    {
+        if ($this->refundPayments === []) {
+            return;
+        }
+
+        $id = (new CreatePaymentReturn([
+            'date' => Carbon::now()->toDateString(),
+            'document_set_id' => $this->payload->get('document_set_id'),
+            'customer_id' => $this->payload->get('customer_id'),
+            'net_value' => $this->documentTotal(),
+            'associated_documents' => [['associated_id' => $creditNoteId, 'value' => $this->documentTotal()]],
+            'payments' => $this->refundPayments,
+            'status' => 1,
+        ]))->execute()->getId();
+
+        $this->data->additional(['payment_return_id' => $id]);
     }
 
     /**
@@ -286,6 +311,10 @@ class Create extends Invoice implements ShouldCreateInvoice
             return;
         }
 
+        if ($this->data->type === InvoiceType::CreditNote && $this->draft) {
+            return;
+        }
+
         if (! ($this->data->payments instanceof Collection)) {
             return;
         }
@@ -307,6 +336,12 @@ class Create extends Invoice implements ShouldCreateInvoice
                 'value' => ($payment->amount ?? 0) / 100,
             ];
         });
+
+        if ($this->data->type === InvoiceType::CreditNote) {
+            $this->refundPayments = $payments->values()->toArray();
+
+            return;
+        }
 
         $this->payload->put('payments', $payments->values()->toArray());
 
