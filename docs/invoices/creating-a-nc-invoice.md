@@ -287,6 +287,9 @@ Example credit note response:
 Always provide a clear, descriptive reason for the credit note. Each item must reference its line number on the original invoice, and the payment amount should match the total credit amount. Credit notes use the same payment method configuration as invoices.
 
 > [!NOTE]
+> On Cegid Vendus, a credit note for an FR also issues a refund receipt (RG) for the credited amount, automatically. A credit note for an FT does not. Do not issue your own RG for a refund that Cegid Vendus already issued, or the refund is recorded twice.
+
+> [!NOTE]
 > On Moloni, `documentId` must be the numeric `document_id` of the original document and `row` the `document_product_id` of the line being credited. The credited documents are sent as `associated_documents`, each with the gross total of its items.
 
 ---
