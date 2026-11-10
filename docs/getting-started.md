@@ -16,6 +16,27 @@ php artisan vendor:publish --tag="invoicing-integration-config"
 
 ## 3. Configure Environment Variables
 
+### With the setup command
+
+The `invoicing-integration:setup` command asks for your provider and its credentials, fetches the IDs the package needs from the provider, and writes them to your `.env` file. Run it again whenever the provider account changes.
+
+```bash
+php artisan invoicing-integration:setup
+```
+
+- Existing keys are replaced in place; the other lines of the file are kept. `--env-file=path/to/file` writes another file instead of the app `.env`.
+- When exactly one record matches, it is picked. When several match, the command asks which one to use.
+- A key with no match is not written, and the command warns you to set it by hand.
+
+| Provider     | Asks for                                         | Fetches                                                                                                                         |
+| ------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Cegid Vendus | API key, mode                                    | Payment method IDs per `PaymentMethod` type, unit IDs (`KG`, `UNIT`)                                                            |
+| Moloni       | Developer ID, client secret, username, password  | Company (you pick one), the client with VAT `999999990`, the `PT` tax IDs per `ItemTax` type and the `OTHER` rate, unit IDs (`KG`, `UNIT`) |
+
+On Moloni, when the company has no exempt (`ISE`) tax in the `PT` zone, the command asks for an exemption reason (`M01` to `M16`) and creates one with [`Tax::create()`](taxes/creating-a-tax.md). Moloni currently rejects a 0% `value` on `taxes/insert`, so the command then warns you to create the exempt tax in Moloni and set `MOLONI_TAX_EXEMPT_ID` by hand.
+
+### By hand
+
 Add the following to your `.env` file:
 
 ```bash

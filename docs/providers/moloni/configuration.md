@@ -67,7 +67,9 @@ The same `access_token` works for looking up the other IDs this page asks for (c
 
 ### Environment Variables
 
-Add the following to your `.env` file:
+`php artisan invoicing-integration:setup` fetches these values and writes them to `.env`. See [Getting Started – With the setup command](../../getting-started.md#with-the-setup-command).
+
+To set them by hand, add the following to your `.env` file:
 
 ```bash
 # Moloni credentials

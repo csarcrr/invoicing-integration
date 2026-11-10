@@ -63,7 +63,7 @@ You can read more about AT CUD <a href="https://www.vendus.pt/ajuda/comunicacao-
 
 ## payments mapping
 
-Each payment method in your code needs to map to a numeric ID from Cegid Vendus. Here's how to find those IDs:
+Each payment method in your code needs to map to a numeric ID from Cegid Vendus. `php artisan invoicing-integration:setup` fetches the payment method and unit IDs and writes them to `.env` (see [Getting Started – With the setup command](../../getting-started.md#with-the-setup-command)). To find them by hand:
 
 ### Step-by-step: Finding payment method IDs
 

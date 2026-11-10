@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration;
 
+use CsarCrr\InvoicingIntegration\Commands\SetupCommand;
 use CsarCrr\InvoicingIntegration\Configuration\HttpConfiguration;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
@@ -33,7 +34,8 @@ class InvoicingIntegrationServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('invoicing-integration')
-            ->hasConfigFile('invoicing-integration');
+            ->hasConfigFile('invoicing-integration')
+            ->hasCommand(SetupCommand::class);
     }
 
     private function setupHttpMacros(): void

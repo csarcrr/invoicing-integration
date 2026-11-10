@@ -66,7 +66,7 @@ The command matches taxes by `vat_type`, not by rate.
 - `PaymentMethodAction::find()`: the Vendus case no longer throws.
 - Type mapping: `NU`→MONEY, `CD`→MB, `CC`→CREDIT_CARD, `DNP`→CURRENT_ACCOUNT, `TB`→MONEY_TRANSFER, any other code → `null`.
 
-## 5. Command `invoicing-integration:setup {--env-file=}`
+## ~~5. Command `invoicing-integration:setup {--env-file=}`~~ (done)
 
 - Files:
   - `src/Commands/SetupCommand.php`, registered with `hasCommand()`
@@ -88,15 +88,20 @@ The command matches taxes by `vat_type`, not by rate.
   6. Units: Unit find.
 - Delete `bin/sandbox-ids.sh`.
 
-## Tests and docs
+## ~~Tests and docs~~ (done)
 
 - Pest tests per Find and Create with the `providers` dataset and fixtures; unsupported operations assert `OperationNotSupportedException`.
 - Command test with `Http::fake` and `expectsQuestion`.
 - Docs: new `docs/companies/`, `docs/taxes/`, `docs/units/`; payment-methods pages for Vendus; `getting-started.md` for the command; `api-reference.md`; changelog for the Vendus changes.
 
-## Open questions
+## Open questions (decided while implementing; revisit if needed)
 
-1. Moloni has no Kg unit: also create one with `measurementUnits/insert` (adds a Unit Create action), or only warn?
-2. No no-VAT client: create one with `Client::create` ("Consumidor Final"), or only warn?
-3. Exempt tax reason: prompt with the M01–M16 choices from `TaxExemptionReason`, or always `M07`?
-4. Public command with docs and changelog, or dev-only tool without docs?
+1. ~~Moloni has no Kg unit~~: only warn.
+2. ~~No no-VAT client~~: only warn.
+3. ~~Exempt tax reason~~: prompt with `M01`–`M16`, default `M07`.
+4. ~~Public or dev-only~~: public, documented in `getting-started.md`.
+
+## Found live
+
+- Moloni `taxes/insert` rejects `value` 0 in every form (`'0'`, `'0.0'`, `0.0`), so a 0% exempt tax cannot be created through the API. The command warns and continues.
+- The Moloni demo company labels some taxes with the wrong `vat_type` (e.g. "IVA Reduzido 6%" is `NOR`), so the tax choices show the rate.
