@@ -77,6 +77,15 @@ Features for listing the companies the provider user has access to.
 | -------------- | ------------ | ------ | --------------- |
 | List Companies | ❌           | ✅     | ❌              |
 
+## Tax Management
+
+Features for managing the taxes stored in the provider.
+
+|             | Cegid Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Create Tax  | ❌           | ✅     | ❌              |
+| List Taxes  | ❌           | ✅     | ❌              |
+
 ## Invoicing
 
 Features that apply when issuing an Invoicing.

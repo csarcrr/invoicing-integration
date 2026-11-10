@@ -22,7 +22,7 @@ Already in place:
 | `name` | `name` |
 | `vat` | `vat` |
 
-## 2. Tax (Moloni only)
+## ~~2. Tax (Moloni only)~~ (done)
 
 - Files:
   - `ShouldFindTax` and `ShouldCreateTax`

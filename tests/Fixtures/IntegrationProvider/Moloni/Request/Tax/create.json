@@ -1,0 +1,11 @@
+{
+    "name": "Isento",
+    "value": 0,
+    "type": 1,
+    "saft_type": 1,
+    "vat_type": "ISE",
+    "stamp_tax": "",
+    "exemption_reason": "M07",
+    "fiscal_zone": "PT",
+    "active_by_default": 0
+}

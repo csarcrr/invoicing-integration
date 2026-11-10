@@ -11,6 +11,7 @@ enum SupportedMoloniProperties: string
     case Invoice = 'invoice';
     case DueDate = 'due_date';
     case PaymentMethod = 'payment_method';
+    case Tax = 'tax';
 
     /** @return array<string> */
     public function properties(): array
@@ -20,6 +21,7 @@ enum SupportedMoloniProperties: string
             self::Invoice => ['document_id', 'number', 'net_value', 'taxes_value', 'products'],
             self::DueDate => ['maturity_date_id', 'name', 'days'],
             self::PaymentMethod => ['payment_method_id', 'name', 'is_numerary', 'is_mb', 'is_credit'],
+            self::Tax => ['tax_id', 'name', 'value', 'type', 'saft_type', 'vat_type', 'stamp_tax', 'exemption_reason', 'fiscal_zone', 'active_by_default'],
             self::Item => ['product_id', 'category_id', 'type', 'name', 'summary', 'reference', 'ean', 'price', 'has_stock', 'visibility_id', 'unit_id', 'taxes', 'exemption_reason', 'warehouses'],
         };
     }

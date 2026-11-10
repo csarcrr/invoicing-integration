@@ -33,6 +33,11 @@
     - [Creating a Payment Method](payment-methods/creating-a-payment-method.md)
     - [Finding Payment Methods](payment-methods/finding-payment-methods.md)
 
+- **Taxes**
+    - [Overview](taxes/README.md)
+    - [Creating a Tax](taxes/creating-a-tax.md)
+    - [Finding Taxes](taxes/finding-taxes.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)

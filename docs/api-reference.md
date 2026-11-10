@@ -277,6 +277,48 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Company\ShouldFin
 
 ---
 
+## Tax (Facade)
+
+Entry point for managing the taxes stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`ItemTax` enum](#itemtax).
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Tax;
+```
+
+| Method                       | Return Type       | Description                        |
+| ---------------------------- | ----------------- | ---------------------------------- |
+| `Tax::create(TaxData $tax)`  | `ShouldCreateTax` | Creates a new tax builder instance |
+| `Tax::find()`                | `ShouldFindTax`   | Lists the provider's taxes         |
+
+## ShouldCreateTax Contract
+
+The interface returned by `Tax::create()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldCreateTax;
+```
+
+| Method         | Return Type  | Description                                               |
+| -------------- | ------------ | --------------------------------------------------------- |
+| `execute()`    | `self`       | Send the create request and populate the response         |
+| `getTax()`     | `TaxData`    | Access the hydrated DTO (includes provider-assigned `id`) |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)      |
+
+## ShouldFindTax Contract
+
+The interface returned by `Tax::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldFindTax;
+```
+
+| Method      | Return Type  | Description                   |
+| ----------- | ------------ | ----------------------------- |
+| `execute()` | `self`       | Send the request              |
+| `getList()` | `Collection` | `Collection<TaxData>` results |
+
+---
+
 ## PaymentMethod (Facade)
 
 Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
@@ -602,6 +644,25 @@ use CsarCrr\InvoicingIntegration\Data\CompanyData;
 | `name`   | `string`  | Required. Name of the company  |
 | `id`     | `?int`    | Provider-assigned company ID   |
 | `vat`    | `?string` | VAT number of the company      |
+
+---
+
+### TaxData
+
+Represents a tax stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\TaxData;
+```
+
+| Property          | Type                  | Description                                          |
+| ----------------- | --------------------- | ---------------------------------------------------- |
+| `name`            | `string`              | Required. Name of the tax                            |
+| `id`              | `?int`                | Provider-assigned tax ID                             |
+| `rate`            | `?float`              | Rate in percent                                      |
+| `type`            | `?ItemTax`            | Kind of VAT, `null` when the tax is not VAT          |
+| `fiscalZone`      | `?string`             | Fiscal zone, e.g. `PT`, `PT-AC`, `PT-MA`             |
+| `exemptionReason` | `?TaxExemptionReason` | Exemption reason, set on 0% taxes                    |
 
 ---
 
