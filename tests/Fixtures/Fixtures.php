@@ -106,6 +106,13 @@ class Fixtures
         return $this;
     }
 
+    public function unit(): self
+    {
+        $this->path[] = 'Unit';
+
+        return $this;
+    }
+
     public function paymentMethod(): self
     {
         $this->path[] = 'PaymentMethod';

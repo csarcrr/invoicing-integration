@@ -44,7 +44,7 @@ Already in place:
 
 The command matches taxes by `vat_type`, not by rate.
 
-## 3. Unit (both providers)
+## ~~3. Unit (both providers)~~ (done)
 
 - Files:
   - `ShouldFindUnit`

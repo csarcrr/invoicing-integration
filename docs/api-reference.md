@@ -319,6 +319,33 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldFindTax
 
 ---
 
+## Unit (Facade)
+
+Entry point for listing the units stored in the provider. Supported on Cegid Vendus and Moloni. Not to be confused with the [`Unit` enum](#unit).
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Unit;
+```
+
+| Method         | Return Type      | Description                |
+| -------------- | ---------------- | -------------------------- |
+| `Unit::find()` | `ShouldFindUnit` | Lists the provider's units |
+
+## ShouldFindUnit Contract
+
+The interface returned by `Unit::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUnit;
+```
+
+| Method      | Return Type  | Description                    |
+| ----------- | ------------ | ------------------------------ |
+| `execute()` | `self`       | Send the request               |
+| `getList()` | `Collection` | `Collection<UnitData>` results |
+
+---
+
 ## PaymentMethod (Facade)
 
 Entry point for managing the payment methods stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
@@ -663,6 +690,22 @@ use CsarCrr\InvoicingIntegration\Data\TaxData;
 | `type`            | `?ItemTax`            | Kind of VAT, `null` when the tax is not VAT          |
 | `fiscalZone`      | `?string`             | Fiscal zone, e.g. `PT`, `PT-AC`, `PT-MA`             |
 | `exemptionReason` | `?TaxExemptionReason` | Exemption reason, set on 0% taxes                    |
+
+---
+
+### UnitData
+
+Represents a unit stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\UnitData;
+```
+
+| Property    | Type      | Description                                |
+| ----------- | --------- | ------------------------------------------ |
+| `name`      | `string`  | Required. Name of the unit                 |
+| `id`        | `?int`    | Provider-assigned unit ID                  |
+| `shortName` | `?string` | Short name (Moloni only; `null` on Vendus) |
 
 ---
 

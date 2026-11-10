@@ -47,6 +47,7 @@ uses()->group('InvoiceTestingGroup')->in('Unit/Invoice', 'Feature/Invoice');
 uses()->group('ItemTestingGroup')->in('Unit/Item', 'Feature/Item');
 uses()->group('PaymentMethodTestingGroup')->in('Unit/PaymentMethod', 'Feature/PaymentMethod');
 uses()->group('TaxTestingGroup')->in('Unit/Tax', 'Feature/Tax');
+uses()->group('UnitTestingGroup')->in('Unit/Unit', 'Feature/Unit');
 uses()->group('ItemStockTestingGroup')->in('Unit/ItemStock', 'Feature/ItemStock');
 uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Unit/HttpRequestTest.php');
 uses()->group('TraitTestingGroup')->in('Unit/Traits');

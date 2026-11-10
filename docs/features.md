@@ -86,6 +86,14 @@ Features for managing the taxes stored in the provider.
 | Create Tax  | ❌           | ✅     | ❌              |
 | List Taxes  | ❌           | ✅     | ❌              |
 
+## Unit Management
+
+Features for listing the units stored in the provider.
+
+|            | Cegid Vendus | Moloni | Invoice Express |
+| ---------- | ------------ | ------ | --------------- |
+| List Units | ✅           | ✅     | ❌              |
+
 ## Invoicing
 
 Features that apply when issuing an Invoicing.

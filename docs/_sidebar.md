@@ -38,6 +38,10 @@
     - [Creating a Tax](taxes/creating-a-tax.md)
     - [Finding Taxes](taxes/finding-taxes.md)
 
+- **Units**
+    - [Overview](units/README.md)
+    - [Finding Units](units/finding-units.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)
