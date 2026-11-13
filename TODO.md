@@ -7,7 +7,6 @@ These operations throw `OperationNotSupportedException`. Their tests run on Molo
 | Operation | Provider | Provider endpoint | Status |
 | ----------------------- | ------------ | --------------------------------- | ------------------------------------------------- |
 | `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | To implement |
-| `PaymentMethod::find` | Cegid Vendus | `GET /documents/paymentmethods` | To implement |
 | `DueDate::find` | Cegid Vendus | `GET /documents/duedates` | To implement |
 | `DueDate::create` | Cegid Vendus | None in `providers-docs/vendus/openapi.json` | Cannot implement until Vendus adds an endpoint |
 
