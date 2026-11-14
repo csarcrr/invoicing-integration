@@ -22,7 +22,7 @@ foreach ($results->getList() as $warehouse) {
 
 ## Cegid Vendus
 
-The request is sent to `GET stores`. Cegid Vendus stores and warehouses are both listed here. The `type` filter of the endpoint is not exposed, so the provider default applies. Each row is mapped as:
+The request is sent to `GET stores`. On Cegid Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Cegid Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse. The endpoint's `type` filter (`all`, `store`, `warehouse`) is not exposed, so the provider default applies; read each row's `type` from `getAdditionalData()` to tell stores from warehouses. Each row is mapped as:
 
 | Cegid Vendus field | `WarehouseData` |
 | ------------------ | --------------- |

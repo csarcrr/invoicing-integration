@@ -53,6 +53,7 @@
 
 - **Warehouses**
     - [Overview](warehouses/README.md)
+    - [Creating a Warehouse](warehouses/creating-a-warehouse.md)
     - [Finding Warehouses](warehouses/finding-warehouses.md)
 
 - **Invoices**

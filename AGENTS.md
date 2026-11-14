@@ -6,6 +6,7 @@
 - Uses Pest PHP for testing
 - Uses PHPStan (Larastan) for static analysis
 - Uses Pint for code formatting/linting
+- `GLOSSARY.md` defines the package's domain terms and the name each provider uses for them. Use its terms in code, tests and docs.
 
 ## Commands
 

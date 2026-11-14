@@ -1,6 +1,6 @@
 # Feature Backlog
 
-Operations that both providers (Moloni and Cegid Vendus) support but the package does not expose yet. Entry 10 (`Warehouse::create`) is the one exception: it stays in the backlog by the user's decision, although Cegid Vendus v1.1 has no endpoint for it.
+Operations that both providers (Moloni and Cegid Vendus) support but the package does not expose yet. Two exceptions: entry 10 (`Warehouse::create`) is implemented on Moloni only, because Cegid Vendus creates stores only in API v1.2; entry 13 migrates the Vendus client to v1.2. Domain terms and their provider names are in `GLOSSARY.md`.
 
 ## How to use this file
 
@@ -12,7 +12,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
   - **Agent resolves:** look it up yourself (local docs, v1.1 docs or the sandbox) before implementing. It does not block.
   - No marker: a design decision for the user. Ask before implementing, and do not decide it alone.
 - When the user answers a question, write the answer into the file as a **Default:** so later agents do not ask again.
-- Vendus versions: the package client calls v1.1 (`src/Configuration/HttpConfiguration.php`). The source of truth for v1.1 is the live spec at `https://www.vendus.pt/ws/v1.1/api.jsonapi` (rendered at `https://www.vendus.pt/ws/v1.1/`). The local `providers-docs/vendus/openapi.json` is v1.2 and has endpoints v1.1 lacks. Line numbers below point into the local v1.2 file; every Vendus endpoint in the backlog was checked against the live v1.1 spec on 2026-11-13.
+- Vendus versions: the user decided on 2026-11-14 to migrate the package client to v1.2 as a separate change; until then, operations that exist only in v1.2 throw `OperationNotSupportedException` on Vendus. The package client calls v1.1 (`src/Configuration/HttpConfiguration.php`). The source of truth for v1.1 is the live spec at `https://www.vendus.pt/ws/v1.1/api.jsonapi` (rendered at `https://www.vendus.pt/ws/v1.1/`). The local `providers-docs/vendus/openapi.json` is v1.2 and has endpoints v1.1 lacks. Line numbers below point into the local v1.2 file; every Vendus endpoint in the backlog was checked against the live v1.1 spec on 2026-11-13.
 - Moloni: the local pages under `providers-docs/moloni/` matched the live pages for every backlog endpoint on 2026-11-13.
 - Status rules:
   1. Before starting, set the entry to `In progress` on the board and in the entry.
@@ -33,9 +33,10 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 7 | `Item::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Item/ShouldDeleteItem.php`; `src/Provider/Moloni/Item/Delete.php`; `src/Provider/CegidVendus/Item/Delete.php`; `tests/Unit/Item/Delete/PayloadTest.php`; `tests/Feature/Item/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Item/delete.json`. Changed: `src/Provider/Base.php` (`$url`, `getUrl()`); `src/Actions/ItemAction.php`; `src/Facades/Item.php`. Docs: `docs/items/deleting-an-item.md` (new); `docs/_sidebar.md`; `docs/items/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 8 | `Category::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldCreateCategory.php`; `src/Provider/CegidVendus/Category.php` (base, `toCategoryData()`); `src/Provider/CegidVendus/Category/Create.php`; `src/Provider/Moloni/Category/Create.php`; `tests/Unit/Category/Create/PayloadTest.php`; `tests/Feature/Category/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Category/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Category/create.json`. Changed: `src/Provider/Moloni/Category.php` (extends `Base`); `src/Actions/CategoryAction.php`; `src/Facades/Category.php`. Docs: `docs/categories/creating-a-category.md` (new); `docs/_sidebar.md`; `docs/categories/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 9 | `Warehouse::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldFindWarehouse.php`; `src/Data/WarehouseData.php`; `src/Provider/Moloni/Warehouse.php` and `src/Provider/CegidVendus/Warehouse.php` (bases, `toWarehouseData()`); `src/Provider/Moloni/Warehouse/Find.php`; `src/Provider/CegidVendus/Warehouse/Find.php`; `tests/Unit/Warehouse/Find/PayloadTest.php`; `tests/Feature/Warehouse/FindTest.php`; fixtures `Response/Warehouse/response_multiple.json` for both providers. Changed: `src/Actions/WarehouseAction.php` and `src/Facades/Warehouse.php` (new); `tests/Fixtures/Fixtures.php` (`warehouse()`). Docs: `docs/warehouses/README.md` and `docs/warehouses/finding-warehouses.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
-| 10 | `Warehouse::create` | Post-MVP | Todo | Moloni only; Vendus v1.1 has no endpoint, throws `OperationNotSupportedException` |
+| 10 | `Warehouse::create` | Post-MVP | Done | Moloni done; Cegid Vendus throws `OperationNotSupportedException` until entry 13 (v1.2 migration). Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldCreateWarehouse.php`; `src/Provider/Moloni/Warehouse/Create.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Warehouse/create.json`. Changed: `src/Data/WarehouseData.php` (`code`, `address`, `city`, `postalCode`, `country`, `isDefault`); `src/Actions/WarehouseAction.php`; `src/Facades/Warehouse.php`. Docs: `docs/warehouses/creating-a-warehouse.md` (new); `docs/warehouses/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 11 | `TaxExemption::find` | Post-MVP | Todo | Reference data |
 | 12 | `DocumentType::find` | Post-MVP | Todo | Reference data |
+| 13 | Cegid Vendus v1.2 migration | Post-MVP | Todo | Move the Vendus client from v1.1 to v1.2; unblocks Vendus `Warehouse::create` |
 
 ## Backlog
 
@@ -391,14 +392,14 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 10. Warehouse::create
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Creates a warehouse (Moloni).
 
 **Moloni:** `warehouses/insert` (`settings/warehouses/insert`). Local docs: `providers-docs/moloni/dev/settings/warehouses/insert/index.html`. Required: `company_id`, `title`, `code`, `address`, `city`, `zip_code`, `country_id`. Optional: `is_default` (1/0), `phone`, `fax`, `contact_name`, `contact_email`. Response: `valid`, `warehouse_id`. Creating the first warehouse moves all stock to it.
 
-**Vendus:** not supported. The v1.1 spec has no `POST /stores` (only `GET`). The local v1.2 file has one (line 3297), but the package client uses v1.1. Kept in the backlog by user decision (2026-11-14).
+**Vendus:** a Vendus store is a record tied to the account subscription; its `type` is `store` or `warehouse`. Both map to the package `Warehouse` (see `GLOSSARY.md`). Creating one is `POST /stores`, which exists only in v1.2 (local file line 3297); the live v1.1 spec has `GET /stores` and `GET /stores/{id}` only (checked 2026-11-14). The package client calls v1.1, so Vendus throws `OperationNotSupportedException` until the package migrates to v1.2.
 
 **Existing pieces to reuse:**
 - Warehouse::find (entry 9) for the DTO and facade
@@ -419,14 +420,15 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 1. Facade name: `Store` or `Warehouse` (same decision as entry 9)? **Default:** `Warehouse`, as in entry 9.
 2. Moloni needs `country_id`, not an ISO code. Should the DTO carry the ISO code and look up the id, as `Invoice::create` does for transport? **Default:** yes. Carry the ISO code and look up the id, as `Invoice::create` and `Client::create` do.
 3. How does Vendus take the default store flag? **Default:** resolved: Vendus v1.1 has no create endpoint at all.
-4. What happens on Cegid Vendus? **Default:** the action throws `OperationNotSupportedException`, as `TaxAction::create()` does. Document it on the docs page.
+4. What happens on Cegid Vendus? **Default:** migrate the package client to Vendus v1.2, then add the Vendus implementation on `POST /stores` (user decision, 2026-11-14). The migration is a separate change. Until it lands, the action throws `OperationNotSupportedException`, as `TaxAction::create()` does, and the docs say so.
+5. How is the country id resolved, given unit tests cannot fake HTTP? **Default:** `buildPayload()` runs in the constructor without HTTP; `execute()` looks up `country_id` with `Country/Get` before sending. The payload unit test does not include `country_id`; the feature test covers it. Fields: `code`, `address`, `city`, `postalCode`, `country`, `isDefault` added to `WarehouseData`; phone, fax and contact fields not exposed. (Agent decision, 2026-11-14.)
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Warehouse/Create/` and `tests/Feature/Warehouse/`, using the `providers` dataset: Moloni fixtures, and a Vendus test asserting `OperationNotSupportedException`
-- [ ] Facade method, action and contract added, using the DTO from entry 9
-- [ ] Moloni implementation added under `src/Provider/Moloni/Warehouse/`
-- [ ] Docs page `docs/warehouses/creating-a-warehouse.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (Vendus not supported)
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Warehouse/Create/` and `tests/Feature/Warehouse/`, using the `providers` dataset: Moloni fixtures, and a Vendus test asserting `OperationNotSupportedException`
+- [x] Facade method, action and contract added, using the DTO from entry 9
+- [x] Moloni implementation added under `src/Provider/Moloni/Warehouse/`
+- [x] Docs page `docs/warehouses/creating-a-warehouse.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (Vendus not supported)
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 11. TaxExemption::find
 
@@ -502,6 +504,36 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 - [ ] Docs page `docs/document-types/finding-document-types.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (new section)
 - [ ] Board and entry statuses set to `Done`, with Notes filled
 
+### 13. Cegid Vendus v1.2 migration
+
+**Priority:** Post-MVP
+**Package status:** Missing
+**Status:** Todo
+
+**What it does:** Moves the Cegid Vendus client from API v1.1 to v1.2, so the package can use the endpoints that exist only in v1.2. User decision, 2026-11-14 (see entry 10, question 4).
+
+**Scope:**
+- Base URL: `src/Configuration/HttpConfiguration.php:33` sets `https://www.vendus.pt/ws/v1.1/`.
+- Every Cegid Vendus provider class (27 files under `src/Provider/CegidVendus/`): request payloads and response mapping move from the v1.1 flat fields (`gross_price`, `tax_id`) to the v1.2 nested fields (`prices.gross`, `tax.id`).
+- Every Cegid Vendus fixture under `tests/Fixtures/IntegrationProvider/CegidVendus/` and the tests that assert Vendus field names.
+- Docs: every Cegid Vendus section that names a field or endpoint, and the "Vendus versions" notes in `CLAUDE.md`, `AGENTS.md` and this file.
+- Source of truth after the move: the local `providers-docs/vendus/openapi.json` (v1.2).
+
+**Unblocked by this entry:**
+- `Warehouse::create` on Cegid Vendus (`POST /stores`); entry 10 currently throws `OperationNotSupportedException`.
+- Single-provider gaps that are v1.2 only: `Category::update` (`PATCH /products/categories/{id}`), `Unit::create` (`POST /products/units`), `DueDate::find` (`GET /documents/duedates`).
+
+**Open questions:**
+1. Is this one change, or one change per resource (Client, Item, Invoice, ...) while the rest stays on v1.1? Mixing versions needs a per-request base URL.
+2. Does the Vendus sandbox accept the current API key on v1.2, and do v1.2 responses match the local spec? **Agent resolves:** check in the sandbox before mapping.
+3. Do the v1.2-only operations listed above get their own entries after the migration, or are they part of this one?
+
+**Done when:**
+- [ ] The Vendus client calls v1.2, and every Vendus payload and response mapping uses the v1.2 field names
+- [ ] Vendus fixtures and tests updated to v1.2 shapes
+- [ ] Docs and agent instructions updated; no reference to v1.1 as the current version remains
+- [ ] Board and entry statuses set to `Done`, with Notes filled
+
 ## Single-provider gaps
 
 Operations that one provider does not support: either the package already exposes them on one provider, or they exist only on Moloni. Not duplicated in the backlog.
@@ -509,15 +541,15 @@ Operations that one provider does not support: either the package already expose
 | Operation | Missing on | Provider endpoint | Reference |
 | --- | --- | --- | --- |
 | `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | `TODO.md`, "Operations not supported by a provider" |
-| `DueDate::find` | Cegid Vendus | `GET /documents/duedates` | `TODO.md` |
+| `DueDate::find` | Cegid Vendus | none in v1.1 (`GET /documents/duedates` exists only in v1.2) | `TODO.md`; unblocked by entry 13 |
 | `DueDate::create` | Cegid Vendus | none in `openapi.json` | `TODO.md` (cannot implement until Vendus adds an endpoint) |
 | `Tax::find` | Cegid Vendus | `GET /taxes` (openapi line 3606) | `docs/features.md` shows Vendus not supported. Not in `TODO.md` |
 | `Tax::create` | Cegid Vendus | none in `openapi.json` | `docs/features.md`. Not in `TODO.md`; cannot implement until Vendus adds an endpoint |
 | `Company::find` | Cegid Vendus | `GET /account` (line 1010), mapping unverified | `docs/features.md` shows Vendus not supported. Not in `TODO.md` |
-| `Category::update` | Cegid Vendus | none in v1.1 (`PATCH /products/categories/{id}` exists only in v1.2, line 5458) | Not exposed yet. Moloni: `productCategories/update` (required `company_id`, `category_id`, `parent_id`, `name`) |
-| `Unit::create` | Cegid Vendus | none in v1.1 (`POST /products/units` exists only in v1.2, line 6199) | Not exposed yet. Moloni: `measurementUnits/insert` (required `company_id`, `name`, `short_name`) |
+| `Category::update` | Cegid Vendus | none in v1.1 (`PATCH /products/categories/{id}` exists only in v1.2, line 5458) | Unblocked by entry 13. Not exposed yet. Moloni: `productCategories/update` (required `company_id`, `category_id`, `parent_id`, `name`) |
+| `Unit::create` | Cegid Vendus | none in v1.1 (`POST /products/units` exists only in v1.2, line 6199) | Unblocked by entry 13. Not exposed yet. Moloni: `measurementUnits/insert` (required `company_id`, `name`, `short_name`) |
 
-Moloni invoice PDF and the Moloni "Save as PDF" gap are covered by backlog entry 2 (`Invoice::pdf`), not listed here. `Warehouse::create` is also Moloni only, but stays in the backlog as entry 10.
+Moloni invoice PDF and the Moloni "Save as PDF" gap are covered by backlog entry 2 (`Invoice::pdf`), not listed here. `Warehouse::create` is Moloni only until entry 13, and stays in the backlog as entry 10.
 
 ## Provider-only features
 

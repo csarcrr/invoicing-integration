@@ -17,5 +17,11 @@ class WarehouseData extends Data implements DataNeedsValidation
     public function __construct(
         public ?int $id = null,
         public ?string $name = null,
+        public ?string $code = null,
+        public ?string $address = null,
+        public ?string $city = null,
+        public ?string $postalCode = null,
+        public ?string $country = null,
+        public ?bool $isDefault = null,
     ) {}
 }

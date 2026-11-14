@@ -12,6 +12,10 @@ _Avoid_: Integration, platform, vendor
 One action a provider can perform on one kind of record, such as creating an invoice or moving stock. Not every provider supports every operation.
 _Avoid_: Endpoint, feature
 
+**Company**:
+The business account in a provider that issues invoices. Cegid Vendus calls it the account.
+_Avoid_: Account, tenant
+
 ## Fiscal documents
 
 **Invoice**:
@@ -45,6 +49,14 @@ _Avoid_: Parent document, linked invoice
 The human-readable identifier of an issued invoice, combining its document type, series and number.
 _Avoid_: Invoice number, reference
 
+**Document Series**:
+The numbering sequence an invoice is issued under. Moloni calls it a document set.
+_Avoid_: Document set, series
+
+**Cancellation**:
+Setting an issued invoice to the cancelled state; the invoice is kept, not removed.
+_Avoid_: Void, deletion
+
 **ATCUD**:
 The unique document code required by the Portuguese tax authority on every fiscal document.
 
@@ -63,6 +75,10 @@ The amount of an invoice before taxes.
 **Client**:
 The person or organization an invoice is issued to.
 _Avoid_: Customer, buyer, account
+
+**Reference**:
+A code the developer chooses to identify a client in their own system. Moloni calls it the client number; Cegid Vendus calls it the external reference.
+_Avoid_: External reference, client number
 
 **VAT Number**:
 A client's Portuguese tax identification number (NIF).
@@ -102,8 +118,8 @@ The measure an item's quantity is expressed in, such as units or kilograms.
 ## Stock
 
 **Warehouse**:
-A location within a provider account where an item's stock is held.
-_Avoid_: Store, location
+A location within a provider account where an item's stock is held. Cegid Vendus calls it a store: a record tied to the account's subscription whose type is either store or warehouse, so a Cegid Vendus warehouse is a store of type warehouse. Not a Cegid Vendus register, which is a point-of-sale till.
+_Avoid_: Store, location, register
 
 **Item Stock**:
 The quantity of an item held in one warehouse.
@@ -132,3 +148,22 @@ _Avoid_: Maturity date, payment term
 **Due Date Term**:
 The number of days, from a fixed list (0, 1, 7, 15, 30, 45, 60 or 90), a single invoice or a client's invoices are due in after issue. A term of 0 days means the invoice is due on the day of issue.
 _Avoid_: Due date (when meaning one invoice)
+
+## Provider names
+
+The name each provider uses for a package term, where it differs or is worth stating.
+
+| Package term | Moloni | Cegid Vendus |
+| --- | --- | --- |
+| Company | company | account |
+| Client | customer | client |
+| Reference | number | external reference |
+| Item | product | product |
+| Category | product category | product category |
+| Unit | measurement unit | unit |
+| Warehouse | warehouse | store (type store or warehouse) |
+| Stock Movement | product stock | product stock |
+| Invoice | document | document |
+| Document Series | document set | none |
+| Due Date | maturity date | due date |
+| Tax Exemption Reason | tax exemption | tax exemption |
