@@ -83,7 +83,7 @@ it('does not send the fields the client does not set', function (Provider $provi
         ->and($payload->has('salesman_id'))->toBeFalse();
 })->with('providers');
 
-it('does not send the moloni number when the client has no reference', function (Provider $provider) {
+it('does not send the reference when the client has none', function (Provider $provider) {
     fakeProviderDueDates($provider);
 
     $payload = Client::update(ClientData::from([
@@ -94,6 +94,8 @@ it('does not send the moloni number when the client has no reference', function 
         'city' => 'Porto',
     ]))->getPayload();
 
-    expect($payload->has('number'))->toBeFalse()
-        ->and($payload->has('external_reference'))->toBeFalse();
-})->with('providers')->note('todo: review this test. why are sending for both providers and specifying moloni in the name?');
+    expect($payload->has(match ($provider) {
+        Provider::CEGID_VENDUS => 'external_reference',
+        Provider::MOLONI => 'number',
+    }))->toBeFalse();
+})->with('providers');

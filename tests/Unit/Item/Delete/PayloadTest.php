@@ -15,7 +15,7 @@ it('builds the delete url for the item id', function (Provider $provider) {
     };
 })->with('providers');
 
-it('sends the item id in the payload', function (Provider $provider) {
+it('builds the delete payload for the item id', function (Provider $provider) {
     $payload = Item::delete(ItemData::from(['id' => 99999]))->getPayload();
 
     match ($provider) {
