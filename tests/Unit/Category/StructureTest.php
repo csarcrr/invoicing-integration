@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFindCategory;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGetCategory;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUpdateCategory;
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Category;
@@ -14,4 +15,8 @@ it('is an instance of the correct when finding categories', function (Provider $
 
 it('is an instance of the correct when getting a category', function (Provider $provider) {
     expect(Category::get(CategoryData::make(['id' => 1])))->toBeInstanceOf(ShouldGetCategory::class);
+})->with('providers');
+
+it('is an instance of the correct when updating a category', function (Provider $provider) {
+    expect(Category::update(CategoryData::make(['id' => 1])))->toBeInstanceOf(ShouldUpdateCategory::class);
 })->with('providers');

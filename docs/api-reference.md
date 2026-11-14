@@ -509,6 +509,7 @@ use CsarCrr\InvoicingIntegration\Facades\Category;
 | `Category::create(CategoryData $category)`     | `ShouldCreateCategory` | Creates a new category builder instance            |
 | `Category::find(?CategoryData $category = null)` | `ShouldFindCategory` | Lists the provider's categories, by `parentId` level |
 | `Category::get(CategoryData $category)`        | `ShouldGetCategory`  | Fetches one category by `id`                         |
+| `Category::update(CategoryData $category)`     | `ShouldUpdateCategory` | Creates a category update instance                 |
 
 ## ShouldCreateCategory Contract
 
@@ -559,6 +560,21 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGe
 | --------------- | -------------- | -------------------------------------------------------------- |
 | `execute()`     | `self`         | Send the request; throws `InvalidArgumentException` without an `id` |
 | `getCategory()` | `CategoryData` | The fetched category                                           |
+
+## ShouldUpdateCategory Contract
+
+The interface returned by `Category::update()`. Supported on Cegid Vendus and Moloni. See [Updating a Category](categories/updating-a-category.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUpdateCategory;
+```
+
+| Method          | Return Type    | Description                                                                 | Throws                                                                                  |
+| --------------- | -------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `execute()`     | `self`         | Send the update request; returns `self`                                     | `InvalidArgumentException` (if ID missing, thrown by `Category::update()`), `RequestFailedException` (if the provider rejects the update) |
+| `getCategory()` | `CategoryData` | The updated category; on Moloni, the `CategoryData` you passed in           | -                                                                                       |
+| `getUrl()`      | `string`       | The request URL the update is sent to                                       | -                                                                                       |
+| `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Cegid Vendus; `category_id`, `name` and `parent_id` on Moloni) | -                                    |
 
 ---
 

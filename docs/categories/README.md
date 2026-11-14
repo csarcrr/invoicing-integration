@@ -19,6 +19,7 @@ foreach (Category::find()->execute()->getList() as $category) {
 | Create a category | [Creating a Category](creating-a-category.md) |
 | Find categories   | [Finding Categories](finding-categories.md) |
 | Get a category    | [Getting a Category](getting-a-category.md) |
+| Update a category | [Updating a Category](updating-a-category.md) |
 
 ## Provider support
 
@@ -27,3 +28,4 @@ foreach (Category::find()->execute()->getList() as $category) {
 | Create Category | ✅           | ✅     | ❌              |
 | Find Categories | ✅           | ✅     | ❌              |
 | Get Category    | ✅           | ✅     | ❌              |
+| Update Category | ✅           | ✅     | ❌              |

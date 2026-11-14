@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Added: `Category::update()`
+
+`Category::update()` updates a stored category on Moloni and Cegid Vendus. The `id` is required. On Moloni, `parentId` is sent only when set, and Moloni requires it, so set it (use `0` for a top-level category).
+
+See [Updating a Category](categories/updating-a-category.md).
+
 ### Added: `TaxExemption::find()`
 
 `TaxExemption::find()` lists the tax exemption reasons stored in the provider, on Moloni and Cegid Vendus. Each `TaxExemptionData` has a `code` (e.g. `M04`) and a `description`.

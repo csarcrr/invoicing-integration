@@ -96,6 +96,7 @@ Features for managing the categories stored in the provider.
 | Create Category | ✅           | ✅     | ❌              |
 | List Categories | ✅           | ✅     | ❌              |
 | Get Category    | ✅           | ✅     | ❌              |
+| Update Category | ✅           | ✅     | ❌              |
 
 ## Unit Management
 
