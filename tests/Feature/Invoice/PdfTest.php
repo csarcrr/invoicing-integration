@@ -38,7 +38,7 @@ test('the output url is the moloni pdf link and null on cegid vendus', function 
         Provider::CEGID_VENDUS => expect($output->url)->toBeNull(),
         Provider::MOLONI => expect($output->url)->toBe('https://www.moloni.pt/downloads/?h=abc.def.ghi'),
     };
-})->with('providers');
+})->with('providers')->note('todo: change test namings like these. we can have multiple new providers. this needs to be something more generic like "outputs the expected pdf content or pdf url"');
 
 test('moloni keeps the pdf link when the download does not return a pdf', function () {
     mockConfiguration(Provider::MOLONI);
