@@ -79,29 +79,103 @@ This package facilitates invoicing provider API usage and is not intended to ser
 
 - [Getting Started](getting-started.md) - Installation and configuration
 - [Features](features.md) - Supported features by provider and document type
+- [Handling Errors](handling-errors.md)
+- [Changelog](changelog.md)
+
+### Items
+
+- [Overview](items/README.md)
+- [Creating an Item](items/creating-an-item.md)
+- [Updating an Item](items/updating-an-item.md)
+- [Deleting an Item](items/deleting-an-item.md)
+- [Getting an Item](items/getting-an-item.md)
+- [Finding Items](items/finding-an-item.md)
+
+### Categories
+
+- [Overview](categories/README.md)
+- [Creating a Category](categories/creating-a-category.md)
+- [Updating a Category](categories/updating-a-category.md)
+- [Finding Categories](categories/finding-categories.md)
+- [Getting a Category](categories/getting-a-category.md)
+
+### Item Stocks
+
+- [Overview](item-stocks/README.md)
+- [Moving Stock](item-stocks/moving-stock.md)
 
 ### Clients
 
 - [Overview](clients/README.md)
 - [Creating a Client](clients/creating-a-client.md)
+- [Updating a Client](clients/updating-a-client.md)
+- [Deleting a Client](clients/deleting-a-client.md)
 - [Getting a Client](clients/getting-a-client.md)
 - [Finding Clients](clients/finding-clients.md)
 
+### Companies
+
+- [Overview](companies/README.md)
+- [Finding Companies](companies/finding-companies.md)
+
+### Due Dates
+
+- [Overview](due-dates/README.md)
+- [Creating a Due Date](due-dates/creating-a-due-date.md)
+- [Finding Due Dates](due-dates/finding-due-dates.md)
+
+### Payment Methods
+
+- [Overview](payment-methods/README.md)
+- [Creating a Payment Method](payment-methods/creating-a-payment-method.md)
+- [Finding Payment Methods](payment-methods/finding-payment-methods.md)
+
+### Taxes
+
+- [Overview](taxes/README.md)
+- [Creating a Tax](taxes/creating-a-tax.md)
+- [Finding Taxes](taxes/finding-taxes.md)
+- [Finding Tax Exemptions](taxes/finding-tax-exemptions.md)
+
+### Units
+
+- [Overview](units/README.md)
+- [Creating a Unit](units/creating-a-unit.md)
+- [Finding Units](units/finding-units.md)
+
+### Warehouses
+
+- [Overview](warehouses/README.md)
+- [Creating a Warehouse](warehouses/creating-a-warehouse.md)
+- [Finding Warehouses](warehouses/finding-warehouses.md)
+
+### Document Types
+
+- [Overview](document-types/README.md)
+- [Finding Document Types](document-types/finding-document-types.md)
+
 ### Invoices
 
+- [Overview](invoices/README.md)
 - [Creating an Invoice](invoices/creating-an-invoice.md)
 - [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)
 - [Creating a Credit Note (NC)](invoices/creating-a-nc-invoice.md)
+- [Getting an Invoice](invoices/getting-an-invoice.md)
+- [Finding Invoices](invoices/finding-invoices.md)
+- [Cancelling an Invoice](invoices/cancelling-an-invoice.md)
+- [Tax Exemptions](invoices/tax-exemption.md)
 - [Output Formats](invoices/outputting-invoice.md)
 - [Using Invoice Data](invoices/using-invoice-data.md)
-
-### Providers
-
-- [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md)
 
 ### Reference
 
 - [API Reference](api-reference.md)
+
+### Providers
+
+- [Cegid Vendus](providers/cegid-vendus/configuration.md)
+- [Moloni](providers/moloni/configuration.md)
+- [Invoice Express](providers/invoice-express/configuration.md)
 
 ## What's New
 

@@ -290,7 +290,7 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 7. Item::delete
 
 **Priority:** Post-MVP
-**Package status:** Missing
+**Package status:** Implemented
 **Status:** Done
 
 **What it does:** Deletes a stored item (product) by id.
@@ -642,13 +642,13 @@ Operations that one provider does not support: either the package already expose
 
 | Operation | Missing on | Provider endpoint | Reference |
 | --- | --- | --- | --- |
-| `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | `TODO.md`, "Operations not supported by a provider" |
-| `DueDate::create` | Cegid Vendus | none in `openapi.json` | `TODO.md` (cannot implement until Vendus adds an endpoint) |
-| `Tax::find` | Cegid Vendus | `GET /taxes` (openapi line 3606) | `docs/features.md` shows Vendus not supported. Not in `TODO.md` |
-| `Tax::create` | Cegid Vendus | none in `openapi.json` | `docs/features.md`. Not in `TODO.md`; cannot implement until Vendus adds an endpoint |
-| `Company::find` | Cegid Vendus | `GET /account` (line 1010), mapping unverified | `docs/features.md` shows Vendus not supported. Not in `TODO.md` |
+| `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | `TODO.md`, "Gaps" |
+| `DueDate::create` | Cegid Vendus | none in `openapi.json` | `TODO.md`, "Gaps" (cannot implement until Vendus adds an endpoint) |
+| `Tax::find` | Cegid Vendus | `GET /taxes` (openapi line 3606) | `TODO.md`, "Gaps" |
+| `Tax::create` | Cegid Vendus | none in `openapi.json` | `TODO.md`, "Gaps" (cannot implement until Vendus adds an endpoint) |
+| `Company::find` | Cegid Vendus | `GET /account` (line 1010), mapping unverified | `TODO.md`, "Gaps" |
 
-Moloni invoice PDF and the Moloni "Save as PDF" gap are covered by backlog entry 2 (`Invoice::pdf`), not listed here. `Warehouse::create` on Cegid Vendus, `Category::update`, `Unit::create` and `DueDate::find` on Cegid Vendus are backlog entries 14 to 17.
+Moloni invoice PDF and the Moloni "Save as PDF" gap are covered by backlog entry 2 (`Invoice::pdf`), not listed here. `Warehouse::create` on Cegid Vendus, `Category::update`, `Unit::create` and `DueDate::find` on Cegid Vendus were backlog entries 14 to 17 and are done.
 
 ## Provider-only features
 

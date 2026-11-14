@@ -6,7 +6,7 @@
 
 **Invoicing Integration** is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
 
-> **Supported provider (today):** Cegid Vendus. The package architecture allows more providers to be added without changing your application code.
+> **Supported providers:** Cegid Vendus and Moloni. The package architecture allows more providers to be added without changing your application code.
 
 ## Why Invoicing Integration?
 
@@ -23,7 +23,7 @@ This package solves that by giving you:
 
 - Fluent builders for all fiscal document types (FT, FR, FS, RG, NC, GT)
 - DTO-first workflows via `InvoiceData`, so requests/responses share the same typed object
-- First-class client management via the `Client` facade (create, get, find)
+- First-class client management via the `Client` facade (create, get, update, delete, find)
 - Strongly typed DTOs powered by `spatie/laravel-data`
 - Built-in PDF / ESC/POS outputs with secure file persistence helpers
 - Centralized HTTP error handling and provider configuration facades

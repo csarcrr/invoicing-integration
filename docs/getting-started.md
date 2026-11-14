@@ -57,7 +57,7 @@ CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID=123460
 
 ## 4. Configuration File
 
-Each provider has its own configuration requirements. Currently, only **Cegid Vendus** is supported. See [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md) for a full understanding of the configuration options.
+Each provider has its own configuration requirements. See [Cegid Vendus Configuration](providers/cegid-vendus/configuration.md) and [Moloni Configuration](providers/moloni/configuration.md) for a full understanding of the configuration options.
 
 The published configuration file (`config/invoicing-integration.php`) looks like this:
 

@@ -6,7 +6,7 @@ See [Cegid Vendus Configuration](cegid-vendus/configuration.md) for details on c
 
 ## Moloni
 
-See [Moloni Configuration](moloni/configuration.md) - Coming soon.
+See [Moloni Configuration](moloni/configuration.md) for details on configuring and using the Moloni provider.
 
 ## Invoice Express
 
