@@ -17,17 +17,15 @@ beforeEach(function () {
 test('maps the created warehouse onto WarehouseData', function () {
     Http::fake(mockResponse(fixtures()->response()->warehouse()->files('create')));
 
-    $warehouse = Warehouse::create(WarehouseData::make([
-        'name' => 'Armazém Principal',
-        'code' => 'AP',
-        'isDefault' => true,
-    ]))->execute()->getWarehouse();
+    $create = Warehouse::create(WarehouseData::make(['name' => 'Armazém Principal']));
+    $code = $create->getPayload()->get('code');
+
+    $warehouse = $create->execute()->getWarehouse();
 
     expect($warehouse)->toBeInstanceOf(WarehouseData::class)
         ->and($warehouse->id)->toBe(29999)
         ->and($warehouse->name)->toBe('Armazém Principal')
-        ->and($warehouse->code)->toBe('AP')
-        ->and($warehouse->isDefault)->toBeTrue();
+        ->and($warehouse->getAdditionalData()['code'])->toBe($code);
 });
 
 test('sends the Moloni country id for the country code', function () {

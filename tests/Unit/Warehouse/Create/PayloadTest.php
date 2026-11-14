@@ -17,29 +17,28 @@ it('builds the create url', function () {
 it('builds the payload from the warehouse data', function () {
     $payload = Warehouse::create(WarehouseData::make([
         'name' => 'Armazém Principal',
-        'code' => 'AP',
         'address' => 'Rua Nova de Mil Fontes, 35',
         'city' => 'Setúbal',
         'postalCode' => '1100-234',
-        'isDefault' => true,
     ]))->getPayload()->toArray();
 
-    expect($payload)->toBe([
+    expect(collect($payload)->except('code')->all())->toBe([
         'title' => 'Armazém Principal',
-        'code' => 'AP',
         'address' => 'Rua Nova de Mil Fontes, 35',
         'city' => 'Setúbal',
         'zip_code' => '1100-234',
-        'is_default' => 1,
     ]);
 });
 
-it('sends is_default as 0 when the warehouse is not the default', function () {
-    $payload = Warehouse::create(WarehouseData::make(['name' => 'Loja', 'isDefault' => false]))->getPayload();
+it('generates a random code', function () {
+    $first = Warehouse::create(WarehouseData::make(['name' => 'Loja']))->getPayload()->get('code');
+    $second = Warehouse::create(WarehouseData::make(['name' => 'Loja']))->getPayload()->get('code');
 
-    expect($payload->get('is_default'))->toBe(0);
+    expect($first)->toBeString()
+        ->toHaveLength(8)
+        ->and($second)->not->toBe($first);
 });
 
 it('leaves out the fields that are not set', function () {
-    expect(Warehouse::create(WarehouseData::make(['name' => 'Loja']))->getPayload()->toArray())->toBe(['title' => 'Loja']);
+    expect(Warehouse::create(WarehouseData::make(['name' => 'Loja']))->getPayload()->keys()->all())->toBe(['title', 'code']);
 });

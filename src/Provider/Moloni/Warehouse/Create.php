@@ -12,6 +12,7 @@ use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Warehouse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 use function collect;
 use function throw_if;
@@ -44,9 +45,9 @@ class Create extends Warehouse implements ShouldCreateWarehouse
             (string) $response->json('message', 'Warehouse could not be created.')
         );
 
-        $this->data = WarehouseData::make([
-            'id' => (int) $response->json('warehouse_id'),
-        ] + $this->data->toArray());
+        $this->data = WarehouseData::make(
+            ['id' => (int) $response->json('warehouse_id')] + $this->data->toArray()
+        )->additional(['code' => $this->payload->get('code')]);
 
         return $this;
     }
@@ -72,10 +73,7 @@ class Create extends Warehouse implements ShouldCreateWarehouse
     protected function buildPayload(): void
     {
         $this->payload->put('title', $this->data->name);
-
-        if (! is_null($this->data->code)) {
-            $this->payload->put('code', $this->data->code);
-        }
+        $this->payload->put('code', Str::random(8));
 
         if (! is_null($this->data->address)) {
             $this->payload->put('address', $this->data->address);
@@ -87,10 +85,6 @@ class Create extends Warehouse implements ShouldCreateWarehouse
 
         if (! is_null($this->data->postalCode)) {
             $this->payload->put('zip_code', $this->data->postalCode);
-        }
-
-        if (! is_null($this->data->isDefault)) {
-            $this->payload->put('is_default', (int) $this->data->isDefault);
         }
     }
 

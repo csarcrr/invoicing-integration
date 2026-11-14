@@ -418,7 +418,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 | Method             | Return Type     | Description                                                                                       |
 | ------------------ | --------------- | ------------------------------------------------------------------------------------------------- |
 | `execute()`        | `self`          | Send the create request and populate the returned `WarehouseData`; throws `RequestFailedException` if the provider rejects the warehouse |
-| `getWarehouse()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`                                            |
+| `getWarehouse()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()` |
 | `getUrl()`         | `string`        | The request URL the warehouse is sent to                                                          |
 | `getPayload()`     | `Collection`    | Inspect the payload sent to the provider (`title` and the optional fields on Moloni)              |
 
@@ -951,14 +951,12 @@ use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 | ------------ | --------- | ------------------------------------------------------------------ |
 | `id`         | `?int`    | Provider-assigned warehouse or store ID                            |
 | `name`       | `?string` | Name of the warehouse or store                                     |
-| `code`       | `?string` | Warehouse code (Moloni only)                                       |
-| `address`    | `?string` | Street address (Moloni only)                                       |
-| `city`       | `?string` | City (Moloni only)                                                 |
-| `postalCode` | `?string` | Postal code, sent as `zip_code` on Moloni (Moloni only)            |
-| `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni (Moloni only) |
-| `isDefault`  | `?bool`   | Whether the warehouse is the default one (Moloni only)             |
+| `address`    | `?string` | Street address                                                     |
+| `city`       | `?string` | City                                                               |
+| `postalCode` | `?string` | Postal code, sent as `zip_code` on Moloni                          |
+| `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni       |
 
-Other fields the provider returns are available through `getAdditionalData()`.
+`address`, `city`, `postalCode` and `country` are inputs to `Warehouse::create()`; `Warehouse::find()` fills only `id` and `name`. Other fields the provider returns, and the code Moloni create generates, are available through `getAdditionalData()`.
 
 ---
 

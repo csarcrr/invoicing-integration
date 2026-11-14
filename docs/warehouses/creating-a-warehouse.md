@@ -10,12 +10,10 @@ use CsarCrr\InvoicingIntegration\Facades\Warehouse;
 
 $warehouse = Warehouse::create(WarehouseData::make([
     'name' => 'Armazém Principal',
-    'code' => 'AP',
     'address' => 'Rua Nova de Mil Fontes, 35',
     'city' => 'Setúbal',
     'postalCode' => '1100-234',
     'country' => 'PT',
-    'isDefault' => true,
 ]))->execute()->getWarehouse();
 
 echo $warehouse->id; // provider-assigned ID
@@ -31,21 +29,19 @@ The request is sent to `warehouses/insert`. The fields are mapped as follows:
 | `WarehouseData` | Moloni field |
 | --------------- | ------------ |
 | `name`          | `title`      |
-| `code`          | `code`       |
 | `address`       | `address`    |
 | `city`          | `city`       |
 | `postalCode`    | `zip_code`   |
 | `country`       | `country_id` |
-| `isDefault`     | `is_default` |
 
+- Moloni requires a `code`. The package generates a random 8-character code and sends it with the request; it is not an input. The generated code is returned in `getAdditionalData()['code']`.
 - `country` is an ISO 3166-1 alpha-2 code. The package looks up the Moloni `country_id` with `countries/getAll` before the warehouse is sent, so one extra request is made when `country` is set.
-- `isDefault` is sent as `1` when `true` and `0` when `false`. It is left out when not set.
 - Fields that are not set are left out of the request.
 
-The returned warehouse is mapped from the response: `id` from `warehouse_id`. The other fields are kept from the input. A response whose `valid` is not `1` throws `RequestFailedException` with the provider's `message`.
+The returned warehouse is mapped from the response: `id` from `warehouse_id`. The other fields are kept from the input, and the generated `code` is kept in additional data. A response whose `valid` is not `1` throws `RequestFailedException` with the provider's `message`.
 
 > [!NOTE]
-> Moloni moves all stock to the first warehouse created. When `isDefault` is `true`, the previous default warehouse is unmarked.
+> Moloni moves all stock to the first warehouse created.
 
 ## Cegid Vendus
 
