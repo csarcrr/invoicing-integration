@@ -75,4 +75,4 @@ test('an unknown document type falls back to FT', function (Provider $provider) 
     $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
 
     expect($invoice->type)->toBe(InvoiceType::Invoice);
-})->with('providers');
+})->with('providers')->note('verify: we cannot have unsupported document types');
