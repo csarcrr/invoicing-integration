@@ -1,0 +1,40 @@
+[
+    {
+        "warehouse_id": 29999,
+        "title": "Armazém Principal",
+        "is_default": 1,
+        "code": "AP",
+        "address": "Rua Nova de Mil Fontes, 35",
+        "city": "Setúbal",
+        "zip_code": "1100-234",
+        "country_id": 1,
+        "phone": "210192029",
+        "fax": "",
+        "contact_name": "",
+        "contact_email": "",
+        "country": {
+            "country_id": 1,
+            "iso_3166_1": "PT",
+            "name": "Portugal"
+        }
+    },
+    {
+        "warehouse_id": 19999,
+        "title": "Loja",
+        "is_default": 0,
+        "code": "LJ",
+        "address": "Avenida da Liberdade, 10",
+        "city": "Lisboa",
+        "zip_code": "1250-096",
+        "country_id": 1,
+        "phone": "213456789",
+        "fax": "",
+        "contact_name": "",
+        "contact_email": "",
+        "country": {
+            "country_id": 1,
+            "iso_3166_1": "PT",
+            "name": "Portugal"
+        }
+    }
+]

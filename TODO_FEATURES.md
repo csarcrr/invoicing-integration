@@ -32,7 +32,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 6 | `Client::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Client/ShouldDeleteClient.php`; `src/Provider/Moloni/Client/Delete.php`; `src/Provider/CegidVendus/Client/Delete.php`; `tests/Unit/Client/Delete/PayloadTest.php`; `tests/Feature/Client/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Client/delete.json`. Changed: `src/Actions/ClientAction.php`; `src/Facades/Client.php`. Docs: `docs/clients/deleting-a-client.md` (new); `docs/_sidebar.md`; `docs/clients/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 7 | `Item::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Item/ShouldDeleteItem.php`; `src/Provider/Moloni/Item/Delete.php`; `src/Provider/CegidVendus/Item/Delete.php`; `tests/Unit/Item/Delete/PayloadTest.php`; `tests/Feature/Item/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Item/delete.json`. Changed: `src/Provider/Base.php` (`$url`, `getUrl()`); `src/Actions/ItemAction.php`; `src/Facades/Item.php`. Docs: `docs/items/deleting-an-item.md` (new); `docs/_sidebar.md`; `docs/items/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 8 | `Category::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldCreateCategory.php`; `src/Provider/CegidVendus/Category.php` (base, `toCategoryData()`); `src/Provider/CegidVendus/Category/Create.php`; `src/Provider/Moloni/Category/Create.php`; `tests/Unit/Category/Create/PayloadTest.php`; `tests/Feature/Category/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Category/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Category/create.json`. Changed: `src/Provider/Moloni/Category.php` (extends `Base`); `src/Actions/CategoryAction.php`; `src/Facades/Category.php`. Docs: `docs/categories/creating-a-category.md` (new); `docs/_sidebar.md`; `docs/categories/README.md`; `docs/features.md`; `docs/api-reference.md` |
-| 9 | `Warehouse::find` | Post-MVP | Todo | Reference data; Moloni warehouses, Vendus stores |
+| 9 | `Warehouse::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldFindWarehouse.php`; `src/Data/WarehouseData.php`; `src/Provider/Moloni/Warehouse.php` and `src/Provider/CegidVendus/Warehouse.php` (bases, `toWarehouseData()`); `src/Provider/Moloni/Warehouse/Find.php`; `src/Provider/CegidVendus/Warehouse/Find.php`; `tests/Unit/Warehouse/Find/PayloadTest.php`; `tests/Feature/Warehouse/FindTest.php`; fixtures `Response/Warehouse/response_multiple.json` for both providers. Changed: `src/Actions/WarehouseAction.php` and `src/Facades/Warehouse.php` (new); `tests/Fixtures/Fixtures.php` (`warehouse()`). Docs: `docs/warehouses/README.md` and `docs/warehouses/finding-warehouses.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 10 | `Warehouse::create` | Post-MVP | Todo | Moloni only; Vendus v1.1 has no endpoint, throws `OperationNotSupportedException` |
 | 11 | `TaxExemption::find` | Post-MVP | Todo | Reference data |
 | 12 | `DocumentType::find` | Post-MVP | Todo | Reference data |
@@ -356,8 +356,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 9. Warehouse::find
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Lists the warehouses (Moloni) or stores (Vendus) so a developer can pick one by id.
 
@@ -382,11 +382,11 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 2. Which fields should the new DTO carry? **Default:** `WarehouseData` with `id` and `name` only. Keep extra response fields with `fillAdditionalProperties()`. Do not expose the Vendus `type` filter.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Warehouse/Find/` and `tests/Feature/Warehouse/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade, action and contract added, and a new DTO in `src/Data/`
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Warehouse/` and `src/Provider/CegidVendus/Warehouse/`
-- [ ] Docs page `docs/warehouses/finding-warehouses.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (new section)
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Warehouse/Find/` and `tests/Feature/Warehouse/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade, action and contract added, and a new DTO in `src/Data/`
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Warehouse/` and `src/Provider/CegidVendus/Warehouse/`
+- [x] Docs page `docs/warehouses/finding-warehouses.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (new section)
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 10. Warehouse::create
 

@@ -104,6 +104,14 @@ Features for listing the units stored in the provider.
 | ---------- | ------------ | ------ | --------------- |
 | List Units | ✅           | ✅     | ❌              |
 
+## Warehouse Management
+
+Features for listing the warehouses (Moloni) or stores (Cegid Vendus) stored in the provider.
+
+|                 | Cegid Vendus | Moloni | Invoice Express |
+| --------------- | ------------ | ------ | --------------- |
+| List Warehouses | ✅           | ✅     | ❌              |
+
 ## Invoice Management
 
 Features for reading the invoices stored in the provider.

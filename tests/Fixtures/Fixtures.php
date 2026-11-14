@@ -120,6 +120,13 @@ class Fixtures
         return $this;
     }
 
+    public function warehouse(): self
+    {
+        $this->path[] = 'Warehouse';
+
+        return $this;
+    }
+
     public function paymentMethod(): self
     {
         $this->path[] = 'PaymentMethod';

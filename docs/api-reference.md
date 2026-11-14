@@ -394,6 +394,34 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 
 ---
 
+## Warehouse (Facade)
+
+Entry point for listing the warehouses (Moloni) or stores (Cegid Vendus) stored in the provider. Supported on Cegid Vendus and Moloni.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\Warehouse;
+```
+
+| Method            | Return Type           | Description                          |
+| ----------------- | --------------------- | ------------------------------------ |
+| `Warehouse::find()` | `ShouldFindWarehouse` | Lists the provider's warehouses or stores |
+
+## ShouldFindWarehouse Contract
+
+The interface returned by `Warehouse::find()`.
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldFindWarehouse;
+```
+
+| Method      | Return Type  | Description                          |
+| ----------- | ------------ | ------------------------------------ |
+| `execute()` | `self`       | Send the request                     |
+| `getList()` | `Collection` | `Collection<WarehouseData>` results  |
+| `getUrl()`  | `string`     | Request URL the operation builds     |
+
+---
+
 ## Category (Facade)
 
 Entry point for the categories stored in the provider. Supported on Cegid Vendus and Moloni.
@@ -892,6 +920,23 @@ use CsarCrr\InvoicingIntegration\Data\UnitData;
 | `name`      | `string`  | Required. Name of the unit                 |
 | `id`        | `?int`    | Provider-assigned unit ID                  |
 | `shortName` | `?string` | Short name (Moloni only; `null` on Vendus) |
+
+---
+
+### WarehouseData
+
+Represents a warehouse (Moloni) or store (Cegid Vendus) stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\WarehouseData;
+```
+
+| Property | Type      | Description                                   |
+| -------- | --------- | --------------------------------------------- |
+| `id`     | `?int`    | Provider-assigned warehouse or store ID       |
+| `name`   | `?string` | Name of the warehouse or store                |
+
+Other fields the provider returns are available through `getAdditionalData()`.
 
 ---
 

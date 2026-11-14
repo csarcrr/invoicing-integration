@@ -51,6 +51,10 @@
     - [Overview](units/README.md)
     - [Finding Units](units/finding-units.md)
 
+- **Warehouses**
+    - [Overview](warehouses/README.md)
+    - [Finding Warehouses](warehouses/finding-warehouses.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)

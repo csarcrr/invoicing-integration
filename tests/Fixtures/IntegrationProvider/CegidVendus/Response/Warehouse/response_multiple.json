@@ -1,0 +1,28 @@
+[
+    {
+        "id": 29999,
+        "type": "warehouse",
+        "title": "Armazém Principal",
+        "tax_id": "NOR",
+        "address": "Rua Nova de Mil Fontes, 35",
+        "postalcode": "1100-234",
+        "city": "Setúbal",
+        "country": "PT",
+        "email": "",
+        "phone": "210192029",
+        "status": "on"
+    },
+    {
+        "id": 19999,
+        "type": "store",
+        "title": "Loja",
+        "tax_id": "NOR",
+        "address": "Avenida da Liberdade, 10",
+        "postalcode": "1250-096",
+        "city": "Lisboa",
+        "country": "PT",
+        "email": "",
+        "phone": "213456789",
+        "status": "on"
+    }
+]
