@@ -25,17 +25,18 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 | # | Entry | Status | Notes |
 | --- | --- | --- | --- |
-| 1 | Request-shape tests use `assertSent` | In progress | Class changes + test rewrites |
-| 2 | Response-handling tests live in `tests/Unit/` | In progress | Move to `tests/Feature/` |
-| 3 | HTTP layer tests live in `tests/Unit/` | Todo | Move to `tests/Feature/` |
-| 4 | Payload building triggers HTTP lookups | Todo | Rule exception in `testing.md` |
-| 5 | Provider class structure drift | Todo | Not test-only |
+| 1 | Request-shape tests use `assertSent` | Done | Class changes + test rewrites |
+| 2 | Response-handling tests live in `tests/Unit/` | Done | Move to `tests/Feature/` |
+| 3 | HTTP layer tests live in `tests/Unit/` | Done | Move to `tests/Feature/` |
+| 4 | Payload building triggers HTTP lookups | Blocked (open questions) | Temporary exception; approach later |
+| 5 | Provider class structure drift | Done | Not test-only |
+| 6 | Test naming | Done | Two test renames |
 
 ## Entries
 
 ### 1. Request-shape tests use `assertSent`
 
-**Status:** In progress
+**Status:** Done
 
 **Problem:** these tests run `execute()` against a fake and check the URL or body with `Http::assertSent`. They should assert on `getUrl()` and `getPayload()` without HTTP.
 
@@ -64,9 +65,9 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 - [x] No test in the table uses `Http::` or a fake helper (the entry 2 tests in the same files still do, until entry 2 moves them)
 - [x] Each listed class builds `$url` (and `$payload` where it sends one) in `build*()` methods
 - [x] Docs and `docs/api-reference.md` list the new `getUrl()` / `getPayload()` methods on the touched contracts
-- [ ] User ran the test suite and checks
+- [x] User ran the test suite and checks
 
-**Notes:** code written 2026-11-14, waiting for user review.
+**Notes:** committed in `e9645ca` on 2026-11-14, tests pass.
 - Classes: `src/Provider/{Moloni,CegidVendus}/Client/{Get,Delete}.php`, `src/Provider/{Moloni,CegidVendus}/Item/Get.php`, `src/Provider/{Moloni,CegidVendus}/Invoice/{Get,Pdf,Cancel,Find}.php`, `src/Provider/Moloni/{Country/Get,Language/Get,DocumentSeries/Find}.php`.
 - Contracts: `ShouldGetClient`, `ShouldDeleteClient`, `ShouldGetItem`, `ShouldGetInvoice`, `ShouldGetInvoicePdf`, `ShouldCancelInvoice` gained `getUrl()` and `ShouldHavePayload`. `ShouldFindInvoice` gained `getUrl()`.
 - Tests: the 10 files in the table, `tests/Feature/Invoice/PdfTest.php` (moved Moloni download test), and `tests/Unit/Client/StructureTest.php` (gets an id, because the id check now runs in the constructor).
@@ -77,7 +78,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 ### 2. Response-handling tests live in `tests/Unit/`
 
-**Status:** In progress
+**Status:** Done
 
 **Problem:** these tests check how a provider response is handled. That needs HTTP, so they belong in `tests/Feature/`.
 
@@ -95,9 +96,9 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 **Done when:**
 - [x] Every listed test lives under `tests/Feature/`
 - [x] Emptied unit files are deleted (none emptied: each unit file keeps its request-shape test)
-- [ ] User ran the test suite and checks
+- [x] User ran the test suite and checks
 
-**Notes:** code written 2026-11-14, waiting for user review.
+**Notes:** committed in `2288f58` on 2026-11-14, tests pass.
 - Moved into: `tests/Feature/Client/GetTest.php`, `tests/Feature/Invoice/GetTest.php`, `tests/Feature/Invoice/PdfTest.php`, and new `tests/Feature/Providers/Moloni/{Country/GetTest,Language/GetTest,DocumentSeries/FindTest}.php`. The new Moloni files carry the source `beforeEach` (`Cache::flush()`, `mockConfiguration(Provider::MOLONI)`).
 - Moved out of: `tests/Unit/Client/Get/IdTest.php`, `tests/Unit/Invoice/Get/IdTest.php`, `tests/Unit/Invoice/Pdf/IdTest.php`, `tests/Unit/Providers/Moloni/{Country/GetTest,Language/GetTest,DocumentSeries/FindTest}.php`. Imports made unused were removed.
 - The moved PDF test uses `test(...)` to match `tests/Feature/Invoice/PdfTest.php`.
@@ -105,7 +106,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 ### 3. HTTP layer tests live in `tests/Unit/`
 
-**Status:** Todo
+**Status:** Done
 
 **Problem:** these files test the HTTP layer itself, so faking is the subject of the test.
 
@@ -118,9 +119,18 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 1. Move these files to `tests/Feature/`, or keep them in `tests/Unit/` and state the exception in `.claude/rules/testing.md`?
    **Default:** move them to `tests/Feature/`. No rule exception.
 
+**Done when:**
+- [x] The four files live under `tests/Feature/` (Moloni-only ones in `tests/Feature/Providers/Moloni/`) with unchanged test bodies
+- [x] No file is left in `tests/Unit/` for them
+- [x] User ran the test suite and checks
+
+**Notes:** code written 2026-11-14, tests pass.
+- Moved with `git mv`, bodies unchanged: `tests/Feature/HttpRequestTest.php`, `tests/Feature/Providers/RequestAuthenticationTest.php`, `tests/Feature/Providers/Moloni/AuthenticationTest.php`, `tests/Feature/Providers/Moloni/RequestTest.php`.
+- `tests/Pest.php:53`: `ProviderTestingGroup` now names the four moved files, so they keep their group. The entry 2 files in `tests/Feature/Providers/` stay without a group.
+
 ### 4. Payload building triggers HTTP lookups
 
-**Status:** Todo
+**Status:** Blocked (open questions)
 
 **Problem:** some classes send requests while building the payload, so their unit tests cannot avoid fakes. Rewriting the tests alone does not fix this.
 
@@ -136,26 +146,63 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 
 **Open questions:**
 1. Make the lookups replaceable (e.g. inject or set the resolved values) so unit tests never reach HTTP, or allow lookup fakes in unit tests as a stated exception in `.claude/rules/testing.md`?
-   **Default:** allow lookup fakes in unit tests as a stated exception in `.claude/rules/testing.md`.
+   **Default:** lookup fakes in unit tests are a temporary exception, not a rule. Do not write them into `.claude/rules/testing.md`. A different approach will replace them later.
 2. Where do the lookup-count assertions ("once per invoice", "single page", "no request") belong after the change?
-   **Default:** they stay in `tests/Unit/`, under the lookup exception.
+   **Default:** they stay in `tests/Unit/` for now, under the temporary exception.
+3. Which approach replaces the lookup fakes? To be decided later by the user.
+
+**Interaction with entry 5:** removing the Moloni client defaults (entry 5, second bullet) removes the 15-day maturity default, so client create and update no longer look up due dates when `defaultPayDue` is not set. Update the due-date row above after entry 5.
+
+**Done when:**
+- [ ] The user picked the approach (question 3)
+- [ ] No unit test fakes a lookup
+
+**Notes:** a rule bullet was added to `.claude/rules/testing.md` on 2026-11-14 and removed the same day at the user's request.
 
 ### 5. Provider class structure drift
 
-**Status:** Todo
+**Status:** Done
 
 **Problem:** classes that break `.claude/rules/provider-operations.md` beyond what entry 1 covers.
 
-- `src/Provider/{Moloni,CegidVendus}/Client/Update.php` extend `Client/Create.php`, so an `Update` is also a `ShouldCreateClient`. Proposed fix: move the shared `build*()` methods into a per-provider trait.
-- Moloni `Client::update` reuses `Create::getPayload()`, which sends creation defaults (country PT, language pt, 15-day maturity, discount, credit limit, delivery method 0). That overwrites stored values. Proposed fix: read the stored client with `customers/getOne` and merge it, as Moloni `Item\Update` does. This changes behaviour; docs currently describe a full replace.
+- `src/Provider/{Moloni,CegidVendus}/Client/Update.php` extend `Client/Create.php`, so an `Update` is also a `ShouldCreateClient`. Proposed fix: move the shared `build*()` methods into a per-provider trait. **Won't fix** (user decision).
+- Moloni `Client::update` reuses `Create::getPayload()`, which sends creation defaults (country PT, language pt, 15-day maturity, discount, credit limit, delivery method 0). That overwrites stored values. Fix: remove the defaults from create and update (see the Default below). This changes behaviour; update the client docs.
 - Contracts that extend `ShouldExecute` inherit `execute(): self` bound to `ShouldExecute`, so the editor flags calls like `getClient()` after `execute()` (e.g. `tests/Feature/Client/UpdateTest.php`). Six contracts already redeclare `execute(): self` (commit `5d98059`). Proposed fix: redeclare it on the rest.
 
 **Open questions:**
 1. Apply each proposed fix above? Answer per bullet.
    **Default:** first bullet (shared trait for `Update`/`Create`): no. Third bullet (redeclare `execute(): self`): yes.
    Second bullet: the package must not guess default values. Remove the Moloni client defaults from both create and update. The only place the package guesses values is issuing an invoice. No merge with the stored client.
+2. Moloni `customers/insert` requires `payment_method_id` (`providers-docs/moloni/dev/entities/customers/insert/index.html`), and the package sends `0`. `ClientData` has no field for it, so after removing the default no input can produce it. Same for `payment_day` and `salesman_id`, which are optional on Moloni. Add `ClientData` fields for them, drop them from the payload, or keep `payment_method_id => 0` as the one exception?
+   **Default:** add `ClientData` fields for them.
 
-## Test naming
+**Done when:**
+- [x] Moloni client create and update send no guessed values (country PT, language pt, 15-day maturity, discount, credit limit, delivery method 0), subject to question 2
+- [x] Every contract that extends `ShouldExecute` redeclares `execute(): self`
+- [x] Client docs describe what is sent when a field is not set
+- [x] User ran the test suite and checks
+
+**Notes:** code written 2026-11-14, tests pass.
+- `src/Provider/Moloni/Client/Create.php`: country, language and due date are looked up and sent only when set; `discount`, `credit_limit`, `delivery_method_id`, `payment_method_id`, `payment_day`, `salesman_id` are sent only when set. Removed `buildPendingIds()`, the `DueDateTerm` import and the `?? 0` on the due date. Added `buildPaymentMethod()`, `buildSalesman()`.
+- `src/Data/ClientData.php`: new `paymentMethodId`, `paymentDay`, `salesmanId` (`integer|min:0`). Moloni only; Cegid Vendus does not send them.
+- 16 contracts under `src/Contracts/IntegrationProvider/` redeclare `execute(): self` (form from commit `5d98059`).
+- Tests: `tests/Unit/Client/Create/ProviderData/{CommercialTermsTest,CountryTest,LanguageTest,DefaultPayDueTest}.php` assert the fields are absent when unset; new `tests/Unit/Client/Create/ProviderData/PaymentTest.php`; new test in `tests/Unit/Client/Update/ProviderData/PayloadTest.php`. Test names no longer say "moloni" when they run on both providers.
+- Feature edits: `tests/Feature/Client/CreateTest.php` expects 1 request on Moloni (was 4: the lookups no longer run); `tests/Fixtures/IntegrationProvider/Moloni/Request/Client/client_full.json` lost the default values.
+- Docs: `docs/clients/creating-a-client.md` (new fields, no defaults, Moloni required-field note from `customers/insert`), `docs/clients/updating-a-client.md`, `docs/api-reference.md`, `docs/changelog.md`.
+
+### 6. Test naming
+
+**Status:** Done
 
 - `tests/Unit/Client/Update/ProviderData/PayloadTest.php` "does not send the moloni number when the client has no reference" checks both providers (no `number` on Moloni, no `external_reference` on Vendus). Proposed name: "does not send the reference when the client has none", with a `match ($provider)` picking the key.
 - `tests/Unit/Item/Delete/PayloadTest.php` "sends the item id in the payload" asserts an empty payload on Cegid Vendus. Proposed name: "builds the delete payload for the item id".
+
+**Open questions:**
+1. Apply both renames?
+   **Default:** yes, apply both.
+
+**Done when:**
+- [x] Both tests carry the approved names
+- [x] User ran the test suite and checks
+
+**Notes:** applied 2026-11-14, tests pass, in `tests/Unit/Client/Update/ProviderData/PayloadTest.php` (with the `match ($provider)` key and its review note removed) and `tests/Unit/Item/Delete/PayloadTest.php`.
