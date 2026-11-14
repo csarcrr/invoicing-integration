@@ -32,7 +32,7 @@ it('sends the creation defaults for omitted fields', function (Provider $provide
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($payload->get('type_id'))->toBe('P')
-            ->and($payload->get('stock_control'))->toBe('1')
+            ->and($payload->get('stock')['control'])->toBe('1')
             ->and($payload->get('status'))->toBe('on'),
         Provider::MOLONI => expect($payload->get('type'))->toBe(1)
             ->and($payload->get('has_stock'))->toBe(1),

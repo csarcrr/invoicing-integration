@@ -45,7 +45,7 @@ The returned warehouse is mapped from the response: `id` from `warehouse_id`. Th
 
 ## Cegid Vendus
 
-Not supported yet: `Warehouse::create()` throws `OperationNotSupportedException`. On Cegid Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Cegid Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse. Creating a store (`POST stores`) exists only in Cegid Vendus API v1.2, and the package calls v1.1. Support follows when the package moves to v1.2.
+Not supported on Cegid Vendus yet: `Warehouse::create()` throws `OperationNotSupportedException`. On Cegid Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Cegid Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse.
 
 ## Reference
 

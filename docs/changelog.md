@@ -39,9 +39,28 @@ After:
 'taxExemptionLaw' => 'Artigo 13.º do CIVA',
 ```
 
-Use `TaxExemption::find()` to get the codes, and write the law text yourself: on Cegid Vendus it is in `getAdditionalData()['law']`, and Moloni returns none.
+Use `TaxExemption::find()` to get the codes, and write the law text yourself: on Cegid Vendus `getAdditionalData()['law']` is a list of law texts, and Moloni returns none.
 
 See [Tax Exemptions](invoices/tax-exemption.md).
+
+### Changed: Cegid Vendus now uses API v1.2
+
+Cegid Vendus requests go to `https://www.vendus.pt/ws/v1.2/` instead of v1.1. Facades and DTOs do not change.
+
+Item fields on Cegid Vendus now use the v1.2 names in `getAdditionalData()` and in the item operations (`Item::create()`, `Item::update()`, `Item::get()` and `Item::find()`). `prices`, `tax` and `stock` are mapped and are not in additional data:
+
+| v1.1                  | v1.2                |
+| --------------------- | ------------------- |
+| `gross_price`         | `prices.gross`      |
+| `tax_id`              | `tax.id`            |
+| `tax_exemption`       | `tax.exemption`     |
+| `tax_exemption_law`   | `tax.exemption_law` |
+| `stock_control`       | `stock.control`     |
+| `stock_store`         | `stock.stores`      |
+| `qty` (in stock rows) | `stock`             |
+
+- `ClientData->date` is no longer set from Cegid Vendus responses. The `date` filter of `Client::find()` still works.
+- `defaultPayDue` is not set on Cegid Vendus `Client::find()` results. `Client::get()`, `create()` and `update()` still return it.
 
 ### Changed: Moloni client create and update send only the fields you set
 

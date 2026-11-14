@@ -147,6 +147,7 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
         ->and($list->get(1)->price)->toBe(4500)
         ->and($list->get(1)->controlStock)->toBeFalse()
+        ->and($list->last()->stock)->toBeEmpty()
         ->and($list->last()->enabled)->toBeFalse();
 });
 
@@ -196,7 +197,7 @@ test('maps the tax exemption of exempt items when finding items', function (Prov
     $response = fixtures()->response()->item()->files($fixtureName);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => $response[0] = [...$response[0], 'tax_id' => 'ISE', 'tax_exemption' => 'M01'],
+        Provider::CEGID_VENDUS => $response[0] = [...$response[0], 'tax' => ['id' => 'ISE', 'exemption' => 'M01', 'exemption_law' => '']],
         Provider::MOLONI => $response[0] = [...$response[0], 'exemption_reason' => 'M01', 'taxes' => [[...$response[0]['taxes'][0], 'tax_id' => 5]]],
     };
 

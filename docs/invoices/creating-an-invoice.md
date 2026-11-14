@@ -175,7 +175,7 @@ $items[] = ItemData::make([
     'price' => 4500,
     'tax' => ItemTax::EXEMPT,
     'taxExemptionReason' => $exemption->code,
-    'taxExemptionLaw' => $exemption->getAdditionalData()['law'] ?? null,
+    'taxExemptionLaw' => $exemption->getAdditionalData()['law'][0] ?? null,
 ]);
 ```
 

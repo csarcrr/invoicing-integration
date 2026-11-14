@@ -98,7 +98,7 @@ class Create extends Item implements ShouldCreateItem
             return;
         }
 
-        $this->payload->put('gross_price', $this->data->price / 100);
+        $this->payload->put('prices', ['gross' => $this->data->price / 100]);
     }
 
     protected function buildDescription(): void
@@ -121,7 +121,7 @@ class Create extends Item implements ShouldCreateItem
             return;
         }
 
-        $this->payload->put('tax_id', $this->data->tax->vendus());
+        $this->payload->put('tax', ['id' => $this->data->tax->vendus()]);
     }
 
     protected function buildTaxExemptionReason(): void
@@ -130,11 +130,13 @@ class Create extends Item implements ShouldCreateItem
             return;
         }
 
-        $this->payload->put('tax_exemption', $this->data->taxExemptionReason);
+        $tax = [...$this->payload->get('tax', []), 'exemption' => $this->data->taxExemptionReason];
 
         if ($this->data->taxExemptionLaw) {
-            $this->payload->put('tax_exemption_law', $this->data->taxExemptionLaw);
+            $tax['exemption_law'] = $this->data->taxExemptionLaw;
         }
+
+        $this->payload->put('tax', $tax);
     }
 
     protected function buildBarcode(): void
@@ -157,7 +159,7 @@ class Create extends Item implements ShouldCreateItem
 
     protected function buildControlStock(): void
     {
-        $this->payload->put('stock_control', ($this->data->controlStock ?? true) ? '1' : '0');
+        $this->payload->put('stock', ['control' => ($this->data->controlStock ?? true) ? '1' : '0']);
     }
 
     protected function buildEnabled(): void

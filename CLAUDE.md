@@ -50,7 +50,7 @@ Offline copies of the provider API docs live in `providers-docs/`. For any endpo
 | Moloni | `providers-docs/moloni/` (HTML pages, e.g. `providers-docs/moloni/dev/settings/payment-methods/insert/index.html`) |
 | Cegid Vendus | `providers-docs/vendus/` (`openapi.json` is the full API spec; `index.html` is its Redoc viewer) |
 
-The local Vendus `openapi.json` describes v1.2, but the package calls v1.1 (`src/Configuration/HttpConfiguration.php`). v1.2 uses nested fields (`prices.gross`, `tax.id`) where v1.1 uses flat ones (`gross_price`, `tax_id`), and it has endpoints v1.1 lacks. The live v1.1 spec at `https://www.vendus.pt/ws/v1.1/api.jsonapi` is the source of truth for Vendus endpoints and field names. Treat a mismatch between the local spec and the code as "confirm against v1.1", not as a bug.
+The package calls Cegid Vendus API v1.2 (`src/Configuration/HttpConfiguration.php`), and the local `openapi.json` is the v1.2 spec: it is the source of truth for Vendus endpoints and field names. v1.2 nests product fields (`prices.gross`, `tax.id`, `stock.control`); document line items keep flat names (`gross_price`, `tax_id`).
 
 ### Domain Decisions
 

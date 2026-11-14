@@ -60,14 +60,14 @@ $item->price;       // Gross price in cents
 | Property       | Cegid Vendus field | Moloni field                         |
 | -------------- | ------------------ | ------------------------------------ |
 | `category`     | `category_id`      | `category_id`                        |
-| `controlStock` | `stock_control`    | `has_stock`                          |
+| `controlStock` | `stock.control`    | `has_stock`                          |
 | `enabled`      | `status` (`on`/`off`) | `visibility_id` (`1`/`0`)         |
 | `unit`         | `unit_id`          | `unit_id`                            |
 | `type`         | `type_id`          | `type`                               |
-| `tax`          | `tax_id`           | `taxes[0].tax_id`, see below         |
-| `taxExemptionReason` | `tax_exemption` | `exemption_reason`              |
-| `taxExemptionLaw` | `tax_exemption_law` | Not returned                       |
-| `price`        | `gross_price`      | `price` plus `taxes[0].value`        |
+| `tax`          | `tax.id`           | `taxes[0].tax_id`, see below         |
+| `taxExemptionReason` | `tax.exemption` | `exemption_reason`              |
+| `taxExemptionLaw` | `tax.exemption_law` | Not returned                       |
+| `price`        | `prices.gross`     | `price` plus `taxes[0].value`        |
 
 On Moloni, `tax` is the `ItemTax` whose `MOLONI_TAX_*_ID` matches `taxes[0].tax_id`, so a configured tax with no VAT type, such as a 0% exempt tax, still maps to its `ItemTax`. A tax that is not configured falls back to `taxes[0].tax.vat_type`, and is `null` when that is not an `ItemTax` value.
 
@@ -94,13 +94,13 @@ $item->stock->sum('quantity'); // total stock
 | Provider     | Response field | `warehouseId` from | `quantity` from |
 | ------------ | -------------- | ------------------ | --------------- |
 | Moloni       | `warehouses[]` | `warehouse_id`     | `stock`         |
-| Cegid Vendus | `stock_store[]` | `store_id`        | `qty`           |
+| Cegid Vendus | `stock.stores[]` | `store_id`       | `stock`         |
 
 When the response has no stock entries, `stock` is an empty `Collection`.
 
 ### Additional response data
 
-Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Cegid Vendus, that is any field outside the provider's supported item properties:
+Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Cegid Vendus, that is any field outside the provider's supported item properties. The `prices`, `tax` and `stock` objects are mapped, so they are not in additional data:
 
 ```php
 $item = Item::get($itemData)->execute()->getItem();

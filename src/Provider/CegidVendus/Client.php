@@ -31,7 +31,6 @@ abstract class Client extends BaseClient
         ! empty($client['send_email']) && $data['emailNotification'] = $client['send_email'] === 'yes';
         ! empty($client['irs_retention']) && $data['irsRetention'] = $client['irs_retention'] === 'yes';
         ! empty($client['status']) && $data['status'] = $client['status'];
-        ! empty($client['date']) && $data['date'] = $client['date'];
 
         return ClientData::from($data);
     }

@@ -98,7 +98,7 @@ it('sends a false stock control', function (Provider $provider) {
     $payload = Item::update(ItemData::make(['id' => 1542, 'controlStock' => false]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('stock_control'))->toBe('0'),
+        Provider::CEGID_VENDUS => expect($payload->get('stock')['control'])->toBe('0'),
         Provider::MOLONI => expect($payload->get('has_stock'))->toBe(0),
     };
 })->with('providers');
@@ -109,7 +109,7 @@ it('sends a true stock control', function (Provider $provider) {
     $payload = Item::update(ItemData::make(['id' => 1542, 'controlStock' => true]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('stock_control'))->toBe('1'),
+        Provider::CEGID_VENDUS => expect($payload->get('stock')['control'])->toBe('1'),
         Provider::MOLONI => expect($payload->get('has_stock'))->toBe(1),
     };
 })->with('providers');

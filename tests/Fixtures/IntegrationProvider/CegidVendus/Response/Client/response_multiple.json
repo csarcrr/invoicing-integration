@@ -11,7 +11,6 @@
         "email": "marta.silva@example.com",
         "country": "PT",
         "send_email": "yes",
-        "default_pay_due": 7,
         "irs_retention": "no",
         "external_reference": "VEN-2024-001",
         "mobile": "919 321 444",
@@ -22,7 +21,6 @@
             "is_default": "no"
         },
         "status": "active",
-        "date": "2024-05-14",
         "balance": {
             "total": "120.00",
             "on_time": "120.00",
@@ -41,7 +39,6 @@
         "email": "joao.carvalho@carv.pt",
         "country": "PT",
         "send_email": "no",
-        "default_pay_due": 30,
         "irs_retention": "yes",
         "external_reference": "GAIA-PO-77",
         "mobile": "935 234 890",
@@ -52,7 +49,6 @@
             "is_default": "yes"
         },
         "status": "active",
-        "date": "2024-05-10",
         "balance": {
             "total": "580.90",
             "on_time": "320.40",
@@ -71,7 +67,6 @@
         "email": "clara@monteirodesigns.com",
         "country": "PT",
         "send_email": "yes",
-        "default_pay_due": 15,
         "irs_retention": "no",
         "external_reference": "LXB-CLARA-03",
         "mobile": "927 456 222",
@@ -82,7 +77,6 @@
             "is_default": "no"
         },
         "status": "inactive",
-        "date": "2024-04-02",
         "balance": {
             "total": "0.00",
             "on_time": "0.00",
@@ -101,7 +95,6 @@
         "email": "bruno.ramos@ramos.pt",
         "country": "PT",
         "send_email": "yes",
-        "default_pay_due": 1,
         "irs_retention": "no",
         "external_reference": "CBR-INV-908",
         "mobile": "932 550 210",
@@ -112,7 +105,6 @@
             "is_default": "no"
         },
         "status": "active",
-        "date": "2024-05-01",
         "balance": {
             "total": "48.20",
             "on_time": "32.00",
@@ -131,7 +123,6 @@
         "email": "sofia.pires@alentejofoods.pt",
         "country": "PT",
         "send_email": "yes",
-        "default_pay_due": 45,
         "irs_retention": "no",
         "external_reference": "EVR-FOOD-12",
         "mobile": "965 730 010",
@@ -142,7 +133,6 @@
             "is_default": "yes"
         },
         "status": "active",
-        "date": "2024-03-18",
         "balance": {
             "total": "920.00",
             "on_time": "450.00",
@@ -161,7 +151,6 @@
         "email": "luis.figueira@figtech.pt",
         "country": "PT",
         "send_email": "yes",
-        "default_pay_due": 60,
         "irs_retention": "yes",
         "external_reference": "LEI-TECH-42",
         "mobile": "968 660 678",
@@ -172,7 +161,6 @@
             "is_default": "no"
         },
         "status": "active",
-        "date": "2024-05-16",
         "balance": {
             "total": "210.75",
             "on_time": "210.75",
@@ -191,7 +179,6 @@
         "email": "helena.costa@costatelier.pt",
         "country": "PT",
         "send_email": "no",
-        "default_pay_due": 45,
         "irs_retention": "no",
         "external_reference": "GMR-ATELIER-55",
         "mobile": "963 880 557",
@@ -202,7 +189,6 @@
             "is_default": "no"
         },
         "status": "suspended",
-        "date": "2024-02-11",
         "balance": {
             "total": "150.30",
             "on_time": "0.00",

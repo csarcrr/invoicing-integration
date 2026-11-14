@@ -17,9 +17,9 @@ abstract class Item extends BaseItem
      */
     protected function toItemData(?int $id, array $item): ItemData
     {
-        $tax = ItemTax::tryFrom($item['tax_id'] ?? '');
+        $tax = ItemTax::tryFrom($item['tax']['id'] ?? '');
         $exemptionReason = $tax === ItemTax::EXEMPT
-            ? (($item['tax_exemption'] ?? '') ?: null)
+            ? (($item['tax']['exemption'] ?? '') ?: null)
             : null;
 
         return ItemData::make([
@@ -30,7 +30,7 @@ abstract class Item extends BaseItem
             'barcode' => $item['barcode'] ?? null,
             'category' => CategoryData::make(['id' => isset($item['category_id']) ? (int) $item['category_id'] : null]),
             'unit' => $this->toUnit($item['unit_id'] ?? null),
-            'controlStock' => (bool) ($item['stock_control'] ?? true),
+            'controlStock' => (bool) ($item['stock']['control'] ?? true),
             'enabled' => $this->toEnabled($item['status'] ?? null),
             'type' => match ($item['type_id'] ?? null) {
                 'P' => ItemType::Product,
@@ -42,13 +42,13 @@ abstract class Item extends BaseItem
             },
             'tax' => $tax,
             'taxExemptionReason' => $exemptionReason,
-            'taxExemptionLaw' => $exemptionReason ? (($item['tax_exemption_law'] ?? '') ?: null) : null,
-            'price' => isset($item['gross_price']) ? $this->toCents((float) $item['gross_price']) : null,
+            'taxExemptionLaw' => $exemptionReason ? (($item['tax']['exemption_law'] ?? '') ?: null) : null,
+            'price' => isset($item['prices']['gross']) ? $this->toCents((float) $item['prices']['gross']) : null,
             'stock' => array_map(fn (array $store) => [
                 'itemId' => $id,
                 'warehouseId' => $store['store_id'],
-                'quantity' => $store['qty'],
-            ], $item['stock_store'] ?? []),
+                'quantity' => $store['stock'],
+            ], $item['stock']['stores'] ?? []),
         ]);
     }
 

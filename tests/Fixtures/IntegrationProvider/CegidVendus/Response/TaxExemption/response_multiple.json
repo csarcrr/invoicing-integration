@@ -2,11 +2,11 @@
     {
         "id": "M07",
         "text": "Isento Artigo 9.º do CIVA",
-        "law": "Artigo 9.º do CIVA"
+        "law": ["Artigo 9.º do CIVA"]
     },
     {
         "id": "M40",
         "text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
-        "law": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+        "law": ["Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"]
     }
 ]

@@ -29,7 +29,7 @@ The request is sent to `GET taxes/exemptions`. Each row is mapped as:
 | `id`               | `code`             |
 | `text`             | `description`      |
 
-The law text of each exemption is in `getAdditionalData()['law']`. When Cegid Vendus reports no data, `getList()` is empty.
+The laws of each exemption are in `getAdditionalData()['law']`, as a list of texts. When Cegid Vendus reports no data, `getList()` is empty.
 
 ## Moloni
 

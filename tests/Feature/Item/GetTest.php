@@ -38,7 +38,7 @@ test('supported properties are not filled in additional data', function (Provide
     [$unmapped, $mapped] = match ($provider) {
         Provider::CEGID_VENDUS => [
             ['lot_control'],
-            ['title', 'description', 'reference', 'barcode', 'gross_price', 'type_id', 'tax_id', 'category_id', 'stock_control', 'status', 'unit_id'],
+            ['title', 'description', 'reference', 'barcode', 'prices', 'type_id', 'tax', 'category_id', 'stock', 'status', 'unit_id'],
         ],
         Provider::MOLONI => [
             ['image', 'stock', 'category'],
@@ -87,7 +87,7 @@ test('maps a disabled stock control', function (Provider $provider, string $resp
     $response = fixtures()->response()->item()->files($responseFixture);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => $response['stock_control'] = '0',
+        Provider::CEGID_VENDUS => $response['stock']['control'] = '0',
         Provider::MOLONI => $response['has_stock'] = 0,
     };
 
@@ -146,7 +146,7 @@ test('leaves the price and the tax empty when the provider sends none', function
     $response = fixtures()->response()->item()->files($responseFixture);
 
     $response = match ($provider) {
-        Provider::CEGID_VENDUS => collect($response)->except(['gross_price', 'tax_id'])->all(),
+        Provider::CEGID_VENDUS => collect($response)->except(['prices', 'tax'])->all(),
         Provider::MOLONI => [...$response, 'taxes' => []],
     };
 
@@ -201,7 +201,7 @@ test('maps the stock of each warehouse', function (Provider $provider, string $r
     $data = Item::get($item)->execute()->getItem();
 
     $stockKey = match ($provider) {
-        Provider::CEGID_VENDUS => 'stock_store',
+        Provider::CEGID_VENDUS => 'stock',
         Provider::MOLONI => 'warehouses',
     };
 
@@ -240,7 +240,7 @@ test('maps the tax exemption of an exempt item', function (Provider $provider, s
     $response = fixtures()->response()->item()->files($responseFixture);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => $response = [...$response, 'tax_id' => 'ISE', 'tax_exemption' => 'M01', 'tax_exemption_law' => 'Artigo 16.º, n.º 6 do CIVA'],
+        Provider::CEGID_VENDUS => $response = [...$response, 'tax' => ['id' => 'ISE', 'exemption' => 'M01', 'exemption_law' => 'Artigo 16.º, n.º 6 do CIVA']],
         Provider::MOLONI => $response = [...$response, 'exemption_reason' => 'M01', 'taxes' => [[...$response['taxes'][0], 'tax_id' => 5]]],
     };
 
@@ -260,7 +260,7 @@ test('ignores a tax exemption on an item that is not exempt', function (Provider
     $response = fixtures()->response()->item()->files($responseFixture);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => $response = [...$response, 'tax_exemption' => 'M01', 'tax_exemption_law' => 'Artigo 16.º, n.º 6 do CIVA'],
+        Provider::CEGID_VENDUS => $response = [...$response, 'tax' => [...$response['tax'], 'exemption' => 'M01', 'exemption_law' => 'Artigo 16.º, n.º 6 do CIVA']],
         Provider::MOLONI => $response['exemption_reason'] = 'M01',
     };
 

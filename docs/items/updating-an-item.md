@@ -48,14 +48,14 @@ Stock quantities cannot change here: `stock` and `quantity` are ignored. Use [Mo
 | `description`        | `description`       | `summary`                 |
 | `reference`          | `reference`         | `reference`               |
 | `barcode`            | `barcode`           | `ean`                     |
-| `price`              | `gross_price`       | `price` (net)             |
+| `price`              | `prices.gross`      | `price` (net)             |
 | `type`               | `type_id`           | `type`                    |
-| `tax`                | `tax_id`            | `taxes`                   |
-| `taxExemptionReason` | `tax_exemption`     | `exemption_reason`        |
-| `taxExemptionLaw`    | `tax_exemption_law` | Ignored                   |
+| `tax`                | `tax.id`            | `taxes`                   |
+| `taxExemptionReason` | `tax.exemption`     | `exemption_reason`        |
+| `taxExemptionLaw`    | `tax.exemption_law` | Ignored                   |
 | `category`           | `category_id`       | `category_id`             |
 | `unit`               | `unit_id`           | `unit_id`                 |
-| `controlStock`       | `stock_control`     | `has_stock`               |
+| `controlStock`       | `stock.control`     | `has_stock`               |
 | `enabled`            | `status`            | `visibility_id`, see below |
 
 An unmapped `unit` throws `CouldNotGetUnitIdException`.

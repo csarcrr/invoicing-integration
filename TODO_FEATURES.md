@@ -1,6 +1,6 @@
 # Feature Backlog
 
-Operations that both providers (Moloni and Cegid Vendus) support but the package does not expose yet. Two exceptions: entry 10 (`Warehouse::create`) is implemented on Moloni only, because Cegid Vendus creates stores only in API v1.2; entry 13 migrates the Vendus client to v1.2. Domain terms and their provider names are in `GLOSSARY.md`.
+Operations that both providers (Moloni and Cegid Vendus) support but the package does not expose yet. Two exceptions: entry 10 (`Warehouse::create`) is implemented on Moloni only (entry 14 adds Cegid Vendus); entry 13 migrates the Vendus client to v1.2. Domain terms and their provider names are in `GLOSSARY.md`.
 
 ## How to use this file
 
@@ -9,10 +9,10 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 - Follow `CLAUDE.md` and `.claude/rules/*`: TDD, simplicity-first, provider-rules, docs, surgical-changes, no verification commands.
 - Open questions come in three kinds:
   - **Default:** settled. Apply the answer without asking.
-  - **Agent resolves:** look it up yourself (local docs, v1.1 docs or the sandbox) before implementing. It does not block.
+  - **Agent resolves:** look it up yourself (local docs or the sandbox) before implementing. It does not block.
   - No marker: a design decision for the user. Ask before implementing, and do not decide it alone.
 - When the user answers a question, write the answer into the file as a **Default:** so later agents do not ask again.
-- Vendus versions: the user decided on 2026-11-14 to migrate the package client to v1.2 as a separate change; until then, operations that exist only in v1.2 throw `OperationNotSupportedException` on Vendus. The package client calls v1.1 (`src/Configuration/HttpConfiguration.php`). The source of truth for v1.1 is the live spec at `https://www.vendus.pt/ws/v1.1/api.jsonapi` (rendered at `https://www.vendus.pt/ws/v1.1/`). The local `providers-docs/vendus/openapi.json` is v1.2 and has endpoints v1.1 lacks. Line numbers below point into the local v1.2 file; every Vendus endpoint in the backlog was checked against the live v1.1 spec on 2026-11-13.
+- Vendus versions: the package client calls v1.2 since entry 13 (`src/Configuration/HttpConfiguration.php`), and the local `providers-docs/vendus/openapi.json` is the v1.2 spec and the source of truth. Entries 1 to 12 were written against v1.1, so their "v1.1 confirmed" notes are history. Sandbox credentials for live checks are in `.sandbox.env` (git-ignored); never print its values.
 - Moloni: the local pages under `providers-docs/moloni/` matched the live pages for every backlog endpoint on 2026-11-13.
 - Status rules:
   1. Before starting, set the entry to `In progress` on the board and in the entry.
@@ -36,7 +36,11 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 10 | `Warehouse::create` | Post-MVP | Done | Moloni done; Cegid Vendus throws `OperationNotSupportedException` until entry 13 (v1.2 migration). Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldCreateWarehouse.php`; `src/Provider/Moloni/Warehouse/Create.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Warehouse/create.json`. Changed: `src/Data/WarehouseData.php` (`code`, `address`, `city`, `postalCode`, `country`, `isDefault`); `src/Actions/WarehouseAction.php`; `src/Facades/Warehouse.php`. Docs: `docs/warehouses/creating-a-warehouse.md` (new); `docs/warehouses/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 11 | `TaxExemption::find` | Post-MVP | Done | Also removes the `TaxExemptionReason` enum (breaking on Cegid Vendus). Added: `src/Contracts/IntegrationProvider/TaxExemption/ShouldFindTaxExemption.php`; `src/Data/TaxExemptionData.php`; `src/Actions/TaxExemptionAction.php`; `src/Facades/TaxExemption.php`; `src/Provider/Moloni/TaxExemption.php` and `src/Provider/CegidVendus/TaxExemption.php` (bases, `toTaxExemptionData()`); `src/Provider/Moloni/TaxExemption/Find.php`; `src/Provider/CegidVendus/TaxExemption/Find.php`; `tests/Unit/TaxExemption/Find/PayloadTest.php`; `tests/Feature/TaxExemption/FindTest.php`; fixtures `Response/TaxExemption/response_multiple.json` for both providers. Deleted: `src/Enums/Tax/TaxExemptionReason.php`. Changed: `src/Data/ItemData.php` and `src/Data/TaxData.php` (exemption reason is `?string`); `src/Provider/Moloni/Item.php`; `src/Provider/CegidVendus/Item.php`; `src/Provider/Moloni/Tax/Find.php`; `src/Provider/Moloni/Tax/Create.php`; `Item/Create.php`, `Item/Update.php` and `Invoice/Create.php` on both providers; `src/Commands/Setup/Moloni.php` (reasons from `TaxExemption::find()`); `tests/Fixtures/Fixtures.php` (`taxExemption()`); `tests/Feature/Setup/CommandTest.php`; ten Item, Invoice and Tax tests (string codes). Docs: `docs/taxes/finding-tax-exemptions.md` (new); `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/handling-errors.md`; `docs/items/creating-an-item.md`; `docs/items/getting-an-item.md`; `docs/taxes/README.md`; `docs/taxes/creating-a-tax.md`; `docs/taxes/finding-taxes.md`; `docs/getting-started.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`; `README.md`; `CLAUDE.md`; `AGENTS.md` |
 | 12 | `DocumentType::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/DocumentType/ShouldFindDocumentType.php`; `src/Data/DocumentTypeData.php`; `src/Actions/DocumentTypeAction.php`; `src/Facades/DocumentType.php`; `src/Provider/Moloni/DocumentType.php` and `src/Provider/CegidVendus/DocumentType.php` (bases, `toDocumentTypeData()`); `src/Provider/Moloni/DocumentType/Find.php`; `src/Provider/CegidVendus/DocumentType/Find.php`; `tests/Unit/DocumentType/Find/PayloadTest.php`; `tests/Feature/DocumentType/FindTest.php`; fixtures `Response/DocumentType/response_multiple.json` for both providers. Changed: `tests/Fixtures/Fixtures.php` (`documentType()`). Docs: `docs/document-types/README.md` and `docs/document-types/finding-document-types.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
-| 13 | Cegid Vendus v1.2 migration | Post-MVP | Todo | Move the Vendus client from v1.1 to v1.2; unblocks Vendus `Warehouse::create` |
+| 13 | Cegid Vendus v1.2 migration | Post-MVP | Done | Unblocks entries 14 to 17. Changed: `src/Configuration/HttpConfiguration.php` (base URL v1.2); `src/Provider/CegidVendus/Item.php`, `Item/Create.php`, `Item/Update.php` (nested `prices`, `tax`, `stock`; `taxPayload()` added); `src/Enums/Providers/SupportedCegidVendusProperties.php`; `src/Provider/CegidVendus/Client.php` (removed the `date` mapping, v1.2 does not return it); Vendus fixtures `Response/Item/*.json`, `Request/Item/create.json`, `Response/Client/response.json` and `response_multiple.json`; `tests/Unit/Item/Create/ProviderData/PayloadTest.php` and `TaxTest.php`; `tests/Unit/Item/Update/ProviderData/PayloadTest.php` and `TaxTest.php`; `tests/Feature/Item/CreateTest.php`, `FindTest.php`, `GetTest.php`; `tests/Feature/Client/FindTest.php`. Also in this change, a fix to entry 11: Cegid Vendus `law` is a list (`Response/TaxExemption/response_multiple.json`, `tests/Feature/TaxExemption/FindTest.php`, docs). Docs: `docs/changelog.md`; `docs/items/getting-an-item.md`; `docs/items/updating-an-item.md`; `docs/clients/finding-clients.md`; `docs/clients/getting-a-client.md`; `docs/api-reference.md`; `docs/warehouses/creating-a-warehouse.md`; `docs/categories/creating-a-category.md`; `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/taxes/finding-tax-exemptions.md`; `CLAUDE.md` |
+| 14 | `Warehouse::create` on Cegid Vendus | Post-MVP | Todo | v1.2 `POST /stores`; needs entry 13 |
+| 15 | `Category::update` | Post-MVP | Todo | v1.2 `PATCH /products/categories/{id}`; needs entry 13 |
+| 16 | `Unit::create` | Post-MVP | Todo | v1.2 `POST /products/units`; needs entry 13 |
+| 17 | `DueDate::find` on Cegid Vendus | Post-MVP | Todo | v1.2 `GET /documents/duedates`; needs entry 13 |
 
 ## Backlog
 
@@ -44,7 +48,7 @@ Each entry lists the operation, both provider endpoints, the existing pieces to 
 
 Already exposed on both providers, so excluded: `Invoice::create` (FT, FR, RG, FS, NC; GT on Moloni), `Client::create`, `Client::get`, `Client::find`, `Item::create`, `Item::get`, `Item::find`, `Item::update`, `ItemStock::move`, `Category::find`, `Category::get`, `Unit::find`, `PaymentMethod::find`.
 
-`Category::update` and `Unit::create` were removed from the backlog: Cegid Vendus v1.1 has no endpoint for them. They are listed under "Single-provider gaps".
+`Category::update` and `Unit::create` are entries 15 and 16: Cegid Vendus has them only in v1.2.
 
 ### 1. Invoice::get
 
@@ -439,7 +443,7 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 
 **Moloni:** `taxExemptions/getAll` (`global-data/tax-exemptions/getall`). Local docs: `providers-docs/moloni/dev/global-data/tax-exemptions/getall/index.html`. No required parameters. Optional `with_invisible`. Response fields: `code`, `name`, `description`, `visibility`.
 
-**Vendus:** `GET /taxes/exemptions`. v1.1 confirmed. `openapi.json` line 8300. No parameters. Response fields: `id` (e.g. `M40`), `text`, `law`.
+**Vendus:** `GET /taxes/exemptions`. v1.1 confirmed. `openapi.json` line 8300. No parameters. Response fields: `id` (e.g. `M40`), `text`, `law` (a list of law texts; confirmed in the sandbox on 2026-11-14).
 
 **Existing pieces to reuse:**
 - `src/Actions/WarehouseAction.php`, `src/Facades/Warehouse.php` (`find()` pattern)
@@ -511,31 +515,116 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 13. Cegid Vendus v1.2 migration
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Moves the Cegid Vendus client from API v1.1 to v1.2, so the package can use the endpoints that exist only in v1.2. User decision, 2026-11-14 (see entry 10, question 4).
 
 **Scope:**
 - Base URL: `src/Configuration/HttpConfiguration.php:33` sets `https://www.vendus.pt/ws/v1.1/`.
-- Every Cegid Vendus provider class (27 files under `src/Provider/CegidVendus/`): request payloads and response mapping move from the v1.1 flat fields (`gross_price`, `tax_id`) to the v1.2 nested fields (`prices.gross`, `tax.id`).
+- Cegid Vendus Item and Client classes (see Inventory below): request payloads and response mapping move from the v1.1 flat fields (`gross_price`, `tax_id`) to the v1.2 nested fields (`prices.gross`, `tax.id`). The other Vendus classes need no change.
 - Every Cegid Vendus fixture under `tests/Fixtures/IntegrationProvider/CegidVendus/` and the tests that assert Vendus field names.
 - Docs: every Cegid Vendus section that names a field or endpoint, and the "Vendus versions" notes in `CLAUDE.md`, `AGENTS.md` and this file.
 - Source of truth after the move: the local `providers-docs/vendus/openapi.json` (v1.2).
+
+**Inventory (2026-11-14, live v1.1 spec against the local v1.2 spec, fields the package uses only):**
+- Item is the only resource whose mapped fields change. Request (`Item/Create.php`, `Item/Update.php`) and response (`src/Provider/CegidVendus/Item.php`): `gross_price` to `prices.gross`; `tax_id` to `tax.id`; `tax_exemption` to `tax.exemption`; `tax_exemption_law` to `tax.exemption_law`; `stock_control` to `stock.control`; response `stock_store` to `stock.stores`, with `qty` renamed to `stock`. `Item/Find.php` query `category_id` changes type from integer to string.
+- Client responses lose `date` (create, get, update, find) and the list loses `default_pay_due`, both read in `src/Provider/CegidVendus/Client.php`. v1.2 `PATCH /clients/{id}` accepts `irs_retention`.
+- No difference in used fields: Category, DocumentType, Invoice (create, find, get, cancel), `Item/Delete`, `ItemStock/Move`, PaymentMethod, TaxExemption, Unit, `Warehouse/Find`, `Client/Delete`.
+- In neither spec, so only the sandbox can confirm them on v1.2: `GET documents/{id}.pdf` (`Invoice/Pdf.php`); `atcud` on `GET /documents` list rows; the `errors[].code` `A001` body that `DetectsNoData` reads. Pagination (`page`, `per_page`, `X-Paginator-Pages`) and auth are described the same in both overviews.
 
 **Unblocked by this entry:**
 - `Warehouse::create` on Cegid Vendus (`POST /stores`); entry 10 currently throws `OperationNotSupportedException`.
 - Single-provider gaps that are v1.2 only: `Category::update` (`PATCH /products/categories/{id}`), `Unit::create` (`POST /products/units`), `DueDate::find` (`GET /documents/duedates`).
 
 **Open questions:**
-1. Is this one change, or one change per resource (Client, Item, Invoice, ...) while the rest stays on v1.1? Mixing versions needs a per-request base URL.
-2. Does the Vendus sandbox accept the current API key on v1.2, and do v1.2 responses match the local spec? **Agent resolves:** check in the sandbox before mapping.
-3. Do the v1.2-only operations listed above get their own entries after the migration, or are they part of this one?
+1. Is this one change, or one change per resource (Client, Item, Invoice, ...) while the rest stays on v1.1? Mixing versions needs a per-request base URL. **Default:** one change for all of Cegid Vendus (user decision, 2026-11-14).
+2. Does the Vendus sandbox accept the current API key on v1.2, and do v1.2 responses match the local spec? **Default:** resolved in the sandbox on 2026-11-14 (credentials in `.sandbox.env`, git-ignored). The key works on v1.2. Product responses match the spec: `prices.gross` is a string such as `12.34`; `tax.id`, `tax.exemption`, `tax.exemption_law`; `stock.control`; `stock.stores[]` with `store_id` and `stock`, absent when the item has no stock rows. A `PATCH /products/{id}` with nested `prices`, `tax` and `stock` returns 200. Client responses have no `date`; the client list has no `default_pay_due`, the single client has it. `GET documents/{id}.pdf` returns `application/pdf`. A search with no result returns 404 with `errors[].code` `A001`. `X-Paginator-Pages` is present on lists. `GET /documents` rows have no `atcud` (the single document has it).
+3. Do the v1.2-only operations listed above get their own entries after the migration, or are they part of this one? **Default:** own entries (user decision, 2026-11-14): entries 14 to 17.
 
 **Done when:**
-- [ ] The Vendus client calls v1.2, and every Vendus payload and response mapping uses the v1.2 field names
-- [ ] Vendus fixtures and tests updated to v1.2 shapes
-- [ ] Docs and agent instructions updated; no reference to v1.1 as the current version remains
+- [x] The Vendus client calls v1.2, and every Vendus payload and response mapping uses the v1.2 field names
+- [x] Vendus fixtures and tests updated to v1.2 shapes
+- [x] Docs and agent instructions updated; no reference to v1.1 as the current version remains
+- [x] Board and entry statuses set to `Done`, with Notes filled
+
+### 14. Warehouse::create on Cegid Vendus
+
+**Priority:** Post-MVP
+**Package status:** Missing
+**Status:** Todo
+
+**What it does:** Adds the Cegid Vendus implementation of `Warehouse::create` (entry 10 is Moloni only). Needs entry 13.
+
+**Vendus:** `POST /stores` (v1.2 only, local `openapi.json` line 3297). **Agent resolves:** read the request body and response schema in the local spec and map `WarehouseData` (`name`, `address`, `city`, `postalCode`, `country`) to it; confirm in the sandbox whether a store can be created on the test account, because a Vendus store is tied to the account subscription.
+
+**Existing pieces to reuse:** `src/Provider/Moloni/Warehouse/Create.php`; `src/Provider/CegidVendus/Warehouse.php`; `src/Actions/WarehouseAction.php` (replace the `OperationNotSupportedException` arm); `tests/Feature/Warehouse/CreateTest.php`.
+
+**Done when:**
+- [ ] Pest tests use the `providers` dataset for create, with a Vendus fixture
+- [ ] Vendus implementation added under `src/Provider/CegidVendus/Warehouse/`; action updated
+- [ ] `docs/warehouses/creating-a-warehouse.md`, `docs/features.md` and `docs/api-reference.md` updated
+- [ ] Board and entry statuses set to `Done`, with Notes filled
+
+### 15. Category::update
+
+**Priority:** Post-MVP
+**Package status:** Missing
+**Status:** Todo
+
+**What it does:** Updates a stored category on both providers. Needs entry 13.
+
+**Moloni:** `productCategories/update` (required `company_id`, `category_id`, `parent_id`, `name`).
+
+**Vendus:** `PATCH /products/categories/{id}` (v1.2 only, local `openapi.json` line 5458). **Agent resolves:** read the request body in the local spec.
+
+**Existing pieces to reuse:** `src/Provider/Moloni/Category/Create.php`; `src/Provider/CegidVendus/Category/Create.php`; `src/Actions/CategoryAction.php`; `src/Data/CategoryData.php`.
+
+**Done when:**
+- [ ] Pest tests in `tests/Unit/Category/Update/` and `tests/Feature/Category/`, using the `providers` dataset
+- [ ] Facade method, `CategoryAction::update()`, contract and both implementations added
+- [ ] Docs page `docs/categories/updating-a-category.md` added; `docs/_sidebar.md`, `docs/features.md` and `docs/api-reference.md` updated
+- [ ] Board and entry statuses set to `Done`, with Notes filled
+
+### 16. Unit::create
+
+**Priority:** Post-MVP
+**Package status:** Missing
+**Status:** Todo
+
+**What it does:** Creates a measurement unit on both providers. Needs entry 13.
+
+**Moloni:** `measurementUnits/insert` (required `company_id`, `name`, `short_name`).
+
+**Vendus:** `POST /products/units` (v1.2 only, local `openapi.json` line 6199). **Agent resolves:** read the request body in the local spec.
+
+**Existing pieces to reuse:** `src/Actions/UnitAction.php`; `src/Provider/Moloni/Unit/Find.php`; `src/Provider/CegidVendus/Unit/Find.php`; `src/Data/UnitData.php`.
+
+**Open questions:**
+1. Moloni requires `short_name`. Which `UnitData` field carries it, and what does Cegid Vendus do with it?
+
+**Done when:**
+- [ ] Pest tests in `tests/Unit/Unit/Create/` and `tests/Feature/Unit/`, using the `providers` dataset
+- [ ] Facade method, `UnitAction::create()`, contract and both implementations added
+- [ ] Docs page `docs/units/creating-a-unit.md` added; `docs/_sidebar.md`, `docs/features.md` and `docs/api-reference.md` updated
+- [ ] Board and entry statuses set to `Done`, with Notes filled
+
+### 17. DueDate::find on Cegid Vendus
+
+**Priority:** Post-MVP
+**Package status:** Missing
+**Status:** Todo
+
+**What it does:** Adds the Cegid Vendus implementation of `DueDate::find` (Moloni has it). Needs entry 13.
+
+**Vendus:** `GET /documents/duedates` (v1.2 only). **Agent resolves:** read the response schema in the local spec and map it to `src/Data/DueDateData.php`.
+
+**Existing pieces to reuse:** `src/Provider/Moloni/DueDate/Find.php`; the `DueDate` action and facade.
+
+**Done when:**
+- [ ] Pest tests use the `providers` dataset for find, with a Vendus fixture
+- [ ] Vendus implementation added under `src/Provider/CegidVendus/DueDate/`; action updated
+- [ ] `docs/due-dates/` pages, `docs/features.md` and `docs/api-reference.md` updated
 - [ ] Board and entry statuses set to `Done`, with Notes filled
 
 ## Single-provider gaps
@@ -545,15 +634,12 @@ Operations that one provider does not support: either the package already expose
 | Operation | Missing on | Provider endpoint | Reference |
 | --- | --- | --- | --- |
 | `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | `TODO.md`, "Operations not supported by a provider" |
-| `DueDate::find` | Cegid Vendus | none in v1.1 (`GET /documents/duedates` exists only in v1.2) | `TODO.md`; unblocked by entry 13 |
 | `DueDate::create` | Cegid Vendus | none in `openapi.json` | `TODO.md` (cannot implement until Vendus adds an endpoint) |
 | `Tax::find` | Cegid Vendus | `GET /taxes` (openapi line 3606) | `docs/features.md` shows Vendus not supported. Not in `TODO.md` |
 | `Tax::create` | Cegid Vendus | none in `openapi.json` | `docs/features.md`. Not in `TODO.md`; cannot implement until Vendus adds an endpoint |
 | `Company::find` | Cegid Vendus | `GET /account` (line 1010), mapping unverified | `docs/features.md` shows Vendus not supported. Not in `TODO.md` |
-| `Category::update` | Cegid Vendus | none in v1.1 (`PATCH /products/categories/{id}` exists only in v1.2, line 5458) | Unblocked by entry 13. Not exposed yet. Moloni: `productCategories/update` (required `company_id`, `category_id`, `parent_id`, `name`) |
-| `Unit::create` | Cegid Vendus | none in v1.1 (`POST /products/units` exists only in v1.2, line 6199) | Unblocked by entry 13. Not exposed yet. Moloni: `measurementUnits/insert` (required `company_id`, `name`, `short_name`) |
 
-Moloni invoice PDF and the Moloni "Save as PDF" gap are covered by backlog entry 2 (`Invoice::pdf`), not listed here. `Warehouse::create` is Moloni only until entry 13, and stays in the backlog as entry 10.
+Moloni invoice PDF and the Moloni "Save as PDF" gap are covered by backlog entry 2 (`Invoice::pdf`), not listed here. `Warehouse::create` on Cegid Vendus, `Category::update`, `Unit::create` and `DueDate::find` on Cegid Vendus are backlog entries 14 to 17.
 
 ## Provider-only features
 

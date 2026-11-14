@@ -27,7 +27,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
     $taxExemption = TaxExemption::find()->execute()->getList()->first();
 
     expect($taxExemption->getAdditionalData())->toMatchArray(match ($provider) {
-        Provider::CEGID_VENDUS => ['law' => 'Artigo 9.º do CIVA'],
+        Provider::CEGID_VENDUS => ['law' => ['Artigo 9.º do CIVA']],
         Provider::MOLONI => ['visibility' => 1],
     });
 })->with('providers');

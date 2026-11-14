@@ -55,17 +55,15 @@ class Update extends Item implements ShouldUpdateItem
             'description' => $this->data->description,
             'reference' => $this->data->reference,
             'barcode' => $this->data->barcode,
-            'gross_price' => is_null($this->data->price) ? null : $this->data->price / 100,
+            'prices' => is_null($this->data->price) ? null : ['gross' => $this->data->price / 100],
             'type_id' => $this->data->type?->vendus(),
-            'tax_id' => $this->data->tax?->vendus(),
-            'tax_exemption' => $this->data->taxExemptionReason,
-            'tax_exemption_law' => $this->data->taxExemptionLaw,
+            'tax' => $this->taxPayload(),
             'category_id' => $this->data->category?->id,
             'unit_id' => $this->unitId(),
-            'stock_control' => match ($this->data->controlStock) {
+            'stock' => match ($this->data->controlStock) {
                 null => null,
-                true => '1',
-                false => '0',
+                true => ['control' => '1'],
+                false => ['control' => '0'],
             },
             'status' => match ($this->data->enabled) {
                 null => null,
@@ -73,6 +71,20 @@ class Update extends Item implements ShouldUpdateItem
                 false => 'off',
             },
         ])->reject(fn (mixed $value): bool => is_null($value));
+    }
+
+    /**
+     * @return array<string, string>|null
+     */
+    protected function taxPayload(): ?array
+    {
+        $tax = collect([
+            'id' => $this->data->tax?->vendus(),
+            'exemption' => $this->data->taxExemptionReason,
+            'exemption_law' => $this->data->taxExemptionLaw,
+        ])->reject(fn (mixed $value): bool => is_null($value))->all();
+
+        return empty($tax) ? null : $tax;
     }
 
     /**

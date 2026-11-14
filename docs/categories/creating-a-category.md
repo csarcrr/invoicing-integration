@@ -20,7 +20,7 @@ $category->parentId; // null on Cegid Vendus
 
 ## Cegid Vendus
 
-The request is sent to `POST products/categories`. `name` is sent as `title`. `parentId` is not supported by Cegid Vendus v1.1 and is ignored.
+The request is sent to `POST products/categories`. `name` is sent as `title`. `parentId` is not supported by Cegid Vendus and is ignored.
 
 The returned category is mapped from the response: `id` from `id` and `name` from `title`. `parentId` is always `null`.
 

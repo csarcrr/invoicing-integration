@@ -806,7 +806,7 @@ ClientData::make([
 | `status`            | `Optional<string>` | Provider status                     |
 | `emailNotification` | `Optional<bool>`   | Whether to send documents via email |
 | `irsRetention`      | `Optional<bool>`   | IRS withholding flag                |
-| `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`)    |
+| `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`); not set from Cegid Vendus responses |
 
 > Access DTO values directly: `$client->name`, `$client->vat`, etc. Use
 > `$client->toArray()` when you need a payload-friendly structure. Provider

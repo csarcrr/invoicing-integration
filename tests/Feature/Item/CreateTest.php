@@ -69,7 +69,7 @@ test('reads the exemption law only from cegid vendus', function (Provider $provi
     $law = 'Artigo 6.º n.º 6 alínea a) do CIVA, a contrário';
 
     fakeItemCreate($provider, match ($provider) {
-        Provider::CEGID_VENDUS => ['tax_id' => 'ISE', 'tax_exemption' => 'M40', 'tax_exemption_law' => $law],
+        Provider::CEGID_VENDUS => ['tax' => ['id' => 'ISE', 'exemption' => 'M40', 'exemption_law' => $law]],
         Provider::MOLONI => [
             'exemption_reason' => 'M40',
             'taxes' => [[

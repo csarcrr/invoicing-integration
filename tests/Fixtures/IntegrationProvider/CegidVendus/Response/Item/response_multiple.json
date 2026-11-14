@@ -9,15 +9,12 @@
         "description": "Item Description",
         "include_description": "",
         "supply_price": "0.00",
-        "gross_price": "20.00",
-        "price_without_tax": "20.00",
-        "prices": [
-            {
-                "id": 1,
-                "price": "20.00",
-                "price_without_tax": "20.00"
-            }
-        ],
+        "prices": {
+            "supply": "0.00",
+            "markup": 0,
+            "gross": "20.00",
+            "net": "20.00"
+        },
         "unit_id": 19999,
         "class_name": "",
         "type_id": "P",
@@ -29,28 +26,30 @@
             }
         },
         "lot_control": 0,
-        "stock_control": 1,
-        "stock_type": "M",
-        "tax_id": "ISE",
-        "tax_exemption": "M40",
-        "tax_exemption_law": "",
+        "stock": {
+            "control": 1,
+            "type": "M",
+            "stores": [
+                {
+                    "store_id": 1,
+                    "stock": 40,
+                    "alert": 0
+                },
+                {
+                    "store_id": 2,
+                    "stock": 2.5,
+                    "alert": 0
+                }
+            ]
+        },
+        "tax": {
+            "id": "ISE",
+            "exemption": "M40",
+            "exemption_law": ""
+        },
         "category_id": 0,
         "brand_id": 0,
         "status": "on",
-        "stock": 42.5,
-        "stock_store": [
-            {
-                "store": "Store 1",
-                "store_id": 1,
-                "qty": 40
-            },
-            {
-                "store": "Store 2",
-                "store_id": 2,
-                "qty": 2.5
-            }
-        ],
-        "stock_alert": 0,
         "stores": {
             "store": "",
             "store_id": 0
@@ -66,15 +65,12 @@
         "description": "Another Description",
         "include_description": "",
         "supply_price": "0.00",
-        "gross_price": "45.00",
-        "price_without_tax": "36.59",
-        "prices": [
-            {
-                "id": 1,
-                "price": "45.00",
-                "price_without_tax": "36.59"
-            }
-        ],
+        "prices": {
+            "supply": "0.00",
+            "markup": 0,
+            "gross": "45.00",
+            "net": "36.59"
+        },
         "unit_id": 29999,
         "class_name": "",
         "type_id": "S",
@@ -86,16 +82,21 @@
             }
         },
         "lot_control": 0,
-        "stock_control": 0,
-        "stock_type": "M",
-        "tax_id": "NOR",
-        "tax_exemption": "",
-        "tax_exemption_law": "",
+        "stock": {
+            "control": 0,
+            "type": "M"
+        },
+        "tax": {
+            "id": "NOR",
+            "title": "IVA - Taxa Normal (23%)",
+            "rate": 23,
+            "type": "IVA",
+            "exemption": "",
+            "exemption_law": ""
+        },
         "category_id": 0,
         "brand_id": 0,
         "status": "on",
-        "stock": 0,
-        "stock_alert": 0,
         "stores": {
             "store": "",
             "store_id": 0
@@ -111,15 +112,12 @@
         "description": "Third Description",
         "include_description": "",
         "supply_price": "0.00",
-        "gross_price": "10.50",
-        "price_without_tax": "9.29",
-        "prices": [
-            {
-                "id": 1,
-                "price": "10.50",
-                "price_without_tax": "9.29"
-            }
-        ],
+        "prices": {
+            "supply": "0.00",
+            "markup": 0,
+            "gross": "10.50",
+            "net": "9.29"
+        },
         "unit_id": 29999,
         "class_name": "",
         "type_id": "P",
@@ -131,16 +129,18 @@
             }
         },
         "lot_control": 0,
-        "stock_control": 1,
-        "stock_type": "M",
-        "tax_id": "INT",
-        "tax_exemption": "",
-        "tax_exemption_law": "",
+        "stock": {
+            "control": 1,
+            "type": "M"
+        },
+        "tax": {
+            "id": "INT",
+            "exemption": "",
+            "exemption_law": ""
+        },
         "category_id": 0,
         "brand_id": 0,
         "status": "off",
-        "stock": 0,
-        "stock_alert": 0,
         "stores": {
             "store": "",
             "store_id": 0

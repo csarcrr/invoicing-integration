@@ -30,7 +30,7 @@ final class HttpConfiguration
         return Http::withHeaders([
             'Authorization' => 'Bearer '.$config['key'],
         ])
-            ->baseUrl('https://www.vendus.pt/ws/v1.1/')
+            ->baseUrl('https://www.vendus.pt/ws/v1.2/')
             ->timeout(30)
             ->connectTimeout(10);
     }

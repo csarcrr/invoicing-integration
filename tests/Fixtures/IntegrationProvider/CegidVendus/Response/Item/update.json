@@ -8,41 +8,43 @@
     "description": "A small product description used for testing purposes.",
     "include_description": "",
     "supply_price": "0.00",
-    "gross_price": "24.60",
-    "price_without_tax": "20.00",
-    "prices": [
-        {
-            "id": 1,
-            "price": "24.60",
-            "price_without_tax": "20.00"
-        }
-    ],
+    "prices": {
+        "supply": "0.00",
+        "markup": 0,
+        "gross": "24.60",
+        "net": "20.00"
+    },
     "unit_id": 19999,
     "class_name": "",
     "type_id": "P",
     "lot_control": 0,
-    "stock_control": 1,
-    "stock_type": "M",
-    "tax_id": "NOR",
-    "tax_exemption": "",
-    "tax_exemption_law": "",
+    "stock": {
+        "control": 1,
+        "type": "M",
+        "stores": [
+            {
+                "store_id": 1,
+                "stock": 40,
+                "alert": 0
+            },
+            {
+                "store_id": 2,
+                "stock": 2.5,
+                "alert": 0
+            }
+        ]
+    },
+    "tax": {
+        "id": "NOR",
+        "title": "IVA - Taxa Normal (23%)",
+        "rate": 23,
+        "type": "IVA",
+        "exemption": "",
+        "exemption_law": ""
+    },
     "category_id": 1,
     "brand_id": 0,
     "status": "on",
-    "stock": 0,
-    "stock_store": [
-        {
-            "store": "Store 1",
-            "store_id": 1,
-            "qty": 40
-        },
-        {
-            "store": "Store 2",
-            "store_id": 2,
-            "qty": 2.5
-        }
-    ],
-    "stock_alert": 0,
     "stores": [
         {
             "store": "Store 1",
