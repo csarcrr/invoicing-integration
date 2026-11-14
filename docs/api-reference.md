@@ -53,7 +53,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDele
 
 | Method      | Return Type | Description                                                   | Throws                                                                   |
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()` | `void`      | Send the deletion request; returns nothing                    | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if the provider rejects the deletion) |
+| `execute()` | `void`      | Send the deletion request; returns nothing                    | `RequestFailedException` (if the provider rejects the deletion)          |
 
 ## ShouldGetClient Contract
 
@@ -104,6 +104,7 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 | ----------------------------------- | ------------------ | ------------------------------------ |
 | `Item::create(ItemData $item)`      | `ShouldCreateItem` | Creates a new item builder instance  |
 | `Item::update(ItemData $item)`      | `ShouldUpdateItem` | Creates a partial item update instance |
+| `Item::delete(ItemData $item)`      | `ShouldDeleteItem` | Creates an item deletion instance    |
 | `Item::get(ItemData $item)`         | `ShouldGetItem`    | Creates an item retrieval instance   |
 | `Item::find(?ItemData $item = null)` | `ShouldFindItem`  | Lists/paginates provider catalog items |
 
@@ -196,6 +197,20 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdate
 | `getPayload()` | `Collection` | Inspect the payload. On Moloni this requests the current product first                               |
 
 Throws `InvalidArgumentException` when `id` is missing.
+
+## ShouldDeleteItem Contract
+
+The interface returned by `Item::delete()`. Supported on Cegid Vendus and Moloni. See [Deleting an Item](items/deleting-an-item.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldDeleteItem;
+```
+
+| Method      | Return Type | Description                                                   | Throws                                                                   |
+| ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `execute()` | `void`      | Send the deletion request; returns nothing                    | `RequestFailedException` (if the provider rejects the deletion)          |
+| `getUrl()`  | `string`    | The request URL the deletion is sent to                       | —                                                                        |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `product_id` on Moloni) | — |
 
 ---
 

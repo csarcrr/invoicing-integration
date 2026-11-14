@@ -24,6 +24,13 @@ abstract class Base
      */
     protected array $supportedProperties;
 
+    protected string $url;
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
     /**
      * Stores response fields not listed in `$supportedProperties` as additional data on the given DTO.
      *

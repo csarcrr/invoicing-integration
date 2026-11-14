@@ -6,6 +6,7 @@
     - [Overview](items/README.md)
     - [Creating an Item](items/creating-an-item.md)
     - [Updating an Item](items/updating-an-item.md)
+    - [Deleting an Item](items/deleting-an-item.md)
     - [Getting an Item](items/getting-an-item.md)
     - [Finding Items](items/finding-an-item.md)
 

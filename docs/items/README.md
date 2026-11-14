@@ -41,6 +41,7 @@ echo $created->id; // provider-assigned ID
 | -------------- | ------------------------------------------- |
 | Create an item | [Creating an Item](creating-an-item.md)     |
 | Update an item | [Updating an Item](updating-an-item.md)     |
+| Delete an item | [Deleting an Item](deleting-an-item.md)     |
 | Get an item    | [Getting an Item](getting-an-item.md)       |
 | Find items     | [Finding Items](finding-an-item.md)         |
 
@@ -50,5 +51,6 @@ echo $created->id; // provider-assigned ID
 | ----------- | ------------ | ------ | --------------- |
 | Create Item | ✅           | ✅     | ❌              |
 | Update Item | ✅           | ✅     | ❌              |
+| Delete Item | ✅           | ✅     | ❌              |
 | Get Item    | ✅           | ✅     | ❌              |
 | Find Items  | ✅           | ✅     | ❌              |

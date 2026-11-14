@@ -30,7 +30,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 4 | `Invoice::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldFindInvoice.php`; `src/Provider/CegidVendus/Invoice.php` (base, `toInvoiceData()`); `src/Provider/CegidVendus/Invoice/Find.php`; `src/Provider/Moloni/Invoice/Find.php`; `tests/Unit/Invoice/Find/PayloadTest.php`; `tests/Feature/Invoice/FindTest.php`; fixtures `Response/Invoice/find.json` for both providers. Changed: `src/Provider/Moloni/Invoice.php` (`toInvoiceData()`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php` (both use `toInvoiceData()`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/finding-invoices.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 5 | `Client::update` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Client/ShouldUpdateClient.php`; `src/Provider/Moloni/Client/Update.php`; `src/Provider/CegidVendus/Client/Update.php`; `tests/Unit/Client/Update/ProviderData/PayloadTest.php`; `tests/Feature/Client/UpdateTest.php`. Fixtures reuse the existing `Response/Client/response.json` (Vendus) and `response_simple.json` (Moloni). Changed: `src/Actions/ClientAction.php`; `src/Facades/Client.php`; `src/Provider/Moloni/Client/Create.php` (`ensureRequiredData` message now "for a client", shared with update). Docs: `docs/clients/updating-a-client.md` (new); `docs/_sidebar.md`; `docs/clients/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 6 | `Client::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Client/ShouldDeleteClient.php`; `src/Provider/Moloni/Client/Delete.php`; `src/Provider/CegidVendus/Client/Delete.php`; `tests/Unit/Client/Delete/PayloadTest.php`; `tests/Feature/Client/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Client/delete.json`. Changed: `src/Actions/ClientAction.php`; `src/Facades/Client.php`. Docs: `docs/clients/deleting-a-client.md` (new); `docs/_sidebar.md`; `docs/clients/README.md`; `docs/features.md`; `docs/api-reference.md` |
-| 7 | `Item::delete` | Post-MVP | Todo | CRUD completeness |
+| 7 | `Item::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Item/ShouldDeleteItem.php`; `src/Provider/Moloni/Item/Delete.php`; `src/Provider/CegidVendus/Item/Delete.php`; `tests/Unit/Item/Delete/PayloadTest.php`; `tests/Feature/Item/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Item/delete.json`. Changed: `src/Provider/Base.php` (`$url`, `getUrl()`); `src/Actions/ItemAction.php`; `src/Facades/Item.php`. Docs: `docs/items/deleting-an-item.md` (new); `docs/_sidebar.md`; `docs/items/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 8 | `Category::create` | Post-MVP | Todo | CRUD completeness |
 | 9 | `Warehouse::find` | Post-MVP | Todo | Reference data; Moloni warehouses, Vendus stores |
 | 10 | `Warehouse::create` | Post-MVP | Todo | Moloni only; Vendus v1.1 has no endpoint, throws `OperationNotSupportedException` |
@@ -286,7 +286,7 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 
 **Priority:** Post-MVP
 **Package status:** Missing
-**Status:** Todo
+**Status:** Done
 
 **What it does:** Deletes a stored item (product) by id.
 
@@ -309,11 +309,11 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 1. What does the operation return: nothing, or a boolean? **Default:** return nothing (`void`). Failures surface as the usual exceptions.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Item/Delete/` and `tests/Feature/Item/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `ItemAction::delete()` and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Item/` and `src/Provider/CegidVendus/Item/`
-- [ ] Docs page `docs/items/deleting-an-item.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (Delete Item)
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Item/Delete/` and `tests/Feature/Item/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade method, `ItemAction::delete()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Item/` and `src/Provider/CegidVendus/Item/`
+- [x] Docs page `docs/items/deleting-an-item.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (Delete Item)
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 8. Category::create
 

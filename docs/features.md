@@ -28,7 +28,7 @@ Features for managing items (product catalog) independently of invoices.
 | ------------- | ------------ | ------ | --------------- |
 | Create Item   | ✅           | ✅     | ❌              |
 | Update Item   | ✅           | ✅     | ❌              |
-| Delete Item   | ❌           | ❌     | ❌              |
+| Delete Item   | ✅           | ✅     | ❌              |
 | List Items    | ✅           | ✅     | ❌              |
 
 ## Item Stock Management
