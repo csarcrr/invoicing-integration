@@ -1,6 +1,6 @@
 # Tests and Code Quality Drift
 
-Unit tests and provider classes that drifted from the project rules. Mapped on 2026-11-14.
+Unit tests and provider classes that drifted from the project rules. Mapped on 2026-11-14. Entries 1, 2, 3, 5 and 6 done on 2026-11-14; entry 4 waits for the user's approach.
 
 ## How to use this file
 
@@ -19,7 +19,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 1. Directly: `Http::fake`, `Http::fakeSequence`, `Http::assertSent`, `Http::assertNotSent`, `Http::assertNothingSent`, `Http::assertSentCount`.
 2. Through helpers in `tests/Pest.php`: `fakeProviderPaymentMethods`, `fakeProviderClientByVat`, `fakeProviderDueDates`, `fakeItemUpdate`, `fakeItemCreate`.
-3. Implicitly: `mockConfiguration(Provider::MOLONI)` (`tests/Pest.php:81`) fakes `grant`, `documentSets/getAll`, `countries/getAll` and `languages/getAll` for every Moloni test. `tests/TestCase.php:19` calls `Http::preventStrayRequests()`.
+3. Implicitly: `mockConfiguration(Provider::MOLONI)` (`tests/Pest.php:57`) fakes `grant`, `documentSets/getAll`, `countries/getAll` and `languages/getAll` for every Moloni test. `tests/TestCase.php:19` calls `Http::preventStrayRequests()`.
 
 ## Status board
 
@@ -62,7 +62,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
    **Default:** yes. The download is part of the whole PDF process, so its test moves to `tests/Feature/`. The unit test only checks that the class builds the correct data to send (`getUrl()` / `getPayload()` of the first request).
 
 **Done when:**
-- [x] No test in the table uses `Http::` or a fake helper (the entry 2 tests in the same files still do, until entry 2 moves them)
+- [x] No test in the table uses `Http::` or a fake helper
 - [x] Each listed class builds `$url` (and `$payload` where it sends one) in `build*()` methods
 - [x] Docs and `docs/api-reference.md` list the new `getUrl()` / `getPayload()` methods on the touched contracts
 - [x] User ran the test suite and checks
@@ -124,7 +124,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 - [x] No file is left in `tests/Unit/` for them
 - [x] User ran the test suite and checks
 
-**Notes:** code written 2026-11-14, tests pass.
+**Notes:** committed in `470abad` on 2026-11-14, tests pass.
 - Moved with `git mv`, bodies unchanged: `tests/Feature/HttpRequestTest.php`, `tests/Feature/Providers/RequestAuthenticationTest.php`, `tests/Feature/Providers/Moloni/AuthenticationTest.php`, `tests/Feature/Providers/Moloni/RequestTest.php`.
 - `tests/Pest.php:53`: `ProviderTestingGroup` now names the four moved files, so they keep their group. The entry 2 files in `tests/Feature/Providers/` stay without a group.
 
@@ -136,13 +136,13 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 | Lookup | Triggered by | Unit files affected |
 | --- | --- | --- |
-| Moloni due dates (`maturityDates/getAll`) | client create and update, invoice create | `tests/Unit/Client/Create/ProviderData/{PayloadTest,DefaultPayDueTest,CommercialTermsTest,CountryTest,LanguageTest,NumberTest}.php`, `tests/Unit/Client/Update/ProviderData/PayloadTest.php`, `tests/Unit/Invoice/Create/ProviderData/DueDateTest.php` |
+| Moloni due dates (`maturityDates/getAll`) | client create and update (only when `defaultPayDue` is set), invoice create | `tests/Unit/Client/Create/ProviderData/{DefaultPayDueTest,CommercialTermsTest,CountryTest,LanguageTest,NumberTest,PaymentTest}.php`, `tests/Unit/Client/Update/ProviderData/PayloadTest.php`, `tests/Unit/Invoice/Create/ProviderData/DueDateTest.php` (the client files call `fakeProviderDueDates`; most of them no longer trigger the lookup) |
 | Payment methods | invoice create | `tests/Unit/Invoice/Create/ProviderData/{PaymentTest,DueDateTest,TypeTest,RelatedDocumentTest}.php`, `tests/Unit/Invoice/Create/ProviderData/CreditNote/CreditNoteReasonTest.php` |
 | Client by VAT | invoice create | `tests/Unit/Invoice/Create/ProviderData/{ClientTest,TransportTest}.php` |
 | Stored product (`products/getOne`) | Moloni item update merges the stored product | `tests/Unit/Item/Update/ProviderData/{PayloadTest,TaxTest}.php` |
-| Country, language, document set, OAuth grant | Moloni client and invoice create, every Moloni request | every Moloni unit test, through `mockConfiguration(Provider::MOLONI)` |
+| Country, language, document set, OAuth grant | Moloni client create and update (country and language only when set), invoice create, every Moloni request | every Moloni unit test, through `mockConfiguration(Provider::MOLONI)` |
 
-Some tests assert the lookup itself: "fetches the provider payment methods once per invoice", "fetches the provider due dates in a single page", "does not fetch the provider due dates when no due date is set", "only sends payments on document types that accept them", and the "fails … without any request" tests that use `Http::assertNothingSent`.
+Some tests assert the lookup itself: "fetches the provider payment methods once per invoice", "fetches the provider due dates in a single page", "does not fetch the provider due dates when no due date is set", "only sends payments on document types that accept them", the "fails … without any request" tests that use `Http::assertNothingSent`, and (added by entry 5) "does not send or look up the country / language / default pay due when the client has none" in `tests/Unit/Client/Create/ProviderData/{CountryTest,LanguageTest,DefaultPayDueTest}.php`.
 
 **Open questions:**
 1. Make the lookups replaceable (e.g. inject or set the resolved values) so unit tests never reach HTTP, or allow lookup fakes in unit tests as a stated exception in `.claude/rules/testing.md`?
@@ -150,8 +150,6 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 2. Where do the lookup-count assertions ("once per invoice", "single page", "no request") belong after the change?
    **Default:** they stay in `tests/Unit/` for now, under the temporary exception.
 3. Which approach replaces the lookup fakes? To be decided later by the user.
-
-**Interaction with entry 5:** removing the Moloni client defaults (entry 5, second bullet) removes the 15-day maturity default, so client create and update no longer look up due dates when `defaultPayDue` is not set. Update the due-date row above after entry 5.
 
 **Done when:**
 - [ ] The user picked the approach (question 3)
@@ -167,7 +165,7 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 
 - `src/Provider/{Moloni,CegidVendus}/Client/Update.php` extend `Client/Create.php`, so an `Update` is also a `ShouldCreateClient`. Proposed fix: move the shared `build*()` methods into a per-provider trait. **Won't fix** (user decision).
 - Moloni `Client::update` reuses `Create::getPayload()`, which sends creation defaults (country PT, language pt, 15-day maturity, discount, credit limit, delivery method 0). That overwrites stored values. Fix: remove the defaults from create and update (see the Default below). This changes behaviour; update the client docs.
-- Contracts that extend `ShouldExecute` inherit `execute(): self` bound to `ShouldExecute`, so the editor flags calls like `getClient()` after `execute()` (e.g. `tests/Feature/Client/UpdateTest.php`). Six contracts already redeclare `execute(): self` (commit `5d98059`). Proposed fix: redeclare it on the rest.
+- Contracts that extend `ShouldExecute` inherit `execute(): self` bound to `ShouldExecute`, so the editor flags calls like `getClient()` after `execute()` (e.g. `tests/Feature/Client/UpdateTest.php`). Six contracts already redeclare `execute(): self` (commit `5d98059`). Fix: redeclare it on the rest.
 
 **Open questions:**
 1. Apply each proposed fix above? Answer per bullet.
@@ -182,7 +180,7 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 - [x] Client docs describe what is sent when a field is not set
 - [x] User ran the test suite and checks
 
-**Notes:** code written 2026-11-14, tests pass.
+**Notes:** committed in `0b4f572` on 2026-11-14, tests pass.
 - `src/Provider/Moloni/Client/Create.php`: country, language and due date are looked up and sent only when set; `discount`, `credit_limit`, `delivery_method_id`, `payment_method_id`, `payment_day`, `salesman_id` are sent only when set. Removed `buildPendingIds()`, the `DueDateTerm` import and the `?? 0` on the due date. Added `buildPaymentMethod()`, `buildSalesman()`.
 - `src/Data/ClientData.php`: new `paymentMethodId`, `paymentDay`, `salesmanId` (`integer|min:0`). Moloni only; Cegid Vendus does not send them.
 - 16 contracts under `src/Contracts/IntegrationProvider/` redeclare `execute(): self` (form from commit `5d98059`).
@@ -205,4 +203,4 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 - [x] Both tests carry the approved names
 - [x] User ran the test suite and checks
 
-**Notes:** applied 2026-11-14, tests pass, in `tests/Unit/Client/Update/ProviderData/PayloadTest.php` (with the `match ($provider)` key and its review note removed) and `tests/Unit/Item/Delete/PayloadTest.php`.
+**Notes:** committed in `404f019` on 2026-11-14, tests pass. Renamed in `tests/Unit/Client/Update/ProviderData/PayloadTest.php` (with the `match ($provider)` key and its review note removed) and `tests/Unit/Item/Delete/PayloadTest.php`.
