@@ -74,4 +74,4 @@ it('does not send the moloni number when the client has no reference', function 
 
     expect($payload->has('number'))->toBeFalse()
         ->and($payload->has('external_reference'))->toBeFalse();
-})->with('providers');
+})->with('providers')->note('todo: review this test. why are sending for both providers and specifying moloni in the name?');

@@ -27,7 +27,7 @@ test('moloni fails with the provider message when the client is not deleted', fu
     ]);
 
     Client::delete(ClientData::from(['id' => '99999']))->execute();
-})->throws(RequestFailedException::class, 'Client is referenced by a document');
+})->throws(RequestFailedException::class, 'Client is referenced by a document')->note('todo: this problem persists... same exception different messages, just mash them into the same test and ignore the message.');
 
 test('cegid vendus fails with the provider error when the request is rejected', function () {
     mockConfiguration(Provider::CEGID_VENDUS);
