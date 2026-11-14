@@ -102,7 +102,7 @@ $receiptData = InvoiceData::make([
 $receiptResult = Invoice::create($receiptData)->execute()->getInvoice();
 
 if ($receiptResult->output) {
-    $receiptResult->output->save('receipts/' . $receiptResult->output->fileName());
+    $receiptResult->output->save('receipts/' . $receiptResult->output->fileName);
 }
 ```
 
@@ -195,7 +195,7 @@ $receiptData = InvoiceData::make([
 $result = Invoice::create($receiptData)->execute()->getInvoice();
 
 if ($result->output) {
-    $result->output->save('receipts/' . $result->output->fileName());
+    $result->output->save('receipts/' . $result->output->fileName);
 }
 ```
 

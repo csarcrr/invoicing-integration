@@ -458,6 +458,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 | --------------------------------------- | --------------- | ---------------------------------------------------- |
 | `Invoice::create(InvoiceData $invoice)` | `ShouldCreateInvoice` | Creates a builder seeded with the provided DTO state |
 | `Invoice::get(InvoiceData $invoice)`   | `ShouldGetInvoice`    | Creates a retrieval instance for a stored document   |
+| `Invoice::pdf(InvoiceData $invoice)`   | `ShouldGetInvoicePdf` | Creates a retrieval instance for the PDF of a stored document |
 
 > [!TIP]
 > The `Invoice` facade resolves the underlying `InvoiceAction` class from the service container. Prefer the facade for day-to-day usage. Resolve `InvoiceAction` directly only when you need to inject the class (e.g., in constructors) or swap the implementation during testing.
@@ -494,6 +495,19 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if no document has the ID) |
 | `getInvoice()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
+
+## ShouldGetInvoicePdf Contract
+
+The contract returned by `Invoice::pdf()`. See [Getting the PDF of an Invoice](invoices/outputting-invoice.md#getting-the-pdf-of-an-existing-invoice).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoicePdf;
+```
+
+| Method          | Return Type   | Description                                                   | Throws                                                                   |
+| --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing), `RequestFailedException` (Moloni, if no PDF link is returned) |
+| `getOutput()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
 
 ---
 
@@ -880,7 +894,7 @@ $transport = TransportData::make([
 The hydrated `InvoiceData` returned after issuing an invoice. Contains the provider's response data.
 
 > [!NOTE]
-> The `output` property on the returned `InvoiceData` is an `OutputData` instance (the same type used as the input DTO). It is hydrated with the provider's file content after `execute()`. All file-handling methods (`save()`, `fileName()`, `content()`) live directly on `OutputData` — there is no separate `Output` value object. The "Output" section below describes the same `OutputData` methods accessible via `$result->output`.
+> The `output` property on the returned `InvoiceData` is an `OutputData` instance (the same type used as the input DTO). It is hydrated with the provider's file content after `execute()`. See the [OutputData](#outputdata) section below.
 
 **Properties:**
 
@@ -891,26 +905,32 @@ The hydrated `InvoiceData` returned after issuing an invoice. Contains the provi
 | `total`     | `int`     | Total amount in cents (gross)           | -                                       |
 | `totalNet`  | `int`     | Net total amount in cents               | -                                       |
 | `atcudHash` | `?string` | ATCUD hash (Portugal AT code)           | -                                       |
-| `output`    | `?Output` | Output object for PDF/ESC/POS           | `null` when the provider omits the file |
+| `output`    | `OutputData` | Output for PDF/ESC/POS               | `content` is `null` when the provider omits the file |
 
 ---
 
-### Output
+### OutputData
+
+Holds a document's file. Returned in `InvoiceData->output` by `Invoice::create()` and by `Invoice::pdf()->execute()->getOutput()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\ValueObjects\Output;
+use CsarCrr\InvoicingIntegration\Data\OutputData;
 ```
+
+**Properties:**
+
+| Property   | Type           | Default      | Description |
+| ---------- | -------------- | ------------ | ----------- |
+| `format`   | `OutputFormat` | `PDF_BASE64` | Output format. Set it on input to choose the format `Invoice::create()` requests |
+| `content`  | `?string`      | `null`       | The file, base64 encoded |
+| `fileName` | `?string`      | `null`       | File name used by `save()`. Cegid Vendus `Invoice::create()` sets it to the document number |
+| `url`      | `?string`      | `null`       | Provider download link. Set by `Invoice::pdf()` on Moloni only |
 
 **Methods:**
 
-| Method | Return Type | Description |
-| -------------------------- | -------------- | ---------------------------------- |
-| `fileName()` | `?string` | Auto-generated filename |
-| `save(?string $path)` | `string` | Save to storage, returns full path |
-| `get()` | `string` | Alias for `save()`, returns path |
-| `content()` | `string` | Raw output content |
-| `format()` | `OutputFormat` | Output format enum |
-| `getPath()` | `?string` | Path after saving (null if unsaved)|
+| Method                | Return Type | Description |
+| --------------------- | ----------- | ----------- |
+| `save(?string $path)` | `string`    | `PDF_BASE64`: decodes `content`, writes it to the `local` disk and returns the path. The path defaults to `invoices/{fileName}` (a random name when `fileName` is `null`), is sanitized and gets a `.pdf` suffix. `ESCPOS`: returns the decoded content and writes nothing. Returns `''` when `content` is `null` |
 
 ---
 

@@ -266,7 +266,7 @@ $creditNoteData = InvoiceData::make([
 $result = Invoice::create($creditNoteData)->execute()->getInvoice();
 
 if ($result->output) {
-    $result->output->save('credit-notes/' . $result->output->fileName());
+    $result->output->save('credit-notes/' . $result->output->fileName);
 }
 ```
 

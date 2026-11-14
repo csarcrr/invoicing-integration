@@ -24,6 +24,7 @@ class OutputData extends Data implements DataNeedsValidation
         public OutputFormat $format = OutputFormat::PDF_BASE64,
         public Optional|null|string $content = null,
         public Optional|null|string $fileName = null,
+        public Optional|null|string $url = null,
     ) {}
 
     public function save(?string $path = null): string

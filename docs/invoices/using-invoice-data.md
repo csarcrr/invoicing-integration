@@ -82,7 +82,7 @@ Invoice::create($receiptData)->execute();
 ## Working with Output
 
 > [!NOTE]
-> `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. The methods you interact with (`save()`, `fileName()`, `content()`) are all on `OutputData` itself — there is no separate `Output` value object to import.
+> `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. Read `content`, `fileName` and `url` as properties and call `save()` on `OutputData` itself — there is no separate `Output` value object to import.
 
 The output object provides access to the generated document:
 
@@ -144,7 +144,7 @@ $pdfPath = null;
 
 if ($result->output) {
     $pdfPath = $result->output->save(
-        'invoices/' . $result->output->fileName()
+        'invoices/' . $result->output->fileName
     );
 
     $invoiceRecord->pdf_path = $pdfPath;
@@ -170,7 +170,7 @@ function processInvoiceResult($result): array
     return [
         'sequence' => $result->sequence,
         'id' => $result->id,
-        'filename' => $result->output?->fileName(),
+        'filename' => $result->output?->fileName,
     ];
 }
 ```

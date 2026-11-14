@@ -1,6 +1,6 @@
 # Output Formats
 
-The provider returns the document as base64-encoded PDF by default, or as ESC/POS for thermal printers:
+When you create an invoice, the provider returns the document as base64-encoded PDF by default, or as ESC/POS for thermal printers. To get the PDF of an invoice that already exists, see [Getting the PDF of an existing invoice](#getting-the-pdf-of-an-existing-invoice).
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -29,7 +29,7 @@ $result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 // Save the PDF
 if ($result->output) {
-    $path = $result->output->save('invoices/' . $result->output->fileName());
+    $path = $result->output->save('invoices/' . $result->output->fileName);
     // $path = "storage/app/invoices/fr_01p2025_1.pdf"
 }
 ```
@@ -83,7 +83,7 @@ if (! $result->output) {
     return;
 }
 
-$result->output->save('invoices/' . $result->output->fileName());
+$result->output->save('invoices/' . $result->output->fileName);
 ```
 
 ## Custom File Paths
@@ -96,7 +96,7 @@ $output = $result->output;
 
 if ($output) {
     // Organize by year/month
-    $path = $output->save('invoices/2025/01/' . $output->fileName());
+    $path = $output->save('invoices/2025/01/' . $output->fileName);
 
     // Or use a custom name
     $path = $output->save('invoices/order-12345.pdf');
@@ -106,6 +106,42 @@ if ($output) {
     $path = $output->save("invoices/{$sanitized}.pdf");
 }
 ```
+
+## Getting the PDF of an existing invoice
+
+Use `Invoice::pdf()` to fetch the PDF of a document already stored in the provider, for example one created earlier with `Invoice::create()`:
+
+```php
+use CsarCrr\InvoicingIntegration\Data\InvoiceData;
+use CsarCrr\InvoicingIntegration\Facades\Invoice;
+
+$output = Invoice::pdf(InvoiceData::make(['id' => 123]))->execute()->getOutput();
+
+$output->content; // base64-encoded PDF; null when the provider did not return the file (Moloni)
+$output->format;  // OutputFormat::PDF_BASE64
+$output->url;     // Moloni PDF link; null on Cegid Vendus
+
+$path = $output->save('invoices/document-123.pdf');
+```
+
+- Pass the provider ID (`id`), not the sequence.
+- `save()` works as for `create()`. When `content` is `null`, `save()` returns an empty string and writes nothing.
+- `url` is the Moloni PDF link, so you can offer the document for download even when `content` is `null`.
+
+### Cegid Vendus
+
+The request is sent to `GET documents/{id}.pdf`. The provider returns the raw PDF, which the package base64-encodes into `content`. `url` is `null`.
+
+### Moloni
+
+The request is sent to `documents/getPDFLink` with `document_id`. Moloni returns a download page in `url`. The package then downloads the PDF from `https://www.moloni.pt/downloads/index.php?action=getDownload&h=<token>&d=<id>`, where `<token>` is the `h` value of the link and `<id>` is the document ID, and stores it base64-encoded in `content`. This download URL is not in the Moloni API documentation.
+
+If that download does not return a PDF, `content` is `null` and `url` is still set, so the developer can open the link instead. Moloni does not return a PDF link for draft documents (status 0).
+
+### Exceptions
+
+- `InvalidArgumentException` with `Invoice ID is required.` when `id` is not set.
+- `RequestFailedException` when the provider returns an error, or when Moloni returns an empty PDF link.
 
 ## Thermal Printer Integration (ESC/POS)
 
@@ -144,7 +180,7 @@ $result = Invoice::create($invoiceData)->execute()->getInvoice();
 
 if ($result->output) {
     // Save the ESC/POS data
-    $path = $result->output->save('print-queue/' . $result->output->fileName());
+    $path = $result->output->save('print-queue/' . $result->output->fileName);
 
     // Send to your print service
     // PrintService::sendToPrinter($path);
@@ -154,17 +190,15 @@ if ($result->output) {
 > [!NOTE]
 > ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
 
-## Output Object Methods
+## OutputData Properties and Methods
 
-The output object provides these methods:
-
-| Method        | Returns        | Description                                        |
-| ------------- | -------------- | -------------------------------------------------- |
-| `fileName()`  | `?string`      | Auto-generated filename (e.g., `fr_01p2025_1.pdf`) |
-| `save($path)` | `string`       | Save to storage, returns full path                 |
-| `content()`   | `string`       | Raw output content (base64 for PDF)                |
-| `format()`    | `OutputFormat` | The output format enum                             |
-| `getPath()`   | `?string`      | Path after saving (null if not yet saved)          |
+| Member           | Type           | Description |
+| ---------------- | -------------- | ----------- |
+| `format`         | `OutputFormat` | Output format (default `PDF_BASE64`) |
+| `content`        | `?string`      | The file, base64 encoded |
+| `fileName`       | `?string`      | File name used by `save()`; Cegid Vendus `Invoice::create()` sets it to the document number |
+| `url`            | `?string`      | Provider download link; set by `Invoice::pdf()` on Moloni only |
+| `save(?string $path)` | `string`  | `PDF_BASE64`: decodes `content`, writes it to the `local` disk and returns the path (default `invoices/{fileName}`, sanitized, `.pdf` suffix added). `ESCPOS`: returns the decoded content and writes nothing. Returns `''` when `content` is `null` |
 
 ## Complete Workflow Example
 
@@ -210,7 +244,7 @@ $order->invoice_provider_id = $result->id;
 
 // Save and store the PDF path
 if ($result->output) {
-    $pdfPath = $result->output->save('invoices/' . $result->output->fileName());
+    $pdfPath = $result->output->save('invoices/' . $result->output->fileName);
     $order->invoice_pdf_path = $pdfPath;
 
     // Queue email to customer
@@ -231,10 +265,10 @@ return response()->json([
 
 ---
 
-The default output format is PDF (base64 encoded). Set the format via `OutputData` on your `InvoiceData` before issuing. Use `$result->output?->save($path)` to store the document and `$result->output?->fileName()` for the auto-generated filename. Always check `if ($result->output)` before saving, since the provider may not always return a file. Check provider [Features](../features.md) for format support.
+The default output format is PDF (base64 encoded). Set the format via `OutputData` on your `InvoiceData` before issuing. Use `$result->output?->save($path)` to store the document and `$result->output?->fileName` for the auto-generated filename. Always check `if ($result->output)` before saving, since the provider may not always return a file. Check provider [Features](../features.md) for format support.
 
 > [!NOTE]
-> Moloni does not return a file yet: `output->content` is `null` and `save()` returns an empty string without writing anything.
+> On `Invoice::create()`, Moloni does not return a file yet: `output->content` is `null` and `save()` returns an empty string without writing anything. Use `Invoice::pdf()` to get the PDF of a Moloni invoice.
 
 ---
 

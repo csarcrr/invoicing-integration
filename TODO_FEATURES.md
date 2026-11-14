@@ -25,7 +25,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | # | Operation | Priority | Status | Notes |
 | --- | --- | --- | --- | --- |
 | 1 | `Invoice::get` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoice.php`; `src/Provider/Moloni/Invoice.php` (base, `sequence()` moved from `Moloni/Invoice/Create.php`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php`; `tests/Unit/Invoice/Get/IdTest.php`; `tests/Feature/Invoice/GetTest.php`; fixtures `Response/Invoice/get.json` for both providers. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`; `src/Provider/Moloni/Invoice/Create.php` (extends the new base). Docs: `docs/invoices/getting-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md` (new "Invoice Management" table); `docs/api-reference.md` |
-| 2 | `Invoice::pdf` | MVP | In progress | Moloni has no PDF on the package side; Vendus PDF encoding to check in the sandbox |
+| 2 | `Invoice::pdf` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoicePdf.php`; `src/Provider/CegidVendus/Invoice/Pdf.php`; `src/Provider/Moloni/Invoice/Pdf.php`; `tests/Unit/Invoice/Pdf/IdTest.php`; `tests/Feature/Invoice/PdfTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/pdf_link.json`. Changed: `src/Data/OutputData.php` (`url`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/outputting-invoice.md`; `docs/features.md`; `docs/api-reference.md` |
 | 3 | `Invoice::cancel` | MVP | Todo | Returns `void`; Vendus status `A` |
 | 4 | `Invoice::find` | Post-MVP | Todo | List documents |
 | 5 | `Client::update` | Post-MVP | Todo | CRUD completeness; open question on how the caller passes Moloni `number` |
@@ -88,8 +88,8 @@ Already exposed on both providers, so excluded: `Invoice::create` (FT, FR, RG, F
 ### 2. Invoice::pdf
 
 **Priority:** MVP
-**Package status:** Missing
-**Status:** In progress
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Returns the PDF of an existing document so a developer can store or print it.
 
@@ -115,14 +115,15 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 **Open questions:**
 1. Should the result be a URL (Moloni's shape) or the PDF content (Vendus's shape), and how should `OutputData` carry it? **Default:** use the Vendus shape on both providers: return the PDF content in `OutputData` (`content`, `format`). On Moloni, download the file from the `getPDFLink` URL. If that is not possible, set the entry to `Blocked (open questions)` and ask the user.
 2. Should the Moloni `signed` flag be a method argument, a DTO field, or left at the provider default? **Default:** leave it at the provider default and do not expose it.
-3. Is the Vendus `.pdf` response binary or base64? Not stated in the v1.1 spec or the old docs. **Agent resolves:** check in the sandbox before implementing. This does not block.
+3. Is the Vendus `.pdf` response binary or base64? Not stated in the v1.1 spec or the old docs. **Default:** resolved in the sandbox on 2026-11-14: `GET documents/{id}.pdf` returns the raw PDF (`content-type: application/pdf`, body starts with `%PDF`). `OutputData` with `PDF_BASE64` expects base64, so base64-encode the body. (`GET documents/{id}?output=pdf` returns JSON with a base64 `output` field, but v1.1 does not declare that parameter.)
+4. The Moloni `getPDFLink` `url` (`https://www.moloni.pt/downloads/?h=<token>`) returns an HTML download page (`text/html`), not the PDF, with or without `&d=1`. Checked in the sandbox on 2026-11-14. That page links to `https://www.moloni.pt/downloads/index.php?action=getDownload&h=<token>&d=<document_id>`, which returns the PDF (`application/pdf`). That URL is not in the Moloni API docs. **Default:** return both the link and the PDF when available (user decision, 2026-11-14). `OutputData` gains a `url` field. On Moloni, `url` is the `getPDFLink` URL and `content` is the base64 PDF downloaded from the `getDownload` URL; when that download does not return `application/pdf`, `content` stays `null` and `url` is still returned. On Vendus, `url` is `null`. The operation returns `OutputData` via `getOutput()`.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Invoice/Pdf/` and `tests/Feature/Invoice/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `InvoiceAction::pdf()` and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Invoice/` and `src/Provider/CegidVendus/Invoice/`
-- [ ] Docs page `docs/invoices/outputting-invoice.md` updated; `docs/features.md` matrix updated (Moloni "Save as PDF")
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Invoice/Pdf/` and `tests/Feature/Invoice/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade method, `InvoiceAction::pdf()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Invoice/` and `src/Provider/CegidVendus/Invoice/`
+- [x] Docs page `docs/invoices/outputting-invoice.md` updated; `docs/features.md` matrix updated (Moloni "Save as PDF")
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 3. Invoice::cancel
 

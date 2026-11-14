@@ -110,6 +110,7 @@ Features for reading the invoices stored in the provider.
 |             | Cegid Vendus | Moloni | Invoice Express |
 | ----------- | ------------ | ------ | --------------- |
 | Get Invoice | ✅           | ✅     | ❌              |
+| Get Invoice PDF | ✅       | ✅     | ❌              |
 
 ## Invoicing
 
@@ -198,7 +199,7 @@ Features that are "shared" between multiple Invoicing types.
 
 |               | Cegid Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
-| Save as PDF   | ✅           | ❌     | ❌              |
+| Save as PDF   | ✅           | ✅     | ❌              |
 | Obtain ESCPOS | ✅           | ❌     | ❌              |
 
 Moloni documents can also be created as drafts with `asDraft()`.
