@@ -93,8 +93,15 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 **Default:** move each test unchanged into the matching `tests/Feature/<Resource>/` file; create the file if missing. Moloni-only internals go in `tests/Feature/Providers/Moloni/`.
 
 **Done when:**
-- [ ] Every listed test lives under `tests/Feature/`
-- [ ] Emptied unit files are deleted
+- [x] Every listed test lives under `tests/Feature/`
+- [x] Emptied unit files are deleted (none emptied: each unit file keeps its request-shape test)
+- [ ] User ran the test suite and checks
+
+**Notes:** code written 2026-11-14, waiting for user review.
+- Moved into: `tests/Feature/Client/GetTest.php`, `tests/Feature/Invoice/GetTest.php`, `tests/Feature/Invoice/PdfTest.php`, and new `tests/Feature/Providers/Moloni/{Country/GetTest,Language/GetTest,DocumentSeries/FindTest}.php`. The new Moloni files carry the source `beforeEach` (`Cache::flush()`, `mockConfiguration(Provider::MOLONI)`).
+- Moved out of: `tests/Unit/Client/Get/IdTest.php`, `tests/Unit/Invoice/Get/IdTest.php`, `tests/Unit/Invoice/Pdf/IdTest.php`, `tests/Unit/Providers/Moloni/{Country/GetTest,Language/GetTest,DocumentSeries/FindTest}.php`. Imports made unused were removed.
+- The moved PDF test uses `test(...)` to match `tests/Feature/Invoice/PdfTest.php`.
+- `tests/Feature/Providers/` gets no Pest group (user decision).
 
 ### 3. HTTP layer tests live in `tests/Unit/`
 

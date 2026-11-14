@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -71,3 +72,13 @@ it('requests the moloni download with the token from the pdf link and the docume
         && Str::contains($request->url(), 'h=abc.def.ghi')
         && Str::contains($request->url(), 'd=123456'));
 })->note('todo: this is a provider specific test');
+
+test('fails when moloni returns an empty pdf link', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake([
+        '*documents/getPDFLink*' => mockResponse(['url' => '']),
+    ]);
+
+    Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute();
+})->throws(RequestFailedException::class, 'Invoice PDF link not available.')->note('todo: this is a provider specific test');

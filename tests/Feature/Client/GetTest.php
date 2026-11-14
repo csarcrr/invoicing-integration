@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
@@ -97,3 +98,12 @@ test('cegid vendus client get maps a default pay due of now to the zero day term
 
     expect($data->defaultPayDue)->toBe(DueDateTerm::Days0);
 });
+
+it('fails when the provider has no client with the id', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
+
+    Client::get(ClientData::from(['id' => '999999']))->execute();
+})->with('providers')->throws(RequestFailedException::class);

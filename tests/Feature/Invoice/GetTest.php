@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Support\Facades\Http;
 
@@ -76,3 +77,12 @@ test('an unknown document type falls back to FT', function (Provider $provider) 
 
     expect($invoice->type)->toBe(InvoiceType::Invoice);
 })->with('providers')->note('verify: we cannot have unsupported document types');
+
+it('fails when the provider has no invoice with the id', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
+
+    Invoice::get(InvoiceData::from(['id' => 123456]))->execute();
+})->with('providers')->throws(RequestFailedException::class);
