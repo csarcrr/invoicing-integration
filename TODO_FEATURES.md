@@ -1,6 +1,6 @@
 # Feature Backlog
 
-Operations that both providers (Moloni and Cegid Vendus) support but the package does not expose yet. Two exceptions: entry 10 (`Warehouse::create`) is implemented on Moloni only (entry 14 adds Cegid Vendus); entry 13 migrates the Vendus client to v1.2. Domain terms and their provider names are in `GLOSSARY.md`.
+Operations that both providers (Moloni and Cegid Vendus) support but the package does not expose yet. Two exceptions: entry 13 migrates the Vendus client to v1.2; entries 14 and 17 add the Cegid Vendus side of an operation that Moloni already has. Domain terms and their provider names are in `GLOSSARY.md`.
 
 ## How to use this file
 
@@ -33,14 +33,14 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 7 | `Item::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Item/ShouldDeleteItem.php`; `src/Provider/Moloni/Item/Delete.php`; `src/Provider/CegidVendus/Item/Delete.php`; `tests/Unit/Item/Delete/PayloadTest.php`; `tests/Feature/Item/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Item/delete.json`. Changed: `src/Provider/Base.php` (`$url`, `getUrl()`); `src/Actions/ItemAction.php`; `src/Facades/Item.php`. Docs: `docs/items/deleting-an-item.md` (new); `docs/_sidebar.md`; `docs/items/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 8 | `Category::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldCreateCategory.php`; `src/Provider/CegidVendus/Category.php` (base, `toCategoryData()`); `src/Provider/CegidVendus/Category/Create.php`; `src/Provider/Moloni/Category/Create.php`; `tests/Unit/Category/Create/PayloadTest.php`; `tests/Feature/Category/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Category/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Category/create.json`. Changed: `src/Provider/Moloni/Category.php` (extends `Base`); `src/Actions/CategoryAction.php`; `src/Facades/Category.php`. Docs: `docs/categories/creating-a-category.md` (new); `docs/_sidebar.md`; `docs/categories/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 9 | `Warehouse::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldFindWarehouse.php`; `src/Data/WarehouseData.php`; `src/Provider/Moloni/Warehouse.php` and `src/Provider/CegidVendus/Warehouse.php` (bases, `toWarehouseData()`); `src/Provider/Moloni/Warehouse/Find.php`; `src/Provider/CegidVendus/Warehouse/Find.php`; `tests/Unit/Warehouse/Find/PayloadTest.php`; `tests/Feature/Warehouse/FindTest.php`; fixtures `Response/Warehouse/response_multiple.json` for both providers. Changed: `src/Actions/WarehouseAction.php` and `src/Facades/Warehouse.php` (new); `tests/Fixtures/Fixtures.php` (`warehouse()`). Docs: `docs/warehouses/README.md` and `docs/warehouses/finding-warehouses.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
-| 10 | `Warehouse::create` | Post-MVP | Done | Moloni done; Cegid Vendus throws `OperationNotSupportedException` until entry 13 (v1.2 migration). Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldCreateWarehouse.php`; `src/Provider/Moloni/Warehouse/Create.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Warehouse/create.json`. Changed: `src/Data/WarehouseData.php` (`code`, `address`, `city`, `postalCode`, `country`, `isDefault`); `src/Actions/WarehouseAction.php`; `src/Facades/Warehouse.php`. Docs: `docs/warehouses/creating-a-warehouse.md` (new); `docs/warehouses/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
+| 10 | `Warehouse::create` | Post-MVP | Done | Moloni implementation; the Cegid Vendus implementation was added by entry 14. Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldCreateWarehouse.php`; `src/Provider/Moloni/Warehouse/Create.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Warehouse/create.json`. Changed: `src/Data/WarehouseData.php` (`code`, `address`, `city`, `postalCode`, `country`, `isDefault`); `src/Actions/WarehouseAction.php`; `src/Facades/Warehouse.php`. Docs: `docs/warehouses/creating-a-warehouse.md` (new); `docs/warehouses/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 11 | `TaxExemption::find` | Post-MVP | Done | Also removes the `TaxExemptionReason` enum (breaking on Cegid Vendus). Added: `src/Contracts/IntegrationProvider/TaxExemption/ShouldFindTaxExemption.php`; `src/Data/TaxExemptionData.php`; `src/Actions/TaxExemptionAction.php`; `src/Facades/TaxExemption.php`; `src/Provider/Moloni/TaxExemption.php` and `src/Provider/CegidVendus/TaxExemption.php` (bases, `toTaxExemptionData()`); `src/Provider/Moloni/TaxExemption/Find.php`; `src/Provider/CegidVendus/TaxExemption/Find.php`; `tests/Unit/TaxExemption/Find/PayloadTest.php`; `tests/Feature/TaxExemption/FindTest.php`; fixtures `Response/TaxExemption/response_multiple.json` for both providers. Deleted: `src/Enums/Tax/TaxExemptionReason.php`. Changed: `src/Data/ItemData.php` and `src/Data/TaxData.php` (exemption reason is `?string`); `src/Provider/Moloni/Item.php`; `src/Provider/CegidVendus/Item.php`; `src/Provider/Moloni/Tax/Find.php`; `src/Provider/Moloni/Tax/Create.php`; `Item/Create.php`, `Item/Update.php` and `Invoice/Create.php` on both providers; `src/Commands/Setup/Moloni.php` (reasons from `TaxExemption::find()`); `tests/Fixtures/Fixtures.php` (`taxExemption()`); `tests/Feature/Setup/CommandTest.php`; ten Item, Invoice and Tax tests (string codes). Docs: `docs/taxes/finding-tax-exemptions.md` (new); `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/handling-errors.md`; `docs/items/creating-an-item.md`; `docs/items/getting-an-item.md`; `docs/taxes/README.md`; `docs/taxes/creating-a-tax.md`; `docs/taxes/finding-taxes.md`; `docs/getting-started.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`; `README.md`; `CLAUDE.md`; `AGENTS.md` |
 | 12 | `DocumentType::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/DocumentType/ShouldFindDocumentType.php`; `src/Data/DocumentTypeData.php`; `src/Actions/DocumentTypeAction.php`; `src/Facades/DocumentType.php`; `src/Provider/Moloni/DocumentType.php` and `src/Provider/CegidVendus/DocumentType.php` (bases, `toDocumentTypeData()`); `src/Provider/Moloni/DocumentType/Find.php`; `src/Provider/CegidVendus/DocumentType/Find.php`; `tests/Unit/DocumentType/Find/PayloadTest.php`; `tests/Feature/DocumentType/FindTest.php`; fixtures `Response/DocumentType/response_multiple.json` for both providers. Changed: `tests/Fixtures/Fixtures.php` (`documentType()`). Docs: `docs/document-types/README.md` and `docs/document-types/finding-document-types.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
 | 13 | Cegid Vendus v1.2 migration | Post-MVP | Done | Unblocks entries 14 to 17. Changed: `src/Configuration/HttpConfiguration.php` (base URL v1.2); `src/Provider/CegidVendus/Item.php`, `Item/Create.php`, `Item/Update.php` (nested `prices`, `tax`, `stock`; `taxPayload()` added); `src/Enums/Providers/SupportedCegidVendusProperties.php`; `src/Provider/CegidVendus/Client.php` (removed the `date` mapping, v1.2 does not return it); Vendus fixtures `Response/Item/*.json`, `Request/Item/create.json`, `Response/Client/response.json` and `response_multiple.json`; `tests/Unit/Item/Create/ProviderData/PayloadTest.php` and `TaxTest.php`; `tests/Unit/Item/Update/ProviderData/PayloadTest.php` and `TaxTest.php`; `tests/Feature/Item/CreateTest.php`, `FindTest.php`, `GetTest.php`; `tests/Feature/Client/FindTest.php`. Also in this change, a fix to entry 11: Cegid Vendus `law` is a list (`Response/TaxExemption/response_multiple.json`, `tests/Feature/TaxExemption/FindTest.php`, docs). Docs: `docs/changelog.md`; `docs/items/getting-an-item.md`; `docs/items/updating-an-item.md`; `docs/clients/finding-clients.md`; `docs/clients/getting-a-client.md`; `docs/api-reference.md`; `docs/warehouses/creating-a-warehouse.md`; `docs/categories/creating-a-category.md`; `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/taxes/finding-tax-exemptions.md`; `CLAUDE.md` |
-| 14 | `Warehouse::create` on Cegid Vendus | Post-MVP | Todo | v1.2 `POST /stores`; needs entry 13 |
-| 15 | `Category::update` | Post-MVP | Todo | v1.2 `PATCH /products/categories/{id}`; needs entry 13 |
-| 16 | `Unit::create` | Post-MVP | Todo | v1.2 `POST /products/units`; needs entry 13 |
-| 17 | `DueDate::find` on Cegid Vendus | Post-MVP | Todo | v1.2 `GET /documents/duedates`; needs entry 13 |
+| 14 | `Warehouse::create` on Cegid Vendus | Post-MVP | Done | v1.2 `POST /stores`. Added: `src/Provider/CegidVendus/Warehouse/Create.php`; fixture `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Warehouse/create.json`. Changed: `src/Actions/WarehouseAction.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`. Docs: `docs/warehouses/creating-a-warehouse.md`; `docs/warehouses/README.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`. Not confirmed in the sandbox: no store was created, because the API has no store delete |
+| 15 | `Category::update` | Post-MVP | Todo | Vendus `PATCH /products/categories/{id}`; unblocked by entry 13 |
+| 16 | `Unit::create` | Post-MVP | Todo | Vendus `POST /products/units`; unblocked by entry 13. One open question |
+| 17 | `DueDate::find` on Cegid Vendus | Post-MVP | Todo | Vendus `GET /documents/duedates`; unblocked by entry 13. Two open questions |
 
 ## Backlog
 
@@ -551,8 +551,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 14. Warehouse::create on Cegid Vendus
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Adds the Cegid Vendus implementation of `Warehouse::create` (entry 10 is Moloni only). Needs entry 13.
 
@@ -561,10 +561,12 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 **Existing pieces to reuse:** `src/Provider/Moloni/Warehouse/Create.php`; `src/Provider/CegidVendus/Warehouse.php`; `src/Actions/WarehouseAction.php` (replace the `OperationNotSupportedException` arm); `tests/Feature/Warehouse/CreateTest.php`.
 
 **Done when:**
-- [ ] Pest tests use the `providers` dataset for create, with a Vendus fixture
-- [ ] Vendus implementation added under `src/Provider/CegidVendus/Warehouse/`; action updated
-- [ ] `docs/warehouses/creating-a-warehouse.md`, `docs/features.md` and `docs/api-reference.md` updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests use the `providers` dataset for create, with a Vendus fixture
+- [x] Vendus implementation added under `src/Provider/CegidVendus/Warehouse/`; action updated
+- [x] `docs/warehouses/creating-a-warehouse.md`, `docs/features.md` and `docs/api-reference.md` updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
+
+**Notes:** Mapping: `name` to `title`, `address` to `address`, `city` to `local`, `postalCode` to `postalcode`. `country` is not sent: `POST /stores` has no country field. No `code` is generated. The returned `WarehouseData` has `id` from the response and the other fields from the input; the response fields other than `id` and `title` are in additional data. Added: `src/Provider/CegidVendus/Warehouse/Create.php`; fixture `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Warehouse/create.json`. Changed: `src/Actions/WarehouseAction.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`. Docs: `docs/warehouses/creating-a-warehouse.md`; `docs/warehouses/README.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`. Not confirmed in the sandbox: no store was created, because the API has no store delete and a store is tied to the account subscription. The implementation follows the local spec.
 
 ### 15. Category::update
 
@@ -601,7 +603,7 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 **Existing pieces to reuse:** `src/Actions/UnitAction.php`; `src/Provider/Moloni/Unit/Find.php`; `src/Provider/CegidVendus/Unit/Find.php`; `src/Data/UnitData.php`.
 
 **Open questions:**
-1. Moloni requires `short_name`. Which `UnitData` field carries it, and what does Cegid Vendus do with it?
+1. Moloni requires `short_name`. Which `UnitData` field carries it, and what does Cegid Vendus do with it? `UnitData` already has `shortName`, and Vendus `POST /products/units` takes only `title`, `decimal` and `default`. Recommended: `shortName` to Moloni `short_name`; not sent on Cegid Vendus. Asked on 2026-11-14, not answered yet.
 
 **Done when:**
 - [ ] Pest tests in `tests/Unit/Unit/Create/` and `tests/Feature/Unit/`, using the `providers` dataset
@@ -617,7 +619,11 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 
 **What it does:** Adds the Cegid Vendus implementation of `DueDate::find` (Moloni has it). Needs entry 13.
 
-**Vendus:** `GET /documents/duedates` (v1.2 only). **Agent resolves:** read the response schema in the local spec and map it to `src/Data/DueDateData.php`.
+**Vendus:** `GET /documents/duedates` (v1.2 only). The local spec gives no response shape. Sandbox response (2026-11-14): `{"results": {"now": "A Pronto", "1": "Hoje", "7": "A Prazo de 7 Dias", "15": ..., "30": ..., "45": ..., "60": ..., "90": ...}}`: an object keyed by `now` or a number of days, with the name as value. There is no ID.
+
+**Open questions:**
+1. What is `days` for the `now` key? Recommended: `0`; the other keys are cast to int. Asked on 2026-11-14, not answered yet.
+2. Vendus has no ID. Recommended: `id` is `null`, and the raw key is in additional data. Asked on 2026-11-14, not answered yet.
 
 **Existing pieces to reuse:** `src/Provider/Moloni/DueDate/Find.php`; the `DueDate` action and facade.
 

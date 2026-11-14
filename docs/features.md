@@ -111,7 +111,7 @@ Features for managing the warehouses (Moloni) or stores (Cegid Vendus) stored in
 
 |                  | Cegid Vendus | Moloni | Invoice Express |
 | ---------------- | ------------ | ------ | --------------- |
-| Create Warehouse | ❌           | ✅     | ❌              |
+| Create Warehouse | ✅           | ✅     | ❌              |
 | List Warehouses  | ✅           | ✅     | ❌              |
 
 ## Document Type Management

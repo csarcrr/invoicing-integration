@@ -62,6 +62,12 @@ Item fields on Cegid Vendus now use the v1.2 names in `getAdditionalData()` and 
 - `ClientData->date` is no longer set from Cegid Vendus responses. The `date` filter of `Client::find()` still works.
 - `defaultPayDue` is not set on Cegid Vendus `Client::find()` results. `Client::get()`, `create()` and `update()` still return it.
 
+### Added: `Warehouse::create()` on Cegid Vendus
+
+`Warehouse::create()` now works on Cegid Vendus. It creates a store, and the store's other response fields, such as `type`, are in `getAdditionalData()`.
+
+See [Creating a Warehouse](warehouses/creating-a-warehouse.md).
+
 ### Changed: Moloni client create and update send only the fields you set
 
 Moloni `Client::create()` and `Client::update()` no longer guess values for fields you leave unset. Before, they sent `PT` as the country, `pt` as the language, `DueDateTerm::Days15` as the due date, and `0` for `discount`, `creditLimit`, `deliveryMethodId`, `payment_day`, `payment_method_id` and `salesman_id`. Now those fields are not sent. `Client::update()` no longer overwrites stored values with these defaults.

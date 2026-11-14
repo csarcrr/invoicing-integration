@@ -396,7 +396,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 
 ## Warehouse (Facade)
 
-Entry point for managing the warehouses (Moloni) or stores (Cegid Vendus) stored in the provider. `find()` is supported on Cegid Vendus and Moloni; `create()` is supported on Moloni, and Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for managing the warehouses (Moloni) or stores (Cegid Vendus) stored in the provider. `find()` and `create()` are supported on Cegid Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Warehouse;
@@ -418,9 +418,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 | Method             | Return Type     | Description                                                                                       |
 | ------------------ | --------------- | ------------------------------------------------------------------------------------------------- |
 | `execute()`        | `self`          | Send the create request and populate the returned `WarehouseData`; throws `RequestFailedException` if the provider rejects the warehouse |
-| `getWarehouse()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()` |
+| `getWarehouse()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()`; on Cegid Vendus the other response fields (such as `type`) are in `getAdditionalData()` |
 | `getUrl()`         | `string`        | The request URL the warehouse is sent to                                                          |
-| `getPayload()`     | `Collection`    | Inspect the payload sent to the provider (`title` and the optional fields on Moloni)              |
+| `getPayload()`     | `Collection`    | Inspect the payload sent to the provider (`title` and the optional fields)                        |
 
 ## ShouldFindWarehouse Contract
 
@@ -1010,11 +1010,11 @@ use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 | `id`         | `?int`    | Provider-assigned warehouse or store ID                            |
 | `name`       | `?string` | Name of the warehouse or store                                     |
 | `address`    | `?string` | Street address                                                     |
-| `city`       | `?string` | City                                                               |
-| `postalCode` | `?string` | Postal code, sent as `zip_code` on Moloni                          |
-| `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni       |
+| `city`       | `?string` | City, sent as `city` on Moloni and `local` on Cegid Vendus         |
+| `postalCode` | `?string` | Postal code, sent as `zip_code` on Moloni and `postalcode` on Cegid Vendus |
+| `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni; not sent on Cegid Vendus |
 
-`address`, `city`, `postalCode` and `country` are inputs to `Warehouse::create()`; `Warehouse::find()` fills only `id` and `name`. Other fields the provider returns, and the code Moloni create generates, are available through `getAdditionalData()`.
+`address`, `city`, `postalCode` and `country` are inputs to `Warehouse::create()`; `Warehouse::find()` fills only `id` and `name`. Other fields the provider returns, and the code Moloni create generates, are available through `getAdditionalData()`. On Cegid Vendus, `Warehouse::create()` puts the response fields other than `id` and `title` there, such as `type`.
 
 ---
 

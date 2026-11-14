@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldFindWarehouse;
 use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Warehouse\Create as VendusCreate;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Warehouse\Find as VendusFind;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Warehouse\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Warehouse\Find as MoloniFind;
@@ -23,7 +23,7 @@ final class WarehouseAction
     public function create(WarehouseData $warehouse): ShouldCreateWarehouse
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
+            Provider::CEGID_VENDUS => new VendusCreate($warehouse),
             Provider::MOLONI => new MoloniCreate($warehouse),
         };
     }

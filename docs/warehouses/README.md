@@ -26,5 +26,5 @@ foreach (Warehouse::find()->execute()->getList() as $warehouse) {
 
 | Operation        | Cegid Vendus | Moloni | Invoice Express |
 | ---------------- | ------------ | ------ | --------------- |
-| Create Warehouse | ❌           | ✅     | ❌              |
+| Create Warehouse | ✅           | ✅     | ❌              |
 | Find Warehouses  | ✅           | ✅     | ❌              |
