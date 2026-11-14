@@ -13,7 +13,7 @@ Client::delete(ClientData::make(['id' => '12345']))->execute();
 
 - Pass the provider client ID (`id`).
 - `execute()` returns nothing. Check the outcome through the exceptions below.
-- Without an `id`, `execute()` throws `InvalidArgumentException` with `Client ID is required.`
+- Without an `id`, `Client::delete()` throws `InvalidArgumentException` with `Client ID is required.`
 - When the provider rejects the deletion, `execute()` throws `RequestFailedException`.
 
 ## Cegid Vendus

@@ -16,5 +16,5 @@ it('is an instance of the correct when finding a client', function (Provider $pr
 })->with('providers');
 
 it('is an instance of the correct when getting a client', function (Provider $provider) {
-    expect(Client::get(ClientData::from([])))->toBeInstanceOf(ShouldGetClient::class);
+    expect(Client::get(ClientData::from(['id' => '1'])))->toBeInstanceOf(ShouldGetClient::class);
 })->with('providers');

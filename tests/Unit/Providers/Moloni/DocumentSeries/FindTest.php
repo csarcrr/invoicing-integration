@@ -3,10 +3,8 @@
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find;
 use Illuminate\Http\Client\Factory;
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 beforeEach(function () {
     Cache::flush();
@@ -14,12 +12,10 @@ beforeEach(function () {
 });
 
 it('posts to the document sets get all endpoint', function () {
-    (new Find)->execute();
+    $find = new Find;
 
-    Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'documentSets/getAll')
-        && Str::contains($request->body(), 'company_id=123456')
-        && Str::contains($request->body(), 'qty=50')
-        && Str::contains($request->body(), 'offset=0'));
+    expect($find->getUrl())->toBe('documentSets/getAll')
+        ->and($find->getPayload()->toArray())->toBe(['qty' => 50, 'offset' => 0]);
 });
 
 it('returns the default document set id', function () {

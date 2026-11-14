@@ -26,6 +26,9 @@ class Get extends Item implements ShouldGetItem
         $this->data = $item;
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
+
+        $this->buildUrl();
+        $this->buildPayload();
     }
 
     public function execute(): self
@@ -43,12 +46,15 @@ class Get extends Item implements ShouldGetItem
      */
     public function getPayload(): Collection
     {
-        $this->buildId();
-
         return $this->payload;
     }
 
-    protected function buildId(): void
+    protected function buildUrl(): void
+    {
+        $this->url = 'products/getOne';
+    }
+
+    protected function buildPayload(): void
     {
         throw_if(! is_int($this->data->id), \InvalidArgumentException::class, 'Item ID is required.');
 

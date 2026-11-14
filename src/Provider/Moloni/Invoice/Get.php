@@ -11,9 +11,11 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
+use function collect;
 use function is_int;
 use function throw_if;
 
@@ -21,17 +23,22 @@ class Get extends Invoice implements ShouldGetInvoice
 {
     use DetectsNoData;
 
+    /** @var Collection<string, mixed> */
+    protected Collection $payload;
+
     public function __construct(protected InvoiceData $invoice)
     {
         $this->data = $invoice;
+        $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Invoice);
+
+        $this->buildUrl();
+        $this->buildPayload();
     }
 
     public function execute(): self
     {
-        throw_if(! is_int($this->data->id), InvalidArgumentException::class, 'Invoice ID is required.');
-
-        $response = Http::provider()->post('documents/getOne', ['document_id' => $this->data->id]);
+        $response = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 
         Http::handleUnwantedFailures($response);
 
@@ -40,5 +47,25 @@ class Get extends Invoice implements ShouldGetInvoice
         $this->data = $this->toInvoiceData($response->json());
 
         return $this;
+    }
+
+    /**
+     * @return Collection<string, mixed>
+     */
+    public function getPayload(): Collection
+    {
+        return $this->payload;
+    }
+
+    protected function buildUrl(): void
+    {
+        $this->url = 'documents/getOne';
+    }
+
+    protected function buildPayload(): void
+    {
+        throw_if(! is_int($this->data->id), InvalidArgumentException::class, 'Invoice ID is required.');
+
+        $this->payload->put('document_id', $this->data->id);
     }
 }

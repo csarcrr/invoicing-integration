@@ -6,29 +6,22 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 it('sends the invoice type FT by default', function (Provider $provider) {
-    Http::fake(mockResponse([]));
+    $find = Invoice::find();
 
-    Invoice::find()->execute();
-
-    Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'type=FT'),
-        Provider::MOLONI => Str::contains($request->url(), 'invoices/getAll'),
-    });
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find->getPayload()->get('type'))->toBe('FT'),
+        Provider::MOLONI => expect($find->getUrl())->toBe('invoices/getAll'),
+    };
 })->with('providers');
 
 it('sends the document type of the filter', function (Provider $provider, InvoiceType $type) {
-    Http::fake(mockResponse([]));
+    $find = Invoice::find(InvoiceData::from(['type' => $type]));
 
-    Invoice::find(InvoiceData::from(['type' => $type]))->execute();
-
-    Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'type='.$type->value),
-        Provider::MOLONI => Str::contains($request->url(), match ($type) {
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find->getPayload()->get('type'))->toBe($type->value),
+        Provider::MOLONI => expect($find->getUrl())->toBe(match ($type) {
             InvoiceType::Invoice => 'invoices/getAll',
             InvoiceType::InvoiceReceipt => 'invoiceReceipts/getAll',
             InvoiceType::InvoiceSimple => 'simplifiedInvoices/getAll',
@@ -36,38 +29,32 @@ it('sends the document type of the filter', function (Provider $provider, Invoic
             InvoiceType::Transport => 'billsOfLading/getAll',
             InvoiceType::CreditNote => 'creditNotes/getAll',
         }),
-    });
+    };
 })->with('providers', InvoiceType::cases());
 
 it('sends the client id of the filter', function (Provider $provider) {
-    Http::fake(mockResponse([]));
+    $find = Invoice::find(InvoiceData::from(['client' => ['id' => '12001']]));
 
-    Invoice::find(InvoiceData::from(['client' => ['id' => '12001']]))->execute();
-
-    Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'client_id=12001'),
-        Provider::MOLONI => Str::contains($request->body(), 'customer_id=12001'),
-    });
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find->getPayload()->get('client_id'))->toBe('12001'),
+        Provider::MOLONI => expect($find->getPayload()->get('customer_id'))->toBe(12001),
+    };
 })->with('providers');
 
 it('does not send a client filter when no client is set', function (Provider $provider) {
-    Http::fake(mockResponse([]));
+    $find = Invoice::find();
 
-    Invoice::find()->execute();
-
-    Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => ! Str::contains($request->url(), 'client_id'),
-        Provider::MOLONI => ! Str::contains($request->body(), 'customer_id'),
-    });
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->not->toHaveKey('client_id'),
+        Provider::MOLONI => expect($find->getPayload()->toArray())->not->toHaveKey('customer_id'),
+    };
 })->with('providers');
 
 it('sends the requested page', function (Provider $provider) {
-    Http::fake(mockResponse([]));
+    $find = Invoice::find()->page(2);
 
-    Invoice::find()->page(2)->execute();
-
-    Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'page=2'),
-        Provider::MOLONI => Str::contains($request->body(), 'offset=20'),
-    });
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($find->getPayload()->get('page'))->toBe(2),
+        Provider::MOLONI => expect($find->getPayload()->get('offset'))->toBe(20),
+    };
 })->with('providers');

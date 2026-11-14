@@ -33,11 +33,13 @@ class Find extends Invoice implements ShouldFindInvoice
         $this->data = $invoice ?? InvoiceData::from([]);
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Invoice);
+
+        $this->buildUrl();
     }
 
     public function execute(): self
     {
-        $request = Http::provider()->post($this->endpoint(), $this->getPayload()->toArray());
+        $request = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 
         Http::handleUnwantedFailures($request);
 
@@ -65,9 +67,9 @@ class Find extends Invoice implements ShouldFindInvoice
         return $this->payload;
     }
 
-    protected function endpoint(): string
+    protected function buildUrl(): void
     {
-        return match ($this->data->type) {
+        $this->url = match ($this->data->type) {
             InvoiceType::Invoice => 'invoices/getAll',
             InvoiceType::InvoiceReceipt => 'invoiceReceipts/getAll',
             InvoiceType::InvoiceSimple => 'simplifiedInvoices/getAll',

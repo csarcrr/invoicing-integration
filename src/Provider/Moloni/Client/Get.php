@@ -31,11 +31,14 @@ class Get extends Client implements ShouldGetClient
         $this->data = $client;
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
+
+        $this->buildUrl();
+        $this->buildPayload();
     }
 
     public function execute(): self
     {
-        $request = Http::provider()->post('customers/getOne', $this->getPayload()->toArray());
+        $request = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 
         Http::handleUnwantedFailures($request);
 
@@ -54,12 +57,15 @@ class Get extends Client implements ShouldGetClient
      */
     public function getPayload(): Collection
     {
-        $this->buildId();
-
         return $this->payload;
     }
 
-    protected function buildId(): void
+    protected function buildUrl(): void
+    {
+        $this->url = 'customers/getOne';
+    }
+
+    protected function buildPayload(): void
     {
         throw_if(! is_string($this->data->id), InvalidArgumentException::class, 'Client ID is required.');
 

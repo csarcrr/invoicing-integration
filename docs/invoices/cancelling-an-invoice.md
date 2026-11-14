@@ -14,7 +14,7 @@ Invoice::cancel(InvoiceData::make(['id' => 123, 'notes' => 'Wrong client']))->ex
 - Pass the provider ID (`id`), not the sequence.
 - `execute()` returns nothing. Check the outcome through the exceptions below.
 - `notes` is optional. Moloni sends it as the cancellation `observation`; Cegid Vendus does not send it.
-- Without an `id`, `execute()` throws `InvalidArgumentException` with `Invoice ID is required.`
+- Without an `id`, `Invoice::cancel()` throws `InvalidArgumentException` with `Invoice ID is required.`
 - When the provider rejects the cancellation, `execute()` throws `RequestFailedException`.
 
 ## Cegid Vendus

@@ -14,14 +14,19 @@ use function throw_if;
 
 class Get
 {
-    public function __construct(protected LanguageData $language) {}
+    protected string $url;
+
+    public function __construct(protected LanguageData $language)
+    {
+        $this->buildUrl();
+    }
 
     /**
      * @throws CouldNotGetLanguageIdException
      */
     public function execute(): self
     {
-        $response = Http::provider()->post('languages/getAll');
+        $response = Http::provider()->post($this->getUrl());
 
         Http::handleUnwantedFailures($response);
 
@@ -40,8 +45,18 @@ class Get
         return $this;
     }
 
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
     public function getLanguage(): LanguageData
     {
         return $this->language;
+    }
+
+    protected function buildUrl(): void
+    {
+        $this->url = 'languages/getAll';
     }
 }

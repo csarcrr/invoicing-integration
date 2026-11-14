@@ -25,17 +25,17 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 | # | Entry | Status | Notes |
 | --- | --- | --- | --- |
-| 1 | Request-shape tests use `assertSent` | Todo | Class changes + test rewrites |
-| 2 | Response-handling tests live in `tests/Unit/` | Todo | Move to `tests/Feature/` |
-| 3 | HTTP layer tests live in `tests/Unit/` | Blocked (open questions) | Move or allow as exception |
-| 4 | Payload building triggers HTTP lookups | Blocked (open questions) | Design decision needed |
-| 5 | Provider class structure drift | Blocked (open questions) | Not test-only |
+| 1 | Request-shape tests use `assertSent` | In progress | Class changes + test rewrites |
+| 2 | Response-handling tests live in `tests/Unit/` | In progress | Move to `tests/Feature/` |
+| 3 | HTTP layer tests live in `tests/Unit/` | Todo | Move to `tests/Feature/` |
+| 4 | Payload building triggers HTTP lookups | Todo | Rule exception in `testing.md` |
+| 5 | Provider class structure drift | Todo | Not test-only |
 
 ## Entries
 
 ### 1. Request-shape tests use `assertSent`
 
-**Status:** Todo
+**Status:** In progress
 
 **Problem:** these tests run `execute()` against a fake and check the URL or body with `Http::assertSent`. They should assert on `getUrl()` and `getPayload()` without HTTP.
 
@@ -56,16 +56,28 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 **Open questions:**
 1. "sends the notes as observation on moloni only" and "omits the observation when no notes are set" carry the user note that provider-only features should not be supported. Remove the Moloni `observation` mapping, or keep it and only rewrite the tests?
+   **Default:** keep the mapping and rewrite the tests to assert `getPayload()`.
 2. The Moloni PDF download URL depends on the first response. Should that second step be tested through a feature test only?
+   **Default:** yes. The download is part of the whole PDF process, so its test moves to `tests/Feature/`. The unit test only checks that the class builds the correct data to send (`getUrl()` / `getPayload()` of the first request).
 
 **Done when:**
-- [ ] No test in the table uses `Http::` or a fake helper
-- [ ] Each listed class builds `$url` (and `$payload` where it sends one) in `build*()` methods
-- [ ] Docs and `docs/api-reference.md` list the new `getUrl()` / `getPayload()` methods on the touched contracts
+- [x] No test in the table uses `Http::` or a fake helper (the entry 2 tests in the same files still do, until entry 2 moves them)
+- [x] Each listed class builds `$url` (and `$payload` where it sends one) in `build*()` methods
+- [x] Docs and `docs/api-reference.md` list the new `getUrl()` / `getPayload()` methods on the touched contracts
+- [ ] User ran the test suite and checks
+
+**Notes:** code written 2026-11-14, waiting for user review.
+- Classes: `src/Provider/{Moloni,CegidVendus}/Client/{Get,Delete}.php`, `src/Provider/{Moloni,CegidVendus}/Item/Get.php`, `src/Provider/{Moloni,CegidVendus}/Invoice/{Get,Pdf,Cancel,Find}.php`, `src/Provider/Moloni/{Country/Get,Language/Get,DocumentSeries/Find}.php`.
+- Contracts: `ShouldGetClient`, `ShouldDeleteClient`, `ShouldGetItem`, `ShouldGetInvoice`, `ShouldGetInvoicePdf`, `ShouldCancelInvoice` gained `getUrl()` and `ShouldHavePayload`. `ShouldFindInvoice` gained `getUrl()`.
+- Tests: the 10 files in the table, `tests/Feature/Invoice/PdfTest.php` (moved Moloni download test), and `tests/Unit/Client/StructureTest.php` (gets an id, because the id check now runs in the constructor).
+- Docs: `docs/api-reference.md`, `docs/clients/deleting-a-client.md`, `docs/invoices/getting-an-invoice.md`, `docs/invoices/cancelling-an-invoice.md`. The "ID is required" error now comes from the facade call, not `execute()`.
+- Removed: `buildId()` on Moloni Client Get and Item Get (renamed to `buildPayload()`), and `endpoint()` on Moloni Invoice Find (merged into `buildUrl()`).
+- Kept: Moloni `Item\Get::execute()` still sends through the shared `Moloni\Item::getProduct()`, which writes `products/getOne` directly. Moloni `Item\Update` uses it too.
+- Beyond the table: `DocumentSeries\Find` also builds its payload (`qty`, `offset`). Both `Invoice\Find` classes build `$url`, because the Moloni test asserts the endpoint.
 
 ### 2. Response-handling tests live in `tests/Unit/`
 
-**Status:** Todo
+**Status:** In progress
 
 **Problem:** these tests check how a provider response is handled. That needs HTTP, so they belong in `tests/Feature/`.
 
@@ -86,7 +98,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 ### 3. HTTP layer tests live in `tests/Unit/`
 
-**Status:** Blocked (open questions)
+**Status:** Todo
 
 **Problem:** these files test the HTTP layer itself, so faking is the subject of the test.
 
@@ -97,10 +109,11 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 **Open questions:**
 1. Move these files to `tests/Feature/`, or keep them in `tests/Unit/` and state the exception in `.claude/rules/testing.md`?
+   **Default:** move them to `tests/Feature/`. No rule exception.
 
 ### 4. Payload building triggers HTTP lookups
 
-**Status:** Blocked (open questions)
+**Status:** Todo
 
 **Problem:** some classes send requests while building the payload, so their unit tests cannot avoid fakes. Rewriting the tests alone does not fix this.
 
@@ -116,11 +129,13 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 
 **Open questions:**
 1. Make the lookups replaceable (e.g. inject or set the resolved values) so unit tests never reach HTTP, or allow lookup fakes in unit tests as a stated exception in `.claude/rules/testing.md`?
+   **Default:** allow lookup fakes in unit tests as a stated exception in `.claude/rules/testing.md`.
 2. Where do the lookup-count assertions ("once per invoice", "single page", "no request") belong after the change?
+   **Default:** they stay in `tests/Unit/`, under the lookup exception.
 
 ### 5. Provider class structure drift
 
-**Status:** Blocked (open questions)
+**Status:** Todo
 
 **Problem:** classes that break `.claude/rules/provider-operations.md` beyond what entry 1 covers.
 
@@ -130,6 +145,8 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
 
 **Open questions:**
 1. Apply each proposed fix above? Answer per bullet.
+   **Default:** first bullet (shared trait for `Update`/`Create`): no. Third bullet (redeclare `execute(): self`): yes.
+   Second bullet: the package must not guess default values. Remove the Moloni client defaults from both create and update. The only place the package guesses values is issuing an invoice. No merge with the stored client.
 
 ## Test naming
 

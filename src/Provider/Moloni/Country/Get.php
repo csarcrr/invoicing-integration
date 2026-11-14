@@ -14,14 +14,19 @@ use function throw_if;
 
 class Get
 {
-    public function __construct(protected CountryData $country) {}
+    protected string $url;
+
+    public function __construct(protected CountryData $country)
+    {
+        $this->buildUrl();
+    }
 
     /**
      * @throws CouldNotGetCountryIdException
      */
     public function execute(): self
     {
-        $response = Http::provider()->post('countries/getAll');
+        $response = Http::provider()->post($this->getUrl());
 
         Http::handleUnwantedFailures($response);
 
@@ -40,8 +45,18 @@ class Get
         return $this;
     }
 
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
     public function getCountry(): CountryData
     {
         return $this->country;
+    }
+
+    protected function buildUrl(): void
+    {
+        $this->url = 'countries/getAll';
     }
 }

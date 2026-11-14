@@ -35,11 +35,13 @@ class Find extends Invoice implements ShouldFindInvoice
         $this->data = $invoice ?? InvoiceData::from([]);
         $this->payload = collect();
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Invoice);
+
+        $this->buildUrl();
     }
 
     public function execute(): self
     {
-        $request = Http::provider()->get('/documents', $this->getPayload());
+        $request = Http::provider()->get($this->getUrl(), $this->getPayload());
 
         if ($this->hasNoData($request)) {
             $this->updatePaginationDetails($request);
@@ -74,6 +76,11 @@ class Find extends Invoice implements ShouldFindInvoice
         $this->buildClient();
 
         return $this->payload;
+    }
+
+    protected function buildUrl(): void
+    {
+        $this->url = '/documents';
     }
 
     protected function buildPagination(): void

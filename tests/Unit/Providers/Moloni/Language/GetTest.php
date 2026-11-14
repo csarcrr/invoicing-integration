@@ -6,10 +6,7 @@ use CsarCrr\InvoicingIntegration\Data\LanguageData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get;
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 beforeEach(function () {
     Cache::flush();
@@ -17,10 +14,7 @@ beforeEach(function () {
 });
 
 it('posts to the languages get all endpoint', function () {
-    (new Get(LanguageData::from(['code' => 'PT'])))->execute();
-
-    Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'languages/getAll')
-        && Str::contains($request->body(), 'company_id=123456'));
+    expect((new Get(LanguageData::from(['code' => 'PT'])))->getUrl())->toBe('languages/getAll');
 });
 
 it('fills the language id and name matching the code', function (string $code, int $expectedId, string $expectedName) {

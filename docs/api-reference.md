@@ -53,7 +53,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDele
 
 | Method      | Return Type | Description                                                   | Throws                                                                   |
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()` | `void`      | Send the deletion request; returns nothing                    | `RequestFailedException` (if the provider rejects the deletion)          |
+| `execute()` | `void`      | Send the deletion request; returns nothing                    | `InvalidArgumentException` (if ID missing, thrown by `Client::delete()`), `RequestFailedException` (if the provider rejects the deletion) |
+| `getUrl()`  | `string`    | The request URL the deletion is sent to                       | -                                                                        |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `customer_id` on Moloni) | - |
 
 ## ShouldGetClient Contract
 
@@ -65,7 +67,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetC
 
 | Method      | Return Type  | Description                                   | Throws                                     |
 | ----------- | ------------ | --------------------------------------------- | ------------------------------------------ |
-| `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing) |
+| `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing, thrown by `Client::get()`) |
+| `getUrl()`  | `string`     | The request URL the retrieval is sent to      | -                                          |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `customer_id` on Moloni) | - |
 
 ## ShouldFindClient Contract
 
@@ -118,8 +122,10 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetIte
 
 | Method      | Return Type | Description                                                  | Throws                                     |
 | ----------- | ----------- | ------------------------------------------------------------ | ------------------------------------------ |
-| `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing) |
+| `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing, thrown by `Item::get()`) |
 | `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`, and additional data) | — |
+| `getUrl()`  | `string`    | The request URL the retrieval is sent to                    | —                                          |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `product_id` and `with_invisible` on Moloni) | — |
 
 Provider response fields that the package does not explicitly map onto `ItemData` are accessible via `getAdditionalData()` on the returned DTO:
 
@@ -537,8 +543,10 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 
 | Method          | Return Type   | Description                                                   | Throws                                                                   |
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if no document has the ID) |
+| `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing, thrown by `Invoice::get()`), `RequestFailedException` (if no document has the ID) |
 | `getInvoice()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
+| `getUrl()`      | `string`      | The request URL the retrieval is sent to                      | -                                                                    |
+| `getPayload()`  | `Collection`  | Inspect the payload sent to the provider (empty on Cegid Vendus, `document_id` on Moloni) | -                                                                    |
 
 ## ShouldGetInvoicePdf Contract
 
@@ -550,8 +558,10 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 
 | Method          | Return Type   | Description                                                   | Throws                                                                   |
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing), `RequestFailedException` (Moloni, if no PDF link is returned) |
+| `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing, thrown by `Invoice::pdf()`), `RequestFailedException` (Moloni, if no PDF link is returned) |
 | `getOutput()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
+| `getUrl()`      | `string`      | The URL of the first request (Moloni: the PDF link request; Cegid Vendus: the PDF document) | -                                       |
+| `getPayload()`  | `Collection`  | Inspect the payload of the first request (empty on Cegid Vendus, `document_id` on Moloni) | -                                       |
 
 ## ShouldCancelInvoice Contract
 
@@ -563,7 +573,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCan
 
 | Method      | Return Type | Description                                                   | Throws                                                                   |
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()` | `void`      | Send the cancellation request; returns nothing                | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if the provider rejects the cancellation) |
+| `execute()` | `void`      | Send the cancellation request; returns nothing                | `InvalidArgumentException` (if ID missing, thrown by `Invoice::cancel()`), `RequestFailedException` (if the provider rejects the cancellation) |
+| `getUrl()`  | `string`    | The request URL the cancellation is sent to                  | -                                                                        |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (`status` on Cegid Vendus, `document_id` and optional `observation` on Moloni) | -                                                                        |
 
 ## ShouldFindInvoice Contract
 
@@ -578,6 +590,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFin
 | `execute()`        | `self`       | Execute the current page request                   | `RequestFailedException` (if the provider rejects the search)            |
 | `getList()`        | `Collection` | `Collection<InvoiceData>` results                  | -                                                                        |
 | `getPayload()`     | `Collection` | Current request payload (type, client, pagination) | -                                                                        |
+| `getUrl()`         | `string`     | The request URL the search is sent to (Moloni: one endpoint per document type; Cegid Vendus: `/documents`) | - |
 | `next()`           | `self`       | Move to the next page                              | `NoMorePagesException` (Cegid Vendus, past the last page)                |
 | `previous()`       | `self`       | Go back one page                                   | `NoMorePagesException` (before the first page)                           |
 | `page(int $page)`  | `self`       | Jump to a specific page                            | `NoMorePagesException` (below 1, or past the total on Cegid Vendus)      |

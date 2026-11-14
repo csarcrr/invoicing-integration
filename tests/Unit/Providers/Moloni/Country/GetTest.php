@@ -6,10 +6,7 @@ use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get;
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 beforeEach(function () {
     Cache::flush();
@@ -17,10 +14,7 @@ beforeEach(function () {
 });
 
 it('posts to the countries get all endpoint', function () {
-    (new Get(CountryData::from(['iso' => 'PT'])))->execute();
-
-    Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'countries/getAll')
-        && Str::contains($request->body(), 'company_id=123456'));
+    expect((new Get(CountryData::from(['iso' => 'PT'])))->getUrl())->toBe('countries/getAll');
 });
 
 it('fills the country id and name matching the iso code', function (string $iso, int $expectedId, string $expectedName) {

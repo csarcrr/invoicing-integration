@@ -6,20 +6,17 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 it('can set the client id', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->client()->files('response')));
-    $client = ClientData::from(['id' => '999999']);
+    $get = Client::get(ClientData::from(['id' => '999999']));
 
-    Client::get($client)->execute();
-
-    Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), '999999'),
-        Provider::MOLONI => Str::contains($request->body(), 'customer_id=999999'),
-    });
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($get->getUrl())->toBe('/clients/999999')
+            ->and($get->getPayload()->toArray())->toBe([]),
+        Provider::MOLONI => expect($get->getUrl())->toBe('customers/getOne')
+            ->and($get->getPayload()->toArray())->toBe(['customer_id' => '999999']),
+    };
 })->with('providers');
 
 it('fails when no id is set', function (Provider $provider) {

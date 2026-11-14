@@ -6,7 +6,9 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 test('an invoice pdf request returns the pdf base64 encoded in the output', function (Provider $provider) {
     Http::fake(match ($provider) {
@@ -53,3 +55,19 @@ test('moloni keeps the pdf link when the download does not return a pdf', functi
     expect($output->content)->toBeNull()
         ->and($output->url)->toBe('https://www.moloni.pt/downloads/?h=abc.def.ghi');
 })->note('todo: naming keeps being provider specific and it cannot. example fix: "providers that don\'t directly support download, are always able to fallback to get the url"');
+
+it('requests the moloni download with the token from the pdf link and the document id', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake([
+        '*documents/getPDFLink*' => mockResponse(fixtures()->response()->invoice()->files('pdf_link')),
+        'www.moloni.pt/downloads/index.php*' => mockResponse('%PDF-1.7 test', 200, ['Content-Type' => 'application/pdf']),
+    ]);
+
+    Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute();
+
+    Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'www.moloni.pt/downloads/index.php')
+        && Str::contains($request->url(), 'action=getDownload')
+        && Str::contains($request->url(), 'h=abc.def.ghi')
+        && Str::contains($request->url(), 'd=123456'));
+})->note('todo: this is a provider specific test');

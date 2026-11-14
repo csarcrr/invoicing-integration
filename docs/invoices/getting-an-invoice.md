@@ -19,7 +19,7 @@ $invoice->atcudHash; // Cegid Vendus only; null on Moloni
 ```
 
 - Pass the provider ID (`id`), not the sequence.
-- Without an `id`, `execute()` throws `InvalidArgumentException` with `Invoice ID is required.`
+- Without an `id`, `Invoice::get()` throws `InvalidArgumentException` with `Invoice ID is required.`
 - When the provider has no document with that ID, `execute()` throws `RequestFailedException`.
 - `output` is not filled. `Invoice::get()` does not fetch the PDF or the ESC/POS output.
 - Response fields the package does not map are kept with `getAdditionalData()`.
