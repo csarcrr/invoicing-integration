@@ -80,7 +80,6 @@ This package facilitates invoicing provider API usage and is not intended to ser
 - [Getting Started](getting-started.md) - Installation and configuration
 - [Features](features.md) - Supported features by provider and document type
 - [Handling Errors](handling-errors.md)
-- [Changelog](changelog.md)
 
 ### Items
 

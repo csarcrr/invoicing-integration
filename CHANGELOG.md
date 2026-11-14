@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Moloni provider. Both Cegid Vendus and Moloni are supported; see the Moloni configuration page in the docs.
 - `DueDate::find()` on Cegid Vendus. Cegid Vendus has no due date ID, so `id` is `null` and the provider key (`now`, `30`, ...) is kept in additional data as `key`; `now` maps to `0` days.
 - `Unit::create()` to create a measurement unit on Moloni and Cegid Vendus. `shortName` is sent to Moloni only.
 - `Category::update()` to rename or move a stored category on Moloni and Cegid Vendus. `parentId` is sent to Moloni only.
@@ -25,15 +26,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Invoice::cancel()` to cancel a stored document on Moloni and Cegid Vendus.
 - `Invoice::pdf()` to get a stored document's PDF on Moloni and Cegid Vendus. `OutputData` gains `url`.
 - `Invoice::get()` to read a stored document by its provider ID on Moloni and Cegid Vendus.
+- `Category::find()` and `Category::get()` on Moloni and Cegid Vendus.
+- `invoicing-integration:setup` command, which writes the provider IDs (payment methods, units, taxes, ...) to `.env`.
+- `PaymentMethod::find()` on Cegid Vendus.
+- `Unit::find()` to list the provider's units on Moloni and Cegid Vendus.
+- `Tax::find()` and `Tax::create()` on Moloni.
+- `Company::find()` on Moloni, to list the companies the user has access to.
+- `ClientData` fields `paymentMethodId`, `paymentDay` and `salesmanId`, sent to Moloni only.
 
 ### Changed
 
 - Cegid Vendus requests now use API v1.2 (`https://www.vendus.pt/ws/v1.2/`). Item fields in `getAdditionalData()` use the v1.2 nested names: `prices.gross`, `tax.id`, `tax.exemption`, `tax.exemption_law`, `stock.control`, `stock.stores`.
 - Cegid Vendus no longer sets `ClientData->date` from responses, because v1.2 does not return it. The `date` filter of `Client::find()` still works.
 - `ItemData->taxExemptionReason` and `TaxData->exemptionReason` are now `?string` and take the provider's exemption code (e.g. `'M04'`).
+- **Breaking:** `ClientData->externalReference` is renamed to `reference`.
+- **Breaking:** Cegid Vendus sends `CEGID_VENDUS_MODE` as `mode` when it is set. The valid values are `normal` and `tests`; `production` is rejected.
+- **Breaking:** Cegid Vendus receipts (RG) take the invoice number (its `sequence`, e.g. `FT 01P2025/1`) as `relatedDocument`, not its `id`.
+- **Breaking:** `AddressData::country` no longer defaults to `PT`. Set `country` on transport addresses to keep sending it.
+- **Breaking:** Cegid Vendus `Client::create()` sends only the fields you set. A client created without `irsRetention` or `emailNotification` now has both switched off.
+- **Breaking:** Cegid Vendus `Item::find()` also lists disabled items (`enabled` is `false`) and returns an empty list when nothing matches. A `category` filter is now sent as `category_id`.
+- **Breaking:** Cegid Vendus `Client::find()` returns an empty list when nothing matches, instead of throwing `RequestFailedException`.
+- **Breaking:** `Item::create()` and `Item::update()` return the stored item as the provider returns it, not the `ItemData` you passed.
+- **Breaking:** read items map `unit` from the provider's `unit_id` against the configured units, and `enabled` from the provider instead of a fixed `true`. The top-level `quantity` of a read item is `null`.
+- **Breaking:** `ItemData` built without `quantity`, `type`, `controlStock` or `enabled` reads `null` in those properties. `controlStock` and `enabled` are now `?bool`.
 
 ### Removed
 
 - **Breaking:** the `TaxExemptionReason` enum and its `laws()` helper. Pass the exemption code as a string and get the codes from `TaxExemption::find()`. This affects Cegid Vendus as well as Moloni.
+
+### Fixed
+
+- Cegid Vendus returns the invoice ATCUD as `atcudHash`.
+- Cegid Vendus invoices with a client were rejected: the client now sends only the fields Cegid Vendus accepts, and `emailNotification` is sent as `send_email`.
+- Cegid Vendus invoice items now send `id` and `name` (as `title`).
+- Cegid Vendus invoices with an item `note`, item `percentageDiscount` or a `dueDate` were rejected: they are now sent as `text`, `discount_percentage` and `date_due`.
+- Cegid Vendus `Client::create()` stored `Array` in unset text fields.
 
 [Unreleased]: https://github.com/csarcrr/invoicing-integration/compare/v0.6.2...HEAD
