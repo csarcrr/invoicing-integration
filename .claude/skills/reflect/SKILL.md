@@ -12,7 +12,7 @@ Find what went wrong in this session, why, and the smallest change that stops it
 Scan the session for:
 
 - User corrections, rejections, or repeated instructions.
-- Outputs that broke a rule in `CLAUDE.md`, `.claude/rules/*.md`, `~/.claude/CLAUDE.md`, or memory.
+- Outputs that broke a rule in `AGENTS.md`, `.agents/rules/*.md`, `.claude/rules/*.md`, `~/.claude/CLAUDE.md`, or memory.
 - `builder` reports with `not met` items, or builder output the main session had to redo.
 - Wrong assumptions about a dependency, provider API, or repo convention.
 
@@ -32,10 +32,11 @@ For each mistake, name the cause in one sentence:
 
 | Cause | Target |
 |---|---|
-| Project convention for code, tests, or docs | `.claude/rules/<topic>.md` (edit an existing file before creating one) |
+| Portable project convention for code, tests, or docs | `AGENTS.md` or `.agents/rules/<topic>.md` (edit an existing file before creating one) |
+| Claude-only convention | `.claude/rules/<topic>.md` (edit an existing file before creating one) |
 | Builder got it wrong | `.claude/agents/builder.md` |
 | Reviewer missed it | `.claude/agents/code-reviewer.md` |
-| Brief was incomplete | this skill or the orchestration notes in `CLAUDE.md` |
+| Brief was incomplete | this skill or `.claude/rules/orchestration.md` |
 | User preference or one-off ruling with context | auto-memory file plus its `MEMORY.md` index line |
 
 Before proposing, read the target file and check that no existing rule or memory already covers the fix. Update the existing entry rather than adding a duplicate. Delete entries that turned out wrong.

@@ -78,7 +78,7 @@ One-paragraph overall assessment with a clear recommendation: **Approve**, **App
 
 Before finalizing your review, ask yourself:
 - Did I check every file for `declare(strict_types=1);`?
-- Did I verify all namespaces match the path conventions in CLAUDE.md?
+- Did I verify all namespaces match the path conventions in AGENTS.md?
 - Did I check PHPStan level 7 compliance for all type annotations?
 - Did I verify Pest-only syntax in test files?
 - Did I check that the Request Flow architecture is respected?
@@ -92,7 +92,7 @@ Examples of what to record:
 - Patterns used in existing provider implementations (e.g., how `buildPayload()` is structured in CegidVendus)
 - DTO field naming conventions and how `Optional` is used in practice
 - Recurring test patterns and how HTTP faking is set up
-- Any project-specific idioms or conventions not captured in CLAUDE.md
+- Any project-specific idioms or conventions not captured in AGENTS.md
 
 # Persistent Agent Memory
 
@@ -116,7 +116,7 @@ What to save:
 What NOT to save:
 - Session-specific context (current task details, in-progress work, temporary state)
 - Information that might be incomplete — verify against project docs before writing
-- Anything that duplicates or contradicts existing CLAUDE.md instructions
+- Anything that duplicates or contradicts existing AGENTS.md instructions
 - Speculative or unverified conclusions from reading a single file
 
 Explicit user requests:

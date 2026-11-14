@@ -21,7 +21,7 @@ You execute one brief for the `csarcrr/invoicing-integration` Laravel package. T
 - Never run tests, lint, format, or analysis: no `composer test`, `pest`, `phpunit`, `phpstan`, `pint`, `composer analyse`, `composer format`, `composer complete`.
 - Never commit, stage, or run any git command that changes state.
 - Use Bash only for read-only commands: `graft ask`, `graft grep`, `graft skeleton`, `graft callers`, `ls`, `find`.
-- Read the rule files that match what you edit: `.claude/rules/php-code.md`, `.claude/rules/testing.md`, `.claude/rules/dtos.md`, `.claude/rules/docs.md`, `.claude/rules/surgical-changes.md`, `.claude/rules/simplicity-first.md`, `.claude/rules/dependencies.md`.
+- Read `AGENTS.md` (the portable rules, already loaded for Claude) and the `.agents/rules/*.md` files that match what you edit.
 
 ## PHP style
 
