@@ -35,7 +35,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 9 | `Warehouse::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldFindWarehouse.php`; `src/Data/WarehouseData.php`; `src/Provider/Moloni/Warehouse.php` and `src/Provider/CegidVendus/Warehouse.php` (bases, `toWarehouseData()`); `src/Provider/Moloni/Warehouse/Find.php`; `src/Provider/CegidVendus/Warehouse/Find.php`; `tests/Unit/Warehouse/Find/PayloadTest.php`; `tests/Feature/Warehouse/FindTest.php`; fixtures `Response/Warehouse/response_multiple.json` for both providers. Changed: `src/Actions/WarehouseAction.php` and `src/Facades/Warehouse.php` (new); `tests/Fixtures/Fixtures.php` (`warehouse()`). Docs: `docs/warehouses/README.md` and `docs/warehouses/finding-warehouses.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 10 | `Warehouse::create` | Post-MVP | Done | Moloni done; Cegid Vendus throws `OperationNotSupportedException` until entry 13 (v1.2 migration). Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldCreateWarehouse.php`; `src/Provider/Moloni/Warehouse/Create.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Warehouse/create.json`. Changed: `src/Data/WarehouseData.php` (`code`, `address`, `city`, `postalCode`, `country`, `isDefault`); `src/Actions/WarehouseAction.php`; `src/Facades/Warehouse.php`. Docs: `docs/warehouses/creating-a-warehouse.md` (new); `docs/warehouses/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 11 | `TaxExemption::find` | Post-MVP | Done | Also removes the `TaxExemptionReason` enum (breaking on Cegid Vendus). Added: `src/Contracts/IntegrationProvider/TaxExemption/ShouldFindTaxExemption.php`; `src/Data/TaxExemptionData.php`; `src/Actions/TaxExemptionAction.php`; `src/Facades/TaxExemption.php`; `src/Provider/Moloni/TaxExemption.php` and `src/Provider/CegidVendus/TaxExemption.php` (bases, `toTaxExemptionData()`); `src/Provider/Moloni/TaxExemption/Find.php`; `src/Provider/CegidVendus/TaxExemption/Find.php`; `tests/Unit/TaxExemption/Find/PayloadTest.php`; `tests/Feature/TaxExemption/FindTest.php`; fixtures `Response/TaxExemption/response_multiple.json` for both providers. Deleted: `src/Enums/Tax/TaxExemptionReason.php`. Changed: `src/Data/ItemData.php` and `src/Data/TaxData.php` (exemption reason is `?string`); `src/Provider/Moloni/Item.php`; `src/Provider/CegidVendus/Item.php`; `src/Provider/Moloni/Tax/Find.php`; `src/Provider/Moloni/Tax/Create.php`; `Item/Create.php`, `Item/Update.php` and `Invoice/Create.php` on both providers; `src/Commands/Setup/Moloni.php` (reasons from `TaxExemption::find()`); `tests/Fixtures/Fixtures.php` (`taxExemption()`); `tests/Feature/Setup/CommandTest.php`; ten Item, Invoice and Tax tests (string codes). Docs: `docs/taxes/finding-tax-exemptions.md` (new); `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/handling-errors.md`; `docs/items/creating-an-item.md`; `docs/items/getting-an-item.md`; `docs/taxes/README.md`; `docs/taxes/creating-a-tax.md`; `docs/taxes/finding-taxes.md`; `docs/getting-started.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`; `README.md`; `CLAUDE.md`; `AGENTS.md` |
-| 12 | `DocumentType::find` | Post-MVP | Todo | Reference data |
+| 12 | `DocumentType::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/DocumentType/ShouldFindDocumentType.php`; `src/Data/DocumentTypeData.php`; `src/Actions/DocumentTypeAction.php`; `src/Facades/DocumentType.php`; `src/Provider/Moloni/DocumentType.php` and `src/Provider/CegidVendus/DocumentType.php` (bases, `toDocumentTypeData()`); `src/Provider/Moloni/DocumentType/Find.php`; `src/Provider/CegidVendus/DocumentType/Find.php`; `tests/Unit/DocumentType/Find/PayloadTest.php`; `tests/Feature/DocumentType/FindTest.php`; fixtures `Response/DocumentType/response_multiple.json` for both providers. Changed: `tests/Fixtures/Fixtures.php` (`documentType()`). Docs: `docs/document-types/README.md` and `docs/document-types/finding-document-types.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
 | 13 | Cegid Vendus v1.2 migration | Post-MVP | Todo | Move the Vendus client from v1.1 to v1.2; unblocks Vendus `Warehouse::create` |
 
 ## Backlog
@@ -474,8 +474,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 12. DocumentType::find
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Lists the document types the provider supports (FT, FR, NC and so on).
 
@@ -498,14 +498,15 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 
 **Open questions:**
 1. Where does `language_id` come from for Moloni? It is required and the package has no language option. **Default:** take an optional `LanguageData` and fall back to `pt`. Look up the id with `Moloni/Language/Get`, as `src/Provider/Moloni/Client/Create.php` does.
-2. Is the return a DTO or the raw list? No DTO exists in `src/Data/`. **Default:** return a new DTO, like the other finders.
+2. Is the return a DTO or the raw list? No DTO exists in `src/Data/`. **Default:** return a new DTO, like the other finders: `DocumentTypeData` with `code` and `name`. Other provider fields (Moloni `document_type_id`; Vendus `visible_filter`, `visible_finalize`) go to additional data. The Vendus filters are not exposed.
+3. How is the Moloni `language_id` resolved, given unit tests cannot fake HTTP? **Default:** `DocumentType::find(?LanguageData $language = null)`; the Moloni payload is empty at construction and `execute()` looks up `language_id` with `Language/Get` (code `pt` when no language is given) before sending, as `Warehouse/Create` does for the country. Cegid Vendus drops the language. (Agent decision, 2026-11-14.)
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/DocumentType/Find/` and `tests/Feature/DocumentType/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade, action and contract added, and a DTO in `src/Data/` if needed
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/` and `src/Provider/CegidVendus/`
-- [ ] Docs page `docs/document-types/finding-document-types.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (new section)
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/DocumentType/Find/` and `tests/Feature/DocumentType/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade, action and contract added, and a DTO in `src/Data/` if needed
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/` and `src/Provider/CegidVendus/`
+- [x] Docs page `docs/document-types/finding-document-types.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (new section)
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 13. Cegid Vendus v1.2 migration
 

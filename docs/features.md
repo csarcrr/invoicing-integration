@@ -114,6 +114,14 @@ Features for managing the warehouses (Moloni) or stores (Cegid Vendus) stored in
 | Create Warehouse | ❌           | ✅     | ❌              |
 | List Warehouses  | ✅           | ✅     | ❌              |
 
+## Document Type Management
+
+Features for listing the document types stored in the provider.
+
+|                     | Cegid Vendus | Moloni | Invoice Express |
+| ------------------- | ------------ | ------ | --------------- |
+| List Document Types | ✅           | ✅     | ❌              |
+
 ## Invoice Management
 
 Features for reading the invoices stored in the provider.

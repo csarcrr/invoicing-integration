@@ -1,0 +1,14 @@
+[
+    {
+        "id": "FT",
+        "title": "Fatura",
+        "visible_filter": "yes",
+        "visible_finalize": "yes"
+    },
+    {
+        "id": "NC",
+        "title": "Nota de Crédito",
+        "visible_filter": "yes",
+        "visible_finalize": "no"
+    }
+]

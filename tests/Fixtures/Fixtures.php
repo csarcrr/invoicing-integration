@@ -134,6 +134,13 @@ class Fixtures
         return $this;
     }
 
+    public function documentType(): self
+    {
+        $this->path[] = 'DocumentType';
+
+        return $this;
+    }
+
     public function paymentMethod(): self
     {
         $this->path[] = 'PaymentMethod';

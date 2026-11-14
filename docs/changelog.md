@@ -10,6 +10,12 @@ Changes that need action when upgrading.
 
 See [Finding Tax Exemptions](taxes/finding-tax-exemptions.md).
 
+### Added: `DocumentType::find()`
+
+`DocumentType::find()` lists the document types stored in the provider, on Moloni and Cegid Vendus. Each `DocumentTypeData` has a `code` (e.g. `FT`) and a `name` (e.g. `Fatura`). On Moloni, pass a `LanguageData` to get the names in another language.
+
+See [Finding Document Types](document-types/finding-document-types.md).
+
 ### Breaking: `TaxExemptionReason` enum and `laws()` removed
 
 The `TaxExemptionReason` enum and its `laws()` helper are removed. `ItemData->taxExemptionReason` and `TaxData->exemptionReason` are now `?string` and take the provider's exemption code.

@@ -467,6 +467,35 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\TaxExemption\Shou
 
 ---
 
+## DocumentType (Facade)
+
+Entry point for listing the document types stored in the provider. Supported on Cegid Vendus and Moloni.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\DocumentType;
+```
+
+| Method                                               | Return Type              | Description                         |
+| ---------------------------------------------------- | ------------------------ | ----------------------------------- |
+| `DocumentType::find(?LanguageData $language = null)` | `ShouldFindDocumentType` | Lists the provider's document types |
+
+## ShouldFindDocumentType Contract
+
+The interface returned by `DocumentType::find()`. See [Finding Document Types](document-types/finding-document-types.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DocumentType\ShouldFindDocumentType;
+```
+
+| Method         | Return Type  | Description                                                                                  |
+| -------------- | ------------ | -------------------------------------------------------------------------------------------- |
+| `execute()`    | `self`       | Send the request                                                                             |
+| `getList()`    | `Collection` | `Collection<DocumentTypeData>` results                                                       |
+| `getUrl()`     | `string`     | Request URL the operation builds                                                             |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus; `language_id` on Moloni, added during `execute()`) |
+
+---
+
 ## Category (Facade)
 
 Entry point for the categories stored in the provider. Supported on Cegid Vendus and Moloni.
@@ -1003,6 +1032,23 @@ use CsarCrr\InvoicingIntegration\Data\TaxExemptionData;
 | `description` | `?string` | Provider text describing the exemption reason                 |
 
 Other fields the provider returns, such as the Cegid Vendus `law`, are available through `getAdditionalData()`.
+
+---
+
+### DocumentTypeData
+
+Represents a document type stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\DocumentTypeData;
+```
+
+| Property | Type      | Description                                      |
+| -------- | --------- | ------------------------------------------------ |
+| `code`   | `?string` | Document type code, e.g. `FT`                    |
+| `name`   | `?string` | Name of the document type, e.g. `Fatura`         |
+
+Other fields the provider returns, such as the Moloni `document_type_id`, are available through `getAdditionalData()`.
 
 ---
 

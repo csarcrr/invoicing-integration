@@ -57,6 +57,10 @@
     - [Creating a Warehouse](warehouses/creating-a-warehouse.md)
     - [Finding Warehouses](warehouses/finding-warehouses.md)
 
+- **Document Types**
+    - [Overview](document-types/README.md)
+    - [Finding Document Types](document-types/finding-document-types.md)
+
 - **Invoices**
     - [Overview](invoices/README.md)
     - [Creating an Invoice](invoices/creating-an-invoice.md)
