@@ -37,3 +37,4 @@ Every operation (create, get, find, update, delete, cancel...) follows the same 
 ## Unsupported fields
 
 - When a provider does not support a DTO field, leave it out of the payload and document it in that provider's docs section. Never throw: throwing breaks the developer's automations.
+- When a provider requires a value no DTO field carries, build it in the provider class (e.g. a random token) and keep it in the returned DTO's additional data. Never add a DTO field for one provider (see `.claude/rules/dtos.md`).
