@@ -125,7 +125,8 @@ class Moloni extends ProviderSetup
             ->values()
             ->all();
 
-        $reason = (string) $command->choice('Exemption reason for the new exempt tax', $reasons, TaxExemptionReason::M07->value);
+        /** @var string $reason */
+        $reason = $command->choice('Exemption reason for the new exempt tax', $reasons, TaxExemptionReason::M07->value);
 
         try {
             return Tax::create(TaxData::make([

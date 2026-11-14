@@ -15,7 +15,8 @@ class CegidVendus extends ProviderSetup
     public function run(Command $command): array
     {
         $key = (string) $command->secret('Cegid Vendus API key');
-        $mode = (string) $command->choice('Cegid Vendus mode', ['normal', 'tests'], 'normal');
+        /** @var string $mode */
+        $mode = $command->choice('Cegid Vendus mode', ['normal', 'tests'], 'normal');
 
         $this->configure(Provider::CEGID_VENDUS, ['key' => $key, 'mode' => $mode]);
 

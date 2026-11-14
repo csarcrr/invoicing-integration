@@ -17,10 +17,13 @@ class SetupCommand extends Command
 
     public function handle(): int
     {
-        $provider = Provider::from((string) $this->choice(
+        /** @var string $choice */
+        $choice = $this->choice(
             'Which provider do you want to set up?',
             array_map(fn (Provider $provider) => $provider->value, Provider::cases()),
-        ));
+        );
+
+        $provider = Provider::from($choice);
 
         $setup = match ($provider) {
             Provider::CEGID_VENDUS => new CegidVendus,
@@ -28,7 +31,8 @@ class SetupCommand extends Command
         };
 
         $values = ['INVOICING_INTEGRATION_PROVIDER' => $provider->value, ...$setup->run($this)];
-        $path = (string) ($this->option('env-file') ?: $this->laravel->basePath('.env'));
+        $envFile = $this->option('env-file');
+        $path = is_string($envFile) && $envFile !== '' ? $envFile : $this->laravel->basePath('.env');
 
         $this->writeEnv($path, $values);
 

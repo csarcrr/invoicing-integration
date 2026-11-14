@@ -57,7 +57,7 @@ class Find extends Category implements ShouldFindCategory
      */
     public function getPayload(): Collection
     {
-        $this->payload->put('parent_id', $this->category?->parentId ?? 0);
+        $this->payload->put('parent_id', $this->category->parentId ?? 0);
 
         return $this->payload;
     }

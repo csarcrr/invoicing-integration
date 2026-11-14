@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 interface ShouldFindCompany extends ShouldExecute
 {
+    public function execute(): self;
+
     /**
      * @return Collection<int, CompanyData>
      */

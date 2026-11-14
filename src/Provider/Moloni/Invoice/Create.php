@@ -174,14 +174,20 @@ class Create extends Invoice implements ShouldCreateInvoice
             return;
         }
 
-        $client = (new FindClient(ClientData::from(['vat' => $client->vat])))
+        /** @var string|int $vat */
+        $vat = $client->vat;
+
+        $client = (new FindClient(ClientData::from(['vat' => $vat])))
             ->execute()
             ->getList()
-            ->first(fn (ClientData $found) => (string) $found->vat === (string) $client->vat);
+            ->first(fn (ClientData $found) => ! ($found->vat instanceof Optional) && (string) $found->vat === (string) $vat);
 
         throw_if(is_null($client), CouldNotFindCustomerByVatException::class);
 
-        $this->payload->put('customer_id', (int) $client->id);
+        /** @var string $id */
+        $id = $client->id;
+
+        $this->payload->put('customer_id', (int) $id);
     }
 
     /**

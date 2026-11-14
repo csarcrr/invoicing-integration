@@ -10,5 +10,7 @@ use CsarCrr\InvoicingIntegration\Data\TaxData;
 
 interface ShouldCreateTax extends ShouldExecute, ShouldHavePayload
 {
+    public function execute(): self;
+
     public function getTax(): TaxData;
 }
