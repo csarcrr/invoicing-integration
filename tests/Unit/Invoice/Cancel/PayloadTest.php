@@ -38,7 +38,7 @@ it('sends the notes as observation on moloni only', function (Provider $provider
         Provider::CEGID_VENDUS => ! Str::contains($request->body(), 'Wrong client'),
         Provider::MOLONI => Str::contains($request->body(), 'observation=Wrong+client'),
     });
-})->with('providers');
+})->with('providers')->note('todo: this cannot exist in the package. if the feature/field is only available in a specific provider, it should not be supported. this will steer users to believe it is supported in all providers and might result in unexected error or behaviours down the line. a package review must be done to remove all provider specific features and only support the common denominator of all providers. the test `omits the observation when no notes are set` also fits in this category');
 
 it('omits the observation when no notes are set', function (Provider $provider) {
     Http::fake(match ($provider) {
