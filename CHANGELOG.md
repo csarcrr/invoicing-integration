@@ -2,41 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — enhance-actions-structure
+## [Unreleased]
 
 ### Added
 
-- `Item::update(ItemData)`: partial item update for Cegid Vendus and Moloni. `null` leaves a field alone and `''` clears it.
+- `DueDate::find()` on Cegid Vendus. Cegid Vendus has no due date ID, so `id` is `null` and the provider key (`now`, `30`, ...) is kept in additional data as `key`; `now` maps to `0` days.
+- `Unit::create()` to create a measurement unit on Moloni and Cegid Vendus. `shortName` is sent to Moloni only.
+- `Category::update()` to rename or move a stored category on Moloni and Cegid Vendus. `parentId` is sent to Moloni only.
+- `Warehouse::create()` on Cegid Vendus, which creates a store.
+- `DocumentType::find()` and `DocumentTypeData` to list the document types of Moloni and Cegid Vendus.
+- `TaxExemption::find()` and `TaxExemptionData` to list the tax exemption reasons stored in the provider.
+- `Warehouse::create()` on Moloni.
+- `Warehouse::find()` and `WarehouseData` to list Moloni warehouses and Cegid Vendus stores.
+- `Category::create()` to create a product category on Moloni and Cegid Vendus. `parentId` is sent to Moloni only.
+- `Item::delete()` to remove a stored item on Moloni and Cegid Vendus.
+- `Client::delete()` to remove a stored client on Moloni and Cegid Vendus.
+- `Client::update()` to edit a stored client on Moloni and Cegid Vendus.
+- `Invoice::find()` to list stored documents by type and client on Moloni and Cegid Vendus.
+- `Invoice::cancel()` to cancel a stored document on Moloni and Cegid Vendus.
+- `Invoice::pdf()` to get a stored document's PDF on Moloni and Cegid Vendus. `OutputData` gains `url`.
+- `Invoice::get()` to read a stored document by its provider ID on Moloni and Cegid Vendus.
 
 ### Changed
 
-- `ItemData` built without `quantity`, `type`, `controlStock` or `enabled` now reads `null`. Item creation and invoice payloads still send the previous defaults.
-- Refactored action classes (`InvoiceAction`, `ClientAction`, `ItemAction`) to use a shared `data` property via the base provider classes, removing the need to inject `*Data` into individual formatting methods.
-- Contracts now extend one another to reduce boilerplate implementations across provider classes (`ShouldCreateInvoice`, `ShouldCreateClient`, `ShouldCreateItem`, etc.).
-- Provider base classes (`Provider/Invoice`, `Provider/Client`, `Provider/Item`) made more abstract so logic can be reused across future providers without duplication.
-- Dependency injection introduced in provider base classes to allow more abstract methods.
-- Fixed `strict_types` enforcement across several provider files and action classes.
+- Cegid Vendus requests now use API v1.2 (`https://www.vendus.pt/ws/v1.2/`). Item fields in `getAdditionalData()` use the v1.2 nested names: `prices.gross`, `tax.id`, `tax.exemption`, `tax.exemption_law`, `stock.control`, `stock.stores`.
+- Cegid Vendus no longer sets `ClientData->date` from responses, because v1.2 does not return it. The `date` filter of `Client::find()` still works.
+- `ItemData->taxExemptionReason` and `TaxData->exemptionReason` are now `?string` and take the provider's exemption code (e.g. `'M04'`).
 
-### Fixed
+### Removed
 
-- PHPStan errors caused by missing PHPDoc blocks and incorrect type hints.
-- `InvoiceAction` and `ItemAction` now correctly reflect the shared data property pattern.
-- Class loading issue where a provider class was not autoloaded correctly.
+- **Breaking:** the `TaxExemptionReason` enum and its `laws()` helper. Pass the exemption code as a string and get the codes from `TaxExemption::find()`. This affects Cegid Vendus as well as Moloni.
 
----
-
-## [Breaking Change] — January 2025
-
-### Changed
-
-- **Breaking:** Invoice creation entry point changed from the old standalone `Invoice` class to the `Invoice` facade backed by `InvoiceAction`.
-  - Before: instantiated the `Invoice` class manually and called builder methods on it.
-  - After: populate an `InvoiceData` DTO and pass it to `Invoice::create(InvoiceData $invoice)->execute()->getInvoice()`.
-- `InvoiceData` now serves a dual role as both the input DTO and the hydrated response object returned by `getInvoice()`.
-- All response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, `output`) are set on the returned `InvoiceData` instance; there is no separate response class.
-- `OutputData` (accessible via `$result->output`) exposes `save()`, `fileName()`, and `content()` directly — no separate `Output` value object is needed.
-
-[Unreleased]: https://github.com/csarcrr/invoicing-integration/compare/main...enhance-actions-structure
+[Unreleased]: https://github.com/csarcrr/invoicing-integration/compare/v0.6.2...HEAD
