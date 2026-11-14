@@ -10,13 +10,13 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use CsarCrr\InvoicingIntegration\Traits\HasPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 use function collect;
+use function is_string;
 
 class Find extends Invoice implements ShouldFindInvoice
 {
@@ -87,7 +87,7 @@ class Find extends Invoice implements ShouldFindInvoice
     {
         $client = $this->data->client;
 
-        if (! ($client instanceof ClientData) || Properties::isNotValid($client->id)) {
+        if (! ($client instanceof ClientData) || ! is_string($client->id)) {
             return;
         }
 
