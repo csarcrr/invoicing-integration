@@ -6,10 +6,9 @@ namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoice;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
-use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\Invoice;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
@@ -32,18 +31,7 @@ class Get extends Invoice implements ShouldGetInvoice
 
         Http::handleUnwantedFailures($response);
 
-        $data = $response->json();
-
-        $this->data = InvoiceData::from([
-            'id' => (int) $data['id'],
-            'sequence' => (string) $data['number'],
-            'total' => $this->toCents((float) $data['amount_gross']),
-            'totalNet' => $this->toCents((float) $data['amount_net']),
-            'atcudHash' => $data['atcud'] ?? null,
-            'type' => InvoiceType::tryFrom($data['type'] ?? '') ?? InvoiceType::Invoice,
-        ]);
-
-        $this->fillAdditionalProperties($data);
+        $this->data = $this->toInvoiceData($response->json());
 
         return $this;
     }

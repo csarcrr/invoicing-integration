@@ -1,0 +1,40 @@
+[
+    {
+        "document_id": 1001,
+        "document_type_id": 1,
+        "document_set_id": 1,
+        "number": 12,
+        "date": "2026-11-10",
+        "expiration_date": "2026-11-10",
+        "status": 1,
+        "document_type": {
+            "document_type_id": 1,
+            "saft_code": "FT"
+        },
+        "document_set": {
+            "document_set_id": 1,
+            "name": "A"
+        },
+        "taxes_value": 5.61,
+        "net_value": 30.00
+    },
+    {
+        "document_id": 1002,
+        "document_type_id": 1,
+        "document_set_id": 1,
+        "number": 13,
+        "date": "2026-11-11",
+        "expiration_date": "2026-11-11",
+        "status": 1,
+        "document_type": {
+            "document_type_id": 1,
+            "saft_code": "FT"
+        },
+        "document_set": {
+            "document_set_id": 1,
+            "name": "A"
+        },
+        "taxes_value": 2.80,
+        "net_value": 15.00
+    }
+]

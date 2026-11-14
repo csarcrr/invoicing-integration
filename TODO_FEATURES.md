@@ -27,7 +27,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 1 | `Invoice::get` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoice.php`; `src/Provider/Moloni/Invoice.php` (base, `sequence()` moved from `Moloni/Invoice/Create.php`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php`; `tests/Unit/Invoice/Get/IdTest.php`; `tests/Feature/Invoice/GetTest.php`; fixtures `Response/Invoice/get.json` for both providers. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`; `src/Provider/Moloni/Invoice/Create.php` (extends the new base). Docs: `docs/invoices/getting-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md` (new "Invoice Management" table); `docs/api-reference.md` |
 | 2 | `Invoice::pdf` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoicePdf.php`; `src/Provider/CegidVendus/Invoice/Pdf.php`; `src/Provider/Moloni/Invoice/Pdf.php`; `tests/Unit/Invoice/Pdf/IdTest.php`; `tests/Feature/Invoice/PdfTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/pdf_link.json`. Changed: `src/Data/OutputData.php` (`url`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/outputting-invoice.md`; `docs/features.md`; `docs/api-reference.md` |
 | 3 | `Invoice::cancel` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldCancelInvoice.php`; `src/Provider/CegidVendus/Invoice/Cancel.php`; `src/Provider/Moloni/Invoice/Cancel.php`; `tests/Unit/Invoice/Cancel/PayloadTest.php`; `tests/Feature/Invoice/CancelTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/cancel.json`. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/cancelling-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
-| 4 | `Invoice::find` | Post-MVP | Todo | List documents |
+| 4 | `Invoice::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldFindInvoice.php`; `src/Provider/CegidVendus/Invoice.php` (base, `toInvoiceData()`); `src/Provider/CegidVendus/Invoice/Find.php`; `src/Provider/Moloni/Invoice/Find.php`; `tests/Unit/Invoice/Find/PayloadTest.php`; `tests/Feature/Invoice/FindTest.php`; fixtures `Response/Invoice/find.json` for both providers. Changed: `src/Provider/Moloni/Invoice.php` (`toInvoiceData()`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php` (both use `toInvoiceData()`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/finding-invoices.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 5 | `Client::update` | Post-MVP | Todo | CRUD completeness; open question on how the caller passes Moloni `number` |
 | 6 | `Client::delete` | Post-MVP | Todo | CRUD completeness |
 | 7 | `Item::delete` | Post-MVP | Todo | CRUD completeness |
@@ -167,8 +167,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 4. Invoice::find
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Lists documents, optionally filtered, so a developer can find an invoice without knowing its id.
 
@@ -195,13 +195,14 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 1. Which filters belong on the filter DTO (document type, client, dates, store)? **Default:** the main ones: document type, client, and a date range (from/to). Drop any filter a provider lacks, per the unsupported-field rule. On Moloni this drops document type and date range.
 2. What are the Moloni `getAll` filter parameters? **Default:** resolved, listed above.
 3. Should the result be a paginated collection of `InvoiceData` or the raw provider list? **Default:** a paginated collection of `InvoiceData`, like the other finders.
+4. How does the caller pass the filters? **Default:** reuse `InvoiceData`: `Invoice::find(?InvoiceData)`. The type filter always applies (`InvoiceData->type`, default `FT`); the client filter comes from `client->id`; there is no date range filter. (User decision, 2026-11-14; supersedes question 1.) Vendus sends `type` and `client_id`. Moloni picks the per-type endpoint, as `Create::endpoint()` does with `insert` (`invoices/getAll`, `invoiceReceipts/getAll`, `simplifiedInvoices/getAll`, `receipts/getAll`, `billsOfLading/getAll`, `creditNotes/getAll`; all exist in the local docs), and sends `customer_id`. The per-type responses carry the same fields as `documents/getOne`.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Invoice/Find/` and `tests/Feature/Invoice/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `InvoiceAction::find()` and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Invoice/` and `src/Provider/CegidVendus/Invoice/`
-- [ ] Docs page `docs/invoices/finding-invoices.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Invoice/Find/` and `tests/Feature/Invoice/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade method, `InvoiceAction::find()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Invoice/` and `src/Provider/CegidVendus/Invoice/`
+- [x] Docs page `docs/invoices/finding-invoices.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 5. Client::update
 

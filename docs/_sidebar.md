@@ -53,6 +53,7 @@
     - [Creating a Receipt (RG)](invoices/creating-a-RG-for-an-invoice.md)
     - [Creating a Credit Note (NC)](invoices/creating-a-nc-invoice.md)
     - [Getting an Invoice](invoices/getting-an-invoice.md)
+    - [Finding Invoices](invoices/finding-invoices.md)
     - [Cancelling an Invoice](invoices/cancelling-an-invoice.md)
     - [Tax Exemptions](invoices/tax-exemption.md)
     - [Output Formats](invoices/outputting-invoice.md)

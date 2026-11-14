@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1001,
+        "type": "FT",
+        "number": "FT 01P2026/12",
+        "date": "2026-11-10",
+        "status": "N",
+        "amount_gross": "30.00",
+        "amount_net": "24.39"
+    },
+    {
+        "id": 1002,
+        "type": "FT",
+        "number": "FT 01P2026/13",
+        "date": "2026-11-11",
+        "status": "N",
+        "amount_gross": "15.00",
+        "amount_net": "12.20"
+    }
+]

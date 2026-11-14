@@ -110,6 +110,7 @@ Features for reading the invoices stored in the provider.
 |             | Cegid Vendus | Moloni | Invoice Express |
 | ----------- | ------------ | ------ | --------------- |
 | Get Invoice | ✅           | ✅     | ❌              |
+| Find Invoices | ✅         | ✅     | ❌              |
 | Get Invoice PDF | ✅       | ✅     | ❌              |
 | Cancel Invoice | ✅       | ✅     | ❌              |
 

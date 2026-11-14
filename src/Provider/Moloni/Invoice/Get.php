@@ -6,7 +6,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoice;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
-use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
@@ -38,19 +37,7 @@ class Get extends Invoice implements ShouldGetInvoice
 
         throw_if($this->hasNoData($response), RequestFailedException::class, 'Invoice not found.');
 
-        $data = $response->json();
-
-        $total = (float) ($data['net_value'] ?? 0);
-
-        $this->data = InvoiceData::from([
-            'id' => $this->data->id,
-            'sequence' => $this->sequence($data),
-            'total' => $this->toCents($total),
-            'totalNet' => $this->toCents($total - (float) ($data['taxes_value'] ?? 0)),
-            'type' => InvoiceType::tryFrom($data['document_type']['saft_code'] ?? '') ?? InvoiceType::Invoice,
-        ]);
-
-        $this->fillAdditionalProperties($data);
+        $this->data = $this->toInvoiceData($response->json());
 
         return $this;
     }

@@ -460,6 +460,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 | `Invoice::get(InvoiceData $invoice)`   | `ShouldGetInvoice`    | Creates a retrieval instance for a stored document   |
 | `Invoice::pdf(InvoiceData $invoice)`   | `ShouldGetInvoicePdf` | Creates a retrieval instance for the PDF of a stored document |
 | `Invoice::cancel(InvoiceData $invoice)` | `ShouldCancelInvoice` | Creates a cancellation instance for a stored document |
+| `Invoice::find(?InvoiceData $invoice = null)` | `ShouldFindInvoice` | Lists/paginates stored documents of one type, optionally for one client |
 
 > [!TIP]
 > The `Invoice` facade resolves the underlying `InvoiceAction` class from the service container. Prefer the facade for day-to-day usage. Resolve `InvoiceAction` directly only when you need to inject the class (e.g., in constructors) or swap the implementation during testing.
@@ -521,6 +522,25 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCan
 | Method      | Return Type | Description                                                   | Throws                                                                   |
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()` | `void`      | Send the cancellation request; returns nothing                | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if the provider rejects the cancellation) |
+
+## ShouldFindInvoice Contract
+
+The contract returned by `Invoice::find()`. See [Finding Invoices](invoices/finding-invoices.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFindInvoice;
+```
+
+| Method             | Return Type  | Description                                        | Throws                                                                   |
+| ------------------ | ------------ | -------------------------------------------------- | ------------------------------------------------------------------------ |
+| `execute()`        | `self`       | Execute the current page request                   | `RequestFailedException` (if the provider rejects the search)            |
+| `getList()`        | `Collection` | `Collection<InvoiceData>` results                  | -                                                                        |
+| `getPayload()`     | `Collection` | Current request payload (type, client, pagination) | -                                                                        |
+| `next()`           | `self`       | Move to the next page                              | `NoMorePagesException` (Cegid Vendus, past the last page)                |
+| `previous()`       | `self`       | Go back one page                                   | `NoMorePagesException` (before the first page)                           |
+| `page(int $page)`  | `self`       | Jump to a specific page                            | `NoMorePagesException` (below 1, or past the total on Cegid Vendus)      |
+| `getCurrentPage()` | `int`        | Current page index                                 | -                                                                        |
+| `getTotalPages()`  | `?int`       | Total pages, `null` when not reported (Moloni)     | -                                                                        |
 
 ---
 
