@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace CsarCrr\InvoicingIntegration\Provider\Moloni;
 
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
+use CsarCrr\InvoicingIntegration\Provider\Base;
 
-abstract class Category
+/** @extends Base<CategoryData> */
+abstract class Category extends Base
 {
     /**
      * @param  array<string, mixed>  $category

@@ -404,8 +404,24 @@ use CsarCrr\InvoicingIntegration\Facades\Category;
 
 | Method                                         | Return Type          | Description                                          |
 | ---------------------------------------------- | -------------------- | ---------------------------------------------------- |
+| `Category::create(CategoryData $category)`     | `ShouldCreateCategory` | Creates a new category builder instance            |
 | `Category::find(?CategoryData $category = null)` | `ShouldFindCategory` | Lists the provider's categories, by `parentId` level |
 | `Category::get(CategoryData $category)`        | `ShouldGetCategory`  | Fetches one category by `id`                         |
+
+## ShouldCreateCategory Contract
+
+The interface returned by `Category::create()`. See [Creating a Category](categories/creating-a-category.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldCreateCategory;
+```
+
+| Method          | Return Type    | Description                                                                 |
+| --------------- | -------------- | --------------------------------------------------------------------------- |
+| `execute()`     | `self`         | Send the create request and populate the returned `CategoryData`; throws `RequestFailedException` if the provider rejects the category |
+| `getCategory()` | `CategoryData` | The created category, with the provider-assigned `id`                       |
+| `getUrl()`      | `string`       | The request URL the category is sent to                                     |
+| `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Cegid Vendus, `name` and `parent_id` on Moloni) |
 
 ## ShouldFindCategory Contract
 
@@ -751,7 +767,7 @@ $item = ItemData::make([
 
 ### CategoryData
 
-Represents a product category for catalog items, and the categories returned by `Category::find()` and `Category::get()`.
+Represents a product category for catalog items, and the categories returned by `Category::create()`, `Category::find()` and `Category::get()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\CategoryData;

@@ -31,7 +31,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 5 | `Client::update` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Client/ShouldUpdateClient.php`; `src/Provider/Moloni/Client/Update.php`; `src/Provider/CegidVendus/Client/Update.php`; `tests/Unit/Client/Update/ProviderData/PayloadTest.php`; `tests/Feature/Client/UpdateTest.php`. Fixtures reuse the existing `Response/Client/response.json` (Vendus) and `response_simple.json` (Moloni). Changed: `src/Actions/ClientAction.php`; `src/Facades/Client.php`; `src/Provider/Moloni/Client/Create.php` (`ensureRequiredData` message now "for a client", shared with update). Docs: `docs/clients/updating-a-client.md` (new); `docs/_sidebar.md`; `docs/clients/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 6 | `Client::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Client/ShouldDeleteClient.php`; `src/Provider/Moloni/Client/Delete.php`; `src/Provider/CegidVendus/Client/Delete.php`; `tests/Unit/Client/Delete/PayloadTest.php`; `tests/Feature/Client/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Client/delete.json`. Changed: `src/Actions/ClientAction.php`; `src/Facades/Client.php`. Docs: `docs/clients/deleting-a-client.md` (new); `docs/_sidebar.md`; `docs/clients/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 7 | `Item::delete` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Item/ShouldDeleteItem.php`; `src/Provider/Moloni/Item/Delete.php`; `src/Provider/CegidVendus/Item/Delete.php`; `tests/Unit/Item/Delete/PayloadTest.php`; `tests/Feature/Item/DeleteTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Item/delete.json`. Changed: `src/Provider/Base.php` (`$url`, `getUrl()`); `src/Actions/ItemAction.php`; `src/Facades/Item.php`. Docs: `docs/items/deleting-an-item.md` (new); `docs/_sidebar.md`; `docs/items/README.md`; `docs/features.md`; `docs/api-reference.md` |
-| 8 | `Category::create` | Post-MVP | Todo | CRUD completeness |
+| 8 | `Category::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldCreateCategory.php`; `src/Provider/CegidVendus/Category.php` (base, `toCategoryData()`); `src/Provider/CegidVendus/Category/Create.php`; `src/Provider/Moloni/Category/Create.php`; `tests/Unit/Category/Create/PayloadTest.php`; `tests/Feature/Category/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Category/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Category/create.json`. Changed: `src/Provider/Moloni/Category.php` (extends `Base`); `src/Actions/CategoryAction.php`; `src/Facades/Category.php`. Docs: `docs/categories/creating-a-category.md` (new); `docs/_sidebar.md`; `docs/categories/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 9 | `Warehouse::find` | Post-MVP | Todo | Reference data; Moloni warehouses, Vendus stores |
 | 10 | `Warehouse::create` | Post-MVP | Todo | Moloni only; Vendus v1.1 has no endpoint, throws `OperationNotSupportedException` |
 | 11 | `TaxExemption::find` | Post-MVP | Todo | Reference data |
@@ -318,8 +318,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 8. Category::create
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Creates a product category.
 
@@ -347,11 +347,11 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 3. What does the operation return: the created `CategoryData` or the provider response? **Default:** return the DTO, as the existing `create` and `find` operations do.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Category/Create/` and `tests/Feature/Category/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `CategoryAction::create()` and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Category/` and `src/Provider/CegidVendus/Category/`
-- [ ] Docs page `docs/categories/creating-a-category.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Category/Create/` and `tests/Feature/Category/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade method, `CategoryAction::create()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Category/` and `src/Provider/CegidVendus/Category/`
+- [x] Docs page `docs/categories/creating-a-category.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 9. Warehouse::find
 

@@ -16,6 +16,7 @@ foreach (Category::find()->execute()->getList() as $category) {
 
 | Operation         | Docs                                        |
 | ----------------- | ------------------------------------------- |
+| Create a category | [Creating a Category](creating-a-category.md) |
 | Find categories   | [Finding Categories](finding-categories.md) |
 | Get a category    | [Getting a Category](getting-a-category.md) |
 
@@ -23,5 +24,6 @@ foreach (Category::find()->execute()->getList() as $category) {
 
 | Operation       | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
+| Create Category | ✅           | ✅     | ❌              |
 | Find Categories | ✅           | ✅     | ❌              |
 | Get Category    | ✅           | ✅     | ❌              |

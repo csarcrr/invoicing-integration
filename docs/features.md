@@ -88,10 +88,11 @@ Features for managing the taxes stored in the provider.
 
 ## Category Management
 
-Features for listing the categories stored in the provider.
+Features for managing the categories stored in the provider.
 
 |                 | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
+| Create Category | ✅           | ✅     | ❌              |
 | List Categories | ✅           | ✅     | ❌              |
 | Get Category    | ✅           | ✅     | ❌              |
 

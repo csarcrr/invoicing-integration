@@ -12,6 +12,7 @@
 
 - **Categories**
     - [Overview](categories/README.md)
+    - [Creating a Category](categories/creating-a-category.md)
     - [Finding Categories](categories/finding-categories.md)
     - [Getting a Category](categories/getting-a-category.md)
 
