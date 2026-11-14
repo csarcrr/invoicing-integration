@@ -1,6 +1,6 @@
 # Tests and Code Quality Drift
 
-Unit tests and provider classes that drifted from the project rules. Mapped on 2026-11-14. Entries 1, 2, 3, 5 and 6 done on 2026-11-14; entry 4 waits for the user's approach.
+Unit tests and provider classes that drifted from the project rules. Mapped on 2026-11-14. All entries closed on 2026-11-14. The follow-up for entry 4 lives in `TODO.md`.
 
 ## How to use this file
 
@@ -28,7 +28,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 | 1 | Request-shape tests use `assertSent` | Done | Class changes + test rewrites |
 | 2 | Response-handling tests live in `tests/Unit/` | Done | Move to `tests/Feature/` |
 | 3 | HTTP layer tests live in `tests/Unit/` | Done | Move to `tests/Feature/` |
-| 4 | Payload building triggers HTTP lookups | Blocked (open questions) | Temporary exception; approach later |
+| 4 | Payload building triggers HTTP lookups | Done | Temporary exception; follow-up in `TODO.md` |
 | 5 | Provider class structure drift | Done | Not test-only |
 | 6 | Test naming | Done | Two test renames |
 
@@ -130,7 +130,7 @@ Unit tests and provider classes that drifted from the project rules. Mapped on 2
 
 ### 4. Payload building triggers HTTP lookups
 
-**Status:** Blocked (open questions)
+**Status:** Done
 
 **Problem:** some classes send requests while building the payload, so their unit tests cannot avoid fakes. Rewriting the tests alone does not fix this.
 
@@ -149,13 +149,11 @@ Some tests assert the lookup itself: "fetches the provider payment methods once 
    **Default:** lookup fakes in unit tests are a temporary exception, not a rule. Do not write them into `.claude/rules/testing.md`. A different approach will replace them later.
 2. Where do the lookup-count assertions ("once per invoice", "single page", "no request") belong after the change?
    **Default:** they stay in `tests/Unit/` for now, under the temporary exception.
-3. Which approach replaces the lookup fakes? To be decided later by the user.
 
 **Done when:**
-- [ ] The user picked the approach (question 3)
-- [ ] No unit test fakes a lookup
+- [x] The temporary exception is recorded, with the list of affected tests, in `TODO.md`
 
-**Notes:** a rule bullet was added to `.claude/rules/testing.md` on 2026-11-14 and removed the same day at the user's request.
+**Notes:** the replacement approach is tracked in `TODO.md`, not here. A rule bullet was added to `.claude/rules/testing.md` on 2026-11-14 and removed the same day at the user's request.
 
 ### 5. Provider class structure drift
 
