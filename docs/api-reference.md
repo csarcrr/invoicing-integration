@@ -13,6 +13,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 | Method                                      | Return Type    | Description                           |
 | ------------------------------------------- | -------------- | ------------------------------------- |
 | `Client::create(ClientData $client)`        | `ShouldCreateClient` | Creates a new client builder instance |
+| `Client::update(ClientData $client)`        | `ShouldUpdateClient` | Creates a client update instance      |
 | `Client::get(ClientData $client)`           | `ShouldGetClient`    | Creates a client retrieval instance   |
 | `Client::find(?ClientData $filters = null)` | `ShouldFindClient`   | Lists/paginates provider clients      |
 
@@ -27,6 +28,19 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 | Method      | Return Type  | Description                                 |
 | ----------- | ------------ | ------------------------------------------- |
 | `execute()` | `ClientData` | Create the client and return populated data |
+
+## ShouldUpdateClient Contract
+
+The interface returned by `Client::update()`. Supported on Cegid Vendus and Moloni. See [Updating a Client](clients/updating-a-client.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
+```
+
+| Method      | Return Type  | Description                                                    | Throws                                     |
+| ----------- | ------------ | -------------------------------------------------------------- | ------------------------------------------ |
+| `execute()` | `self`       | Send the update request and store unhandled response fields as additional data | `InvalidArgumentException` (if ID missing) |
+| `getClient()` | `ClientData` | The updated client. On Moloni, the `ClientData` you passed in | -                                    |
 
 ## ShouldGetClient Contract
 

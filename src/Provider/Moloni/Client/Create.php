@@ -96,7 +96,7 @@ class Create extends Client implements ShouldCreateClient
             throw_if(
                 Properties::isNotValid($this->data->{$field}),
                 MissingClientDataException::class,
-                "Moloni requires the {$field} to create a client."
+                "Moloni requires the {$field} for a client."
             );
         }
     }

@@ -8,14 +8,17 @@ use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Update;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as MoloniFind;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Get as MoloniGet;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Update as MoloniUpdate;
 
 /**
  * Orchestrates client operations by routing them to the correct provider implementation.
@@ -34,6 +37,17 @@ final class ClientAction
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => new Create($client),
             Provider::MOLONI => new MoloniCreate($client),
+        };
+    }
+
+    /**
+     * Returns a provider-specific implementation to update a client.
+     */
+    public function update(ClientData $client): ShouldUpdateClient
+    {
+        return match ($this->provider->getProvider()) {
+            Provider::CEGID_VENDUS => new Update($client),
+            Provider::MOLONI => new MoloniUpdate($client),
         };
     }
 

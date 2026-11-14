@@ -28,7 +28,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 2 | `Invoice::pdf` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoicePdf.php`; `src/Provider/CegidVendus/Invoice/Pdf.php`; `src/Provider/Moloni/Invoice/Pdf.php`; `tests/Unit/Invoice/Pdf/IdTest.php`; `tests/Feature/Invoice/PdfTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/pdf_link.json`. Changed: `src/Data/OutputData.php` (`url`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/outputting-invoice.md`; `docs/features.md`; `docs/api-reference.md` |
 | 3 | `Invoice::cancel` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldCancelInvoice.php`; `src/Provider/CegidVendus/Invoice/Cancel.php`; `src/Provider/Moloni/Invoice/Cancel.php`; `tests/Unit/Invoice/Cancel/PayloadTest.php`; `tests/Feature/Invoice/CancelTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/cancel.json`. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/cancelling-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 4 | `Invoice::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldFindInvoice.php`; `src/Provider/CegidVendus/Invoice.php` (base, `toInvoiceData()`); `src/Provider/CegidVendus/Invoice/Find.php`; `src/Provider/Moloni/Invoice/Find.php`; `tests/Unit/Invoice/Find/PayloadTest.php`; `tests/Feature/Invoice/FindTest.php`; fixtures `Response/Invoice/find.json` for both providers. Changed: `src/Provider/Moloni/Invoice.php` (`toInvoiceData()`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php` (both use `toInvoiceData()`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/finding-invoices.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
-| 5 | `Client::update` | Post-MVP | In progress | CRUD completeness; open question on how the caller passes Moloni `number` |
+| 5 | `Client::update` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Client/ShouldUpdateClient.php`; `src/Provider/Moloni/Client/Update.php`; `src/Provider/CegidVendus/Client/Update.php`; `tests/Unit/Client/Update/ProviderData/PayloadTest.php`; `tests/Feature/Client/UpdateTest.php`. Fixtures reuse the existing `Response/Client/response.json` (Vendus) and `response_simple.json` (Moloni). Changed: `src/Actions/ClientAction.php`; `src/Facades/Client.php`; `src/Provider/Moloni/Client/Create.php` (`ensureRequiredData` message now "for a client", shared with update). Docs: `docs/clients/updating-a-client.md` (new); `docs/_sidebar.md`; `docs/clients/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 6 | `Client::delete` | Post-MVP | Todo | CRUD completeness |
 | 7 | `Item::delete` | Post-MVP | Todo | CRUD completeness |
 | 8 | `Category::create` | Post-MVP | Todo | CRUD completeness |
@@ -207,8 +207,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 5. Client::update
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** In progress
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Updates a stored client's fields.
 
@@ -242,11 +242,11 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 4. How does the caller pass Moloni `number`: a new field on `ClientData`, or a method argument? `ClientData->id` cannot carry it, because on update it is the Moloni `customer_id`. **Default:** through `ClientData->reference` (user decision, 2026-11-14). `externalReference` was renamed to `reference` in a separate change before this entry: it maps to Moloni `number` and to Vendus `external_reference`. `id` is always the provider client id (Moloni `customer_id`) on both providers, including the result of Moloni `Client::create`. Moloni create sends no `number` when `reference` is unset; the package does not generate one.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Client/Update/` and `tests/Feature/Client/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `ClientAction::update()` and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Client/` and `src/Provider/CegidVendus/Client/`
-- [ ] Docs page `docs/clients/updating-a-client.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (Update Client)
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Client/Update/` and `tests/Feature/Client/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade method, `ClientAction::update()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Client/` and `src/Provider/CegidVendus/Client/`
+- [x] Docs page `docs/clients/updating-a-client.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated (Update Client)
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 6. Client::delete
 

@@ -21,6 +21,7 @@
 - **Clients**
     - [Overview](clients/README.md)
     - [Creating a Client](clients/creating-a-client.md)
+    - [Updating a Client](clients/updating-a-client.md)
     - [Getting a Client](clients/getting-a-client.md)
     - [Finding Clients](clients/finding-clients.md)
 
