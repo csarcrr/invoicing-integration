@@ -46,6 +46,12 @@ class ClientData extends Data implements DataNeedsValidation
         public Optional|float $creditLimit,
         #[Rule('integer|min:0')]
         public Optional|int $deliveryMethodId,
+        #[Rule('integer|min:0')]
+        public Optional|int $paymentMethodId,
+        #[Rule('integer|min:0')]
+        public Optional|int $paymentDay,
+        #[Rule('integer|min:0')]
+        public Optional|int $salesmanId,
 
         public Optional|string|int $vat,
         public Optional|string $id,

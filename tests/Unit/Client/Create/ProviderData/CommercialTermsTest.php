@@ -30,7 +30,7 @@ it('sends the client discount, credit limit and delivery method', function (Prov
     };
 })->with('providers');
 
-it('sends zero as the moloni discount, credit limit and delivery method when the client has none', function (Provider $provider) {
+it('does not send the discount, credit limit and delivery method when the client has none', function (Provider $provider) {
     fakeProviderDueDates($provider);
 
     $payload = Client::create(ClientData::from([
@@ -40,14 +40,9 @@ it('sends zero as the moloni discount, credit limit and delivery method when the
         'city' => 'Porto',
     ]))->getPayload();
 
-    match ($provider) {
-        Provider::MOLONI => expect($payload->get('discount'))->toBe(0.0)
-            ->and($payload->get('credit_limit'))->toBe(0.0)
-            ->and($payload->get('delivery_method_id'))->toBe(0),
-        Provider::CEGID_VENDUS => expect($payload->has('discount'))->toBeFalse()
-            ->and($payload->has('credit_limit'))->toBeFalse()
-            ->and($payload->has('delivery_method_id'))->toBeFalse(),
-    };
+    expect($payload->has('discount'))->toBeFalse()
+        ->and($payload->has('credit_limit'))->toBeFalse()
+        ->and($payload->has('delivery_method_id'))->toBeFalse();
 })->with('providers');
 
 it('rejects invalid discount, credit limit and delivery method', function (array $data) {

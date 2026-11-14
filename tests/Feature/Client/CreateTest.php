@@ -20,10 +20,7 @@ test('create client request is successful', function (Provider $provider, string
         ->and($data->name)->toBeString()
         ->and($data->vat)->toBeInt();
 
-    match ($provider) {
-        Provider::MOLONI => Http::assertSentCount(4),
-        default => Http::assertSentCount(1)
-    };
+    Http::assertSentCount(1);
 })->with('providers', ['create'], ['response_simple']);
 
 test('unsupported properties are kept in additional data', function (Provider $provider, string $responseFixture) {

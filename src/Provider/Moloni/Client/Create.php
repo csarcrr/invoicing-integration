@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
-use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
@@ -78,11 +77,12 @@ class Create extends Client implements ShouldCreateClient
         $this->buildCountry();
         $this->buildLanguage();
         $this->buildMaturityDate();
+        $this->buildPaymentMethod();
         $this->buildPaymentDay();
+        $this->buildSalesman();
         $this->buildCommercialTerms();
         $this->buildContacts();
         $this->buildNotes();
-        $this->buildPendingIds();
 
         return $this->payload;
     }
@@ -140,9 +140,11 @@ class Create extends Client implements ShouldCreateClient
      */
     protected function buildCountry(): void
     {
-        $iso = Properties::isValid($this->data->country) ? $this->data->country : 'PT';
+        if (Properties::isNotValid($this->data->country)) {
+            return;
+        }
 
-        $country = (new GetCountry(CountryData::from(['iso' => $iso])))->execute()->getCountry();
+        $country = (new GetCountry(CountryData::from(['iso' => $this->data->country])))->execute()->getCountry();
 
         $this->payload->put('country_id', $country->id);
     }
@@ -152,30 +154,48 @@ class Create extends Client implements ShouldCreateClient
      */
     protected function buildLanguage(): void
     {
-        $language = $this->data->language instanceof LanguageData
-            ? $this->data->language
-            : LanguageData::from(['code' => 'pt']);
+        if (! $this->data->language instanceof LanguageData) {
+            return;
+        }
 
-        $this->payload->put('language_id', (new GetLanguage($language))->execute()->getLanguage()->id);
+        $this->payload->put('language_id', (new GetLanguage($this->data->language))->execute()->getLanguage()->id);
     }
 
     protected function buildMaturityDate(): void
     {
-        $term = $this->data->defaultPayDue instanceof Optional ? DueDateTerm::Days15 : $this->data->defaultPayDue;
+        if ($this->data->defaultPayDue instanceof Optional) {
+            return;
+        }
 
-        $this->payload->put('maturity_date_id', (new FindDueDate)->execute()->closestTo($term) ?? 0);
+        $maturityDateId = (new FindDueDate)->execute()->closestTo($this->data->defaultPayDue);
+
+        if (is_null($maturityDateId)) {
+            return;
+        }
+
+        $this->payload->put('maturity_date_id', $maturityDateId);
+    }
+
+    protected function buildPaymentMethod(): void
+    {
+        $this->data->paymentMethodId instanceof Optional || $this->payload->put('payment_method_id', $this->data->paymentMethodId);
     }
 
     protected function buildPaymentDay(): void
     {
-        $this->payload->put('payment_day', 0);
+        $this->data->paymentDay instanceof Optional || $this->payload->put('payment_day', $this->data->paymentDay);
+    }
+
+    protected function buildSalesman(): void
+    {
+        $this->data->salesmanId instanceof Optional || $this->payload->put('salesman_id', $this->data->salesmanId);
     }
 
     protected function buildCommercialTerms(): void
     {
-        $this->payload->put('discount', $this->data->discount instanceof Optional ? 0.0 : $this->data->discount);
-        $this->payload->put('credit_limit', $this->data->creditLimit instanceof Optional ? 0.0 : $this->data->creditLimit);
-        $this->payload->put('delivery_method_id', $this->data->deliveryMethodId instanceof Optional ? 0 : $this->data->deliveryMethodId);
+        $this->data->discount instanceof Optional || $this->payload->put('discount', $this->data->discount);
+        $this->data->creditLimit instanceof Optional || $this->payload->put('credit_limit', $this->data->creditLimit);
+        $this->data->deliveryMethodId instanceof Optional || $this->payload->put('delivery_method_id', $this->data->deliveryMethodId);
     }
 
     protected function buildContacts(): void
@@ -191,11 +211,5 @@ class Create extends Client implements ShouldCreateClient
         }
 
         $this->payload->put('notes', $this->data->notes);
-    }
-
-    protected function buildPendingIds(): void
-    {
-        $this->payload->put('payment_method_id', 0);
-        $this->payload->put('salesman_id', 0);
     }
 }

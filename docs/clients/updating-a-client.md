@@ -51,7 +51,7 @@ Client::update($clientData)->execute(); // Works
 | `address`    | `address`                                           | `address`                   |
 | `city`       | `city`                                              | `city`                      |
 | `postalCode` | `zip_code`                                          | `postalcode`                |
-| `country`    | `country_id` (looked up from the ISO code, `PT` when unset) | `country` (ISO code)         |
+| `country`    | `country_id` (looked up from the ISO code, not sent when unset) | `country` (ISO code)         |
 | `notes`      | `notes`                                             | `notes`                     |
 | `defaultPayDue` | `maturity_date_id`                               | `default_pay_due`           |
 | `status`     | not sent                                            | `status` (`active` or `inactive`) |
@@ -62,7 +62,7 @@ The other fields behave as they do in `Client::create()` on each provider. See [
 
 On Cegid Vendus, fields you do not set are not sent, so the provider keeps their stored values.
 
-On Moloni, the update sends the same body as `Client::create()`. Fields that create fills with a default are sent with that default when you leave them unset: `country` (`PT`), `language` (`pt`), `defaultPayDue` (`DueDateTerm::Days15`), `discount`, `creditLimit` and `deliveryMethodId`.
+On Moloni, the update sends only the fields you set, as `Client::create()` does. Fields you leave unset are not sent.
 
 ## Moloni
 

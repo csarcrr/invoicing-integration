@@ -61,6 +61,28 @@ it('sends every client field', function (Provider $provider) {
     };
 })->with('providers');
 
+it('does not send the fields the client does not set', function (Provider $provider) {
+    fakeProviderDueDates($provider);
+
+    $payload = Client::update(ClientData::from([
+        'id' => '99999',
+        'name' => 'Alberto Albertino',
+        'vat' => '223098091',
+        'address' => 'Rua das Flores 125',
+        'city' => 'Porto',
+    ]))->getPayload();
+
+    expect($payload->has('country_id'))->toBeFalse()
+        ->and($payload->has('language_id'))->toBeFalse()
+        ->and($payload->has('maturity_date_id'))->toBeFalse()
+        ->and($payload->has('discount'))->toBeFalse()
+        ->and($payload->has('credit_limit'))->toBeFalse()
+        ->and($payload->has('delivery_method_id'))->toBeFalse()
+        ->and($payload->has('payment_method_id'))->toBeFalse()
+        ->and($payload->has('payment_day'))->toBeFalse()
+        ->and($payload->has('salesman_id'))->toBeFalse();
+})->with('providers');
+
 it('does not send the moloni number when the client has no reference', function (Provider $provider) {
     fakeProviderDueDates($provider);
 

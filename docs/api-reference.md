@@ -681,6 +681,9 @@ ClientData::make([
 | `discount`          | `Optional<float>`  | Discount percentage (0 to 100)      |
 | `creditLimit`       | `Optional<float>`  | Credit limit (0 or more)            |
 | `deliveryMethodId`  | `Optional<int>`    | Delivery method id (0 or more)      |
+| `paymentMethodId`   | `Optional<int>`    | Payment method id (0 or more)       |
+| `paymentDay`        | `Optional<int>`    | Payment day (0 or more)             |
+| `salesmanId`        | `Optional<int>`    | Salesman id (0 or more)             |
 | `reference`         | `Optional<string>` | Your own code for the client (Cegid Vendus `external_reference`, Moloni `number`) |
 | `status`            | `Optional<string>` | Provider status                     |
 | `emailNotification` | `Optional<bool>`   | Whether to send documents via email |

@@ -4,6 +4,16 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Changed: Moloni client create and update send only the fields you set
+
+Moloni `Client::create()` and `Client::update()` no longer guess values for fields you leave unset. Before, they sent `PT` as the country, `pt` as the language, `DueDateTerm::Days15` as the due date, and `0` for `discount`, `creditLimit`, `deliveryMethodId`, `payment_day`, `payment_method_id` and `salesman_id`. Now those fields are not sent. `Client::update()` no longer overwrites stored values with these defaults.
+
+`ClientData` has three new fields for Moloni: `paymentMethodId` (`payment_method_id`), `paymentDay` (`payment_day`) and `salesmanId` (`salesman_id`). Cegid Vendus does not send them.
+
+Moloni requires `paymentMethodId`, `country`, `language` and `defaultPayDue` on create, so set them when you create a client.
+
+See [Creating a Client](clients/creating-a-client.md#moloni).
+
 ### Changed: Cegid Vendus returns the ATCUD as atcudHash
 
 The ATCUD returned by Cegid Vendus was dropped, so `atcudHash` was missing from the created invoice. It is now set. Moloni does not return the ATCUD, so it stays `null`.

@@ -81,6 +81,9 @@ $clientData = ClientData::make([
 | `discount`          | Discount percentage (0 to 100)         |
 | `creditLimit`       | Credit limit (0 or more)               |
 | `deliveryMethodId`  | Provider delivery method id (0 or more) |
+| `paymentMethodId`   | Provider payment method id (0 or more)  |
+| `paymentDay`        | Provider payment day (0 or more)        |
+| `salesmanId`        | Provider salesman id (0 or more)        |
 | `reference`         | Your own code for the client. Sent as Cegid Vendus `external_reference` on invoices, and as Moloni `number` on create |
 
 > [!NOTE]
@@ -89,14 +92,15 @@ $clientData = ClientData::make([
 ### Moloni
 
 - `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
+- Moloni requires `number` (`reference`), `name`, `vat`, `address`, `city`, `country_id` (`country`), `language_id` (`language`), `maturity_date_id` (`defaultPayDue`) and `payment_method_id` (`paymentMethodId`) on create, per the Moloni `customers/insert` documentation. The package sends only the fields you set, so when you leave one of them out, Moloni's error reaches you as `RequestFailedException`.
 - `reference` is sent as the Moloni customer `number`. Moloni requires it on create, and the package does not generate one: without `reference`, no `number` is sent and Moloni rejects the request. `id` is not used for it.
 - After `execute()`, `id` holds the Moloni `customer_id`, the one `Client::get()` expects.
 - Moloni stores at most 20 characters of the `number` and cuts a longer one without an error. The returned `reference` keeps the full value, so it no longer matches the stored number and `Client::find()` by that `reference` returns nothing.
-- `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, Portugal (`PT`) is used. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
-- `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, Portuguese (`pt`) is used. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
-- `defaultPayDue` is sent as the Moloni `maturity_date_id`: the account due date with the same or closest number of days (a tie picks the shorter one), found with a `maturityDates/getAll` lookup. Without it, `DueDateTerm::Days15` is used. When the account has no due dates, `0` is sent. `payment_day` is sent as `0`.
-- `discount`, `creditLimit` and `deliveryMethodId` are sent as `discount`, `credit_limit` and `delivery_method_id`. Without them, `0` is used. Cegid Vendus does not send them.
-- `irsRetention` and `emailNotification` are not sent. The payment method and salesman ids are sent as `0` for now.
+- `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, no lookup runs and no `country_id` is sent. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
+- `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, no lookup runs and no `language_id` is sent. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
+- `defaultPayDue` is sent as the Moloni `maturity_date_id`: the account due date with the same or closest number of days (a tie picks the shorter one), found with a `maturityDates/getAll` lookup. Without it, no lookup runs and no `maturity_date_id` is sent. When the account has no due dates, no `maturity_date_id` is sent.
+- `discount`, `creditLimit`, `deliveryMethodId`, `paymentMethodId`, `paymentDay` and `salesmanId` are sent as `discount`, `credit_limit`, `delivery_method_id`, `payment_method_id`, `payment_day` and `salesman_id`, only when you set them. Cegid Vendus does not send them.
+- `irsRetention` and `emailNotification` are not sent.
 
 ### Cegid Vendus
 

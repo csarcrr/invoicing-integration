@@ -5,6 +5,9 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 it('sends the client language', function (Provider $provider) {
     fakeProviderDueDates($provider);
@@ -24,7 +27,7 @@ it('sends the client language', function (Provider $provider) {
     };
 })->with('providers');
 
-it('sends portuguese as the moloni language when the client has none', function (Provider $provider) {
+it('does not send or look up the language when the client has none', function (Provider $provider) {
     fakeProviderDueDates($provider);
 
     $payload = Client::create(ClientData::from([
@@ -34,8 +37,7 @@ it('sends portuguese as the moloni language when the client has none', function 
         'city' => 'Porto',
     ]))->getPayload();
 
-    match ($provider) {
-        Provider::MOLONI => expect($payload->get('language_id'))->toBe(1),
-        Provider::CEGID_VENDUS => expect($payload->has('language_id'))->toBeFalse(),
-    };
+    expect($payload->has('language_id'))->toBeFalse();
+
+    Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'languages/getAll'));
 })->with('providers');

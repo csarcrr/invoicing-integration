@@ -10,6 +10,8 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 
 interface ShouldGetInvoice extends ShouldExecute, ShouldHavePayload
 {
+    public function execute(): self;
+
     public function getInvoice(): InvoiceData;
 
     public function getUrl(): string;

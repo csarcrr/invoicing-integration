@@ -12,6 +12,8 @@ use Illuminate\Support\Collection;
 
 interface ShouldFindItem extends ShouldExecute, ShouldHavePagination, ShouldHavePayload
 {
+    public function execute(): self;
+
     /**
      * @return Collection<int, mixed>
      */
