@@ -41,7 +41,7 @@ it('requests the moloni download with the token from the pdf link and the docume
         && Str::contains($request->url(), 'action=getDownload')
         && Str::contains($request->url(), 'h=abc.def.ghi')
         && Str::contains($request->url(), 'd=123456'));
-});
+})->note('todo: this is a provider specific test');
 
 it('fails when no id is set', function (Provider $provider) {
     $invoice = InvoiceData::from([]);
@@ -57,4 +57,4 @@ it('fails when moloni returns an empty pdf link', function () {
     ]);
 
     Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute();
-})->throws(RequestFailedException::class, 'Invoice PDF link not available.');
+})->throws(RequestFailedException::class, 'Invoice PDF link not available.')->note('todo: this is a provider specific test');
