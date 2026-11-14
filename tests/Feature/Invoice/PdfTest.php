@@ -52,4 +52,4 @@ test('moloni keeps the pdf link when the download does not return a pdf', functi
 
     expect($output->content)->toBeNull()
         ->and($output->url)->toBe('https://www.moloni.pt/downloads/?h=abc.def.ghi');
-});
+})->note('todo: naming keeps being provider specific and it cannot. example fix: "providers that don\'t directly support download, are always able to fallback to get the url"');
