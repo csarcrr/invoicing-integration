@@ -14,6 +14,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 | ------------------------------------------- | -------------- | ------------------------------------- |
 | `Client::create(ClientData $client)`        | `ShouldCreateClient` | Creates a new client builder instance |
 | `Client::update(ClientData $client)`        | `ShouldUpdateClient` | Creates a client update instance      |
+| `Client::delete(ClientData $client)`        | `ShouldDeleteClient` | Creates a client deletion instance    |
 | `Client::get(ClientData $client)`           | `ShouldGetClient`    | Creates a client retrieval instance   |
 | `Client::find(?ClientData $filters = null)` | `ShouldFindClient`   | Lists/paginates provider clients      |
 
@@ -41,6 +42,18 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpda
 | ----------- | ------------ | -------------------------------------------------------------- | ------------------------------------------ |
 | `execute()` | `self`       | Send the update request and store unhandled response fields as additional data | `InvalidArgumentException` (if ID missing) |
 | `getClient()` | `ClientData` | The updated client. On Moloni, the `ClientData` you passed in | -                                    |
+
+## ShouldDeleteClient Contract
+
+The interface returned by `Client::delete()`. Supported on Cegid Vendus and Moloni. See [Deleting a Client](clients/deleting-a-client.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDeleteClient;
+```
+
+| Method      | Return Type | Description                                                   | Throws                                                                   |
+| ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `execute()` | `void`      | Send the deletion request; returns nothing                    | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if the provider rejects the deletion) |
 
 ## ShouldGetClient Contract
 

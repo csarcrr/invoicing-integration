@@ -20,6 +20,7 @@ Register clients in the invoicing provider to reuse their details across invoice
 
 - [Creating a Client](creating-a-client.md) - Register new customers
 - [Updating a Client](updating-a-client.md) - Change a stored customer's details
+- [Deleting a Client](deleting-a-client.md) - Remove a stored customer
 - [Getting a Client](getting-a-client.md) - Retrieve existing customer information
 - [Finding Clients](finding-clients.md) - Search and paginate your customer base
 

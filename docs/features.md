@@ -48,7 +48,7 @@ Features for managing clients independently of invoices.
 | Create Client | ✅           | ✅     | ❌              |
 | Get Client    | ✅           | ✅     | ❌              |
 | Update Client | ✅           | ✅     | ❌              |
-| Delete Client | ❌           | ❌     | ❌              |
+| Delete Client | ✅           | ✅     | ❌              |
 | List Clients  | ✅           | ✅     | ❌              |
 
 ## Due Date Management
