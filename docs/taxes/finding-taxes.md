@@ -15,7 +15,7 @@ foreach ($results->getList() as $tax) {
     $tax->rate;            // float
     $tax->type;            // ItemTax enum case, or null
     $tax->fiscalZone;      // e.g. PT, PT-AC, PT-MA
-    $tax->exemptionReason; // TaxExemptionReason enum case, or null
+    $tax->exemptionReason; // exemption reason code, e.g. M07, or null
 }
 ```
 

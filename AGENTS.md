@@ -54,7 +54,7 @@ Facades/Invoice::create(InvoiceData)
 - **`src/Actions/`** — Orchestrators that route operations to the correct provider implementation via `match` on `Provider` enum
 - **`src/Contracts/`** — Interfaces that all provider implementations must satisfy (e.g., `ShouldCreateInvoice`, `CreateClient`)
 - **`src/Data/`** — Spatie Laravel Data DTOs (`InvoiceData`, `ItemData`, `ClientData`, etc.) — validated on instantiation
-- **`src/Enums/`** — Strongly-typed domain enums (`InvoiceType`, `ItemTax`, `TaxExemptionReason`, `PaymentMethod`, `Provider`)
+- **`src/Enums/`** — Strongly-typed domain enums (`InvoiceType`, `ItemTax`, `PaymentMethod`, `Provider`)
 - **`src/Provider/CegidVendus/`** — All Cegid Vendus-specific logic, mirroring the `Invoice/`, `Client/`, `Item/` sub-structure
 - **`src/Exceptions/`** — Domain exceptions organized by concern (`Providers/`, `Invoice/`, `Pagination/`)
 - **`src/Traits/`** — `HasMakeValidation`, `HasPaginator`, `HasConfig`, `EnumOptions`

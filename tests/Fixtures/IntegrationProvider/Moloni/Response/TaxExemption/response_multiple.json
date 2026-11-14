@@ -1,0 +1,14 @@
+[
+    {
+        "code": "M07",
+        "name": "Isento Artigo 9.º do CIVA",
+        "description": "Isento Artigo 9.º do CIVA",
+        "visibility": 1
+    },
+    {
+        "code": "M40",
+        "name": "IVA - autoliquidação",
+        "description": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
+        "visibility": 1
+    }
+]

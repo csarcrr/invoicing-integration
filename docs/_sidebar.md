@@ -46,6 +46,7 @@
     - [Overview](taxes/README.md)
     - [Creating a Tax](taxes/creating-a-tax.md)
     - [Finding Taxes](taxes/finding-taxes.md)
+    - [Finding Tax Exemptions](taxes/finding-tax-exemptions.md)
 
 - **Units**
     - [Overview](units/README.md)

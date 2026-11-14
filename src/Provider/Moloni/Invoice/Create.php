@@ -251,7 +251,7 @@ class Create extends Invoice implements ShouldCreateInvoice
         }
 
         if ($item->taxExemptionReason) {
-            $product['exemption_reason'] = $item->taxExemptionReason->value;
+            $product['exemption_reason'] = $item->taxExemptionReason;
         }
 
         if ($this->data->type === InvoiceType::CreditNote) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\TaxData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Facades\Tax;
 
 beforeEach(function () {
@@ -18,7 +17,7 @@ it('transforms tax data to provider payload', function () {
         'rate' => 0,
         'type' => ItemTax::EXEMPT,
         'fiscalZone' => 'PT',
-        'exemptionReason' => TaxExemptionReason::M07,
+        'exemptionReason' => 'M07',
     ]))->getPayload()->toArray();
 
     expect($payload)->toMatchArray(fixtures()->request()->tax()->files('create'));

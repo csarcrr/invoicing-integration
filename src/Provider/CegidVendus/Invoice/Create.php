@@ -339,7 +339,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             }
 
             if ($item->taxExemptionReason) {
-                $data['tax_exemption'] = $item->taxExemptionReason->value;
+                $data['tax_exemption'] = $item->taxExemptionReason;
 
                 if ($item->taxExemptionLaw) {
                     $data['tax_exemption_law'] = $item->taxExemptionLaw;

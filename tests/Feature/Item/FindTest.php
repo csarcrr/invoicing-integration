@@ -7,7 +7,6 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
@@ -206,7 +205,7 @@ test('maps the tax exemption of exempt items when finding items', function (Prov
     $item = Item::find($this->filters)->execute()->getList()->first();
 
     expect($item->tax)->toBe(ItemTax::EXEMPT)
-        ->and($item->taxExemptionReason)->toBe(TaxExemptionReason::M01);
+        ->and($item->taxExemptionReason)->toBe('M01');
 })->with('providers', ['response_multiple']);
 
 test('returns an empty list when cegid vendus finds no items', function () {

@@ -5,7 +5,6 @@ use CsarCrr\InvoicingIntegration\Data\ItemStockData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
@@ -250,7 +249,7 @@ test('maps the tax exemption of an exempt item', function (Provider $provider, s
     $data = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
 
     expect($data->tax)->toBe(ItemTax::EXEMPT)
-        ->and($data->taxExemptionReason)->toBe(TaxExemptionReason::M01)
+        ->and($data->taxExemptionReason)->toBe('M01')
         ->and($data->taxExemptionLaw)->toBe(match ($provider) {
             Provider::CEGID_VENDUS => 'Artigo 16.º, n.º 6 do CIVA',
             Provider::MOLONI => null,

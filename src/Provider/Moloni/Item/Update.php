@@ -231,7 +231,7 @@ class Update extends Item implements ShouldUpdateItem
     protected function exemptionReason(): ?string
     {
         if (! is_null($this->data->taxExemptionReason)) {
-            return $this->data->taxExemptionReason->value;
+            return $this->data->taxExemptionReason;
         }
 
         if (is_null($this->data->tax) || $this->data->tax === ItemTax::EXEMPT) {

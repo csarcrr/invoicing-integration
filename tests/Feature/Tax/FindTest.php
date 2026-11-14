@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\TaxData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Facades\Tax;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -47,7 +46,7 @@ test('maps the provider exemption reason', function () {
         null,
         null,
         null,
-        TaxExemptionReason::M07,
+        'M07',
         null,
     ]);
 });

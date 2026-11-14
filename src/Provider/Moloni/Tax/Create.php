@@ -53,7 +53,7 @@ class Create extends Tax implements ShouldCreateTax
             'saft_type' => 1,
             'vat_type' => $this->data->type?->value,
             'stamp_tax' => '',
-            'exemption_reason' => $this->data->exemptionReason->value ?? '',
+            'exemption_reason' => $this->data->exemptionReason ?? '',
             'fiscal_zone' => $this->data->fiscalZone,
             'active_by_default' => 0,
         ])->reject(fn (mixed $value) => is_null($value));

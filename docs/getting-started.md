@@ -33,7 +33,7 @@ php artisan invoicing-integration:setup
 | Cegid Vendus | API key, mode                                    | Payment method IDs per `PaymentMethod` type, unit IDs (`KG`, `UNIT`)                                                            |
 | Moloni       | Developer ID, client secret, username, password  | Company (you pick one), the client with VAT `999999990`, the `PT` tax IDs per `ItemTax` type and the `OTHER` rate, unit IDs (`KG`, `UNIT`) |
 
-On Moloni, when the company has no exempt (`ISE`) tax in the `PT` zone, the command asks for an exemption reason (`M01` to `M16`) and creates one with [`Tax::create()`](taxes/creating-a-tax.md). Moloni currently rejects a 0% `value` on `taxes/insert`, so the command then warns you to create the exempt tax in Moloni and set `MOLONI_TAX_EXEMPT_ID` by hand.
+On Moloni, when the company has no exempt (`ISE`) tax in the `PT` zone, the command asks for an exemption reason, offering the codes from the provider's list ([`TaxExemption::find()`](taxes/finding-tax-exemptions.md)), and creates one with [`Tax::create()`](taxes/creating-a-tax.md). Moloni currently rejects a 0% `value` on `taxes/insert`, so the command then warns you to create the exempt tax in Moloni and set `MOLONI_TAX_EXEMPT_ID` by hand.
 
 ### By hand
 

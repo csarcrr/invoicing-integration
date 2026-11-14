@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
 
 abstract class Item extends BaseItem
@@ -20,7 +19,7 @@ abstract class Item extends BaseItem
     {
         $tax = ItemTax::tryFrom($item['tax_id'] ?? '');
         $exemptionReason = $tax === ItemTax::EXEMPT
-            ? TaxExemptionReason::tryFrom($item['tax_exemption'] ?? '')
+            ? (($item['tax_exemption'] ?? '') ?: null)
             : null;
 
         return ItemData::make([

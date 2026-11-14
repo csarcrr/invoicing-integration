@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Item as BaseItem;
 use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
@@ -63,7 +62,7 @@ abstract class Item extends BaseItem
             },
             'tax' => $itemTax,
             'taxExemptionReason' => $itemTax === ItemTax::EXEMPT
-                ? TaxExemptionReason::tryFrom((string) ($item['exemption_reason'] ?? ''))
+                ? (((string) ($item['exemption_reason'] ?? '')) ?: null)
                 : null,
             'price' => $tax ? $this->toCents((float) $item['price']) + $this->toCents((float) $tax['value']) : null,
             'stock' => array_map(fn (array $warehouse) => [

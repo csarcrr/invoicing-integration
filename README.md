@@ -172,7 +172,7 @@ The result contains everything you need:
 
 - At least one item is required for FT/FR/FS/NC documents
 - Payments are required for FR, FS, RG, and NC types
-- Tax exemptions require `ItemTax::EXEMPT` plus a valid `TaxExemptionReason`
+- Tax exemptions require `ItemTax::EXEMPT` plus a valid exemption reason code (see `TaxExemption::find()`)
 
 ### Manage clients via the facade
 

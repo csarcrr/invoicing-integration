@@ -6,7 +6,6 @@ namespace CsarCrr\InvoicingIntegration\Data;
 
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use Spatie\LaravelData\Data;
@@ -22,6 +21,6 @@ class TaxData extends Data implements DataNeedsValidation
         public ?float $rate = null,
         public ?ItemTax $type = null,
         public ?string $fiscalZone = null,
-        public ?TaxExemptionReason $exemptionReason = null,
+        public ?string $exemptionReason = null,
     ) {}
 }

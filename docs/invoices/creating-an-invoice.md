@@ -157,7 +157,7 @@ Set specific tax rates or exemptions:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
 
 // Standard VAT (default behavior)
 $item = ItemData::make([
@@ -167,19 +167,21 @@ $item = ItemData::make([
 ]);
 
 // Tax-exempt item (e.g., educational materials)
+$exemption = TaxExemption::find()->execute()->getList()->firstWhere('code', 'M04');
+
 $items[] = ItemData::make([
     'reference' => 'TEXTBOOK-MATH',
     'note' => 'Mathematics Textbook - University Level',
     'price' => 4500,
     'tax' => ItemTax::EXEMPT,
-    'taxExemptionReason' => TaxExemptionReason::M04,
-    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'taxExemptionReason' => $exemption->code,
+    'taxExemptionLaw' => $exemption->getAdditionalData()['law'] ?? null,
 ]);
 ```
 
 > [!NOTE]
-> Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. See
-> [Tax Exemptions](invoices/tax-exemption.md?id=working-with-tax-exemptions-1) for the complete list of `M` codes and validation rules.
+> Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. `TaxExemption::find()` lists the exemption reasons stored in your provider. See
+> [Tax Exemptions](invoices/tax-exemption.md?id=working-with-tax-exemptions-1) for the steps and validation rules.
 
 ## Adding Payments
 

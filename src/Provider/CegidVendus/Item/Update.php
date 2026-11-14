@@ -58,7 +58,7 @@ class Update extends Item implements ShouldUpdateItem
             'gross_price' => is_null($this->data->price) ? null : $this->data->price / 100,
             'type_id' => $this->data->type?->vendus(),
             'tax_id' => $this->data->tax?->vendus(),
-            'tax_exemption' => $this->data->taxExemptionReason?->value,
+            'tax_exemption' => $this->data->taxExemptionReason,
             'tax_exemption_law' => $this->data->taxExemptionLaw,
             'category_id' => $this->data->category?->id,
             'unit_id' => $this->unitId(),

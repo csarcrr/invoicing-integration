@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Data\TaxData;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use Illuminate\Validation\ValidationException;
 
 it('requires a name', function () {
@@ -25,9 +24,9 @@ it('accepts a tax type and an exemption reason', function () {
     $tax = TaxData::make([
         'name' => 'Isento',
         'type' => ItemTax::EXEMPT,
-        'exemptionReason' => TaxExemptionReason::M07,
+        'exemptionReason' => 'M07',
     ]);
 
     expect($tax->type)->toBe(ItemTax::EXEMPT)
-        ->and($tax->exemptionReason)->toBe(TaxExemptionReason::M07);
+        ->and($tax->exemptionReason)->toBe('M07');
 });

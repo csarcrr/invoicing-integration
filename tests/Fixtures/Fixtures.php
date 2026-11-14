@@ -127,6 +127,13 @@ class Fixtures
         return $this;
     }
 
+    public function taxExemption(): self
+    {
+        $this->path[] = 'TaxExemption';
+
+        return $this;
+    }
+
     public function paymentMethod(): self
     {
         $this->path[] = 'PaymentMethod';

@@ -34,7 +34,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 8 | `Category::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldCreateCategory.php`; `src/Provider/CegidVendus/Category.php` (base, `toCategoryData()`); `src/Provider/CegidVendus/Category/Create.php`; `src/Provider/Moloni/Category/Create.php`; `tests/Unit/Category/Create/PayloadTest.php`; `tests/Feature/Category/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Category/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Category/create.json`. Changed: `src/Provider/Moloni/Category.php` (extends `Base`); `src/Actions/CategoryAction.php`; `src/Facades/Category.php`. Docs: `docs/categories/creating-a-category.md` (new); `docs/_sidebar.md`; `docs/categories/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 9 | `Warehouse::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldFindWarehouse.php`; `src/Data/WarehouseData.php`; `src/Provider/Moloni/Warehouse.php` and `src/Provider/CegidVendus/Warehouse.php` (bases, `toWarehouseData()`); `src/Provider/Moloni/Warehouse/Find.php`; `src/Provider/CegidVendus/Warehouse/Find.php`; `tests/Unit/Warehouse/Find/PayloadTest.php`; `tests/Feature/Warehouse/FindTest.php`; fixtures `Response/Warehouse/response_multiple.json` for both providers. Changed: `src/Actions/WarehouseAction.php` and `src/Facades/Warehouse.php` (new); `tests/Fixtures/Fixtures.php` (`warehouse()`). Docs: `docs/warehouses/README.md` and `docs/warehouses/finding-warehouses.md` (new); `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
 | 10 | `Warehouse::create` | Post-MVP | Done | Moloni done; Cegid Vendus throws `OperationNotSupportedException` until entry 13 (v1.2 migration). Added: `src/Contracts/IntegrationProvider/Warehouse/ShouldCreateWarehouse.php`; `src/Provider/Moloni/Warehouse/Create.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Warehouse/create.json`. Changed: `src/Data/WarehouseData.php` (`code`, `address`, `city`, `postalCode`, `country`, `isDefault`); `src/Actions/WarehouseAction.php`; `src/Facades/Warehouse.php`. Docs: `docs/warehouses/creating-a-warehouse.md` (new); `docs/warehouses/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md` |
-| 11 | `TaxExemption::find` | Post-MVP | Todo | Reference data |
+| 11 | `TaxExemption::find` | Post-MVP | Done | Also removes the `TaxExemptionReason` enum (breaking on Cegid Vendus). Added: `src/Contracts/IntegrationProvider/TaxExemption/ShouldFindTaxExemption.php`; `src/Data/TaxExemptionData.php`; `src/Actions/TaxExemptionAction.php`; `src/Facades/TaxExemption.php`; `src/Provider/Moloni/TaxExemption.php` and `src/Provider/CegidVendus/TaxExemption.php` (bases, `toTaxExemptionData()`); `src/Provider/Moloni/TaxExemption/Find.php`; `src/Provider/CegidVendus/TaxExemption/Find.php`; `tests/Unit/TaxExemption/Find/PayloadTest.php`; `tests/Feature/TaxExemption/FindTest.php`; fixtures `Response/TaxExemption/response_multiple.json` for both providers. Deleted: `src/Enums/Tax/TaxExemptionReason.php`. Changed: `src/Data/ItemData.php` and `src/Data/TaxData.php` (exemption reason is `?string`); `src/Provider/Moloni/Item.php`; `src/Provider/CegidVendus/Item.php`; `src/Provider/Moloni/Tax/Find.php`; `src/Provider/Moloni/Tax/Create.php`; `Item/Create.php`, `Item/Update.php` and `Invoice/Create.php` on both providers; `src/Commands/Setup/Moloni.php` (reasons from `TaxExemption::find()`); `tests/Fixtures/Fixtures.php` (`taxExemption()`); `tests/Feature/Setup/CommandTest.php`; ten Item, Invoice and Tax tests (string codes). Docs: `docs/taxes/finding-tax-exemptions.md` (new); `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/handling-errors.md`; `docs/items/creating-an-item.md`; `docs/items/getting-an-item.md`; `docs/taxes/README.md`; `docs/taxes/creating-a-tax.md`; `docs/taxes/finding-taxes.md`; `docs/getting-started.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`; `README.md`; `CLAUDE.md`; `AGENTS.md` |
 | 12 | `DocumentType::find` | Post-MVP | Todo | Reference data |
 | 13 | Cegid Vendus v1.2 migration | Post-MVP | Todo | Move the Vendus client from v1.1 to v1.2; unblocks Vendus `Warehouse::create` |
 
@@ -432,20 +432,19 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 11. TaxExemption::find
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
-**What it does:** Lists the tax exemption reasons stored in the provider.
+**What it does:** Lists the tax exemption reasons stored in the provider. The same change removes the hardcoded `TaxExemptionReason` enum: exemption reasons become provider code strings, and this operation is where the developer gets the valid codes (user decision, 2026-11-14).
 
 **Moloni:** `taxExemptions/getAll` (`global-data/tax-exemptions/getall`). Local docs: `providers-docs/moloni/dev/global-data/tax-exemptions/getall/index.html`. No required parameters. Optional `with_invisible`. Response fields: `code`, `name`, `description`, `visibility`.
 
 **Vendus:** `GET /taxes/exemptions`. v1.1 confirmed. `openapi.json` line 8300. No parameters. Response fields: `id` (e.g. `M40`), `text`, `law`.
 
 **Existing pieces to reuse:**
-- `src/Enums/Tax/TaxExemptionReason.php` (package enum of reasons)
-- `src/Actions/TaxAction.php` (`find()` pattern)
-- `src/Provider/Moloni/Tax/Find.php` (provider class pattern)
-- `src/Contracts/IntegrationProvider/Tax/ShouldFindTax.php` (contract pattern)
+- `src/Actions/WarehouseAction.php`, `src/Facades/Warehouse.php` (`find()` pattern)
+- `src/Provider/Moloni/Warehouse/Find.php`, `src/Provider/CegidVendus/Warehouse/Find.php` (provider class pattern)
+- `src/Contracts/IntegrationProvider/Warehouse/ShouldFindWarehouse.php` (contract pattern)
 
 **Field mapping draft:**
 
@@ -456,16 +455,21 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 | `with_invisible` (optional) | `with_invisible` | none | Moloni page |
 
 **Open questions:**
-1. How does the Moloni list relate to the package's `TaxExemptionReason` enum? Should the find operation return the provider's list or match the enum? **Default:** return the provider's list. Map each code to `src/Enums/Tax/TaxExemptionReason.php` when it matches; keep the provider code and description as given.
+1. How does the Moloni list relate to the package's `TaxExemptionReason` enum? Should the find operation return the provider's list or match the enum? **Default:** return the provider's list, and delete the enum and its `laws()` helper (user decision, 2026-11-14; supersedes the earlier "map each code to the enum" default). `ItemData->taxExemptionReason` and `TaxData->exemptionReason` become `?string` and carry the provider code. This is a breaking change on the released Cegid Vendus API.
 2. What is the default for `with_invisible`? **Default:** leave it at the provider default and do not expose it.
-3. What is the returned DTO? **Default:** a new `TaxExemptionData` with `code` and `description`.
+3. What is the returned DTO? **Default:** a new `TaxExemptionData` with `code` and `description`. Other provider fields (Moloni `name`, `visibility`; Vendus `law`) go to additional data.
+4. Does the package call the exemptions API during item, invoice or tax create and update? **Default:** no. The package sends the code as given and the provider rejects a bad one (user decision, 2026-11-14).
+5. What replaces `laws()`? **Default:** nothing. `ItemData->taxExemptionLaw` stays a free string; on Cegid Vendus the law text is in the additional data of `TaxExemption::find()` (user decision, 2026-11-14).
+6. Where does the Moloni setup command get the exemption reasons for the new exempt tax? **Default:** from `TaxExemption::find()`, with no filter and no default choice (user decision, 2026-11-14).
+7. Facade name? **Default:** a new `TaxExemption` facade with `find()` and a `TaxExemptionAction`, as the entry title says; provider classes under `src/Provider/*/TaxExemption/`. (Agent decision, 2026-11-14.)
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/TaxExemption/Find/` and `tests/Feature/TaxExemption/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `TaxAction::findExemptions()` (or agreed name) and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Tax/` and `src/Provider/CegidVendus/Tax/`
-- [ ] Docs page `docs/taxes/finding-tax-exemptions.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/TaxExemption/Find/` and `tests/Feature/TaxExemption/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade `TaxExemption`, `TaxExemptionAction::find()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/TaxExemption/` and `src/Provider/CegidVendus/TaxExemption/`
+- [x] `src/Enums/Tax/TaxExemptionReason.php` deleted; DTOs, provider classes, setup command, tests and docs use string codes
+- [x] Docs page `docs/taxes/finding-tax-exemptions.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 12. DocumentType::find
 

@@ -28,6 +28,7 @@ function fakeMoloniSetup(?array $taxes = null, ?array $taxInsert = null): void
         '*taxes/getAll*' => mockResponse($taxes ?? fixtures()->response()->tax()->files('response_multiple')),
         '*taxes/insert*' => mockResponse($taxInsert ?? fixtures()->response()->tax()->files('create')),
         '*measurementUnits/getAll*' => mockResponse(fixtures()->response()->unit()->files('response_multiple')),
+        '*taxExemptions/getAll*' => mockResponse(fixtures()->response()->taxExemption()->files('response_multiple')),
     ]);
 }
 

@@ -438,6 +438,35 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldF
 
 ---
 
+## TaxExemption (Facade)
+
+Entry point for listing the tax exemption reasons stored in the provider. Supported on Cegid Vendus and Moloni.
+
+```php
+use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
+```
+
+| Method                  | Return Type               | Description                                 |
+| ----------------------- | ------------------------- | ------------------------------------------- |
+| `TaxExemption::find()`  | `ShouldFindTaxExemption`  | Lists the provider's tax exemption reasons  |
+
+## ShouldFindTaxExemption Contract
+
+The interface returned by `TaxExemption::find()`. See [Finding Tax Exemptions](taxes/finding-tax-exemptions.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\TaxExemption\ShouldFindTaxExemption;
+```
+
+| Method         | Return Type  | Description                                                 |
+| -------------- | ------------ | ----------------------------------------------------------- |
+| `execute()`    | `self`       | Send the request                                            |
+| `getList()`    | `Collection` | `Collection<TaxExemptionData>` results                      |
+| `getUrl()`     | `string`     | Request URL the operation builds                            |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)        |
+
+---
+
 ## Category (Facade)
 
 Entry point for the categories stored in the provider. Supported on Cegid Vendus and Moloni.
@@ -773,8 +802,8 @@ $item = ItemData::make([
     'price' => 1500,
     'note' => 'Consulting hours',
     'tax' => ItemTax::EXEMPT,
-    'taxExemptionReason' => TaxExemptionReason::M04,
-    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'taxExemptionReason' => 'M04',
+    'taxExemptionLaw' => 'Artigo 13.º do CIVA',
     'relatedDocument' => RelatedDocumentReferenceData::make([
         'documentId' => 'FT 01P2025/1',
         'row' => 1,
@@ -796,7 +825,7 @@ $item = ItemData::make([
 | `barcode`            | `?string`                       | `null`               | EAN/barcode                                        | -                                                                         |
 | `type`               | `?ItemType`                     | `null`               | Item classification; create and Vendus invoice lines send `Product` when `null`                                | -                                                                         |
 | `tax`                | `?ItemTax`                      | `null`               | VAT rate                                           | Required for `taxExemptionReason`                                         |
-| `taxExemptionReason` | `?TaxExemptionReason`           | `null`               | VAT exemption justification                        | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
+| `taxExemptionReason` | `?string`                       | `null`               | VAT exemption reason code (see `TaxExemption::find()`) | Requires `tax === ItemTax::EXEMPT`, otherwise `ExemptionCanOnlyBeUsed...` |
 | `taxExemptionLaw`    | `?string`                       | `null`               | Legal reference for the exemption                  | Requires `taxExemptionReason`, otherwise `ExemptionLawCanOnlyBeUsed...`   |
 | `amountDiscount`     | `?int`                          | `null`               | Fixed discount in cents                            | Not sent on Moloni                                                        |
 | `percentageDiscount` | `?int`                          | `null`               | Percentage discount                                | -                                                                         |
@@ -919,7 +948,7 @@ use CsarCrr\InvoicingIntegration\Data\TaxData;
 | `rate`            | `?float`              | Rate in percent                                      |
 | `type`            | `?ItemTax`            | Kind of VAT, `null` when the tax is not VAT          |
 | `fiscalZone`      | `?string`             | Fiscal zone, e.g. `PT`, `PT-AC`, `PT-MA`             |
-| `exemptionReason` | `?TaxExemptionReason` | Exemption reason, set on 0% taxes                    |
+| `exemptionReason` | `?string`             | Exemption reason code, set on 0% taxes               |
 
 ---
 
@@ -957,6 +986,23 @@ use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 | `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni       |
 
 `address`, `city`, `postalCode` and `country` are inputs to `Warehouse::create()`; `Warehouse::find()` fills only `id` and `name`. Other fields the provider returns, and the code Moloni create generates, are available through `getAdditionalData()`.
+
+---
+
+### TaxExemptionData
+
+Represents a tax exemption reason stored in the provider.
+
+```php
+use CsarCrr\InvoicingIntegration\Data\TaxExemptionData;
+```
+
+| Property      | Type      | Description                                                   |
+| ------------- | --------- | ------------------------------------------------------------- |
+| `code`        | `?string` | Exemption reason code, e.g. `M04`, used as `taxExemptionReason` and `exemptionReason` |
+| `description` | `?string` | Provider text describing the exemption reason                 |
+
+Other fields the provider returns, such as the Cegid Vendus `law`, are available through `getAdditionalData()`.
 
 ---
 
@@ -1219,7 +1265,7 @@ Each case's `value` must have a corresponding entry in your config's `units` map
 
 ### ItemTax
 
-VAT rates for invoice items. Use `EXEMPT` with a `TaxExemptionReason` for tax-free items.
+VAT rates for invoice items. Use `EXEMPT` with an exemption reason code (see `TaxExemption::find()`) for tax-free items.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
@@ -1232,54 +1278,6 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 | `REDUCED`      | Reduced rate (6%)       |
 | `EXEMPT`       | Tax exempt              |
 | `OTHER`        | Other tax rate          |
-
-### TaxExemptionReason
-
-```php
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
-```
-
-Portuguese tax exemption codes supported by this package:
-
-| Code | Laws (`laws()[n]`)                                                                                                                                           |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M01  | 0: Art. 16.º, n.º 6, al. a) do CIVA<br>1: Art. 16.º, n.º 6, al. b) do CIVA<br>2: Art. 16.º, n.º 6, al. c) do CIVA<br>3: Art. 16.º, n.º 6, al. d) do CIVA     |
-| M02  | 0: Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho                                                                                                      |
-| M03  | 0: Não utilizar após 2022                                                                                                                                    |
-| M04  | 0: Artigo 13.º do CIVA                                                                                                                                       |
-| M05  | 0: Artigo 14.º do CIVA                                                                                                                                       |
-| M06  | 0: Artigo 15.º do CIVA                                                                                                                                       |
-| M07  | 0: Artigo 9.º do CIVA                                                                                                                                        |
-| M08  | 0: Utilizar alternativa entre M30 e M43                                                                                                                      |
-| M09  | 0: Artigo 60.º do CIVA<br>1: Artigo 72.º n.º 4 do CIVA                                                                                                       |
-| M10  | 0: Artigo 53.º n.º 1 do CIVA<br>1: Artigo 57.º do CIVA                                                                                                       |
-| M11  | 0: Decreto-Lei n.º 346/85, de 23 de agosto                                                                                                                   |
-| M12  | 0: Decreto-Lei n.º 221/85, de 3 de julho                                                                                                                     |
-| M13  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
-| M14  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
-| M15  | 0: Decreto-Lei n.º 199/96, de 18 de outubro                                                                                                                  |
-| M16  | 0: Artigo 14.º do RITI                                                                                                                                       |
-| M19  | 0: Isenções temporárias em diploma próprio                                                                                                                   |
-| M20  | 0: Artigo 59.º-D n.º 2 do CIVA                                                                                                                               |
-| M21  | 0: Artigo 72.º n.º 4 do CIVA                                                                                                                                 |
-| M25  | 0: Artigo 38.º n.º 1 alínea a) do CIVA                                                                                                                       |
-| M26  | 0: Lei n.º 17/2023                                                                                                                                           |
-| M30  | 0: Artigo 2.º n.º 1 alínea i) do CIVA                                                                                                                        |
-| M31  | 0: Artigo 2.º n.º 1 alínea j) do CIVA                                                                                                                        |
-| M32  | 0: Artigo 2.º n.º 1 alínea l) do CIVA                                                                                                                        |
-| M33  | 0: Artigo 2.º n.º 1 alínea m) do CIVA                                                                                                                        |
-| M34  | 0: Artigo 2.º n.º 1 alínea n) do CIVA                                                                                                                        |
-| M40  | 0: Artigo 6.º n.º 6 alínea a) do CIVA, a contrário                                                                                                           |
-| M41  | 0: Artigo 8.º n.º 3 do RITI                                                                                                                                  |
-| M42  | 0: Decreto-Lei n.º 21/2007, de 29 de janeiro                                                                                                                 |
-| M43  | 0: Decreto-Lei n.º 362/99, de 16 de setembro                                                                                                                 |
-| M44  | 0: Artigo 6.º do CIVA                                                                                                                                        |
-| M45  | 0: Artigo 58.º-A do CIVA                                                                                                                                     |
-| M46  | 0: Decreto-Lei n.º 19/2017, de 14 de fevereiro                                                                                                               |
-| M99  | 0: Artigo 2.º, n.º 2 do CIVA<br>1: Artigo 3.º, n.º 4 do CIVA<br>2: Artigo 3.º, n.º 6 do CIVA<br>3: Artigo 3.º, n.º 7 do CIVA<br>4: Artigo 4.º, n.º 5 do CIVA |
-
-To print the first legal reference, call `TaxExemptionReason::M04->laws()[0]`. When multiple entries
-are available, pick the index that matches your use case (e.g., `laws()[1]` for `M10` Article 57.º).
 
 ### OutputFormat
 

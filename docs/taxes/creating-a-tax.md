@@ -7,7 +7,6 @@ Use `Tax::create()` to store a new VAT tax in the provider.
 ```php
 use CsarCrr\InvoicingIntegration\Data\TaxData;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Facades\Tax;
 
 $tax = Tax::create(TaxData::make([
@@ -15,7 +14,7 @@ $tax = Tax::create(TaxData::make([
     'rate' => 0,
     'type' => ItemTax::EXEMPT,
     'fiscalZone' => 'PT',
-    'exemptionReason' => TaxExemptionReason::M07,
+    'exemptionReason' => 'M07',
 ]))->execute()->getTax();
 
 echo $tax->id; // provider-assigned ID

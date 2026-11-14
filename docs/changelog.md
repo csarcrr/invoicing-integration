@@ -4,6 +4,39 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Added: `TaxExemption::find()`
+
+`TaxExemption::find()` lists the tax exemption reasons stored in the provider, on Moloni and Cegid Vendus. Each `TaxExemptionData` has a `code` (e.g. `M04`) and a `description`.
+
+See [Finding Tax Exemptions](taxes/finding-tax-exemptions.md).
+
+### Breaking: `TaxExemptionReason` enum and `laws()` removed
+
+The `TaxExemptionReason` enum and its `laws()` helper are removed. `ItemData->taxExemptionReason` and `TaxData->exemptionReason` are now `?string` and take the provider's exemption code.
+
+> [!WARNING]
+> This affects **Cegid Vendus** as well as Moloni. Code that uses `TaxExemptionReason` cases or `laws()` must be updated. The package sends the code as given and does not check it.
+
+Before:
+
+```php
+use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+
+'taxExemptionReason' => TaxExemptionReason::M04,
+'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+```
+
+After:
+
+```php
+'taxExemptionReason' => 'M04',
+'taxExemptionLaw' => 'Artigo 13.º do CIVA',
+```
+
+Use `TaxExemption::find()` to get the codes, and write the law text yourself: on Cegid Vendus it is in `getAdditionalData()['law']`, and Moloni returns none.
+
+See [Tax Exemptions](invoices/tax-exemption.md).
+
 ### Changed: Moloni client create and update send only the fields you set
 
 Moloni `Client::create()` and `Client::update()` no longer guess values for fields you leave unset. Before, they sent `PT` as the country, `pt` as the language, `DueDateTerm::Days15` as the due date, and `0` for `discount`, `creditLimit`, `deliveryMethodId`, `payment_day`, `payment_method_id` and `salesman_id`. Now those fields are not sent. `Client::update()` no longer overwrites stored values with these defaults.

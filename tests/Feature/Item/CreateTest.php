@@ -5,7 +5,6 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
@@ -67,7 +66,7 @@ test('reads an item created as disabled', function (Provider $provider) {
 })->with('providers');
 
 test('reads the exemption law only from cegid vendus', function (Provider $provider) {
-    $law = TaxExemptionReason::M40->laws()[0];
+    $law = 'Artigo 6.º n.º 6 alínea a) do CIVA, a contrário';
 
     fakeItemCreate($provider, match ($provider) {
         Provider::CEGID_VENDUS => ['tax_id' => 'ISE', 'tax_exemption' => 'M40', 'tax_exemption_law' => $law],
@@ -88,12 +87,12 @@ test('reads the exemption law only from cegid vendus', function (Provider $provi
         'name' => 'Item Title',
         'category' => CategoryData::make(['id' => 1]),
         'tax' => ItemTax::EXEMPT,
-        'taxExemptionReason' => TaxExemptionReason::M40,
+        'taxExemptionReason' => 'M40',
         'taxExemptionLaw' => $law,
     ]))->execute()->getItem();
 
     expect($data->tax)->toBe(ItemTax::EXEMPT)
-        ->and($data->taxExemptionReason)->toBe(TaxExemptionReason::M40)
+        ->and($data->taxExemptionReason)->toBe('M40')
         ->and($data->taxExemptionLaw)->toBe(match ($provider) {
             Provider::CEGID_VENDUS => $law,
             Provider::MOLONI => null,

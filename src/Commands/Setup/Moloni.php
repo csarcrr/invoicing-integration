@@ -9,11 +9,11 @@ use CsarCrr\InvoicingIntegration\Data\CompanyData;
 use CsarCrr\InvoicingIntegration\Data\TaxData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Company;
 use CsarCrr\InvoicingIntegration\Facades\Tax;
+use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -119,14 +119,10 @@ class Moloni extends ProviderSetup
 
     protected function createExemptTax(Command $command): ?TaxData
     {
-        $reasons = collect(TaxExemptionReason::cases())
-            ->filter(fn (TaxExemptionReason $reason) => (int) substr($reason->value, 1) <= 16)
-            ->map(fn (TaxExemptionReason $reason) => $reason->value)
-            ->values()
-            ->all();
+        $reasons = TaxExemption::find()->execute()->getList()->pluck('code')->all();
 
         /** @var string $reason */
-        $reason = $command->choice('Exemption reason for the new exempt tax', $reasons, TaxExemptionReason::M07->value);
+        $reason = $command->choice('Exemption reason for the new exempt tax', $reasons);
 
         try {
             return Tax::create(TaxData::make([
@@ -134,7 +130,7 @@ class Moloni extends ProviderSetup
                 'rate' => 0,
                 'type' => ItemTax::EXEMPT,
                 'fiscalZone' => $this->fiscalZone,
-                'exemptionReason' => TaxExemptionReason::from($reason),
+                'exemptionReason' => $reason,
             ]))->execute()->getTax();
         } catch (RequestFailedException $exception) {
             return $this->missing($command, "Moloni rejected the exempt tax ({$exception->getMessage()}). Create a 0% exempt tax in Moloni.");

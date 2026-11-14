@@ -7,7 +7,6 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
@@ -82,8 +81,8 @@ it('transforms to provider payload with correct tax type', function (Provider $p
     ];
 
     if ($taxType === ItemTax::EXEMPT) {
-        $attributes['taxExemptionReason'] = TaxExemptionReason::M04;
-        $attributes['taxExemptionLaw'] = TaxExemptionReason::M04->laws()[0];
+        $attributes['taxExemptionReason'] = 'M04';
+        $attributes['taxExemptionLaw'] = 'Artigo 13.º do CIVA';
     }
 
     $invoice = Invoice::create(InvoiceData::make([
@@ -176,7 +175,7 @@ it('fails when attempting to use tax exemption with non-exempt tax', function ()
     ItemData::from([
         'reference' => 'reference-1',
         'tax' => ItemTax::NORMAL,
-        'taxExemptionReason' => TaxExemptionReason::M04,
+        'taxExemptionReason' => 'M04',
     ]);
 })->throws(ExemptionCanOnlyBeUsedWithExemptTaxException::class);
 
@@ -184,6 +183,6 @@ it('fails when attempting to set tax exemption law without exemption reason', fu
     ItemData::from([
         'reference' => 'reference-1',
         'tax' => ItemTax::EXEMPT,
-        'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+        'taxExemptionLaw' => 'Artigo 13.º do CIVA',
     ]);
 })->throws(ExemptionLawCanOnlyBeUsedWithExemptionException::class);

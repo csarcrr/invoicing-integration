@@ -85,6 +85,7 @@ Features for managing the taxes stored in the provider.
 | ----------- | ------------ | ------ | --------------- |
 | Create Tax  | ❌           | ✅     | ❌              |
 | List Taxes  | ❌           | ✅     | ❌              |
+| List Tax Exemptions | ✅    | ✅     | ❌              |
 
 ## Category Management
 

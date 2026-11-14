@@ -58,7 +58,7 @@ The `Default` column shows what is sent when a field is omitted on create. `Item
 | `description`  | `?string`       | `null`              | Longer description                              |
 | `price`        | `?int`          | `null`              | Gross price in cents (e.g. `2999` = €29.99)     |
 | `tax`          | `?ItemTax`      | `null`              | VAT rate                                        |
-| `taxExemptionReason` | `?TaxExemptionReason` | `null`  | Exemption reason, only with `tax` `ItemTax::EXEMPT` |
+| `taxExemptionReason` | `?string`       | `null`  | Exemption reason code (see [Finding Tax Exemptions](../taxes/finding-tax-exemptions.md)), only with `tax` `ItemTax::EXEMPT` |
 | `taxExemptionLaw`    | `?string`       | `null`  | Legal reference for the exemption. Cegid Vendus only; Moloni does not store it |
 | `type`         | `?ItemType`     | `ItemType::Product` | Product or service classification               |
 | `barcode`      | `?string`       | `null`              | EAN/barcode                                     |

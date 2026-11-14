@@ -212,7 +212,7 @@ $item = ItemData::make([
     'reference' => 'PRODUCT',
     'price' => 1000,
     'tax' => ItemTax::NORMAL,
-    'taxExemptionReason' => TaxExemptionReason::M04,  // Throws!
+    'taxExemptionReason' => 'M04',  // Throws!
 ]);
 
 // Right: use EXEMPT tax rate
@@ -220,8 +220,8 @@ $item = ItemData::make([
     'reference' => 'PRODUCT',
     'price' => 1000,
     'tax' => ItemTax::EXEMPT,
-    'taxExemptionReason' => TaxExemptionReason::M04,
-    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'taxExemptionReason' => 'M04',
+    'taxExemptionLaw' => 'Artigo 13.º do CIVA',
 ]);
 ```
 

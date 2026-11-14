@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
@@ -85,12 +84,12 @@ it('sends the price without tax when both change to exempt', function () {
 it('sends the exemption reason', function (Provider $provider) {
     fakeItemUpdate($provider);
 
-    $law = TaxExemptionReason::M04->laws()[0];
+    $law = 'Artigo 13.º do CIVA';
 
     $payload = Item::update(ItemData::make([
         'id' => 1542,
         'tax' => ItemTax::EXEMPT,
-        'taxExemptionReason' => TaxExemptionReason::M04,
+        'taxExemptionReason' => 'M04',
         'taxExemptionLaw' => $law,
     ]))->getPayload();
 

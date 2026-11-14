@@ -172,7 +172,7 @@ class Create extends Item implements ShouldCreateItem
             return;
         }
 
-        $this->payload->put('exemption_reason', $this->data->taxExemptionReason->value);
+        $this->payload->put('exemption_reason', $this->data->taxExemptionReason);
     }
 
     /**
