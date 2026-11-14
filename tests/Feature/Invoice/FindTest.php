@@ -60,4 +60,4 @@ test('returns an empty list when cegid vendus has no invoices', function () {
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
     expect(Invoice::find()->execute()->getList())->toBeEmpty();
-});
+})->note('todo: discover the reason for this to be a vendus specific test only');
