@@ -51,6 +51,7 @@
 
 - **Units**
     - [Overview](units/README.md)
+    - [Creating a Unit](units/creating-a-unit.md)
     - [Finding Units](units/finding-units.md)
 
 - **Warehouses**

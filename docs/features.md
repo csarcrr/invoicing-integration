@@ -100,11 +100,12 @@ Features for managing the categories stored in the provider.
 
 ## Unit Management
 
-Features for listing the units stored in the provider.
+Features for managing the units stored in the provider.
 
-|            | Cegid Vendus | Moloni | Invoice Express |
-| ---------- | ------------ | ------ | --------------- |
-| List Units | ✅           | ✅     | ❌              |
+|             | Cegid Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Create Unit | ✅           | ✅     | ❌              |
+| List Units  | ✅           | ✅     | ❌              |
 
 ## Warehouse Management
 

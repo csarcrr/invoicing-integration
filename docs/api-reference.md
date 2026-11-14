@@ -369,15 +369,31 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldFindTax
 
 ## Unit (Facade)
 
-Entry point for listing the units stored in the provider. Supported on Cegid Vendus and Moloni. Not to be confused with the [`Unit` enum](#unit).
+Entry point for the units stored in the provider. `find()` and `create()` are supported on Cegid Vendus and Moloni. Not to be confused with the [`Unit` enum](#unit).
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Unit;
 ```
 
-| Method         | Return Type      | Description                |
-| -------------- | ---------------- | -------------------------- |
-| `Unit::find()` | `ShouldFindUnit` | Lists the provider's units |
+| Method                         | Return Type      | Description                |
+| ------------------------------ | ---------------- | -------------------------- |
+| `Unit::create(UnitData $unit)` | `ShouldCreateUnit` | Creates a new unit builder instance |
+| `Unit::find()`                 | `ShouldFindUnit` | Lists the provider's units |
+
+## ShouldCreateUnit Contract
+
+The interface returned by `Unit::create()`. See [Creating a Unit](units/creating-a-unit.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldCreateUnit;
+```
+
+| Method      | Return Type | Description                                                                 |
+| ----------- | ----------- | --------------------------------------------------------------------------- |
+| `execute()` | `self`      | Send the create request and populate the returned `UnitData`; throws `RequestFailedException` if the provider rejects the unit |
+| `getUnit()` | `UnitData`  | The created unit, with the provider-assigned `id`                           |
+| `getUrl()`  | `string`    | The request URL the unit is sent to                                         |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (`title` on Cegid Vendus; `name` and `short_name` on Moloni) |
 
 ## ShouldFindUnit Contract
 

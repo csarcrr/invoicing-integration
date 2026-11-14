@@ -22,12 +22,14 @@ foreach (Unit::find()->execute()->getList() as $unit) {
 
 ## Available operations
 
-| Operation  | Docs                          |
-| ---------- | ----------------------------- |
-| Find units | [Finding Units](finding-units.md) |
+| Operation     | Docs                                          |
+| ------------- | --------------------------------------------- |
+| Create a unit | [Creating a Unit](creating-a-unit.md)         |
+| Find units    | [Finding Units](finding-units.md)             |
 
 ## Provider support
 
-| Operation  | Cegid Vendus | Moloni | Invoice Express |
-| ---------- | ------------ | ------ | --------------- |
-| Find Units | ✅           | ✅     | ❌              |
+| Operation   | Cegid Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Create Unit | ✅           | ✅     | ❌              |
+| Find Units  | ✅           | ✅     | ❌              |

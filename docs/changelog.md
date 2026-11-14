@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Added: `Unit::create()`
+
+`Unit::create()` creates a unit on Moloni and Cegid Vendus. `name` is required. On Moloni, `shortName` is sent as `short_name` and Moloni requires it, so set it. Cegid Vendus takes only the name: `shortName` is ignored.
+
+See [Creating a Unit](units/creating-a-unit.md).
+
 ### Added: `Category::update()`
 
 `Category::update()` updates a stored category on Moloni and Cegid Vendus. The `id` is required. On Moloni, `parentId` is sent only when set, and Moloni requires it, so set it (use `0` for a top-level category).

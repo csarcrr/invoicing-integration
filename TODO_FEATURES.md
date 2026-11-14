@@ -39,7 +39,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 13 | Cegid Vendus v1.2 migration | Post-MVP | Done | Unblocks entries 14 to 17. Changed: `src/Configuration/HttpConfiguration.php` (base URL v1.2); `src/Provider/CegidVendus/Item.php`, `Item/Create.php`, `Item/Update.php` (nested `prices`, `tax`, `stock`; `taxPayload()` added); `src/Enums/Providers/SupportedCegidVendusProperties.php`; `src/Provider/CegidVendus/Client.php` (removed the `date` mapping, v1.2 does not return it); Vendus fixtures `Response/Item/*.json`, `Request/Item/create.json`, `Response/Client/response.json` and `response_multiple.json`; `tests/Unit/Item/Create/ProviderData/PayloadTest.php` and `TaxTest.php`; `tests/Unit/Item/Update/ProviderData/PayloadTest.php` and `TaxTest.php`; `tests/Feature/Item/CreateTest.php`, `FindTest.php`, `GetTest.php`; `tests/Feature/Client/FindTest.php`. Also in this change, a fix to entry 11: Cegid Vendus `law` is a list (`Response/TaxExemption/response_multiple.json`, `tests/Feature/TaxExemption/FindTest.php`, docs). Docs: `docs/changelog.md`; `docs/items/getting-an-item.md`; `docs/items/updating-an-item.md`; `docs/clients/finding-clients.md`; `docs/clients/getting-a-client.md`; `docs/api-reference.md`; `docs/warehouses/creating-a-warehouse.md`; `docs/categories/creating-a-category.md`; `docs/invoices/tax-exemption.md`; `docs/invoices/creating-an-invoice.md`; `docs/taxes/finding-tax-exemptions.md`; `CLAUDE.md` |
 | 14 | `Warehouse::create` on Cegid Vendus | Post-MVP | Done | v1.2 `POST /stores`. Added: `src/Provider/CegidVendus/Warehouse/Create.php`; fixture `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Warehouse/create.json`. Changed: `src/Actions/WarehouseAction.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`. Docs: `docs/warehouses/creating-a-warehouse.md`; `docs/warehouses/README.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`. Not confirmed in the sandbox: no store was created, because the API has no store delete |
 | 15 | `Category::update` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldUpdateCategory.php`; `src/Provider/CegidVendus/Category/Update.php`; `src/Provider/Moloni/Category/Update.php`; `tests/Unit/Category/Update/PayloadTest.php`; `tests/Feature/Category/UpdateTest.php`. Changed: `src/Actions/CategoryAction.php`; `src/Facades/Category.php`; `tests/Unit/Category/StructureTest.php`. Fixtures reuse the existing `Response/Category/create.json` for both providers. Docs: `docs/categories/updating-a-category.md` (new); `docs/categories/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
-| 16 | `Unit::create` | Post-MVP | Todo | Vendus `POST /products/units`; unblocked by entry 13. |
+| 16 | `Unit::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Unit/ShouldCreateUnit.php`; `src/Provider/Moloni/Unit.php` and `src/Provider/CegidVendus/Unit.php` (bases); `src/Provider/Moloni/Unit/Create.php`; `src/Provider/CegidVendus/Unit/Create.php`; `tests/Unit/Unit/Create/PayloadTest.php`; `tests/Feature/Unit/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Unit/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Unit/create.json`. Changed: `src/Actions/UnitAction.php`; `src/Facades/Unit.php`; `tests/Unit/Unit/StructureTest.php`. Docs: `docs/units/creating-a-unit.md` (new); `docs/units/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
 | 17 | `DueDate::find` on Cegid Vendus | Post-MVP | Todo | Vendus `GET /documents/duedates`; unblocked by entry 13. |
 
 ## Backlog
@@ -594,8 +594,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 16. Unit::create
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Creates a measurement unit on both providers. Needs entry 13.
 
@@ -609,10 +609,10 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 1. Moloni requires `short_name`. Which `UnitData` field carries it, and what does Cegid Vendus do with it? `UnitData` already has `shortName`, and Vendus `POST /products/units` takes only `title`, `decimal` and `default`. **Default:** `shortName` to Moloni `short_name`; not sent on Cegid Vendus.
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Unit/Create/` and `tests/Feature/Unit/`, using the `providers` dataset
-- [ ] Facade method, `UnitAction::create()`, contract and both implementations added
-- [ ] Docs page `docs/units/creating-a-unit.md` added; `docs/_sidebar.md`, `docs/features.md` and `docs/api-reference.md` updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Unit/Create/` and `tests/Feature/Unit/`, using the `providers` dataset
+- [x] Facade method, `UnitAction::create()`, contract and both implementations added
+- [x] Docs page `docs/units/creating-a-unit.md` added; `docs/_sidebar.md`, `docs/features.md` and `docs/api-reference.md` updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 17. DueDate::find on Cegid Vendus
 
