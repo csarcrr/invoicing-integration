@@ -64,3 +64,15 @@
     - this is a problem because, stores in vendus, are registers and these registers are tied to the subscription
         - this means that creating a register will create a new item for the subscription which will not work
         - and this is a problem because the API is not stating the type of register anywhere - investigate if it accepts `type`
+
+## Gaps
+
+Operations one provider supports and the other does not expose yet.
+
+- Cegid Vendus has an endpoint, the package does not use it yet:
+    - `PaymentMethod::create`: `POST /documents/paymentmethods`
+    - `Tax::find`: `GET /taxes` (`providers-docs/vendus/openapi.json` line 3606)
+    - `Company::find`: `GET /account` (`providers-docs/vendus/openapi.json` line 1010), mapping unverified
+- Cegid Vendus has no endpoint, so these cannot be implemented until Vendus adds one:
+    - `DueDate::create`
+    - `Tax::create`
