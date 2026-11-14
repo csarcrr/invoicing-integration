@@ -1,0 +1,28 @@
+{
+    "valid": 1,
+    "document_id": 123456,
+    "number": 12,
+    "date": "2026-11-10",
+    "status": 1,
+    "document_type": {
+        "document_type_id": 2,
+        "saft_code": "FR"
+    },
+    "document_set": {
+        "document_set_id": 1,
+        "name": "A"
+    },
+    "taxes_value": 5.61,
+    "net_value": 30.00,
+    "rsa_hash": "g9jP",
+    "products": [
+        {
+            "document_product_id": 3383967992,
+            "product_id": 243055047,
+            "reference": "reference-1",
+            "name": "Batata",
+            "price": 24.39,
+            "qty": 1
+        }
+    ]
+}

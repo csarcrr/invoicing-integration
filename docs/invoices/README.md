@@ -50,6 +50,7 @@ $invoiceData = InvoiceData::make([
 - [Creating an Invoice](creating-an-invoice.md) — Full invoices with clients, items, discounts, and payments
 - [Creating a Receipt (RG)](creating-a-RG-for-an-invoice.md) — Confirming payment for a deferred invoice
 - [Creating a Credit Note (NC)](creating-a-nc-invoice.md) — Handling refunds and returns
+- [Getting an Invoice](getting-an-invoice.md) — Reading back a stored document by its provider id
 - [Tax Exemptions](tax-exemption.md) — Configuring VAT exemptions with the correct M-codes
 - [Output Formats](outputting-invoice.md) — Saving PDFs or printing to thermal printers
 - [Using Invoice Data](using-invoice-data.md) — Working with the response after issuing

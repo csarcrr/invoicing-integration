@@ -1,0 +1,26 @@
+{
+    "id": 123456,
+    "type": "FR",
+    "number": "FR 01P2026/12",
+    "date": "2026-11-10",
+    "system_time": "2026-11-10 10:15:32",
+    "local_time": "2026-11-10 10:15:32",
+    "subtype": "G",
+    "tax_authority_id": "10000708560",
+    "date_supply": "2026-11-10",
+    "amount_gross": "30.00",
+    "amount_net": "24.39",
+    "hash": "g9jP",
+    "atcud": "JFD5B7DW-12",
+    "items": [
+        {
+            "id": 243055047,
+            "reference": "reference-1",
+            "title": "Batata",
+            "gross_price": 24.39,
+            "qty": 1,
+            "tax_id": "NOR",
+            "type_id": "P"
+        }
+    ]
+}

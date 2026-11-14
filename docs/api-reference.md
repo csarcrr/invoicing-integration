@@ -457,6 +457,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 | Method                                  | Return Type     | Description                                          |
 | --------------------------------------- | --------------- | ---------------------------------------------------- |
 | `Invoice::create(InvoiceData $invoice)` | `ShouldCreateInvoice` | Creates a builder seeded with the provided DTO state |
+| `Invoice::get(InvoiceData $invoice)`   | `ShouldGetInvoice`    | Creates a retrieval instance for a stored document   |
 
 > [!TIP]
 > The `Invoice` facade resolves the underlying `InvoiceAction` class from the service container. Prefer the facade for day-to-day usage. Resolve `InvoiceAction` directly only when you need to inject the class (e.g., in constructors) or swap the implementation during testing.
@@ -480,6 +481,19 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCre
 > Need to change values after instantiating your DTO? Mutate the
 > `InvoiceData` instance (its properties are public) before passing it to
 > `Invoice::create()`, or create a new DTO via `InvoiceData::from([...])`.
+
+## ShouldGetInvoice Contract
+
+The contract returned by `Invoice::get()`. See [Getting an Invoice](invoices/getting-an-invoice.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoice;
+```
+
+| Method          | Return Type   | Description                                                   | Throws                                                                   |
+| --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if no document has the ID) |
+| `getInvoice()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
 
 ---
 

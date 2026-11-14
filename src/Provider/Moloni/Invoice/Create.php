@@ -24,11 +24,11 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotFindCustome
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentMethodIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
-use CsarCrr\InvoicingIntegration\Provider\Invoice;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as FindClient;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentReturn\Create as CreatePaymentReturn;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
@@ -112,18 +112,6 @@ class Create extends Invoice implements ShouldCreateInvoice
         ]))->execute()->getId();
 
         $this->data->additional(['payment_return_id' => $id]);
-    }
-
-    /**
-     * @param  array<string, mixed>  $document
-     */
-    protected function sequence(array $document): string
-    {
-        $type = $document['document_type']['saft_code'] ?? '';
-        $set = $document['document_set']['name'] ?? '';
-        $number = $document['number'] ?? 0;
-
-        return "{$type} {$set}/{$number}";
     }
 
     /**

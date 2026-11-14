@@ -103,6 +103,14 @@ Features for listing the units stored in the provider.
 | ---------- | ------------ | ------ | --------------- |
 | List Units | ✅           | ✅     | ❌              |
 
+## Invoice Management
+
+Features for reading the invoices stored in the provider.
+
+|             | Cegid Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Get Invoice | ✅           | ✅     | ❌              |
+
 ## Invoicing
 
 Features that apply when issuing an Invoicing.
