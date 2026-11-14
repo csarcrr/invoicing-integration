@@ -17,6 +17,6 @@ it('is an instance of the correct when getting a category', function (Provider $
     expect(Category::get(CategoryData::make(['id' => 1])))->toBeInstanceOf(ShouldGetCategory::class);
 })->with('providers');
 
-it('is an instance of the correct when updating a category', function (Provider $provider) {
+it('is an instance of the correct when updating a category', function () {
     expect(Category::update(CategoryData::make(['id' => 1])))->toBeInstanceOf(ShouldUpdateCategory::class);
 })->with('providers');
