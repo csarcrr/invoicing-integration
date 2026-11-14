@@ -10,8 +10,9 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 use CsarCrr\InvoicingIntegration\Data\DueDateData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\OperationNotSupportedException;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Create;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\DueDate\Find as VendusFind;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Create as MoloniCreate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as MoloniFind;
 
 final class DueDateAction
 {
@@ -23,15 +24,15 @@ final class DueDateAction
     {
         return match ($this->provider->getProvider()) {
             Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
-            Provider::MOLONI => new Create($dueDate),
+            Provider::MOLONI => new MoloniCreate($dueDate),
         };
     }
 
     public function find(): ShouldFindDueDate
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
-            Provider::MOLONI => new Find,
+            Provider::CEGID_VENDUS => new VendusFind,
+            Provider::MOLONI => new MoloniFind,
         };
     }
 }

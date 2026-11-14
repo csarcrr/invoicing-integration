@@ -18,11 +18,6 @@ it('is an instance of the correct when creating a due date', function (Provider 
     };
 })->with('providers');
 
-it('is an instance of the correct when finding due dates', function (Provider $provider) {
-    $find = fn () => DueDate::find();
-
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($find())->toBeInstanceOf(ShouldFindDueDate::class),
-    };
+it('is an instance of the correct when finding due dates', function () {
+    expect(DueDate::find())->toBeInstanceOf(ShouldFindDueDate::class);
 })->with('providers');

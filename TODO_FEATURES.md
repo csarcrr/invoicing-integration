@@ -40,7 +40,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 14 | `Warehouse::create` on Cegid Vendus | Post-MVP | Done | v1.2 `POST /stores`. Added: `src/Provider/CegidVendus/Warehouse/Create.php`; fixture `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Warehouse/create.json`. Changed: `src/Actions/WarehouseAction.php`; `tests/Unit/Warehouse/StructureTest.php`; `tests/Unit/Warehouse/Create/PayloadTest.php`; `tests/Feature/Warehouse/CreateTest.php`. Docs: `docs/warehouses/creating-a-warehouse.md`; `docs/warehouses/README.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md`. Not confirmed in the sandbox: no store was created, because the API has no store delete |
 | 15 | `Category::update` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Category/ShouldUpdateCategory.php`; `src/Provider/CegidVendus/Category/Update.php`; `src/Provider/Moloni/Category/Update.php`; `tests/Unit/Category/Update/PayloadTest.php`; `tests/Feature/Category/UpdateTest.php`. Changed: `src/Actions/CategoryAction.php`; `src/Facades/Category.php`; `tests/Unit/Category/StructureTest.php`. Fixtures reuse the existing `Response/Category/create.json` for both providers. Docs: `docs/categories/updating-a-category.md` (new); `docs/categories/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
 | 16 | `Unit::create` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Unit/ShouldCreateUnit.php`; `src/Provider/Moloni/Unit.php` and `src/Provider/CegidVendus/Unit.php` (bases); `src/Provider/Moloni/Unit/Create.php`; `src/Provider/CegidVendus/Unit/Create.php`; `tests/Unit/Unit/Create/PayloadTest.php`; `tests/Feature/Unit/CreateTest.php`; fixtures `tests/Fixtures/IntegrationProvider/CegidVendus/Response/Unit/create.json` and `tests/Fixtures/IntegrationProvider/Moloni/Response/Unit/create.json`. Changed: `src/Actions/UnitAction.php`; `src/Facades/Unit.php`; `tests/Unit/Unit/StructureTest.php`. Docs: `docs/units/creating-a-unit.md` (new); `docs/units/README.md`; `docs/_sidebar.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
-| 17 | `DueDate::find` on Cegid Vendus | Post-MVP | Todo | Vendus `GET /documents/duedates`; unblocked by entry 13. |
+| 17 | `DueDate::find` on Cegid Vendus | Post-MVP | Done | Added: `src/Provider/CegidVendus/DueDate.php` (base); `src/Provider/CegidVendus/DueDate/Find.php`; fixture `tests/Fixtures/IntegrationProvider/CegidVendus/Response/DueDate/response_multiple.json`. Changed: `src/Actions/DueDateAction.php`; `tests/Feature/DueDate/FindTest.php`; `tests/Unit/DueDate/Find/PayloadTest.php`; `tests/Unit/DueDate/StructureTest.php`. Docs: `docs/due-dates/finding-due-dates.md`; `docs/due-dates/README.md`; `docs/features.md`; `docs/api-reference.md`; `docs/changelog.md` |
 
 ## Backlog
 
@@ -617,8 +617,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 17. DueDate::find on Cegid Vendus
 
 **Priority:** Post-MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Adds the Cegid Vendus implementation of `DueDate::find` (Moloni has it). Needs entry 13.
 
@@ -631,10 +631,10 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 **Existing pieces to reuse:** `src/Provider/Moloni/DueDate/Find.php`; the `DueDate` action and facade.
 
 **Done when:**
-- [ ] Pest tests use the `providers` dataset for find, with a Vendus fixture
-- [ ] Vendus implementation added under `src/Provider/CegidVendus/DueDate/`; action updated
-- [ ] `docs/due-dates/` pages, `docs/features.md` and `docs/api-reference.md` updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests use the `providers` dataset for find, with a Vendus fixture
+- [x] Vendus implementation added under `src/Provider/CegidVendus/DueDate/`; action updated
+- [x] `docs/due-dates/` pages, `docs/features.md` and `docs/api-reference.md` updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ## Single-provider gaps
 

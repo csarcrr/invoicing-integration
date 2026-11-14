@@ -4,6 +4,12 @@ Changes that need action when upgrading.
 
 ## Unreleased
 
+### Added: `DueDate::find()` on Cegid Vendus
+
+`DueDate::find()` now lists the due dates on Cegid Vendus, as it already did on Moloni. Each `DueDateData` has a `name` and a `days` count (`0` for the provider's `now` term). Cegid Vendus has no due date ID, so `id` is `null`; the provider key is kept in additional data as `key`.
+
+See [Finding Due Dates](due-dates/finding-due-dates.md).
+
 ### Added: `Unit::create()`
 
 `Unit::create()` creates a unit on Moloni and Cegid Vendus. `name` is required. On Moloni, `shortName` is sent as `short_name` and Moloni requires it, so set it. Cegid Vendus takes only the name: `shortName` is ignored.

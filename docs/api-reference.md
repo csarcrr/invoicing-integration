@@ -222,7 +222,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldDelete
 
 ## DueDate
 
-Entry point for managing due dates (payment terms). Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for managing due dates (payment terms). `find()` is supported on Moloni and Cegid Vendus; `create()` is supported on Moloni only, and throws `OperationNotSupportedException` on Cegid Vendus.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\DueDate;
