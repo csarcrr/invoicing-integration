@@ -34,7 +34,7 @@ test('cegid vendus maps the atcud to atcudHash and moloni leaves it null', funct
         Provider::CEGID_VENDUS => expect($invoice->atcudHash)->toBe('JFD5B7DW-12'),
         Provider::MOLONI => expect($invoice->atcudHash)->toBeNull(),
     };
-})->with('providers');
+})->with('providers')->note('todo: verify if moloni has an equivalent to atcud');
 
 test('supported properties are not filled in additional data', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
