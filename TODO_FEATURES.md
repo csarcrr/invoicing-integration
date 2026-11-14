@@ -26,7 +26,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | --- | --- | --- | --- | --- |
 | 1 | `Invoice::get` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoice.php`; `src/Provider/Moloni/Invoice.php` (base, `sequence()` moved from `Moloni/Invoice/Create.php`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php`; `tests/Unit/Invoice/Get/IdTest.php`; `tests/Feature/Invoice/GetTest.php`; fixtures `Response/Invoice/get.json` for both providers. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`; `src/Provider/Moloni/Invoice/Create.php` (extends the new base). Docs: `docs/invoices/getting-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md` (new "Invoice Management" table); `docs/api-reference.md` |
 | 2 | `Invoice::pdf` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoicePdf.php`; `src/Provider/CegidVendus/Invoice/Pdf.php`; `src/Provider/Moloni/Invoice/Pdf.php`; `tests/Unit/Invoice/Pdf/IdTest.php`; `tests/Feature/Invoice/PdfTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/pdf_link.json`. Changed: `src/Data/OutputData.php` (`url`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/outputting-invoice.md`; `docs/features.md`; `docs/api-reference.md` |
-| 3 | `Invoice::cancel` | MVP | Todo | Returns `void`; Vendus status `A` |
+| 3 | `Invoice::cancel` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldCancelInvoice.php`; `src/Provider/CegidVendus/Invoice/Cancel.php`; `src/Provider/Moloni/Invoice/Cancel.php`; `tests/Unit/Invoice/Cancel/PayloadTest.php`; `tests/Feature/Invoice/CancelTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/cancel.json`. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/cancelling-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 4 | `Invoice::find` | Post-MVP | Todo | List documents |
 | 5 | `Client::update` | Post-MVP | Todo | CRUD completeness; open question on how the caller passes Moloni `number` |
 | 6 | `Client::delete` | Post-MVP | Todo | CRUD completeness |
@@ -128,8 +128,8 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 ### 3. Invoice::cancel
 
 **Priority:** MVP
-**Package status:** Missing
-**Status:** Todo
+**Package status:** Implemented
+**Status:** Done
 
 **What it does:** Sets an existing document to the cancelled state.
 
@@ -155,13 +155,14 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 1. Which Vendus `status` value cancels a document? **Default:** `A` (resolved from the v1.1 spec enum, `requests.doc` and the old `documents.doc`).
 2. Should `observation` be a method argument or a DTO field? **Default:** a DTO field. Vendus has no equivalent, so it is dropped on Vendus per the unsupported-field rule.
 3. Should the returned object be `InvoiceData` with the new status, or the provider response? **Default:** return nothing (`void`). Failures surface as the usual exceptions. (User decision, 2026-11-14.)
+4. Which DTO field carries `observation`, and how is `void` expressed? **Default:** reuse `InvoiceData->notes` (no new field); sent only when set. The contract `ShouldCancelInvoice` declares `execute(): void` and does not extend `ShouldExecute`. A Moloni response without `valid: 1` throws `RequestFailedException` with the provider's `message`, as entry 6 does. (Agent decision, 2026-11-14.)
 
 **Done when:**
-- [ ] Pest tests in `tests/Unit/Invoice/Cancel/` and `tests/Feature/Invoice/`, using the `providers` dataset, with fixtures for both providers
-- [ ] Facade method, `InvoiceAction::cancel()` and contract added
-- [ ] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Invoice/` and `src/Provider/CegidVendus/Invoice/`
-- [ ] Docs page `docs/invoices/cancelling-an-invoice.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
-- [ ] Board and entry statuses set to `Done`, with Notes filled
+- [x] Pest tests in `tests/Unit/Invoice/Cancel/` and `tests/Feature/Invoice/`, using the `providers` dataset, with fixtures for both providers
+- [x] Facade method, `InvoiceAction::cancel()` and contract added
+- [x] Moloni and Cegid Vendus implementations added under `src/Provider/Moloni/Invoice/` and `src/Provider/CegidVendus/Invoice/`
+- [x] Docs page `docs/invoices/cancelling-an-invoice.md` added; `docs/_sidebar.md` and the `docs/features.md` matrix updated
+- [x] Board and entry statuses set to `Done`, with Notes filled
 
 ### 4. Invoice::find
 

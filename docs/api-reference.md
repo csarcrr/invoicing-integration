@@ -459,6 +459,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 | `Invoice::create(InvoiceData $invoice)` | `ShouldCreateInvoice` | Creates a builder seeded with the provided DTO state |
 | `Invoice::get(InvoiceData $invoice)`   | `ShouldGetInvoice`    | Creates a retrieval instance for a stored document   |
 | `Invoice::pdf(InvoiceData $invoice)`   | `ShouldGetInvoicePdf` | Creates a retrieval instance for the PDF of a stored document |
+| `Invoice::cancel(InvoiceData $invoice)` | `ShouldCancelInvoice` | Creates a cancellation instance for a stored document |
 
 > [!TIP]
 > The `Invoice` facade resolves the underlying `InvoiceAction` class from the service container. Prefer the facade for day-to-day usage. Resolve `InvoiceAction` directly only when you need to inject the class (e.g., in constructors) or swap the implementation during testing.
@@ -508,6 +509,18 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing), `RequestFailedException` (Moloni, if no PDF link is returned) |
 | `getOutput()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
+
+## ShouldCancelInvoice Contract
+
+The contract returned by `Invoice::cancel()`. See [Cancelling an Invoice](invoices/cancelling-an-invoice.md).
+
+```php
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCancelInvoice;
+```
+
+| Method      | Return Type | Description                                                   | Throws                                                                   |
+| ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `execute()` | `void`      | Send the cancellation request; returns nothing                | `InvalidArgumentException` (if ID missing), `RequestFailedException` (if the provider rejects the cancellation) |
 
 ---
 

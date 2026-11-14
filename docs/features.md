@@ -111,6 +111,7 @@ Features for reading the invoices stored in the provider.
 | ----------- | ------------ | ------ | --------------- |
 | Get Invoice | ✅           | ✅     | ❌              |
 | Get Invoice PDF | ✅       | ✅     | ❌              |
+| Cancel Invoice | ✅       | ✅     | ❌              |
 
 ## Invoicing
 
