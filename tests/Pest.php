@@ -50,7 +50,7 @@ uses()->group('TaxTestingGroup')->in('Unit/Tax', 'Feature/Tax');
 uses()->group('UnitTestingGroup')->in('Unit/Unit', 'Feature/Unit');
 uses()->group('SetupTestingGroup')->in('Feature/Setup');
 uses()->group('ItemStockTestingGroup')->in('Unit/ItemStock', 'Feature/ItemStock');
-uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Unit/HttpRequestTest.php');
+uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Feature/HttpRequestTest.php', 'Feature/Providers/RequestAuthenticationTest.php', 'Feature/Providers/Moloni/AuthenticationTest.php', 'Feature/Providers/Moloni/RequestTest.php');
 uses()->group('TraitTestingGroup')->in('Unit/Traits');
 uses()->group('ArchTestingGroup')->in('Arch');
 
