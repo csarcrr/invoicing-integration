@@ -50,6 +50,14 @@ Offline copies of the provider API docs live in `providers-docs/`. For any endpo
 | Moloni | `providers-docs/moloni/` (HTML pages, e.g. `providers-docs/moloni/dev/settings/payment-methods/insert/index.html`) |
 | Cegid Vendus | `providers-docs/vendus/` (`openapi.json` is the full API spec; `index.html` is its Redoc viewer) |
 
+The local Vendus `openapi.json` describes v1.2, but the package calls v1.1 (`src/Configuration/HttpConfiguration.php`). v1.2 uses nested fields (`prices.gross`, `tax.id`) where v1.1 uses flat ones (`gross_price`, `tax_id`), and it has endpoints v1.1 lacks. The live v1.1 spec at `https://www.vendus.pt/ws/v1.1/api.jsonapi` is the source of truth for Vendus endpoints and field names. Treat a mismatch between the local spec and the code as "confirm against v1.1", not as a bug.
+
+### Domain Decisions
+
+- An item carries exactly one tax. Don't design for multiple taxes per item.
+- On Moloni items, `ItemTax::EXEMPT` maps to a configured 0% tax sent with `exemption_reason`, never an empty `taxes` list.
+- Changing only an item's tax keeps its gross price; the net price is recalculated.
+
 ### Namespaces
 
 | Path | Namespace |
