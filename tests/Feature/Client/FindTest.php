@@ -96,7 +96,8 @@ test('maps all response fields onto the returned ClientData', function (Provider
 
     expect($client->name)->toBe('Marta Silva')
         ->and($client->email)->toBe('marta.silva@example.com')
-        ->and($client->vat)->toBe('215783920');
+        ->and($client->vat)->toBe('215783920')
+        ->and($client->reference)->toBe('VEN-2024-001');
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($client->emailNotification)->toBeTrue()
@@ -126,7 +127,7 @@ test('absent response fields remain Optional on the returned ClientData', functi
         ->and($client->email)->toBeInstanceOf(Optional::class)
         ->and($client->vat)->toBeInstanceOf(Optional::class)
         ->and($client->city)->toBeInstanceOf(Optional::class)
-        ->and($client->externalReference)->toBeInstanceOf(Optional::class);
+        ->and($client->reference)->toBeInstanceOf(Optional::class);
 })->with('providers', ['response_sparse']);
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
@@ -174,7 +175,7 @@ test('searches moloni clients on the endpoint of the search field', function (ar
 })->with([
     'vat' => [['vat' => '215783920'], 'customers/getByVat', 'vat=215783920'],
     'email' => [['email' => 'marta@example.com'], 'customers/getByEmail', 'email=marta%40example.com'],
-    'number' => [['id' => '12001'], 'customers/getByNumber', 'number=12001'],
+    'number' => [['reference' => '12001'], 'customers/getByNumber', 'number=12001'],
     'name' => [['name' => 'Marta'], 'customers/getByName', 'name=Marta'],
 ]);
 

@@ -382,8 +382,12 @@ class Create extends Invoice implements ShouldCreateInvoice
         throw_if(Properties::isNotValid($client->vat), InvoiceRequiresClientVatException::class);
 
         $data = collect($client->toArray())
-            ->only(['id', 'name', 'email', 'country', 'city', 'address', 'phone', 'notes', 'external_reference'])
+            ->only(['id', 'name', 'email', 'country', 'city', 'address', 'phone', 'notes'])
             ->all();
+
+        if (! ($client->reference instanceof Optional)) {
+            $data['external_reference'] = $client->reference;
+        }
 
         $data['fiscal_id'] = $client->vat;
         $data['irs_retention'] = $this->booleanFlag($client->irsRetention);

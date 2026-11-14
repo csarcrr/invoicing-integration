@@ -21,7 +21,6 @@ use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get as GetLanguage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Spatie\LaravelData\Optional;
 
 use function collect;
@@ -53,7 +52,7 @@ class Create extends Client implements ShouldCreateClient
         Http::handleUnwantedFailures($response);
 
         $this->data = ClientData::from([
-            'id' => $payload->get('number'),
+            'id' => (string) $response->json('customer_id'),
         ] + $this->data->toArray());
 
         $this->fillAdditionalProperties($response->json());
@@ -104,14 +103,11 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildNumber(): void
     {
-        /** @var string|int $vat */
-        $vat = $this->data->vat;
+        if (Properties::isNotValid($this->data->reference)) {
+            return;
+        }
 
-        $number = Properties::isValid($this->data->id)
-            ? $this->data->id
-            : $vat.Str::random(8);
-
-        $this->payload->put('number', $number);
+        $this->payload->put('number', $this->data->reference);
     }
 
     protected function buildName(): void

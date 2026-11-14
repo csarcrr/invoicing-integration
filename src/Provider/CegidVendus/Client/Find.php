@@ -70,7 +70,7 @@ class Find extends Client implements ShouldFindClient
         $this->buildVat();
         $this->buildName();
         $this->buildEmail();
-        $this->buildExternalReference();
+        $this->buildReference();
         $this->buildStatus();
         $this->buildDate();
 
@@ -97,9 +97,9 @@ class Find extends Client implements ShouldFindClient
         Properties::isValid($this->data->email) && $this->payload->put('email', $this->data->email);
     }
 
-    private function buildExternalReference(): void
+    private function buildReference(): void
     {
-        Properties::isValid($this->data->externalReference) && $this->payload->put('external_reference', $this->data->externalReference);
+        Properties::isValid($this->data->reference) && $this->payload->put('external_reference', $this->data->reference);
     }
 
     private function buildStatus(): void

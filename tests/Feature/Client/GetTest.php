@@ -67,21 +67,24 @@ test('client get returns the id as a string and the default pay due as a due dat
     };
 })->with('providers', ['response']);
 
-test('external reference and status are mapped properties', function (Provider $provider, string $responseFixture) {
+test('reference and status are mapped properties', function (Provider $provider, string $responseFixture) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['id' => 999999]);
 
     $data = Client::get($client)->execute()->getClient();
 
+    expect($data->reference)->toBe('AB892798/19');
+
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($data->externalReference)->toBe('AB892798/19')
-            ->and($data->status)->toBe('active')
+        Provider::CEGID_VENDUS => expect($data->status)->toBe('active')
             ->and($data->getAdditionalData())
             ->not->toHaveKey('external_reference')
             ->not->toHaveKey('status'),
-        Provider::MOLONI => expect($data->externalReference)->toBeInstanceOf(Optional::class)
-            ->and($data->status)->toBeInstanceOf(Optional::class),
+        Provider::MOLONI => expect($data->status)->toBeInstanceOf(Optional::class)
+            ->and($data->getAdditionalData())
+            ->not->toHaveKey('number')
+            ->not->toHaveKey('customer_id'),
     };
 })->with('providers', ['response']);
 

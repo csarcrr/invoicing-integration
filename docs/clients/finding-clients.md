@@ -50,7 +50,7 @@ whole value: `email` must be the full address with the same case, and `name`
 the full name in any case.
 
 Filterable fields depend on the provider, but the `ClientData` DTO supports
-common attributes such as `email`, `vat`, `status`, and `externalReference`.
+common attributes such as `email`, `vat`, `status`, and `reference`.
 
 ## Searching on Moloni
 
@@ -60,14 +60,14 @@ in this order:
 
 1. `vat`
 2. `email`
-3. `id` (sent as the customer number)
+3. `reference` (sent as the customer number)
 4. `name`
 
 ```php
 $results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
 ```
 
-- Other filters (`status`, `externalReference`, `date`) are ignored.
+- Other filters (`status`, `date`) are ignored. `reference` is only sent when `vat` and `email` are not set, and `name` only when `reference` is not set.
 - Each returned client has `id` set to the Moloni `customer_id`, ready for
   `Client::get()`.
 
@@ -79,7 +79,7 @@ Cegid Vendus can search by:
 - `vat` (sent as `fiscal_id`)
 - `name`
 - `email`
-- `externalReference`
+- `reference`
 - `status`
 - `date` (sent as `Y-m-d`)
 

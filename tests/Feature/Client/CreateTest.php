@@ -54,7 +54,7 @@ test('client create returns the id as a string and the default pay due as a due 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($data->id)->toBe('99999')
             ->and($data->defaultPayDue)->toBe(DueDateTerm::Days15),
-        Provider::MOLONI => expect($data->id)->toBeString()
+        Provider::MOLONI => expect($data->id)->toBe('99999')
             ->and($data->defaultPayDue)->toBeInstanceOf(Optional::class),
     };
 })->with([

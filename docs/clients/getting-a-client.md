@@ -19,9 +19,9 @@ $payload = $client->toArray();
 ```
 
 > [!NOTE]
-> On Moloni, `id` is the `customer_id`. `irsRetention`, `emailNotification`,
-> `defaultPayDue`, `externalReference`, `status` and `date` are not returned; the
-> customer `number` is available in `getAdditionalData()`.
+> On Moloni, `id` is the `customer_id`, and the customer `number` is returned as
+> `reference`. `irsRetention`, `emailNotification`, `defaultPayDue`, `status` and
+> `date` are not returned.
 
 Example payload:
 
@@ -70,7 +70,7 @@ $client->notes;            // Internal notes
 $client->irsRetention;     // IRS retention flag (bool)
 $client->emailNotification;// Email notification flag (bool)
 $client->defaultPayDue;    // Default payment due (DueDateTerm)
-$client->externalReference;// External reference
+$client->reference;        // Your own client code (external reference / number)
 $client->status;           // Client status
 $client->date;             // Creation date (Carbon)
 ```
@@ -79,8 +79,8 @@ $client->date;             // Creation date (Carbon)
 > Properties not set in the provider are `Spatie\LaravelData\Optional`, not `null`.
 >
 > `id` is always a string. On Cegid Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
-> returned as `Days0`) and
-> `externalReference`, `status` and `date` are mapped; Moloni does not return them.
+> returned as `Days0`) and `status` and `date` are mapped; Moloni does not return them.
+> `reference` is mapped on both providers: Cegid Vendus `external_reference`, Moloni `number`.
 > Response fields the package does not map, such as `balance`, `mobile`,
 > `website` and `price_group` on Cegid Vendus, are available in
 > `getAdditionalData()`.

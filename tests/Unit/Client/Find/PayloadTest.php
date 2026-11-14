@@ -13,7 +13,7 @@ it('transforms client search filters to provider payload', function (Provider $p
         'vat' => '123456789',
         'email' => 'email@test.com',
         'name' => 'Name',
-        'external_reference' => 'External Reference',
+        'reference' => 'External Reference',
         'status' => 'active',
         'date' => Carbon::createFromFormat('Y-m-d', '2026-01-01'),
     ]));
@@ -23,7 +23,7 @@ it('transforms client search filters to provider payload', function (Provider $p
 
 it('does not send filters the provider cannot search by', function (Provider $provider) {
     $payload = Client::find(ClientData::from([
-        'id' => '1234567',
+        'reference' => '1234567',
         'city' => 'Porto',
         'address' => 'Rua das Flores 125',
         'phone' => '912345678',
@@ -45,7 +45,7 @@ it('does not send empty filters', function (Provider $provider) {
         'vat' => '',
         'name' => '',
         'email' => '',
-        'external_reference' => '',
+        'reference' => '',
         'status' => '',
     ]))->getPayload();
 

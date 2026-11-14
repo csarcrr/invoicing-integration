@@ -626,7 +626,7 @@ ClientData::make([
 | `discount`          | `Optional<float>`  | Discount percentage (0 to 100)      |
 | `creditLimit`       | `Optional<float>`  | Credit limit (0 or more)            |
 | `deliveryMethodId`  | `Optional<int>`    | Delivery method id (0 or more)      |
-| `externalReference` | `Optional<string>` | Provider-specific reference         |
+| `reference`         | `Optional<string>` | Your own code for the client (Cegid Vendus `external_reference`, Moloni `number`) |
 | `status`            | `Optional<string>` | Provider status                     |
 | `emailNotification` | `Optional<bool>`   | Whether to send documents via email |
 | `irsRetention`      | `Optional<bool>`   | IRS withholding flag                |

@@ -25,7 +25,7 @@ it('prioritizes the search criteria', function (Provider $provider, array $filte
         ['email' => 'email@test.com'],
     ],
     'number third' => [
-        ['name' => 'Name', 'id' => '1234567'],
+        ['name' => 'Name', 'reference' => '1234567'],
         ['name' => 'Name'],
         ['number' => '1234567'],
     ],

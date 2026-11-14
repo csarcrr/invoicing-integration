@@ -58,7 +58,7 @@ it('sends only the client fields the provider accepts on a document', function (
         'discount' => 5.0,
         'creditLimit' => 1000.0,
         'deliveryMethodId' => 1,
-        'externalReference' => 'EXT-1',
+        'reference' => 'EXT-1',
         'status' => 'active',
         'emailNotification' => true,
         'irsRetention' => true,

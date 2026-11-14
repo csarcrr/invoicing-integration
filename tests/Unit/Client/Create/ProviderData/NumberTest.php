@@ -5,13 +5,12 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use Illuminate\Support\Str;
 
-it('uses the client id as the number', function (Provider $provider) {
+it('uses the reference as the number', function (Provider $provider) {
     fakeProviderDueDates($provider);
 
     $payload = Client::create(ClientData::from([
-        'id' => 'CLIENT-1',
+        'reference' => 'CLIENT-1',
         'name' => 'Alberto Albertino',
         'vat' => '223098091',
         'address' => 'Rua das Flores 125',
@@ -25,10 +24,11 @@ it('uses the client id as the number', function (Provider $provider) {
     };
 })->with('providers');
 
-it('builds the number from the vat and a random string when no id is given', function (Provider $provider) {
+it('does not use the id as the number when no reference is given', function (Provider $provider) {
     fakeProviderDueDates($provider);
 
     $payload = Client::create(ClientData::from([
+        'id' => 'CLIENT-1',
         'name' => 'Alberto Albertino',
         'vat' => '223098091',
         'address' => 'Rua das Flores 125',
@@ -36,8 +36,7 @@ it('builds the number from the vat and a random string when no id is given', fun
     ]))->getPayload();
 
     match ($provider) {
-        Provider::MOLONI => expect($payload->get('number'))->toStartWith('223098091')
-            ->and(Str::length($payload->get('number')))->toBe(17),
+        Provider::MOLONI => expect($payload->has('number'))->toBeFalse(),
         Provider::CEGID_VENDUS => expect($payload->has('number'))->toBeFalse()
             ->and($payload->has('id'))->toBeFalse(),
     };

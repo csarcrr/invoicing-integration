@@ -27,7 +27,7 @@ abstract class Client extends BaseClient
         ! empty($client['default_pay_due']) && $data['defaultPayDue'] = $client['default_pay_due'] === 'now' ? 0 : (int) $client['default_pay_due'];
         ! empty($client['notes']) && $data['notes'] = $client['notes'];
         ! empty($client['phone']) && $data['phone'] = $client['phone'];
-        ! empty($client['external_reference']) && $data['externalReference'] = $client['external_reference'];
+        ! empty($client['external_reference']) && $data['reference'] = $client['external_reference'];
         ! empty($client['send_email']) && $data['emailNotification'] = $client['send_email'] === 'yes';
         ! empty($client['irs_retention']) && $data['irsRetention'] = $client['irs_retention'] === 'yes';
         ! empty($client['status']) && $data['status'] = $client['status'];

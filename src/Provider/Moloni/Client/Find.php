@@ -79,7 +79,7 @@ class Find extends Client implements ShouldFindClient
         return collect([
             'vat' => $this->data->vat,
             'email' => $this->data->email,
-            'number' => $this->data->id,
+            'number' => $this->data->reference,
             'name' => $this->data->name,
         ])->filter(fn (mixed $value) => Properties::isValid($value))->take(1);
     }

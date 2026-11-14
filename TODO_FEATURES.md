@@ -28,7 +28,7 @@ Operations that both providers (Moloni and Cegid Vendus) support but the package
 | 2 | `Invoice::pdf` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldGetInvoicePdf.php`; `src/Provider/CegidVendus/Invoice/Pdf.php`; `src/Provider/Moloni/Invoice/Pdf.php`; `tests/Unit/Invoice/Pdf/IdTest.php`; `tests/Feature/Invoice/PdfTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/pdf_link.json`. Changed: `src/Data/OutputData.php` (`url`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/outputting-invoice.md`; `docs/features.md`; `docs/api-reference.md` |
 | 3 | `Invoice::cancel` | MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldCancelInvoice.php`; `src/Provider/CegidVendus/Invoice/Cancel.php`; `src/Provider/Moloni/Invoice/Cancel.php`; `tests/Unit/Invoice/Cancel/PayloadTest.php`; `tests/Feature/Invoice/CancelTest.php`; fixture `tests/Fixtures/IntegrationProvider/Moloni/Response/Invoice/cancel.json`. Changed: `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/cancelling-an-invoice.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
 | 4 | `Invoice::find` | Post-MVP | Done | Added: `src/Contracts/IntegrationProvider/Invoice/ShouldFindInvoice.php`; `src/Provider/CegidVendus/Invoice.php` (base, `toInvoiceData()`); `src/Provider/CegidVendus/Invoice/Find.php`; `src/Provider/Moloni/Invoice/Find.php`; `tests/Unit/Invoice/Find/PayloadTest.php`; `tests/Feature/Invoice/FindTest.php`; fixtures `Response/Invoice/find.json` for both providers. Changed: `src/Provider/Moloni/Invoice.php` (`toInvoiceData()`); `src/Provider/Moloni/Invoice/Get.php`; `src/Provider/CegidVendus/Invoice/Get.php` (both use `toInvoiceData()`); `src/Actions/InvoiceAction.php`; `src/Facades/Invoice.php`. Docs: `docs/invoices/finding-invoices.md` (new); `docs/_sidebar.md`; `docs/invoices/README.md`; `docs/features.md`; `docs/api-reference.md` |
-| 5 | `Client::update` | Post-MVP | Todo | CRUD completeness; open question on how the caller passes Moloni `number` |
+| 5 | `Client::update` | Post-MVP | In progress | CRUD completeness; open question on how the caller passes Moloni `number` |
 | 6 | `Client::delete` | Post-MVP | Todo | CRUD completeness |
 | 7 | `Item::delete` | Post-MVP | Todo | CRUD completeness |
 | 8 | `Category::create` | Post-MVP | Todo | CRUD completeness |
@@ -208,7 +208,7 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 
 **Priority:** Post-MVP
 **Package status:** Missing
-**Status:** Todo
+**Status:** In progress
 
 **What it does:** Updates a stored client's fields.
 
@@ -239,7 +239,7 @@ Related gap: `TODO.md`, section "Moloni invoice create", already lists that no P
 1. `ClientData` has no `number` field, and Moloni's update page lists `number` as required. Where does it come from? **Default:** the caller passes it. The package does not look it up and does not generate one. (User decision, 2026-11-14. The earlier default, "send `ClientData->id` as `number` as `Create.php` does", was wrong: `src/Provider/Moloni/Client/Create.php:110-112` sends `vat` plus 8 random characters when `id` is not valid, which would overwrite the number on update.)
 2. Is update partial (send only the fields set) or a full replace? Vendus `PATCH` suggests partial. **Default:** full replace where the provider allows it: send every `ClientData` field.
 3. How is `country` mapped? **Default:** copy `Client/Create.php` on each provider. Moloni looks up `country_id` from the ISO code with `Country/Get`, and Vendus sends the ISO code.
-4. How does the caller pass Moloni `number`: a new field on `ClientData`, or a method argument? `ClientData->id` cannot carry it, because on update it is the Moloni `customer_id`. Ask the user before implementing.
+4. How does the caller pass Moloni `number`: a new field on `ClientData`, or a method argument? `ClientData->id` cannot carry it, because on update it is the Moloni `customer_id`. **Default:** through `ClientData->reference` (user decision, 2026-11-14). `externalReference` was renamed to `reference` in a separate change before this entry: it maps to Moloni `number` and to Vendus `external_reference`. `id` is always the provider client id (Moloni `customer_id`) on both providers, including the result of Moloni `Client::create`. Moloni create sends no `number` when `reference` is unset; the package does not generate one.
 
 **Done when:**
 - [ ] Pest tests in `tests/Unit/Client/Update/` and `tests/Feature/Client/`, using the `providers` dataset, with fixtures for both providers
