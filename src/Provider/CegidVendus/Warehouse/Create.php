@@ -32,9 +32,12 @@ class Create extends Warehouse implements ShouldCreateWarehouse
 
         Http::handleUnwantedFailures($response);
 
+        /** @var array<string, mixed> $store */
+        $store = $response->json();
+
         $this->data = WarehouseData::make(
-            ['id' => (int) $response->json('id')] + $this->data->toArray()
-        )->additional(collect($response->json())->except(['id', 'title'])->toArray());
+            ['id' => (int) $store['id']] + $this->data->toArray()
+        )->additional(collect($store)->except(['id', 'title'])->toArray());
 
         return $this;
     }
