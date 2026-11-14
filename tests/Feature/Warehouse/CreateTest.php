@@ -56,7 +56,7 @@ test('fails with the provider error when the Moloni warehouse is not created', f
     Http::fake(mockResponse(['valid' => 0, 'message' => 'Invalid code']));
 
     Warehouse::create(WarehouseData::make(['name' => 'Loja']))->execute();
-})->throws(RequestFailedException::class);
+})->throws(RequestFailedException::class)->note('todo: again this problem, same types of requests and different tests that can be joined by having multiple http fakes...');
 
 test('fails with the provider error when the Cegid Vendus store is rejected', function () {
     mockConfiguration(Provider::CEGID_VENDUS);
