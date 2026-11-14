@@ -27,7 +27,7 @@ test('moloni fails with the provider message when the document is not cancelled'
     ]);
 
     Invoice::cancel(InvoiceData::from(['id' => 123456]))->execute();
-})->throws(RequestFailedException::class, 'Document is not closed');
+})->throws(RequestFailedException::class, 'Document is not closed')->note('todo: this and "cegid vendus fails with the provider error when the request is rejected", are very similar in behaviour. the only thing that differs is the message. maybe unify the tests and do not look at the message type, but only to the exception type');
 
 test('cegid vendus fails with the provider error when the request is rejected', function () {
     mockConfiguration(Provider::CEGID_VENDUS);
