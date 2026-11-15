@@ -13,7 +13,6 @@ Invoice::cancel(InvoiceData::make(['id' => 123]))->execute();
 
 - Pass the provider ID (`id`), not the sequence.
 - `execute()` returns nothing. Check the outcome through the exceptions below.
-- `notes` is not sent to any provider, because Cegid Vendus has no cancellation reason field. See [INCOMPATIBILITIES.md](../../INCOMPATIBILITIES.md).
 - Without an `id`, `Invoice::cancel()` throws `InvalidArgumentException` with `Invoice ID is required.`
 - When the provider rejects the cancellation, `execute()` throws `RequestFailedException`.
 
