@@ -8,22 +8,22 @@ Use `Invoice::cancel()` to set a stored document to the cancelled state, by its 
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-Invoice::cancel(InvoiceData::make(['id' => 123, 'notes' => 'Wrong client']))->execute();
+Invoice::cancel(InvoiceData::make(['id' => 123]))->execute();
 ```
 
 - Pass the provider ID (`id`), not the sequence.
 - `execute()` returns nothing. Check the outcome through the exceptions below.
-- `notes` is optional. Moloni sends it as the cancellation `observation`; Cegid Vendus does not send it.
+- `notes` is not sent to any provider, because Cegid Vendus has no cancellation reason field. See [INCOMPATIBILITIES.md](../../INCOMPATIBILITIES.md).
 - Without an `id`, `Invoice::cancel()` throws `InvalidArgumentException` with `Invoice ID is required.`
 - When the provider rejects the cancellation, `execute()` throws `RequestFailedException`.
 
 ## Cegid Vendus
 
-The request is sent to `PATCH documents/{id}` with `status` set to `A` (Canceled). `notes` is not sent, because Cegid Vendus has no equivalent field.
+The request is sent to `PATCH documents/{id}` with `status` set to `A` (Canceled).
 
 ## Moloni
 
-The request is sent to `documents/documentCancel` with `document_id`. `notes` is sent as `observation` when set.
+The request is sent to `documents/documentCancel` with `document_id`.
 
 Moloni returns `valid` and `message`. When `valid` is not `1`, `execute()` throws `RequestFailedException` with the provider `message`.
 

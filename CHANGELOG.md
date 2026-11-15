@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Client::delete()` to remove a stored client on Moloni and Cegid Vendus.
 - `Client::update()` to edit a stored client on Moloni and Cegid Vendus.
 - `Invoice::find()` to list stored documents by type and client on Moloni and Cegid Vendus.
-- `Invoice::cancel()` to cancel a stored document on Moloni and Cegid Vendus.
+- `Invoice::cancel()` to cancel a stored document on Moloni and Cegid Vendus. `notes` is not sent to any provider, because Cegid Vendus has no cancellation reason field; see `INCOMPATIBILITIES.md`.
 - `Invoice::pdf()` to get a stored document's PDF on Moloni and Cegid Vendus. `OutputData` gains `url`.
 - `Invoice::get()` to read a stored document by its provider ID on Moloni and Cegid Vendus.
 - `Category::find()` and `Category::get()` on Moloni and Cegid Vendus.

@@ -9,7 +9,6 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -65,9 +64,5 @@ class Cancel extends Invoice implements ShouldCancelInvoice
         throw_if(! is_int($this->data->id), InvalidArgumentException::class, 'Invoice ID is required.');
 
         $this->payload->put('document_id', $this->data->id);
-
-        if (Properties::isValid($this->data->notes)) {
-            $this->payload->put('observation', $this->data->notes);
-        }
     }
 }
