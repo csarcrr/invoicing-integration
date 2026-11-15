@@ -14,13 +14,13 @@ This report inventories every note left in `tests/`: 13 notes in total. 11 are P
 
 | ID | Line | Enclosing test | Kind | Note text | Resolved |
 | --- | --- | --- | --- | --- | --- |
-| F2 | 59 | fails with the provider error when the Moloni warehouse is not created | Pest `->note()` (todo) | todo: again this problem, same types of requests and different tests that can be joined by having multiple http fakes... | no |
+| F2 | 59 | fails with the provider error when the Moloni warehouse is not created | Pest `->note()` (todo) | todo: again this problem, same types of requests and different tests that can be joined by having multiple http fakes... | yes |
 
 ### tests/Feature/Client/DeleteTest.php
 
 | ID | Line | Enclosing test | Kind | Note text | Resolved |
 | --- | --- | --- | --- | --- | --- |
-| F3 | 30 | moloni fails with the provider message when the client is not deleted | Pest `->note()` (todo) | todo: this problem persists... same exception different messages, just mash them into the same test and ignore the message. | no |
+| F3 | 30 | moloni fails with the provider message when the client is not deleted | Pest `->note()` (todo) | todo: this problem persists... same exception different messages, just mash them into the same test and ignore the message. | yes |
 
 ### tests/Feature/Invoice/FindTest.php
 
@@ -39,7 +39,7 @@ This report inventories every note left in `tests/`: 13 notes in total. 11 are P
 
 | ID | Line | Enclosing test | Kind | Note text | Resolved |
 | --- | --- | --- | --- | --- | --- |
-| F7 | 30 | moloni fails with the provider message when the document is not cancelled | Pest `->note()` (todo) | todo: this and "cegid vendus fails with the provider error when the request is rejected", are very similar in behaviour. the only thing that differs is the message. maybe unify the tests and do not look at the message type, but only to the exception type | no |
+| F7 | 30 | moloni fails with the provider message when the document is not cancelled | Pest `->note()` (todo) | todo: this and "cegid vendus fails with the provider error when the request is rejected", are very similar in behaviour. the only thing that differs is the message. maybe unify the tests and do not look at the message type, but only to the exception type | yes |
 
 ### tests/Feature/Invoice/PdfTest.php
 

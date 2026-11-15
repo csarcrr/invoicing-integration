@@ -50,18 +50,11 @@ test('sends the Moloni country id for the country code', function () {
         && ! Str::contains($request->body(), 'country='));
 });
 
-test('fails with the provider error when the Moloni warehouse is not created', function () {
-    mockConfiguration(Provider::MOLONI);
-
-    Http::fake(mockResponse(['valid' => 0, 'message' => 'Invalid code']));
-
-    Warehouse::create(WarehouseData::make(['name' => 'Loja']))->execute();
-})->throws(RequestFailedException::class)->note('todo: again this problem, same types of requests and different tests that can be joined by having multiple http fakes...');
-
-test('fails with the provider error when the Cegid Vendus store is rejected', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
-
-    Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 403));
+test('fails with the provider error when the warehouse is not created', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'P003', 'message' => 'Param title is required for this action. Please add it.']]], 400),
+        Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Invalid code']),
+    });
 
     Warehouse::create(WarehouseData::make(['name' => 'Loja']))->execute();
-})->throws(RequestFailedException::class);
+})->with('providers')->throws(RequestFailedException::class);

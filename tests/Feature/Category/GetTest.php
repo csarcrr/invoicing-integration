@@ -48,18 +48,11 @@ test('fails when no id is set', function (Provider $provider) {
     Category::get(CategoryData::make([]))->execute();
 })->with('providers')->throws(InvalidArgumentException::class, 'Category ID is required.');
 
-test('fails when moloni has no category with the id', function () {
-    mockConfiguration(Provider::MOLONI);
-
-    Http::fake(mockResponse([]));
-
-    Category::get(CategoryData::make(['id' => 1]))->execute();
-})->throws(RequestFailedException::class, 'Category not found.');
-
-test('fails when cegid vendus has no category with the id', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
-
-    Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
+test('fails when no category has the id', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
 
     Category::get(CategoryData::make(['id' => 1]))->execute();
-})->throws(RequestFailedException::class);
+})->with('providers')->throws(RequestFailedException::class);
