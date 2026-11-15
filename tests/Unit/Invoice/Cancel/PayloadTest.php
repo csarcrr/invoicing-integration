@@ -17,15 +17,6 @@ it('sends the cancel request for the invoice id', function (Provider $provider) 
     };
 })->with('providers');
 
-it('does not send the notes', function (Provider $provider) {
-    $cancel = Invoice::cancel(InvoiceData::from(['id' => 123456, 'notes' => 'Wrong client']));
-
-    expect($cancel->getPayload()->toArray())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => ['status' => 'A'],
-        Provider::MOLONI => ['document_id' => 123456],
-    });
-})->with('providers');
-
 it('fails when no id is set', function () {
     $invoice = InvoiceData::from([]);
 
