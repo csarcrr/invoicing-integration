@@ -26,16 +26,21 @@ test('an invoice get request maps the provider response onto InvoiceData', funct
     Http::assertSentCount(1);
 })->with('providers');
 
-test('cegid vendus maps the atcud to atcudHash and moloni leaves it null', function (Provider $provider) {
+test('maps the provider atcud', function () {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
 
     $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
 
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->atcudHash)->toBe('JFD5B7DW-12'),
-        Provider::MOLONI => expect($invoice->atcudHash)->toBeNull(),
-    };
-})->with('providers')->note('todo: verify if moloni has an equivalent to atcud');
+    expect($invoice->atcud)->toBe('JFD5B7DW-12');
+})->with('providers');
+
+test('an empty provider atcud is null', function () {
+    Http::fake(mockResponse([...fixtures()->response()->invoice()->files('get'), 'atcud' => '']));
+
+    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+
+    expect($invoice->atcud)->toBeNull();
+})->with('providers');
 
 test('supported properties are not filled in additional data', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
@@ -53,7 +58,8 @@ test('supported properties are not filled in additional data', function (Provide
             ->not->toHaveKey('document_id')
             ->not->toHaveKey('net_value')
             ->not->toHaveKey('taxes_value')
-            ->not->toHaveKey('products'),
+            ->not->toHaveKey('products')
+            ->not->toHaveKey('atcud'),
     };
 })->with('providers');
 

@@ -62,10 +62,7 @@ test('returns the atcud of the created invoice', function (Provider $provider, s
         'items' => [ItemData::make(['reference' => 'reference-1'])],
     ]))->execute()->getInvoice();
 
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->atcudHash)->toBe('INVALIDO-1'),
-        Provider::MOLONI => expect($invoice->atcudHash)->toBeNull(),
-    };
+    expect($invoice->atcud)->toBe('INVALIDO-1');
 })->with('providers', ['full']);
 
 test('does not keep the provider document lines as additional data', function (Provider $provider, string $fixture) {

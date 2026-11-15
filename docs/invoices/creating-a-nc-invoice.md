@@ -67,7 +67,7 @@ Sample credit note response:
     "sequence": "NC 01P2025/1",
     "total": 14999,
     "totalNet": 12194,
-    "atcudHash": "NC 01P2025/1 XYZ999"
+    "atcud": "NC 01P2025/1 XYZ999"
 }
 ```
 
@@ -278,7 +278,7 @@ Example credit note response:
     "sequence": "NC 01P2025/1",
     "total": 129900,
     "totalNet": 105610,
-    "atcudHash": "NC 01P2025/1 XYZ999"
+    "atcud": "NC 01P2025/1 XYZ999"
 }
 ```
 

@@ -769,7 +769,7 @@ new ItemData(discount: Optional::create());
 
 ### InvoiceData
 
-`InvoiceData` serves a dual role: it is the **input DTO** you populate and pass to `Invoice::create()`, and it is also the **response object** returned by `execute()->getInvoice()`. After a successful call the same class is returned, now hydrated with provider response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, and `output`). There is no separate response type to import.
+`InvoiceData` serves a dual role: it is the **input DTO** you populate and pass to `Invoice::create()`, and it is also the **response object** returned by `execute()->getInvoice()`. After a successful call the same class is returned, now hydrated with provider response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`). There is no separate response type to import.
 
 Entry point for invoice creation.
 
@@ -1200,7 +1200,7 @@ The hydrated `InvoiceData` returned after issuing an invoice. Contains the provi
 | `sequence`  | `string`  | Invoice sequence (e.g., "FT 01P2025/1") | -                                       |
 | `total`     | `int`     | Total amount in cents (gross)           | -                                       |
 | `totalNet`  | `int`     | Net total amount in cents               | -                                       |
-| `atcudHash` | `?string` | ATCUD hash (Portugal AT code)           | -                                       |
+| `atcud`     | `?string` | ATCUD (AT unique document code)         | -                                       |
 | `output`    | `OutputData` | Output for PDF/ESC/POS               | `content` is `null` when the provider omits the file |
 
 ---

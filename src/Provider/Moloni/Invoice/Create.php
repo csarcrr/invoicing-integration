@@ -82,6 +82,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'sequence' => $this->sequence($data),
             'total' => $this->toCents($total),
             'totalNet' => $this->toCents($total - (float) ($data['taxes_value'] ?? 0)),
+            'atcud' => $this->atcud($data),
             'output' => $this->data->output,
             'items' => $this->data->items,
             'payments' => $this->data->payments,

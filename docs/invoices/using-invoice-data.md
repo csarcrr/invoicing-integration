@@ -3,7 +3,7 @@
 `InvoiceData` serves a dual role in this package:
 
 1. **Input DTO** — You populate it and pass it to `Invoice::create(InvoiceData $invoice)` to describe the invoice you want to issue (items, payments, client, output format, etc.).
-2. **Response object** — After calling `execute()->getInvoice()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, and `output`).
+2. **Response object** — After calling `execute()->getInvoice()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`).
 
 This means you work with the same class on both sides of the HTTP boundary; there is no separate "response" type to import.
 
@@ -40,7 +40,7 @@ $output = $result->output;
 | `id`        | `int`     | The provider's internal ID                         |
 | `total`     | `int`     | Total gross amount in cents                        |
 | `totalNet`  | `int`     | Net total amount in cents (excl. VAT)              |
-| `atcudHash` | `?string` | ATCUD hash (Portugal AT code); `null` if absent    |
+| `atcud`     | `?string` | ATCUD (AT unique document code); `null` if absent  |
 | `output`    | `?Output` | Output object, or `null` when no file is provided  |
 
 ## Working with the Sequence

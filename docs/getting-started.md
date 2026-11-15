@@ -126,7 +126,7 @@ Sample invoice response:
     "sequence": "FR 01P2025/1",
     "total": 2598,
     "totalNet": 2112,
-    "atcudHash": null
+    "atcud": null
 }
 ```
 

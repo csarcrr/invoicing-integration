@@ -160,7 +160,7 @@ The result contains everything you need:
     "sequence": "FR 01P2025/1",
     "total": 15498,
     "totalNet": 12600,
-    "atcudHash": "FR 01P2025/1 ABC123"
+    "atcud": "FR 01P2025/1 ABC123"
 }
 ```
 

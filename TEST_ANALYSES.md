@@ -32,7 +32,7 @@ This report inventories every note left in `tests/`: 13 notes in total. 11 are P
 
 | ID | Line | Enclosing test | Kind | Note text | Resolved |
 | --- | --- | --- | --- | --- | --- |
-| F5 | 38 | cegid vendus maps the atcud to atcudHash and moloni leaves it null | Pest `->note()` (todo) | todo: verify if moloni has an equivalent to atcud | no |
+| F5 | 38 | cegid vendus maps the atcud to atcudHash and moloni leaves it null | Pest `->note()` (todo) | todo: verify if moloni has an equivalent to atcud | yes |
 | F6 | 79 | an unknown document type falls back to FT | Pest `->note()` (verify) | verify: we cannot have unsupported document types | no |
 
 ### tests/Feature/Invoice/CancelTest.php

@@ -78,7 +78,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'sequence' => (string) ($data['number'] ?? ''),
             'total' => (int) ((float) ($data['amount_gross'] ?? 0) * 100),
             'totalNet' => (int) ((float) ($data['amount_net'] ?? 0) * 100),
-            'atcudHash' => $data['atcud'] ?? null,
+            'atcud' => $this->atcud($data),
             'output' => $output,
             'items' => $this->data->items,
             'payments' => $this->data->payments,

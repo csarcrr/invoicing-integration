@@ -22,7 +22,7 @@ abstract class Invoice extends BaseInvoice
             'sequence' => (string) $document['number'],
             'total' => $this->toCents((float) $document['amount_gross']),
             'totalNet' => $this->toCents((float) $document['amount_net']),
-            'atcudHash' => $document['atcud'] ?? null,
+            'atcud' => $this->atcud($document),
             'type' => InvoiceType::tryFrom($document['type'] ?? '') ?? InvoiceType::Invoice,
         ])->additional(collect($document)->except($this->supportedProperties)->toArray());
     }

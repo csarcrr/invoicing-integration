@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Cegid Vendus returns the invoice ATCUD as `atcudHash`.
+- Cegid Vendus and Moloni return the invoice ATCUD as `atcud`. An empty ATCUD is `null`.
 - Cegid Vendus invoices with a client were rejected: the client now sends only the fields Cegid Vendus accepts, and `emailNotification` is sent as `send_email`.
 - Cegid Vendus invoice items now send `id` and `name` (as `title`).
 - Cegid Vendus invoices with an item `note`, item `percentageDiscount` or a `dueDate` were rejected: they are now sent as `text`, `discount_percentage` and `date_due`.

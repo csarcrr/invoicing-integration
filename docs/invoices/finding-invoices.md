@@ -138,7 +138,7 @@ Each returned invoice maps the provider fields as
 - `total` and `totalNet` are in cents.
 - `type` is mapped from the provider document type. It falls back to `FT` when
   the type is unknown.
-- `atcudHash` is mapped from `atcud` on Cegid Vendus and is `null` on Moloni.
+- `atcud` is mapped from `atcud`. It is `null` when the provider returns no ATCUD or an empty one.
 
 ## Putting It Together
 

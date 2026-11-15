@@ -31,4 +31,14 @@ class Invoice extends Base
     {
         return $this->data;
     }
+
+    /**
+     * @param  array<string, mixed>  $document
+     */
+    protected function atcud(array $document): ?string
+    {
+        $atcud = (string) ($document['atcud'] ?? '');
+
+        return $atcud === '' ? null : $atcud;
+    }
 }
