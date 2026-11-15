@@ -54,10 +54,11 @@ test('reports the total pages the provider returns', function (Provider $provide
     });
 })->with('providers');
 
-test('returns an empty list when cegid vendus has no invoices', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
-
-    Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
+test('returns an empty list when the provider has no invoices', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
 
     expect(Invoice::find()->execute()->getList())->toBeEmpty();
-})->note('todo: discover the reason for this to be a vendus specific test only');
+})->with('providers');

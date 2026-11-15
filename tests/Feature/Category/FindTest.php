@@ -50,18 +50,13 @@ test('sends the request to the categories endpoint', function (Provider $provide
 })->with('providers');
 
 test('returns an empty list when the provider has no categories', function (Provider $provider) {
-    Http::fake(mockResponse([]));
+    Http::fake(match ($provider) {
+        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
 
     expect(Category::find()->execute()->getList())->toBeEmpty();
 })->with('providers');
-
-test('returns an empty list when cegid vendus reports no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
-
-    Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
-
-    expect(Category::find()->execute()->getList())->toBeEmpty();
-});
 
 test('fails when cegid vendus answers 404 with an error other than no data', function () {
     mockConfiguration(Provider::CEGID_VENDUS);
