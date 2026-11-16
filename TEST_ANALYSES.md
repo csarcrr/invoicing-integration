@@ -45,7 +45,7 @@ This report inventories every note left in `tests/`: 13 notes in total. 11 are P
 
 | ID | Line | Enclosing test | Kind | Note text | Resolved |
 | --- | --- | --- | --- | --- | --- |
-| F8 | 44 | the output url is the moloni pdf link and null on cegid vendus | Pest `->note()` (todo) | todo: change test namings like these. we can have multiple new providers. this needs to be something more generic like "outputs the expected pdf content or pdf url" | no |
+| F8 | 44 | the output url is the moloni pdf link and null on cegid vendus | Pest `->note()` (todo) | todo: change test namings like these. we can have multiple new providers. this needs to be something more generic like "outputs the expected pdf content or pdf url" | yes |
 | F9 | 58 | moloni keeps the pdf link when the download does not return a pdf | Pest `->note()` (todo) | todo: naming keeps being provider specific and it cannot. example fix: "providers that don\'t directly support download, are always able to fallback to get the url" | no |
 | F10 | 74 | requests the moloni download with the token from the pdf link and the document id | Pest `->note()` (todo) | todo: this is a provider specific test | no |
 | F11 | 84 | fails when moloni returns an empty pdf link | Pest `->note()` (todo) | todo: this is a provider specific test | no |
