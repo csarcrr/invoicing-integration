@@ -17,5 +17,6 @@ paths:
 - When every provider throws the same exception, write one test on the `providers` dataset and assert only the exception class, not the message
 - A test closure that does not use `$provider` omits the parameter; the `providers` dataset still configures the provider
 - Give both providers' fixtures the same values where the provider format allows it, so the expected values stay shared
-- When only some providers support an operation, its tests call `mockConfiguration(Provider::X)` in `beforeEach` and do not use the `providers` dataset. The structure test runs on the `providers` dataset and is the one place that asserts `OperationNotSupportedException`
-- When a provider gains support for an operation, move that operation's tests to the `providers` dataset
+- Every test runs on the `providers` dataset, so a new provider runs it by default. Never pin a test to one provider with `mockConfiguration(Provider::X)`
+- When a test does not apply to a provider (the operation or behaviour is not supported there), skip that provider at the top of the test with `$this->markTestSkipped('<reason>')`. Pest's `->skip()` condition cannot see the dataset provider
+- The structure test is the one place that asserts `OperationNotSupportedException`
