@@ -6,10 +6,12 @@ When you create an invoice, the provider returns the document as base64-encoded 
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [
         ItemData::make([
             'reference' => 'LAPTOP-ULTRA-13',
@@ -43,9 +45,11 @@ By default, invoices are returned as PDF. You can request ESC/POS format instead
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     // ...items, payments, etc.
     'output' => OutputData::make([
         'format' => OutputFormat::ESCPOS,
@@ -152,11 +156,13 @@ use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\OutputFormat;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [
         ItemData::make([
             'reference' => 'USB-CABLE-C',

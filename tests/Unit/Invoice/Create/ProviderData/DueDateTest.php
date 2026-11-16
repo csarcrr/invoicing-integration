@@ -28,6 +28,7 @@ it('transforms to provider payload with due date', function (Provider $provider,
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'payments' => [
                 PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
@@ -45,6 +46,7 @@ it('resolves the due date term for the provider', function (Provider $provider, 
     }
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'dueDate' => $term,
     ]))->getPayload();
@@ -68,6 +70,7 @@ it('fetches the provider due dates in a single page', function (Provider $provid
     }
 
     Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'dueDate' => DueDateTerm::Days30,
     ]))->getPayload();
@@ -86,6 +89,7 @@ it('does not send a provider due date id when the provider has none', function (
     }
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'dueDate' => DueDateTerm::Days30,
     ]))->getPayload();
@@ -95,6 +99,7 @@ it('does not send a provider due date id when the provider has none', function (
 
 it('does not fetch the provider due dates when no due date is set', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->getPayload();
 
@@ -103,21 +108,24 @@ it('does not fetch the provider due dates when no due date is set', function (Pr
     Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'maturityDates/getAll'));
 })->with('providers');
 
-it('fails setting a due date in a type different than FT', function (Provider $provider) {
+it('sends the due date on any document type', function (Provider $provider, ?InvoiceType $type) {
     fakeProviderPaymentMethods($provider);
+    fakeProviderDueDates($provider);
 
-    $invoice = Invoice::create(InvoiceData::make([
-        'type' => InvoiceType::InvoiceSimple,
+    $payload = Invoice::create(InvoiceData::make([
+        'type' => $type,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'payments' => [
             PaymentData::from(['amount' => 500, 'method' => PaymentMethod::CREDIT_CARD]),
         ],
         'dueDate' => DueDateTerm::Days30,
-    ]));
+    ]))->getPayload();
 
-    $invoice->getPayload();
-})->with('providers')
-    ->throws(Exception::class, 'Due date can only be set for FT document types.');
+    match ($provider) {
+        Provider::CEGID_VENDUS => expect($payload->get('date_due'))->toBe('2025-07-15'),
+        Provider::MOLONI => expect($payload->get('expiration_date'))->toBe('2025-07-15'),
+    };
+})->with('providers')->with([InvoiceType::InvoiceSimple, null]);
 
 it('only sends an expiration date on document types that accept it', function (Provider $provider) {
     fakeProviderPaymentMethods($provider);

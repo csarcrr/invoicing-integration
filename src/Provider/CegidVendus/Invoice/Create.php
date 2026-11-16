@@ -46,9 +46,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     {
         $this->data = $invoice;
 
-        $this->payload = collect([
-            'type' => $this->data->type->value,
-        ]);
+        $this->payload = collect();
 
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Invoice);
     }
@@ -119,6 +117,10 @@ class Create extends Invoice implements ShouldCreateInvoice
 
     protected function buildType(): void
     {
+        if (is_null($this->data->type)) {
+            return;
+        }
+
         $this->payload->put('type', $this->data->type->value);
     }
 
@@ -133,20 +135,11 @@ class Create extends Invoice implements ShouldCreateInvoice
         $this->payload->put('mode', $mode);
     }
 
-    /**
-     * @throws Exception|\Throwable
-     */
     protected function buildDueDate(): void
     {
         if (! ($this->data->dueDate instanceof DueDateTerm)) {
             return;
         }
-
-        throw_if(
-            $this->data->type !== InvoiceType::Invoice,
-            Exception::class,
-            'Due date can only be set for FT document types.'
-        );
 
         $this->payload->put('date_due', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
     }

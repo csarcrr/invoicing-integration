@@ -123,6 +123,7 @@ You can use a retrieved client when creating invoices:
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
@@ -132,6 +133,7 @@ $client = Client::get($clientData)->execute()->getClient();
 
 // Use client in invoice
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [
         ItemData::make([

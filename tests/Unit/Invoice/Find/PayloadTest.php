@@ -7,12 +7,12 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-it('sends the invoice type FT by default', function (Provider $provider) {
+it('does not send a document type when no type is set', function (Provider $provider) {
     $find = Invoice::find();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find->getPayload()->get('type'))->toBe('FT'),
-        Provider::MOLONI => expect($find->getUrl())->toBe('invoices/getAll'),
+        Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->not->toHaveKey('type'),
+        Provider::MOLONI => expect($find->getUrl())->toBe('documents/getAll'),
     };
 })->with('providers');
 

@@ -71,7 +71,7 @@ test('unsupported properties are kept in additional data', function (Provider $p
     expect($invoice->getAdditionalData())->toHaveKey('date');
 })->with('providers');
 
-test('an unknown document type falls back to FT', function (Provider $provider) {
+test('an unknown document type is null', function (Provider $provider) {
     $fixture = fixtures()->response()->invoice()->files('get');
 
     Http::fake(mockResponse(match ($provider) {
@@ -81,8 +81,8 @@ test('an unknown document type falls back to FT', function (Provider $provider) 
 
     $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
 
-    expect($invoice->type)->toBe(InvoiceType::Invoice);
-})->with('providers')->note('verify: we cannot have unsupported document types');
+    expect($invoice->type)->toBeNull();
+})->with('providers');
 
 it('fails when the provider has no invoice with the id', function (Provider $provider) {
     Http::fake(match ($provider) {

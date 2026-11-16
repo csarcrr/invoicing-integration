@@ -138,6 +138,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     protected function endpoint(): string
     {
         return match ($this->data->type) {
+            null => 'documents/insert',
             InvoiceType::Invoice => 'invoices/insert',
             InvoiceType::InvoiceReceipt => 'invoiceReceipts/insert',
             InvoiceType::InvoiceSimple => 'simplifiedInvoices/insert',
@@ -390,7 +391,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     }
 
     /**
-     * @throws Exception|\Throwable
+     * @throws \Throwable
      */
     protected function buildDueDate(): void
     {
@@ -401,12 +402,6 @@ class Create extends Invoice implements ShouldCreateInvoice
         if (! ($this->data->dueDate instanceof DueDateTerm)) {
             return;
         }
-
-        throw_if(
-            $this->data->type !== InvoiceType::Invoice,
-            Exception::class,
-            'Due date can only be set for FT document types.'
-        );
 
         $this->payload->put('expiration_date', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
 

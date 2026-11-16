@@ -14,7 +14,7 @@ $invoice->id;
 $invoice->sequence;  // e.g. "FR A/12" on Moloni, "FR 01P2026/12" on Cegid Vendus
 $invoice->total;     // gross total in cents
 $invoice->totalNet;  // net total in cents
-$invoice->type;      // InvoiceType, FT when the provider type is unknown
+$invoice->type;      // ?InvoiceType, null when the provider type is unknown
 $invoice->atcud;     // null when the provider returns no ATCUD or an empty one
 ```
 
@@ -26,13 +26,13 @@ $invoice->atcud;     // null when the provider returns no ATCUD or an empty one
 
 ## Cegid Vendus
 
-The request is sent to `GET documents/{id}`. `id` is mapped from `id`, `sequence` from `number`, `total` from `amount_gross` and `totalNet` from `amount_net`. `atcud` is mapped from `atcud`. `type` is mapped from `type`.
+The request is sent to `GET documents/{id}`. `id` is mapped from `id`, `sequence` from `number`, `total` from `amount_gross` and `totalNet` from `amount_net`. `atcud` is mapped from `atcud`. `type` is mapped from `type`; an unknown type is `null`.
 
 ## Moloni
 
 The request is sent to `documents/getOne` with `document_id`. Moloni returns only the first document that matches, so the package sends only `document_id`.
 
-`id` is the ID you passed. `sequence` is built from `document_type.saft_code`, `document_set.name` and `number`, as on `Invoice::create()`. `total` is mapped from `net_value` and `totalNet` is `net_value - taxes_value`. `type` is mapped from `document_type.saft_code`. `atcud` is mapped from `atcud`, and an empty value is `null`.
+`id` is the ID you passed. `sequence` is built from `document_type.saft_code`, `document_set.name` and `number`, as on `Invoice::create()`. `total` is mapped from `net_value` and `totalNet` is `net_value - taxes_value`. `type` is mapped from `document_type.saft_code`; an unknown type is `null`. `atcud` is mapped from `atcud`, and an empty value is `null`.
 
 ## Reference
 

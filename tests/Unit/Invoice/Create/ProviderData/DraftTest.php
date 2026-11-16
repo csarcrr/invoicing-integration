@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 it('issues the final document by default', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->getPayload();
 
@@ -20,6 +22,7 @@ it('issues the final document by default', function (Provider $provider) {
 
 it('can create the document as a draft', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->asDraft()->getPayload();
 

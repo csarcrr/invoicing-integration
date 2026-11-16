@@ -10,7 +10,6 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
 use CsarCrr\InvoicingIntegration\Traits\HidesAdditionalData;
 use Illuminate\Support\Collection;
-use Spatie\LaravelData\Attributes\Validation\Sometimes;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
@@ -38,8 +37,7 @@ class InvoiceData extends Data implements DataNeedsValidation
         public ?OutputData $output = null,
         public Optional|null|string $notes = null,
         public Optional|null|DueDateTerm $dueDate = null,
-        #[Sometimes]
-        public InvoiceType $type = InvoiceType::Invoice,
+        public ?InvoiceType $type = null,
         public Optional|null|string $atcud = null,
     ) {
         if (is_null($this->output)) {

@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `InvoiceData::$type` is now `?InvoiceType` and no longer defaults to `FT`. Without a type, Cegid Vendus requests do not send `type`, Moloni `Invoice::create()` posts to `documents/insert` and Moloni `Invoice::find()` lists from `documents/getAll`. An unknown document type in a provider response is `null` instead of `FT`.
+- `InvoiceData::$dueDate` is sent on any document type. Setting it on a type other than FT no longer throws; the provider decides whether to accept it.
 - Cegid Vendus requests now use API v1.2 (`https://www.vendus.pt/ws/v1.2/`). Item fields in `getAdditionalData()` use the v1.2 nested names: `prices.gross`, `tax.id`, `tax.exemption`, `tax.exemption_law`, `stock.control`, `stock.stores`.
 - Cegid Vendus no longer sets `ClientData->date` from responses, because v1.2 does not return it. The `date` filter of `Client::find()` still works.
 - `ItemData->taxExemptionReason` and `TaxData->exemptionReason` are now `?string` and take the provider's exemption code (e.g. `'M04'`).

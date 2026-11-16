@@ -190,9 +190,11 @@ Payments are **required** for certain document types (FR, FS, RG, NC):
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::CREDIT_CARD,
@@ -243,7 +245,7 @@ $invoiceData = InvoiceData::make([
 
 | Type                          | Code | When to Use                          |
 | ----------------------------- | ---- | ------------------------------------ |
-| `InvoiceType::Invoice`        | FT   | Customer will pay later (default)    |
+| `InvoiceType::Invoice`        | FT   | Customer will pay later              |
 | `InvoiceType::InvoiceReceipt` | FR   | Customer paid at time of sale        |
 | `InvoiceType::InvoiceSimple`  | FS   | Simplified invoice, requires payment |
 | `InvoiceType::Receipt`        | RG   | Receipt for an existing FT invoice   |
@@ -252,7 +254,7 @@ $invoiceData = InvoiceData::make([
 
 ## Due Date
 
-For FT invoices where payment comes later, set a due date with a `DueDateTerm`:
+When payment comes later, set a due date with a `DueDateTerm`:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -268,8 +270,7 @@ Invoice::create($invoiceData)->execute();
 
 Available terms: `Days0`, `Days1`, `Days7`, `Days15`, `Days30`, `Days45`, `Days60` and `Days90`. The due date sent to the provider is today plus the term's days; `Days0` is today.
 
-> [!NOTE]
-> Setting a due date on non-FT document types throws an exception.
+The due date is sent on any document type. The provider decides whether that type accepts it.
 
 ## Notes
 
@@ -292,6 +293,7 @@ use CsarCrr\InvoicingIntegration\Data\AddressData;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\TransportData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 // Where the order ships from (your warehouse)
 $origin = AddressData::make([
@@ -318,6 +320,7 @@ $transport = TransportData::make([
 ]);
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
         'vat' => '987654321',
@@ -357,7 +360,7 @@ All document types are sent to the `documents` endpoint, with the document type 
 
 ## Moloni
 
-Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`.
+Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`. Without a type, the request is sent to `documents/insert` and Moloni decides the outcome.
 
 - **Client**: the client's `id` is sent as `customer_id`. A client without an `id` is looked up by `vat` with one request to `customers/getByVat`, and the `id` of the first customer whose `vat` is exactly the client's is sent. Moloni also returns customers whose `vat` only contains the client's; they are ignored. When no customer has that exact `vat`, `CouldNotFindCustomerByVatException` is thrown; the customer is not created, so create it first with `Client::create()`. Without a client, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
 - **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.

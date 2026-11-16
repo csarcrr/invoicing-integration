@@ -14,6 +14,7 @@ how to configure exemptions when building your `InvoiceData` payload. An exempti
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\TaxExemptionData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
 
@@ -23,6 +24,7 @@ $exemptions = TaxExemption::find()->execute()->getList();
 $exemption = $exemptions->firstWhere('code', 'M04');
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [
         ItemData::make([
             'reference' => 'CONSULTING',

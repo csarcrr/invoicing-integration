@@ -6,6 +6,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotFindCustomerByVatException;
@@ -34,6 +35,7 @@ it('transforms to provider payload with all client fields', function (Provider $
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => $client,
         ])
@@ -66,6 +68,7 @@ it('sends only the client fields the provider accepts on a document', function (
     ]);
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'client' => $client,
     ]))->getPayload();
@@ -93,6 +96,7 @@ it('sends only the client fields the provider accepts on a document', function (
 it('fails when vat is not valid', function (Provider $provider) {
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => ClientData::from(['vat' => '']),
         ])
@@ -104,6 +108,7 @@ it('fails when vat is not valid', function (Provider $provider) {
 it('sends the client id to the provider', function (Provider $provider) {
     $payload = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => ClientData::from(['id' => '12001', 'vat' => '123456789']),
         ])
@@ -121,6 +126,7 @@ it('sends the client found by the client vat', function (Provider $provider) {
     fakeProviderClientByVat($provider, $clients);
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'client' => ClientData::from(['vat' => '215783920']),
     ]))->getPayload();
@@ -140,6 +146,7 @@ it('sends the client whose vat matches the client vat exactly', function (Provid
     ]);
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'client' => ClientData::from(['vat' => '215783920']),
     ]))->getPayload();
@@ -154,6 +161,7 @@ it('fails when no client has the client vat', function (Provider $provider) {
     fakeProviderClientByVat($provider, []);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'client' => ClientData::from(['vat' => '215783920']),
     ]));
@@ -168,6 +176,7 @@ it('fails when only clients with a different vat contain the client vat', functi
     fakeProviderClientByVat($provider, [['customer_id' => 12010, 'vat' => '2157839201']]);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'client' => ClientData::from(['vat' => '215783920']),
     ]));
@@ -181,6 +190,7 @@ it('fails when only clients with a different vat contain the client vat', functi
 it('falls back to the configured client when no client is set', function (Provider $provider) {
     $payload = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
         ])
     )->getPayload();

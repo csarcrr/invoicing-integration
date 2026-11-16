@@ -78,6 +78,7 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
@@ -86,6 +87,7 @@ $clientData = ClientData::make(['id' => $customer->provider_client_id]);
 $client = Client::get($clientData)->execute()->getClient();
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [
         ItemData::make([
@@ -108,6 +110,7 @@ You don't have to register every customer. Here's when to use each approach:
 ```php
 // Option 1: Inline client (for one-time purchases)
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => ClientData::make([
         'name' => 'Individual Buyer',
         'vat' => '123456789',
@@ -120,6 +123,7 @@ Invoice::create($invoiceData)->execute();
 // Option 2: Registered client (for repeat customers)
 $client = Client::get(ClientData::make(['id' => $storedId]))->execute()->getClient();
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [...],
 ]);

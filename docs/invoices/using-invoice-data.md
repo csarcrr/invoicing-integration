@@ -14,9 +14,11 @@ When you issue an invoice, you receive a hydrated `InvoiceData` containing the r
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [ItemData::make(['reference' => 'SKU-001'])],
 ]);
 
@@ -107,10 +109,12 @@ if ($output) {
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [
         ItemData::make([
             'reference' => 'SKU-001',

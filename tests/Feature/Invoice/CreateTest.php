@@ -22,6 +22,7 @@ test('handles invoice response correctly', function (Provider $provider, string 
     Http::fake(mockResponse($payload));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
         'payments' => [PaymentData::make(['method' => PaymentMethod::MB, 'amount' => 1000])],
     ]));
@@ -43,6 +44,7 @@ test('fills the sequence and totals from the provider response', function (Provi
     Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
     ]))->execute()->getInvoice();
 
@@ -59,6 +61,7 @@ test('returns the atcud of the created invoice', function (Provider $provider, s
     Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
     ]))->execute()->getInvoice();
 
@@ -69,6 +72,7 @@ test('does not keep the provider document lines as additional data', function (P
     Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
     ]))->execute()->getInvoice();
 
@@ -79,6 +83,7 @@ test('fetches the created document when the provider needs it', function (Provid
     Http::fake(mockResponse(fixtures()->response()->invoice()->files($fixture)));
 
     Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
     ]))->execute();
 
@@ -126,6 +131,19 @@ test('sends each invoice type to the provider', function (Provider $provider, In
     [InvoiceType::Transport, 'billsOfLading/insert'],
     [InvoiceType::CreditNote, 'creditNotes/insert'],
 ]);
+
+test('sends the invoice without a document type when no type is set', function (Provider $provider) {
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('full')));
+
+    Invoice::create(InvoiceData::make([
+        'items' => [ItemData::make(['reference' => 'reference-1'])],
+    ]))->execute();
+
+    Http::assertSent(fn (Request $request) => match ($provider) {
+        Provider::CEGID_VENDUS => Str::contains($request->url(), 'documents') && ! isset($request['type']),
+        Provider::MOLONI => Str::contains($request->url(), '/v1/documents/insert'),
+    });
+})->with('providers');
 
 test('records the credit note payments as a refund', function (Provider $provider) {
     fakeProviderPaymentMethods($provider);

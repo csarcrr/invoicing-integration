@@ -70,6 +70,7 @@ class Find extends Invoice implements ShouldFindInvoice
     protected function buildUrl(): void
     {
         $this->url = match ($this->data->type) {
+            null => 'documents/getAll',
             InvoiceType::Invoice => 'invoices/getAll',
             InvoiceType::InvoiceReceipt => 'invoiceReceipts/getAll',
             InvoiceType::InvoiceSimple => 'simplifiedInvoices/getAll',

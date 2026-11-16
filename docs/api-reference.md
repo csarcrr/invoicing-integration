@@ -787,7 +787,7 @@ $invoiceData = InvoiceData::make([
 
 | Property           | Type                      | Description                                     |
 | ------------------ | ------------------------- | ----------------------------------------------- |
-| `type`             | `InvoiceType`             | Document type (defaults to `Invoice`)           |
+| `type`             | `?InvoiceType`            | Document type; not sent when `null`, and `null` for an unknown provider type |
 | `items`            | `Collection<ItemData>`    | Invoice lines; required except for receipts     |
 | `payments`         | `Collection<PaymentData>` | Payment records (required for FR, FS, RG, NC)   |
 | `client`           | `?ClientData`             | Customer information                            |
@@ -795,7 +795,7 @@ $invoiceData = InvoiceData::make([
 | `creditNoteReason` | `?string`                 | Required for credit notes                       |
 | `relatedDocument`  | `?string`                 | Related document of a non-credit-note document. On RG, the invoice it settles: its `sequence` on Cegid Vendus, its `id` on Moloni |
 | `notes`            | `?string`                 | Additional notes (printed on document)          |
-| `dueDate`          | `?DueDateTerm`            | Payment term (FT only); throws `Exception` if set on non-FT types |
+| `dueDate`          | `?DueDateTerm`            | Payment term, sent on any document type |
 | `output`           | `OutputData`              | Preferred output format (PDF default)           |
 
 > `InvoiceData` implements `DataNeedsValidation`, so misconfigured payloads throw

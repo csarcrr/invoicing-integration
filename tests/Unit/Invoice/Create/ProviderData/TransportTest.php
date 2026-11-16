@@ -47,6 +47,7 @@ it('transforms to provider payload with transport details', function (Provider $
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'client' => ClientData::from(['name' => 'Client Name', 'vat' => '123456789']),
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'transport' => $transport,
@@ -158,6 +159,7 @@ it('fails when no client is provided with transport', function (Provider $provid
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'transport' => $transport,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
         ])
@@ -195,6 +197,7 @@ it('fails when no load date is provided with transport', function (Provider $pro
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'transport' => $transport,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => ClientData::from(['vat' => '123456789', 'name' => 'Client Name']),

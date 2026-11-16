@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
@@ -24,6 +25,7 @@ it('transforms to provider payload with all item properties', function (Provider
     ]);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [$item],
     ]));
 
@@ -32,6 +34,7 @@ it('transforms to provider payload with all item properties', function (Provider
 
 it('sends the amount discount only to providers that support it', function (Provider $provider) {
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1', 'amountDiscount' => 50])],
     ]));
 
@@ -45,6 +48,7 @@ it('transforms to provider payload with multiple items', function (Provider $pro
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [
             ItemData::from(['reference' => 'reference-1']),
             ItemData::from(['reference' => 'reference-2']),
@@ -58,6 +62,7 @@ it('transforms to provider payload with correct item type', function (Provider $
     $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [
             ItemData::from(['reference' => 'reference-1', 'type' => $type]),
         ],
@@ -86,6 +91,7 @@ it('transforms to provider payload with correct tax type', function (Provider $p
     }
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [
             ItemData::from($attributes),
         ],
@@ -102,6 +108,7 @@ it('transforms to provider payload with correct tax type', function (Provider $p
 
 it('sends the item id to the provider when it identifies items by id', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['id' => 1542, 'reference' => 'reference-1'])],
     ]))->getPayload();
 
@@ -113,6 +120,7 @@ it('sends the item id to the provider when it identifies items by id', function 
 
 it('sends the item id to the provider when the item has no reference', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['id' => 1542])],
     ]))->getPayload();
 
@@ -125,6 +133,7 @@ it('sends the item id to the provider when the item has no reference', function 
 
 it('sends the item name as the line name', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1', 'name' => 'Bananas'])],
     ]))->getPayload();
 
@@ -136,6 +145,7 @@ it('sends the item name as the line name', function (Provider $provider) {
 
 it('sends a quantity of one when the item has no quantity', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->getPayload();
 
@@ -149,6 +159,7 @@ it('sends the product type on vendus invoice lines when the item has no type', f
     mockConfiguration(Provider::CEGID_VENDUS);
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->getPayload();
 

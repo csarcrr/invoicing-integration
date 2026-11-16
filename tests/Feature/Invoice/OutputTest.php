@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +13,7 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
@@ -33,6 +35,7 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
@@ -54,6 +57,7 @@ test('can save the output under a custom name and path', function (Provider $pro
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
@@ -80,6 +84,7 @@ test('is able to sanitize the path and filename when saving', function (
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
@@ -120,6 +125,7 @@ test('outputs null when there is no invoice output provided', function (Provider
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 

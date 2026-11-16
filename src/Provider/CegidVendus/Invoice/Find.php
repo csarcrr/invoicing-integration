@@ -90,6 +90,10 @@ class Find extends Invoice implements ShouldFindInvoice
 
     protected function buildType(): void
     {
+        if (is_null($this->data->type)) {
+            return;
+        }
+
         $this->payload->put('type', $this->data->type->value);
     }
 

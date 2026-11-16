@@ -168,6 +168,7 @@ Once registered, use the client for all their invoices:
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
@@ -175,6 +176,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 $client = Client::create($clientData)->execute()->getClient();
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [
         ItemData::make([
@@ -192,6 +194,7 @@ $storedClientId = $customer->provider_client_id;
 $client = Client::get(ClientData::make(['id' => $storedClientId]))->execute()->getClient();
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     // ... add items, payments, etc.
 ]);
