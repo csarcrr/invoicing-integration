@@ -31,8 +31,10 @@ test('returns the invoice pdf content and the provider pdf url', function (Provi
     };
 })->with('providers');
 
-test('moloni keeps the pdf link when the download does not return a pdf', function () {
-    mockConfiguration(Provider::MOLONI);
+test('falls back to the pdf url when the provider download does not return a pdf', function (Provider $provider) {
+    if ($provider === Provider::CEGID_VENDUS) {
+        $this->markTestSkipped('Cegid Vendus returns the pdf directly and has no pdf url.');
+    }
 
     Http::fake([
         '*documents/getPDFLink*' => mockResponse(fixtures()->response()->invoice()->files('pdf_link')),
@@ -43,7 +45,7 @@ test('moloni keeps the pdf link when the download does not return a pdf', functi
 
     expect($output->content)->toBeNull()
         ->and($output->url)->toBe('https://www.moloni.pt/downloads/?h=abc.def.ghi');
-})->note('todo: naming keeps being provider specific and it cannot. example fix: "providers that don\'t directly support download, are always able to fallback to get the url"');
+})->with('providers');
 
 it('requests the moloni download with the token from the pdf link and the document id', function () {
     mockConfiguration(Provider::MOLONI);
