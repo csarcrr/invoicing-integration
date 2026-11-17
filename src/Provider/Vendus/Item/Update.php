@@ -34,7 +34,7 @@ class Update extends Item implements ShouldUpdateItem
     /**
      * @throws CouldNotGetUnitIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         throw_if(! is_int($this->data->id), \InvalidArgumentException::class, 'Item ID is required.');
 

@@ -35,7 +35,7 @@ class Create extends Client implements ShouldCreateClient
     /**
      * @throws \Throwable
      */
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->post('/clients', $this->getPayload());
 

@@ -34,7 +34,7 @@ class Find extends DocumentType implements ShouldFindDocumentType
     /**
      * @throws CouldNotGetLanguageIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $this->buildLanguage();
 

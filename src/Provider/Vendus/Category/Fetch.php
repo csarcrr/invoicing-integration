@@ -12,7 +12,7 @@ class Fetch implements ShouldFetchCategory
 {
     public function __construct(protected CategoryData $category) {}
 
-    public function execute(): self
+    public function execute(): static
     {
         throw_if(! is_int($this->category->id), \InvalidArgumentException::class, 'Category ID is required.');
 

@@ -36,7 +36,7 @@ class Fetch extends Invoice implements ShouldFetchInvoice
         return $this->data;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->get($this->getUrl());
 

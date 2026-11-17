@@ -29,7 +29,7 @@ class Find extends Category implements ShouldFindCategory
         $this->list = collect();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->post('productCategories/getAll', $this->getPayload()->toArray());
 

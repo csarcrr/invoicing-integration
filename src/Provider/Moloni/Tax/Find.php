@@ -22,7 +22,7 @@ class Find implements ShouldFindTax
         $this->list = collect();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->post('taxes/getAll');
 

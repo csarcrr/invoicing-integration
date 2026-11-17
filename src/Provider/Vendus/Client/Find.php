@@ -34,7 +34,7 @@ class Find extends Client implements ShouldFindClient
         $this->payload = collect();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get('/clients', $this->getPayload());
 

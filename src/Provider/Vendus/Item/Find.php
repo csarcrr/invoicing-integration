@@ -43,7 +43,7 @@ class Find extends Item implements ShouldFindItem
     /**
      * Sends the search request and populates the result list and pagination details.
      */
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get('/products/', $this->getPayload());
 

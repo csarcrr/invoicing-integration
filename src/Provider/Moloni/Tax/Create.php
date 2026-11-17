@@ -31,7 +31,7 @@ class Create extends Tax implements ShouldCreateTax
         return $this->data;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('taxes/insert', $this->getPayload()->toArray());
 

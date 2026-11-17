@@ -10,8 +10,6 @@ use CsarCrr\InvoicingIntegration\Data\CategoryData;
 
 interface ShouldUpdateCategory extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): CategoryData;
 
     public function getUrl(): string;

@@ -41,7 +41,7 @@ class Fetch extends Client implements ShouldFetchClient
         return $this->data;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 

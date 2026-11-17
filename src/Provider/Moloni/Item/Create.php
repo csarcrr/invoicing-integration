@@ -41,7 +41,7 @@ class Create extends Item implements ShouldCreateItem
      * @throws CouldNotGetTaxIdException
      * @throws MissingCategoryException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('products/insert', $this->getPayload()->toArray());
 

@@ -47,7 +47,7 @@ class Create extends Client implements ShouldCreateClient
      * @throws CouldNotGetCountryIdException
      * @throws CouldNotGetLanguageIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $payload = $this->getPayload();
 

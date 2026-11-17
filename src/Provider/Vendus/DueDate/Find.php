@@ -33,7 +33,7 @@ class Find extends DueDate implements ShouldFindDueDate
         $this->buildUrl();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get($this->getUrl(), $this->getPayload()->toArray());
 

@@ -39,7 +39,7 @@ class Find extends Invoice implements ShouldFindInvoice
         $this->buildUrl();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get($this->getUrl(), $this->getPayload());
 

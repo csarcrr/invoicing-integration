@@ -10,7 +10,5 @@ use CsarCrr\InvoicingIntegration\Data\DueDateData;
 
 interface ShouldCreateDueDate extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): DueDateData;
 }

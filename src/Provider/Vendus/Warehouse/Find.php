@@ -31,7 +31,7 @@ class Find extends Warehouse implements ShouldFindWarehouse
         $this->buildUrl();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->get($this->getUrl(), $this->getPayload()->toArray());
 

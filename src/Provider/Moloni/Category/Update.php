@@ -15,7 +15,7 @@ use function throw_if;
 
 class Update extends Create implements ShouldUpdateCategory
 {
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 

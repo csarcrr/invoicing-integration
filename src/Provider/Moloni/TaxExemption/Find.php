@@ -28,7 +28,7 @@ class Find extends TaxExemption implements ShouldFindTaxExemption
         $this->buildUrl();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 

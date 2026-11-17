@@ -10,8 +10,6 @@ use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 
 interface ShouldCreateWarehouse extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): WarehouseData;
 
     public function getUrl(): string;

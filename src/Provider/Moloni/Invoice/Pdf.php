@@ -41,7 +41,7 @@ class Pdf extends Invoice implements ShouldGetInvoicePdf
         $this->buildPayload();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
 

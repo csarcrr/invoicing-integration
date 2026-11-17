@@ -30,7 +30,7 @@ class Find implements ShouldFindDueDate
         $this->perPage = 50;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->post('maturityDates/getAll', $this->getPayload()->toArray());
 

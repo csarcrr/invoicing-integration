@@ -17,7 +17,7 @@ use function throw_if;
 
 class Update extends Create implements ShouldUpdateClient
 {
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('customers/update', $this->getPayload()->toArray());
 

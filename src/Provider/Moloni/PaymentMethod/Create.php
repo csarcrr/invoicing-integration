@@ -32,7 +32,7 @@ class Create extends PaymentMethod implements ShouldCreatePaymentMethod
         return $this->data;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('paymentMethods/insert', $this->getPayload()->toArray());
 

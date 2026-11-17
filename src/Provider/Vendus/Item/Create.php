@@ -46,7 +46,7 @@ class Create extends Item implements ShouldCreateItem
      *
      * @throws CouldNotGetUnitIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('products', $this->getPayload());
 

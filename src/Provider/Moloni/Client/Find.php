@@ -33,7 +33,7 @@ class Find extends Client implements ShouldFindClient
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $endpoint = match ($this->searchFilter()->keys()->first()) {
             'vat' => 'customers/getByVat',

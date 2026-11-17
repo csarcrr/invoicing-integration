@@ -31,7 +31,7 @@ class Create extends Warehouse implements ShouldCreateWarehouse
         $this->buildPayload();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $this->buildCountry();
 

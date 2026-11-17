@@ -39,7 +39,7 @@ class Fetch extends Client implements ShouldFetchClient
     /**
      * @throws InvalidArgumentException|\Throwable
      */
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get($this->getUrl());
 

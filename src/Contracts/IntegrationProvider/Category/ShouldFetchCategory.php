@@ -9,7 +9,5 @@ use CsarCrr\InvoicingIntegration\Data\CategoryData;
 
 interface ShouldFetchCategory extends ShouldExecute
 {
-    public function execute(): self;
-
     public function get(): CategoryData;
 }

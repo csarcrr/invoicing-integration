@@ -10,8 +10,6 @@ use CsarCrr\InvoicingIntegration\Data\OutputData;
 
 interface ShouldGetInvoicePdf extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): OutputData;
 
     public function getUrl(): string;

@@ -10,8 +10,6 @@ use CsarCrr\InvoicingIntegration\Data\UnitData;
 
 interface ShouldCreateUnit extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): UnitData;
 
     public function getUrl(): string;

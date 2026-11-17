@@ -40,7 +40,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpda
 
 | Method      | Return Type  | Description                                                    | Throws                                     |
 | ----------- | ------------ | -------------------------------------------------------------- | ------------------------------------------ |
-| `execute()` | `self`       | Send the update request and store unhandled response fields as additional data | `InvalidArgumentException` (if ID missing) |
+| `execute()` | `static`     | Send the update request and store unhandled response fields as additional data | `InvalidArgumentException` (if ID missing) |
 | `get()` | `ClientData` | The updated client. On Moloni, the `ClientData` you passed in | -                                    |
 
 ## ShouldDeleteClient Contract
@@ -81,7 +81,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 
 | Method             | Return Type  | Description                                   |
 | ------------------ | ------------ | --------------------------------------------- |
-| `execute()`        | `self`       | Execute the current page request              |
+| `execute()`        | `static`     | Execute the current page request              |
 | `get()`        | `Collection` | `Collection<ClientData>` results              |
 | `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
 | `next()`           | `self`       | Move to the next page                         |
@@ -122,7 +122,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFetchI
 
 | Method      | Return Type | Description                                                  | Throws                                     |
 | ----------- | ----------- | ------------------------------------------------------------ | ------------------------------------------ |
-| `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing, thrown by `Item::fetch()`) |
+| `execute()` | `static`    | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing, thrown by `Item::fetch()`) |
 | `get()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`, and additional data) | — |
 | `getUrl()`  | `string`    | The request URL the retrieval is sent to                    | —                                          |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus, `product_id` and `with_invisible` on Moloni) | — |
@@ -150,7 +150,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 
 | Method             | Return Type  | Description                                   |
 | ------------------ | ------------ | --------------------------------------------- |
-| `execute()`        | `self`       | Execute the current page request              |
+| `execute()`        | `static`     | Execute the current page request              |
 | `get()`        | `Collection` | `Collection<ItemData>` results                |
 | `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
 | `next()`           | `self`       | Move to the next page                         |
@@ -174,7 +174,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreate
 
 | Method         | Return Type  | Description                                                                                 |
 | -------------- | ------------ | ------------------------------------------------------------------------------------------- |
-| `execute()`    | `self`       | Send the create request and populate the response                                           |
+| `execute()`    | `static`     | Send the create request and populate the response                                           |
 | `get()`    | `ItemData`   | Access the hydrated DTO (includes provider-assigned `id`)                                   |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)                                        |
 
@@ -198,7 +198,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdate
 
 | Method         | Return Type  | Description                                                                                          |
 | -------------- | ------------ | ---------------------------------------------------------------------------------------------------- |
-| `execute()`    | `self`       | Send the update request and store unhandled response fields as additional data                       |
+| `execute()`    | `static`     | Send the update request and store unhandled response fields as additional data                       |
 | `get()`    | `ItemData`   | The updated item. On Moloni, the current product with the updated fields merged over it              |
 | `getPayload()` | `Collection` | Inspect the payload. On Moloni this requests the current product first                               |
 
@@ -243,7 +243,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldCre
 
 | Method         | Return Type   | Description                                               |
 | -------------- | ------------- | --------------------------------------------------------- |
-| `execute()`    | `self`        | Send the create request and populate the response         |
+| `execute()`    | `static`      | Send the create request and populate the response         |
 | `get()` | `DueDateData` | Access the hydrated DTO (includes provider-assigned `id`) |
 | `getPayload()` | `Collection`  | Inspect the payload sent to the provider (debugging)      |
 
@@ -257,7 +257,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 | Method             | Return Type  | Description                           |
 | ------------------ | ------------ | ------------------------------------- |
-| `execute()`        | `self`       | Execute the current page request      |
+| `execute()`        | `static`     | Execute the current page request      |
 | `get()`        | `Collection` | `Collection<DueDateData>` results     |
 | `getPayload()`     | `Collection` | Current request payload (pagination)  |
 | `next()`           | `self`       | Move to the next page                 |
@@ -292,7 +292,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 
 | Method              | Return Type            | Description                                                   |
 | ------------------- | ---------------------- | ------------------------------------------------------------- |
-| `execute()`         | `self`                 | Send the movement                                             |
+| `execute()`         | `static`               | Send the movement                                             |
 | `get()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
 | `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
 
@@ -320,7 +320,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Company\ShouldFin
 
 | Method      | Return Type  | Description                       |
 | ----------- | ------------ | --------------------------------- |
-| `execute()` | `self`       | Send the request                  |
+| `execute()` | `static`     | Send the request                  |
 | `get()` | `Collection` | `Collection<CompanyData>` results |
 
 ---
@@ -348,7 +348,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldCreateT
 
 | Method         | Return Type  | Description                                               |
 | -------------- | ------------ | --------------------------------------------------------- |
-| `execute()`    | `self`       | Send the create request and populate the response         |
+| `execute()`    | `static`     | Send the create request and populate the response         |
 | `get()`     | `TaxData`    | Access the hydrated DTO (includes provider-assigned `id`) |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)      |
 
@@ -362,7 +362,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldFindTax
 
 | Method      | Return Type  | Description                   |
 | ----------- | ------------ | ----------------------------- |
-| `execute()` | `self`       | Send the request              |
+| `execute()` | `static`     | Send the request              |
 | `get()` | `Collection` | `Collection<TaxData>` results |
 
 ---
@@ -390,7 +390,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldCreate
 
 | Method      | Return Type | Description                                                                 |
 | ----------- | ----------- | --------------------------------------------------------------------------- |
-| `execute()` | `self`      | Send the create request and populate the returned `UnitData`; throws `RequestFailedException` if the provider rejects the unit |
+| `execute()` | `static`    | Send the create request and populate the returned `UnitData`; throws `RequestFailedException` if the provider rejects the unit |
 | `get()` | `UnitData`  | The created unit, with the provider-assigned `id`                           |
 | `getUrl()`  | `string`    | The request URL the unit is sent to                                         |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (`title` on Vendus; `name` and `short_name` on Moloni) |
@@ -405,7 +405,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 
 | Method      | Return Type  | Description                    |
 | ----------- | ------------ | ------------------------------ |
-| `execute()` | `self`       | Send the request               |
+| `execute()` | `static`     | Send the request               |
 | `get()` | `Collection` | `Collection<UnitData>` results |
 
 ---
@@ -433,7 +433,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 
 | Method             | Return Type     | Description                                                                                       |
 | ------------------ | --------------- | ------------------------------------------------------------------------------------------------- |
-| `execute()`        | `self`          | Send the create request and populate the returned `WarehouseData`; throws `RequestFailedException` if the provider rejects the warehouse |
+| `execute()`        | `static`        | Send the create request and populate the returned `WarehouseData`; throws `RequestFailedException` if the provider rejects the warehouse |
 | `get()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()`; on Vendus the other response fields (such as `type`) are in `getAdditionalData()` |
 | `getUrl()`         | `string`        | The request URL the warehouse is sent to                                                          |
 | `getPayload()`     | `Collection`    | Inspect the payload sent to the provider (`title` and the optional fields)                        |
@@ -448,7 +448,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldF
 
 | Method      | Return Type  | Description                          |
 | ----------- | ------------ | ------------------------------------ |
-| `execute()` | `self`       | Send the request                     |
+| `execute()` | `static`     | Send the request                     |
 | `get()` | `Collection` | `Collection<WarehouseData>` results  |
 | `getUrl()`  | `string`     | Request URL the operation builds     |
 
@@ -476,7 +476,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\TaxExemption\Shou
 
 | Method         | Return Type  | Description                                                 |
 | -------------- | ------------ | ----------------------------------------------------------- |
-| `execute()`    | `self`       | Send the request                                            |
+| `execute()`    | `static`     | Send the request                                            |
 | `get()`    | `Collection` | `Collection<TaxExemptionData>` results                      |
 | `getUrl()`     | `string`     | Request URL the operation builds                            |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)        |
@@ -505,7 +505,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DocumentType\Shou
 
 | Method         | Return Type  | Description                                                                                  |
 | -------------- | ------------ | -------------------------------------------------------------------------------------------- |
-| `execute()`    | `self`       | Send the request                                                                             |
+| `execute()`    | `static`     | Send the request                                                                             |
 | `get()`    | `Collection` | `Collection<DocumentTypeData>` results                                                       |
 | `getUrl()`     | `string`     | Request URL the operation builds                                                             |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus; `language_id` on Moloni, added during `execute()`) |
@@ -537,7 +537,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldCr
 
 | Method          | Return Type    | Description                                                                 |
 | --------------- | -------------- | --------------------------------------------------------------------------- |
-| `execute()`     | `self`         | Send the create request and populate the returned `CategoryData`; throws `RequestFailedException` if the provider rejects the category |
+| `execute()`     | `static`       | Send the create request and populate the returned `CategoryData`; throws `RequestFailedException` if the provider rejects the category |
 | `get()` | `CategoryData` | The created category, with the provider-assigned `id`                       |
 | `getUrl()`      | `string`       | The request URL the category is sent to                                     |
 | `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Vendus, `name` and `parent_id` on Moloni) |
@@ -552,7 +552,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFi
 
 | Method             | Return Type  | Description                                  |
 | ------------------ | ------------ | -------------------------------------------- |
-| `execute()`        | `self`       | Execute the current page request             |
+| `execute()`        | `static`     | Execute the current page request             |
 | `get()`        | `Collection` | `Collection<CategoryData>` results           |
 | `getPayload()`     | `Collection` | Current request payload (parent, pagination) |
 | `next()`           | `self`       | Move to the next page                        |
@@ -574,7 +574,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFe
 
 | Method          | Return Type    | Description                                                    |
 | --------------- | -------------- | -------------------------------------------------------------- |
-| `execute()`     | `self`         | Send the request; throws `InvalidArgumentException` without an `id` |
+| `execute()`     | `static`       | Send the request; throws `InvalidArgumentException` without an `id` |
 | `get()` | `CategoryData` | The fetched category                                           |
 
 ## ShouldUpdateCategory Contract
@@ -587,7 +587,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUp
 
 | Method          | Return Type    | Description                                                                 | Throws                                                                                  |
 | --------------- | -------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `execute()`     | `self`         | Send the update request; returns `self`                                     | `InvalidArgumentException` (if ID missing, thrown by `Category::update()`), `RequestFailedException` (if the provider rejects the update) |
+| `execute()`     | `static`       | Send the update request; returns `static`                                   | `InvalidArgumentException` (if ID missing, thrown by `Category::update()`), `RequestFailedException` (if the provider rejects the update) |
 | `get()` | `CategoryData` | The updated category; on Moloni, the `CategoryData` you passed in           | -                                                                                       |
 | `getUrl()`      | `string`       | The request URL the update is sent to                                       | -                                                                                       |
 | `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Vendus; `category_id`, `name` and `parent_id` on Moloni) | -                                    |
@@ -617,7 +617,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\Sho
 
 | Method               | Return Type         | Description                                               |
 | -------------------- | ------------------- | --------------------------------------------------------- |
-| `execute()`          | `self`              | Send the create request and populate the response         |
+| `execute()`          | `static`            | Send the create request and populate the response         |
 | `get()` | `PaymentMethodData` | Access the hydrated DTO (includes provider-assigned `id`) |
 | `getPayload()`       | `Collection`        | Inspect the payload sent to the provider (debugging)      |
 
@@ -631,7 +631,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\Sho
 
 | Method             | Return Type  | Description                             |
 | ------------------ | ------------ | --------------------------------------- |
-| `execute()`        | `self`       | Execute the current page request        |
+| `execute()`        | `static`     | Execute the current page request        |
 | `get()`        | `Collection` | `Collection<PaymentMethodData>` results |
 | `getPayload()`     | `Collection` | Current request payload (pagination)    |
 | `next()`           | `self`       | Move to the next page                   |
@@ -693,7 +693,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFet
 
 | Method          | Return Type   | Description                                                   | Throws                                                                   |
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing, thrown by `Invoice::fetch()`), `RequestFailedException` (if no document has the ID) |
+| `execute()`     | `static`      | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing, thrown by `Invoice::fetch()`), `RequestFailedException` (if no document has the ID) |
 | `get()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
 | `getUrl()`      | `string`      | The request URL the retrieval is sent to                      | -                                                                    |
 | `getPayload()`  | `Collection`  | Inspect the payload sent to the provider (empty on Vendus, `document_id` on Moloni) | -                                                                    |
@@ -708,7 +708,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 
 | Method          | Return Type   | Description                                                   | Throws                                                                   |
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing, thrown by `Invoice::pdf()`), `RequestFailedException` (Moloni, if no PDF link is returned) |
+| `execute()`     | `static`      | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing, thrown by `Invoice::pdf()`), `RequestFailedException` (Moloni, if no PDF link is returned) |
 | `get()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
 | `getUrl()`      | `string`      | The URL of the first request (Moloni: the PDF link request; Vendus: the PDF document) | -                                       |
 | `getPayload()`  | `Collection`  | Inspect the payload of the first request (empty on Vendus, `document_id` on Moloni) | -                                       |
@@ -737,7 +737,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFin
 
 | Method             | Return Type  | Description                                        | Throws                                                                   |
 | ------------------ | ------------ | -------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()`        | `self`       | Execute the current page request                   | `RequestFailedException` (if the provider rejects the search)            |
+| `execute()`        | `static`     | Execute the current page request                   | `RequestFailedException` (if the provider rejects the search)            |
 | `get()`        | `Collection` | `Collection<InvoiceData>` results                  | -                                                                        |
 | `getPayload()`     | `Collection` | Current request payload (type, client, pagination) | -                                                                        |
 | `getUrl()`         | `string`     | The request URL the search is sent to (Moloni: one endpoint per document type; Vendus: `/documents`) | - |

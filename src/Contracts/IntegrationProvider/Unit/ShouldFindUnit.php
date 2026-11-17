@@ -10,8 +10,6 @@ use Illuminate\Support\Collection;
 
 interface ShouldFindUnit extends ShouldExecute
 {
-    public function execute(): self;
-
     /**
      * @return Collection<int, UnitData>
      */

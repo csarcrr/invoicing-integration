@@ -24,7 +24,7 @@ class Find implements ShouldFindUnit
         $this->list = collect();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get('products/units');
 

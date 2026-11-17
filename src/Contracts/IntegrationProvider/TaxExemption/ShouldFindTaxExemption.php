@@ -11,8 +11,6 @@ use Illuminate\Support\Collection;
 
 interface ShouldFindTaxExemption extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     /**
      * @return Collection<int, TaxExemptionData>
      */

@@ -31,7 +31,7 @@ class Find implements ShouldFindCategory
         $this->list = collect();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->get('products/categories', $this->getPayload()->toArray());
 

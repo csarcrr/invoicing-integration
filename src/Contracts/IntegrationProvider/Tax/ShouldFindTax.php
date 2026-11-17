@@ -10,8 +10,6 @@ use Illuminate\Support\Collection;
 
 interface ShouldFindTax extends ShouldExecute
 {
-    public function execute(): self;
-
     /**
      * @return Collection<int, TaxData>
      */

@@ -83,7 +83,7 @@ class Update extends Item implements ShouldUpdateItem
      * @throws CouldNotGetUnitIdException
      * @throws CouldNotGetTaxIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('products/update', $this->getPayload()->toArray());
 

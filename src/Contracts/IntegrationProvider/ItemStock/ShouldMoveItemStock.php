@@ -10,7 +10,5 @@ use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 
 interface ShouldMoveItemStock extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): StockMovementData;
 }

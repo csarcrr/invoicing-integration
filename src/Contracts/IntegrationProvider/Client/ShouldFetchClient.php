@@ -10,8 +10,6 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 interface ShouldFetchClient extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): ClientData;
 
     public function getUrl(): string;

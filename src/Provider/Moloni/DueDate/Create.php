@@ -31,7 +31,7 @@ class Create extends DueDate implements ShouldCreateDueDate
         return $this->data;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('maturityDates/insert', $this->getPayload()->toArray());
 

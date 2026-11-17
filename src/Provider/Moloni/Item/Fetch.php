@@ -36,7 +36,7 @@ class Fetch extends Item implements ShouldFetchItem
         return $this->data;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $data = $this->getProduct($this->getPayload()->toArray());
 

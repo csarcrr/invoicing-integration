@@ -15,7 +15,7 @@ use function throw_if;
 
 class Update extends Create implements ShouldUpdateClient
 {
-    public function execute(): self
+    public function execute(): static
     {
         throw_if(! is_string($this->data->id), InvalidArgumentException::class, 'Client ID is required.');
 

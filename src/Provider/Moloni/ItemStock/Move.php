@@ -23,7 +23,7 @@ class Move implements ShouldMoveItemStock
         $this->payload = collect();
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('productStocks/insert', $this->getPayload()->toArray());
 

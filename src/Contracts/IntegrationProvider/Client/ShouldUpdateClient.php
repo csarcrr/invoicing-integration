@@ -10,7 +10,5 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 interface ShouldUpdateClient extends ShouldExecute, ShouldHavePayload
 {
-    public function execute(): self;
-
     public function get(): ClientData;
 }

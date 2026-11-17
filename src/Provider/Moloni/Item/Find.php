@@ -39,7 +39,7 @@ class Find extends Item implements ShouldFindItem
     /**
      * @throws MissingCategoryException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $endpoint = match (true) {
             ! is_null($this->searchTerm()) => 'products/getBySearch',
