@@ -11,7 +11,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 $invoice = Invoice::fetch(InvoiceData::make(['id' => 123456]))->execute()->get();
 
 $invoice->id;
-$invoice->sequence;  // e.g. "FR A/12" on Moloni, "FR 01P2026/12" on Cegid Vendus
+$invoice->sequence;  // e.g. "FR A/12" on Moloni, "FR 01P2026/12" on Vendus
 $invoice->total;     // gross total in cents
 $invoice->totalNet;  // net total in cents
 $invoice->type;      // ?InvoiceType, null when the provider type is unknown
@@ -24,7 +24,7 @@ $invoice->atcud;     // null when the provider returns no ATCUD or an empty one
 - `output` is not filled. `Invoice::fetch()` does not fetch the PDF or the ESC/POS output.
 - Response fields the package does not map are kept with `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET documents/{id}`. `id` is mapped from `id`, `sequence` from `number`, `total` from `amount_gross` and `totalNet` from `amount_net`. `atcud` is mapped from `atcud`. `type` is mapped from `type`; an unknown type is `null`.
 

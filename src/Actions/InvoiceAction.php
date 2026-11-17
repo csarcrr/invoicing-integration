@@ -12,11 +12,11 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFin
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoicePdf;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Cancel;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Create;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Fetch;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Find;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Invoice\Pdf;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Invoice\Cancel;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Invoice\Create;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Invoice\Fetch;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Invoice\Find;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Invoice\Pdf;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice\Cancel as MoloniCancel;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice\Fetch as MoloniFetch;
@@ -38,7 +38,7 @@ final class InvoiceAction
     public function create(InvoiceData $invoice): ShouldCreateInvoice
     {
         return match ($this->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => (new Create($invoice))->config($this->providerConfiguration->getConfig()),
+            Provider::VENDUS => (new Create($invoice))->config($this->providerConfiguration->getConfig()),
             Provider::MOLONI => (new MoloniCreate($invoice))->config($this->providerConfiguration->getConfig()),
         };
     }
@@ -46,7 +46,7 @@ final class InvoiceAction
     public function fetch(InvoiceData $invoice): ShouldFetchInvoice
     {
         return match ($this->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => new Fetch($invoice),
+            Provider::VENDUS => new Fetch($invoice),
             Provider::MOLONI => new MoloniFetch($invoice),
         };
     }
@@ -54,7 +54,7 @@ final class InvoiceAction
     public function pdf(InvoiceData $invoice): ShouldGetInvoicePdf
     {
         return match ($this->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => new Pdf($invoice),
+            Provider::VENDUS => new Pdf($invoice),
             Provider::MOLONI => new MoloniPdf($invoice),
         };
     }
@@ -62,7 +62,7 @@ final class InvoiceAction
     public function cancel(InvoiceData $invoice): ShouldCancelInvoice
     {
         return match ($this->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => new Cancel($invoice),
+            Provider::VENDUS => new Cancel($invoice),
             Provider::MOLONI => new MoloniCancel($invoice),
         };
     }
@@ -70,7 +70,7 @@ final class InvoiceAction
     public function find(?InvoiceData $invoice = null): ShouldFindInvoice
     {
         return match ($this->providerConfiguration->getProvider()) {
-            Provider::CEGID_VENDUS => new Find($invoice),
+            Provider::VENDUS => new Find($invoice),
             Provider::MOLONI => new MoloniFind($invoice),
         };
     }

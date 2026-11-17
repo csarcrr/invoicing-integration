@@ -12,15 +12,15 @@ $unit = Unit::create(UnitData::make(['name' => 'Kilograma', 'shortName' => 'Kg']
 
 $unit->id;
 $unit->name;
-$unit->shortName; // null on Cegid Vendus
+$unit->shortName; // null on Vendus
 ```
 
 - `get()` returns the `UnitData` with the provider-assigned `id`.
 - When the provider does not create the unit, `execute()` throws `RequestFailedException` with the provider's error message.
 
-## Cegid Vendus
+## Vendus
 
-The request is sent to `POST products/units`. `name` is sent as `title`. `shortName` is not supported by Cegid Vendus and is ignored. `decimal` and `default` are not sent.
+The request is sent to `POST products/units`. `name` is sent as `title`. `shortName` is not supported by Vendus and is ignored. `decimal` and `default` are not sent.
 
 The returned unit is mapped from the response: `id` from `id` and `name` from `title`. `shortName` is always `null`.
 

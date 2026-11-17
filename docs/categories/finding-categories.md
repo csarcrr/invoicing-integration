@@ -13,7 +13,7 @@ $results = Category::find()->execute();
 foreach ($results->get() as $category) {
     $category->id;
     $category->name;
-    $category->parentId; // null for a top-level category and on Cegid Vendus
+    $category->parentId; // null for a top-level category and on Vendus
 }
 
 $subcategories = Category::find(CategoryData::make(['parentId' => 10]))->execute();
@@ -26,18 +26,18 @@ $subcategories = Category::find(CategoryData::make(['parentId' => 10]))->execute
 
 `Category::find()` paginates the same way as [`Item::find()`](../items/finding-an-item.md): `next()`, `previous()`, `page()`, `getCurrentPage()` and `getTotalPages()`. Moving outside the available pages throws `NoMorePagesException`.
 
-## Cegid Vendus
+## Vendus
 
-The request is sent to `GET products/categories` with `page`. Cegid Vendus categories have no hierarchy, so `parentId` is not sent and is always `null` in the results. `getTotalPages()` reads the `X-Paginator-Pages` header. When Cegid Vendus reports no data, `get()` is empty.
+The request is sent to `GET products/categories` with `page`. Vendus categories have no hierarchy, so `parentId` is not sent and is always `null` in the results. `getTotalPages()` reads the `X-Paginator-Pages` header. When Vendus reports no data, `get()` is empty.
 
 Each row is mapped as:
 
-| Cegid Vendus field | `CategoryData` |
+| Vendus field | `CategoryData` |
 | ------------------ | -------------- |
 | `id`               | `id`           |
 | `title`            | `name`         |
 
-Cegid Vendus applies its own default `status` filter, so categories that are turned off may be left out.
+Vendus applies its own default `status` filter, so categories that are turned off may be left out.
 
 ## Moloni
 

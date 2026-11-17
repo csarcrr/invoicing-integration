@@ -6,7 +6,7 @@
 
 **Invoicing Integration** is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
 
-> **Supported providers:** Cegid Vendus and Moloni. The package architecture allows more providers to be added without changing your application code.
+> **Supported providers:** Vendus and Moloni. The package architecture allows more providers to be added without changing your application code.
 
 ## Why Invoicing Integration?
 
@@ -90,10 +90,10 @@ $config = ProviderConfiguration::getConfig();
 
 | Variable                         | Description                                                  |
 | -------------------------------- | ------------------------------------------------------------ |
-| `INVOICING_INTEGRATION_PROVIDER` | Provider key (`CegidVendus` for now)                         |
-| `CEGID_VENDUS_API_KEY`           | API token generated in Vendus                                |
-| `CEGID_VENDUS_MODE`              | `tests` (sandbox/training) or `production` (fiscal)          |
-| `CEGID_VENDUS_PAYMENT_*`         | Mapping between `PaymentMethod` enums and Vendus payment IDs |
+| `INVOICING_INTEGRATION_PROVIDER` | Provider key (`Vendus` for now)                         |
+| `VENDUS_API_KEY`           | API token generated in Vendus                                |
+| `VENDUS_MODE`              | `tests` (sandbox/training) or `production` (fiscal)          |
+| `VENDUS_PAYMENT_*`         | Mapping between `PaymentMethod` enums and Vendus payment IDs |
 
 > The package validates configuration lazily when you issue invoices or clients, so misconfigured payment IDs will raise descriptive exceptions before the HTTP call is sent.
 

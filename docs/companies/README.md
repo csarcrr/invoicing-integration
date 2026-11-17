@@ -22,8 +22,8 @@ foreach ($companies as $company) {
 
 ## Provider support
 
-| Operation      | Cegid Vendus | Moloni | Invoice Express |
+| Operation      | Vendus | Moloni | Invoice Express |
 | -------------- | ------------ | ------ | --------------- |
 | Find Companies | ❌           | ✅     | ❌              |
 
-On Cegid Vendus `Company::find()` throws `OperationNotSupportedException`: a Vendus API key belongs to a single account.
+On Vendus `Company::find()` throws `OperationNotSupportedException`: a Vendus API key belongs to a single account.

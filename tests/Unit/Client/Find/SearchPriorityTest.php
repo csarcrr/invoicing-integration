@@ -10,7 +10,7 @@ it('prioritizes the search criteria', function (Provider $provider, array $filte
     $payload = Client::find(ClientData::from($filters))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->toArray())->toMatchArray($vendusExpected),
+        Provider::VENDUS => expect($payload->toArray())->toMatchArray($vendusExpected),
         Provider::MOLONI => expect($payload->except(['qty', 'offset'])->toArray())->toBe($moloniExpected),
     };
 })->with('providers', [

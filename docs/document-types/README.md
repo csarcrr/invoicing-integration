@@ -23,6 +23,6 @@ foreach (DocumentType::find()->execute()->get() as $type) {
 
 ## Provider support
 
-| Operation           | Cegid Vendus | Moloni | Invoice Express |
+| Operation           | Vendus | Moloni | Invoice Express |
 | ------------------- | ------------ | ------ | --------------- |
 | Find Document Types | ✅           | ✅     | ❌              |

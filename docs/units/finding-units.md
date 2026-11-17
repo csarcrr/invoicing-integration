@@ -12,23 +12,23 @@ $results = Unit::find()->execute();
 foreach ($results->get() as $unit) {
     $unit->id;
     $unit->name;
-    $unit->shortName; // null on Cegid Vendus
+    $unit->shortName; // null on Vendus
 }
 ```
 
 - `get()` returns a `Collection` of `UnitData` instances.
 - `Unit::find()` takes no filters and has no pagination: the provider returns every unit in one response.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET products/units`. Each row is mapped as:
 
-| Cegid Vendus field | `UnitData` |
+| Vendus field | `UnitData` |
 | ------------------ | ---------- |
 | `id`               | `id`       |
 | `title`            | `name`     |
 
-`shortName` is always `null`. When Cegid Vendus reports no data, `get()` is empty.
+`shortName` is always `null`. When Vendus reports no data, `get()` is empty.
 
 ## Moloni
 

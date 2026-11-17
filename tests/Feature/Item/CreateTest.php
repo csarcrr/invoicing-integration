@@ -52,7 +52,7 @@ test('reads the created item from the provider', function (Provider $provider) {
 
 test('reads an item created as disabled', function (Provider $provider) {
     fakeItemCreate($provider, match ($provider) {
-        Provider::CEGID_VENDUS => ['status' => 'off'],
+        Provider::VENDUS => ['status' => 'off'],
         Provider::MOLONI => ['visibility_id' => 0],
     });
 
@@ -65,11 +65,11 @@ test('reads an item created as disabled', function (Provider $provider) {
     expect($data->enabled)->toBeFalse();
 })->with('providers');
 
-test('reads the exemption law only from cegid vendus', function (Provider $provider) {
+test('reads the exemption law only from vendus', function (Provider $provider) {
     $law = 'Artigo 6.º n.º 6 alínea a) do CIVA, a contrário';
 
     fakeItemCreate($provider, match ($provider) {
-        Provider::CEGID_VENDUS => ['tax' => ['id' => 'ISE', 'exemption' => 'M40', 'exemption_law' => $law]],
+        Provider::VENDUS => ['tax' => ['id' => 'ISE', 'exemption' => 'M40', 'exemption_law' => $law]],
         Provider::MOLONI => [
             'exemption_reason' => 'M40',
             'taxes' => [[
@@ -94,7 +94,7 @@ test('reads the exemption law only from cegid vendus', function (Provider $provi
     expect($data->tax)->toBe(ItemTax::EXEMPT)
         ->and($data->taxExemptionReason)->toBe('M40')
         ->and($data->taxExemptionLaw)->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => $law,
+            Provider::VENDUS => $law,
             Provider::MOLONI => null,
         });
 })->with('providers');
@@ -108,7 +108,7 @@ test('sends the item to the provider', function (Provider $provider) {
     ]))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'products')
+        Provider::VENDUS => Str::contains($request->url(), 'products')
             && $request['category_id'] === 1,
         Provider::MOLONI => Str::contains($request->url(), 'products/insert')
             && Str::contains($request->body(), 'category_id=1')
@@ -132,7 +132,7 @@ test('reads the created moloni item back with getOne', function () {
 
 test('fails when the provider rejects the item', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse([
+        Provider::VENDUS => mockResponse([
             'errors' => [
                 ['code' => 'P003', 'message' => 'Param unit_id is required for this action. Please add it.'],
             ],
@@ -148,7 +148,7 @@ test('fails when the provider rejects the item', function (Provider $provider) {
         'category' => CategoryData::make(['id' => 1]),
         'price' => 2000,
     ]))->execute())->toThrow(RequestFailedException::class, match ($provider) {
-        Provider::CEGID_VENDUS => 'P003 - Param unit_id is required for this action. Please add it.',
+        Provider::VENDUS => 'P003 - Param unit_id is required for this action. Please add it.',
         Provider::MOLONI => "1 exemption_reason - Field 'exemption_reason' is required",
     });
 })->with('providers');

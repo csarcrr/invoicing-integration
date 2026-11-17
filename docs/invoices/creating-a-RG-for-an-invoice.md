@@ -17,7 +17,7 @@ When you issue an FT invoice (deferred payment), the customer pays later. Once t
 
 ## Quick Example
 
-A customer just paid their outstanding invoice. Let's issue the receipt. `relatedDocument` identifies the invoice the receipt settles: the invoice `sequence` on Cegid Vendus, its `id` on Moloni (see [Requirements](#requirements)).
+A customer just paid their outstanding invoice. Let's issue the receipt. `relatedDocument` identifies the invoice the receipt settles: the invoice `sequence` on Vendus, its `id` on Moloni (see [Requirements](#requirements)).
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -166,7 +166,7 @@ $result = Invoice::create($receiptData)->execute()->get();
 | Requirement      | Notes                                         |
 | ---------------- | --------------------------------------------- |
 | Document Type    | Must be `InvoiceType::Receipt`                |
-| Related Document | Required - the original invoice: its `sequence` on Cegid Vendus, its `id` on Moloni |
+| Related Document | Required - the original invoice: its `sequence` on Vendus, its `id` on Moloni |
 | Payment          | Required - at least one payment               |
 | Items            | **Not required** for receipts                 |
 | Client           | **Not required** for receipts                 |
@@ -204,7 +204,7 @@ if ($result->output) {
 RG documents require the original invoice reference and at least one payment. No items or client details are needed. For full payment, the total should match the original invoice amount. For partial payments, issue separate receipts for each installment. Ensure payment method IDs are configured in your provider settings.
 
 > [!NOTE]
-> On Cegid Vendus, `relatedDocument` must be the invoice number (`sequence`, e.g. `FT 01P2025/1`). It is sent as the `document_number` of the invoice in `invoices`.
+> On Vendus, `relatedDocument` must be the invoice number (`sequence`, e.g. `FT 01P2025/1`). It is sent as the `document_number` of the invoice in `invoices`.
 >
 > On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice. Moloni names its receipts `RE` (Recibo), so the returned `sequence` starts with `RE` (e.g. `RE M/4`), not `RG`. It is the number Moloni shows and prints on the document.
 

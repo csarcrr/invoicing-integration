@@ -20,16 +20,16 @@ foreach ($types as $type) {
 - `DocumentType::find()` takes no filters and has no pagination: the provider returns every document type in one response.
 - The extra fields the provider returns are kept as additional data, read with `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET documents/types`. Each row is mapped as:
 
-| Cegid Vendus field | `DocumentTypeData` |
+| Vendus field | `DocumentTypeData` |
 | ------------------ | ------------------ |
 | `id`               | `code`             |
 | `title`            | `name`             |
 
-The `visible_filter` and `visible_finalize` fields are kept as additional data, read with `getAdditionalData()`. The endpoint's `visible_filter` and `visible_finalize` filters are not exposed. Cegid Vendus has no language parameter, so a `LanguageData` passed to `find()` is ignored. When Cegid Vendus reports no data, `get()` is empty.
+The `visible_filter` and `visible_finalize` fields are kept as additional data, read with `getAdditionalData()`. The endpoint's `visible_filter` and `visible_finalize` filters are not exposed. Vendus has no language parameter, so a `LanguageData` passed to `find()` is ignored. When Vendus reports no data, `get()` is empty.
 
 ## Moloni
 

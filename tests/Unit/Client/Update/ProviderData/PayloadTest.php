@@ -44,7 +44,7 @@ it('sends every client field', function (Provider $provider) {
             'notes' => 'Client Notes',
             'maturity_date_id' => 4322,
         ])->and($payload->has('status'))->toBeFalse(),
-        Provider::CEGID_VENDUS => expect($payload->toArray())->toMatchArray([
+        Provider::VENDUS => expect($payload->toArray())->toMatchArray([
             'external_reference' => 'CLIENT-1',
             'name' => 'Alberto Albertino',
             'fiscal_id' => '223098091',
@@ -95,7 +95,7 @@ it('does not send the reference when the client has none', function (Provider $p
     ]))->getPayload();
 
     expect($payload->has(match ($provider) {
-        Provider::CEGID_VENDUS => 'external_reference',
+        Provider::VENDUS => 'external_reference',
         Provider::MOLONI => 'number',
     }))->toBeFalse();
 })->with('providers');

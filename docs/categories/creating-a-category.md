@@ -12,15 +12,15 @@ $category = Category::create(CategoryData::make(['name' => 'Produtos', 'parentId
 
 $category->id;
 $category->name;
-$category->parentId; // null on Cegid Vendus
+$category->parentId; // null on Vendus
 ```
 
 - `get()` returns the `CategoryData` with the provider-assigned `id`.
 - When the provider does not create the category, `execute()` throws `RequestFailedException` with the provider's error message.
 
-## Cegid Vendus
+## Vendus
 
-The request is sent to `POST products/categories`. `name` is sent as `title`. `parentId` is not supported by Cegid Vendus and is ignored.
+The request is sent to `POST products/categories`. `name` is sent as `title`. `parentId` is not supported by Vendus and is ignored.
 
 The returned category is mapped from the response: `id` from `id` and `name` from `title`. `parentId` is always `null`.
 

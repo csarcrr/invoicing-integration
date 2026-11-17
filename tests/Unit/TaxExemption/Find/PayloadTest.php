@@ -9,7 +9,7 @@ it('builds the find url', function (Provider $provider) {
     $find = TaxExemption::find();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find->getUrl())->toBe('taxes/exemptions'),
+        Provider::VENDUS => expect($find->getUrl())->toBe('taxes/exemptions'),
         Provider::MOLONI => expect($find->getUrl())->toBe('taxExemptions/getAll'),
     };
 })->with('providers');

@@ -19,6 +19,6 @@ it('fails when a field required by the provider is missing', function (Provider 
 
     match ($provider) {
         Provider::MOLONI => expect($payload)->toThrow(MissingClientDataException::class),
-        Provider::CEGID_VENDUS => expect($payload)->not->toThrow(Exception::class),
+        Provider::VENDUS => expect($payload)->not->toThrow(Exception::class),
     };
 })->with('providers', ['name', 'vat', 'address', 'city']);

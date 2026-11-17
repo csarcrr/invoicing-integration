@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Enums\Unit;
 use Illuminate\Support\Collection;
 
 /**
- * Base class for Cegid Vendus item operations, holding item data and supported API response properties.
+ * Base class for Vendus item operations, holding item data and supported API response properties.
  *
  * @extends Base<ItemData>
  */

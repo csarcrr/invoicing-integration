@@ -28,9 +28,9 @@ echo $dueDate->id; // provider-assigned ID
 
 ## Provider support
 
-| Operation       | Cegid Vendus | Moloni | Invoice Express |
+| Operation       | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Create Due Date | ❌           | ✅     | ❌              |
 | Find Due Dates  | ✅           | ✅     | ❌              |
 
-On Cegid Vendus, `DueDate::create()` throws `OperationNotSupportedException`.
+On Vendus, `DueDate::create()` throws `OperationNotSupportedException`.

@@ -3,7 +3,7 @@
 > A provider-agnostic Laravel package for Portuguese fiscal invoicing.
 
 - Fluent API with Facades, DTOs, and strong typing
-- Supports Cegid Vendus and Moloni (Invoice Express coming soon)
+- Supports Vendus and Moloni (Invoice Express coming soon)
 - FT, FR, FS, RG, NC document types
 - PDF and ESC/POS output
 

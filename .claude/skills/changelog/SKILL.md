@@ -23,7 +23,7 @@ Never commit, tag or push. The user commits when they ask and creates tags on Gi
 4. Read the diff of every commit you keep (`git show --stat <hash>`, then the changed `src/` files) before writing its line. Write for a developer who uses the package: name the facade method, DTO field or config key, and the providers it affects. Never copy the commit message.
 5. One line per change, in the style of the existing entries. Within each section, newest change first. Section order: Added, Changed, Deprecated, Removed, Fixed, Security. Omit empty sections.
 6. Skip a change that [Unreleased] already describes. Merge a fix into its feature's line when both are unreleased; a fix to something not yet released is not a Fixed entry.
-7. A change to how Cegid Vendus or Moloni behaves is breaking when existing code must change; mark it `**Breaking:**`.
+7. A change to how Vendus or Moloni behaves is breaking when existing code must change; mark it `**Breaking:**`.
 8. Show the diff of `CHANGELOG.md` and list the commits you skipped, with the reason for each.
 
 ## `/changelog release <version>`: cut a version

@@ -66,8 +66,8 @@ matches the provider requirements.
 
 | Format  | Enum Value                 | Use Case                        | Providers            |
 | ------- | -------------------------- | ------------------------------- | -------------------- |
-| PDF     | `OutputFormat::PDF_BASE64` | Email, archive, customer portal | Cegid Vendus, Moloni |
-| ESC/POS | `OutputFormat::ESCPOS`     | Thermal receipt printers at POS | Cegid Vendus         |
+| PDF     | `OutputFormat::PDF_BASE64` | Email, archive, customer portal | Vendus, Moloni |
+| ESC/POS | `OutputFormat::ESCPOS`     | Thermal receipt printers at POS | Vendus         |
 
 ## Handling Missing Output
 
@@ -123,7 +123,7 @@ $output = Invoice::pdf(InvoiceData::make(['id' => 123]))->execute()->get();
 
 $output->content; // base64-encoded PDF; null when the provider did not return the file (Moloni)
 $output->format;  // OutputFormat::PDF_BASE64
-$output->url;     // Moloni PDF link; null on Cegid Vendus
+$output->url;     // Moloni PDF link; null on Vendus
 
 $path = $output->save('invoices/document-123.pdf');
 ```
@@ -132,7 +132,7 @@ $path = $output->save('invoices/document-123.pdf');
 - `save()` works as for `create()`. When `content` is `null`, `save()` returns an empty string and writes nothing.
 - `url` is the Moloni PDF link, so you can offer the document for download even when `content` is `null`.
 
-### Cegid Vendus
+### Vendus
 
 The request is sent to `GET documents/{id}.pdf`. The provider returns the raw PDF, which the package base64-encodes into `content`. `url` is `null`.
 
@@ -194,7 +194,7 @@ if ($result->output) {
 ```
 
 > [!NOTE]
-> ESC/POS is supported on Cegid Vendus only. Moloni has no ESC/POS output: the format is not sent and `content` stays `null`.
+> ESC/POS is supported on Vendus only. Moloni has no ESC/POS output: the format is not sent and `content` stays `null`.
 
 ## OutputData Properties and Methods
 
@@ -202,7 +202,7 @@ if ($result->output) {
 | ---------------- | -------------- | ----------- |
 | `format`         | `OutputFormat` | Output format (default `PDF_BASE64`) |
 | `content`        | `?string`      | The file, base64 encoded |
-| `fileName`       | `?string`      | File name used by `save()`; Cegid Vendus `Invoice::create()` sets it to the document number |
+| `fileName`       | `?string`      | File name used by `save()`; Vendus `Invoice::create()` sets it to the document number |
 | `url`            | `?string`      | Provider download link; set by `Invoice::pdf()` on Moloni only |
 | `save(?string $path)` | `string`  | `PDF_BASE64`: decodes `content`, writes it to the `local` disk and returns the path (default `invoices/{fileName}`, sanitized, `.pdf` suffix added). `ESCPOS`: returns the decoded content and writes nothing. Returns `''` when `content` is `null` |
 

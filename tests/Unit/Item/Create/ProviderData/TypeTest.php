@@ -15,7 +15,7 @@ it('sends the provider item type', function (Provider $provider, ItemType $type,
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('type_id'))->toBe($vendusType),
+        Provider::VENDUS => expect($payload->get('type_id'))->toBe($vendusType),
         Provider::MOLONI => expect($payload->get('type'))->toBe($moloniType),
     };
 })->with('providers')->with([

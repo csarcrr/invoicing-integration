@@ -8,7 +8,7 @@ use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 /**
- * Base class for Cegid Vendus client operations, handling shared client data and property mapping.
+ * Base class for Vendus client operations, handling shared client data and property mapping.
  *
  * @extends Base<ClientData>
  */

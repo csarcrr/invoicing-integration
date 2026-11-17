@@ -22,7 +22,7 @@ it('builds the category and pagination payload for the first page', function (Pr
     $find = Item::find(ItemData::make(['category' => CategoryData::make(['id' => 12])]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 1, 'category_id' => 12, 'status' => 'all']),
+        Provider::VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 1, 'category_id' => 12, 'status' => 'all']),
         Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'with_invisible' => 1, 'qty' => 50, 'offset' => 0]),
     };
 })->with('providers');
@@ -31,13 +31,13 @@ it('moves the offset when changing page', function (Provider $provider) {
     $find = Item::find(ItemData::make(['category' => CategoryData::make(['id' => 12])]))->next();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 2, 'category_id' => 12, 'status' => 'all']),
+        Provider::VENDUS => expect($find->getPayload()->toArray())->toBe(['page' => 2, 'category_id' => 12, 'status' => 'all']),
         Provider::MOLONI => expect($find->getPayload()->toArray())->toBe(['category_id' => 12, 'with_invisible' => 1, 'qty' => 50, 'offset' => 50]),
     };
 })->with('providers');
 
-it('lists every cegid vendus item without a category filter', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+it('lists every vendus item without a category filter', function () {
+    mockConfiguration(Provider::VENDUS);
 
     expect(Item::find()->getPayload()->toArray())->toBe(['page' => 1, 'status' => 'all']);
 });

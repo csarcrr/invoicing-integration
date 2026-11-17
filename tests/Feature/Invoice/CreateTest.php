@@ -52,7 +52,7 @@ test('fills the sequence and totals from the provider response', function (Provi
         ->and($invoice->totalNet)->toBe(2439);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->sequence)->toBe('FT 01P2025/1'),
+        Provider::VENDUS => expect($invoice->sequence)->toBe('FT 01P2025/1'),
         Provider::MOLONI => expect($invoice->sequence)->toBe('FT A/12'),
     };
 })->with('providers', ['full']);
@@ -88,7 +88,7 @@ test('fetches the created document when the provider needs it', function (Provid
     ]))->execute();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Http::assertSentCount(1),
+        Provider::VENDUS => Http::assertSentCount(1),
         Provider::MOLONI => Http::assertSent(
             fn (Request $request) => Str::contains($request->url(), '/v1/documents/getOne')
                 && $request['document_id'] === 123456
@@ -120,7 +120,7 @@ test('sends each invoice type to the provider', function (Provider $provider, In
     Invoice::create(InvoiceData::make($invoiceData))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'documents') && $request['type'] === $type->value,
+        Provider::VENDUS => Str::contains($request->url(), 'documents') && $request['type'] === $type->value,
         Provider::MOLONI => Str::contains($request->url(), "/v1/{$moloniEndpoint}"),
     });
 })->with('providers')->with([
@@ -140,7 +140,7 @@ test('sends the invoice without a document type when no type is set', function (
     ]))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'documents') && ! isset($request['type']),
+        Provider::VENDUS => Str::contains($request->url(), 'documents') && ! isset($request['type']),
         Provider::MOLONI => Str::contains($request->url(), '/v1/documents/insert'),
     });
 })->with('providers');
@@ -162,14 +162,14 @@ test('records the credit note payments as a refund', function (Provider $provide
     ]))->execute()->get();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'documents')
+        Provider::VENDUS => Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'documents')
             && isset($request['payments'])),
         Provider::MOLONI => Http::assertSent(fn (Request $request) => Str::contains($request->url(), '/v1/creditNotes/insert')
             && ! isset($request['payments'])),
     };
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentReturns')),
+        Provider::VENDUS => Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentReturns')),
         Provider::MOLONI => Http::assertSent(fn (Request $request) => Str::contains($request->url(), '/v1/paymentReturns/insert')
             && $request['customer_id'] === 999999
             && $request['document_set_id'] === 8002
@@ -180,7 +180,7 @@ test('records the credit note payments as a refund', function (Provider $provide
     };
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->getAdditionalData())->not->toHaveKey('payment_return_id'),
+        Provider::VENDUS => expect($invoice->getAdditionalData())->not->toHaveKey('payment_return_id'),
         Provider::MOLONI => expect($invoice->getAdditionalData()['payment_return_id'])->toBe(654321),
     };
 })->with('providers');
@@ -217,7 +217,7 @@ test('does not record a refund for a draft credit note', function (Provider $pro
     Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentReturns'));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Http::assertSent(fn (Request $request) => isset($request['payments'])),
+        Provider::VENDUS => Http::assertSent(fn (Request $request) => isset($request['payments'])),
         Provider::MOLONI => Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'paymentMethods/getAll')),
     };
 })->with('providers');
@@ -238,7 +238,7 @@ test('fails when the provider rejects the credit note refund', function (Provide
     ]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect(fn () => $invoice->execute())->not->toThrow(RequestFailedException::class),
+        Provider::VENDUS => expect(fn () => $invoice->execute())->not->toThrow(RequestFailedException::class),
         Provider::MOLONI => expect(fn () => $invoice->execute())->toThrow(RequestFailedException::class, '2 net_value - Invalid value'),
     };
 })->with('providers');

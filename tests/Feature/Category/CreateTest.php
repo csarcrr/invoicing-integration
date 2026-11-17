@@ -21,7 +21,7 @@ test('maps the created category onto CategoryData', function () {
 
 test('fails with the provider error when the category is not created', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 400),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 400),
         Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Invalid name']),
     });
 

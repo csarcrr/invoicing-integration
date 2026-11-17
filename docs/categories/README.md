@@ -23,7 +23,7 @@ foreach (Category::find()->execute()->get() as $category) {
 
 ## Provider support
 
-| Operation       | Cegid Vendus | Moloni | Invoice Express |
+| Operation       | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Create Category | ✅           | ✅     | ❌              |
 | Find Categories | ✅           | ✅     | ❌              |

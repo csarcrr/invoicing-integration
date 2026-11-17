@@ -24,7 +24,7 @@ it('sends the client payment method, payment day and salesman', function (Provid
         Provider::MOLONI => expect($payload->get('payment_method_id'))->toBe(2)
             ->and($payload->get('payment_day'))->toBe(10)
             ->and($payload->get('salesman_id'))->toBe(4),
-        Provider::CEGID_VENDUS => expect($payload->has('payment_method_id'))->toBeFalse()
+        Provider::VENDUS => expect($payload->has('payment_method_id'))->toBeFalse()
             ->and($payload->has('payment_day'))->toBeFalse()
             ->and($payload->has('salesman_id'))->toBeFalse(),
     };

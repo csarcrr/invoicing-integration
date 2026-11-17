@@ -84,16 +84,16 @@ while ($results->get()->isNotEmpty()) {
 }
 ```
 
-- `getTotalPages()` reads the provider's `X-Paginator-Pages` header on Cegid
-  Vendus (defaults to `1` if absent). It returns `null` on Moloni, which does
+- `getTotalPages()` reads the provider's `X-Paginator-Pages` header on Vendus
+  (defaults to `1` if absent). It returns `null` on Moloni, which does
   not report a total, and before the first `execute()`: keep calling `next()`
   until a page comes back empty.
 - Calling `previous()` before page 1, or `page()` below 1, raises
-  `NoMorePagesException`. On Cegid Vendus, after the first `execute()`,
+  `NoMorePagesException`. On Vendus, after the first `execute()`,
   `next()` beyond the last page and `page()` above the total also raise it. On
   Moloni they return an empty list.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET documents` with these query parameters:
 
@@ -103,7 +103,7 @@ The request is sent to `GET documents` with these query parameters:
 
 The page size is the provider default; the package does not send `per_page`.
 
-When nothing matches, Cegid Vendus answers `404` with error code `A001`
+When nothing matches, Vendus answers `404` with error code `A001`
 (`No data`). The package returns an empty list instead of throwing. Any other
 `404` throws `RequestFailedException`.
 
@@ -134,7 +134,7 @@ Each returned invoice maps the provider fields as
 [Getting an Invoice](getting-an-invoice.md) does:
 
 - `id` is the provider document ID.
-- `sequence` is `number` on Cegid Vendus, and is built from the document type
+- `sequence` is `number` on Vendus, and is built from the document type
   code, the document set name and `number` on Moloni.
 - `total` and `totalNet` are in cents.
 - `type` is mapped from the provider document type. It is `null` when the type

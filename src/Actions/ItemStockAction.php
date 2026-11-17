@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldMoveItemStock;
 use CsarCrr\InvoicingIntegration\Data\StockMovementData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\ItemStock\Move as VendusMove;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\ItemStock\Move as VendusMove;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\ItemStock\Move;
 
 final class ItemStockAction
@@ -20,7 +20,7 @@ final class ItemStockAction
     public function move(StockMovementData $movement): ShouldMoveItemStock
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new VendusMove($movement),
+            Provider::VENDUS => new VendusMove($movement),
             Provider::MOLONI => new Move($movement),
         };
     }

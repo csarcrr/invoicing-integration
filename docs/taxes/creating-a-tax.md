@@ -39,7 +39,7 @@ The tax is always created as a VAT percentage that is not active by default: `ty
 >
 > Moloni treats a `value` of 0 as missing and rejects it (`2 value 0 null null 0 100 - Field 'value' must be float, greater or equal to 0, lesser or equal to 100`), so a 0% exempt tax cannot be created through the API. Create it in Moloni instead.
 
-## Cegid Vendus
+## Vendus
 
 Not supported: `Tax::create()` throws `OperationNotSupportedException`.
 

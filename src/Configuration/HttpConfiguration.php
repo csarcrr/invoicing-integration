@@ -18,12 +18,12 @@ final class HttpConfiguration
     public static function get(): PendingRequest
     {
         return match (ProviderConfiguration::getProvider()) {
-            Provider::CEGID_VENDUS => self::cegidVendus(),
+            Provider::VENDUS => self::vendus(),
             Provider::MOLONI => self::Moloni(),
         };
     }
 
-    private static function cegidVendus(): PendingRequest
+    private static function vendus(): PendingRequest
     {
         $config = ProviderConfiguration::getConfig();
 

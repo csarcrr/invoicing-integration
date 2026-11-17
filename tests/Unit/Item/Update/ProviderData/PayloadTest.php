@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Unit;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException as VendusCouldNotGetUnitIdException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\CouldNotGetUnitIdException as VendusCouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetUnitIdException as MoloniCouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +18,7 @@ it('sends only the set fields and keeps the current values', function (Provider 
     $payload = Item::update(ItemData::make(['id' => 1542, 'name' => 'New Title']))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->toArray())->toBe(['title' => 'New Title']),
+        Provider::VENDUS => expect($payload->toArray())->toBe(['title' => 'New Title']),
         Provider::MOLONI => expect($payload->toArray())->toEqual([
             'product_id' => 1542,
             'category_id' => 1,
@@ -57,7 +57,7 @@ it('maps each set field to the provider field', function (Provider $provider) {
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->toArray())->toMatchArray([
+        Provider::VENDUS => expect($payload->toArray())->toMatchArray([
             'title' => 'New Title',
             'description' => 'New Description',
             'reference' => 'new-reference',
@@ -85,7 +85,7 @@ it('sends empty strings to clear the description and the barcode', function (Pro
     $payload = Item::update(ItemData::make(['id' => 1542, 'description' => '', 'barcode' => '']))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('description'))->toBe('')
+        Provider::VENDUS => expect($payload->get('description'))->toBe('')
             ->and($payload->get('barcode'))->toBe(''),
         Provider::MOLONI => expect($payload->get('summary'))->toBe('')
             ->and($payload->get('ean'))->toBe(''),
@@ -98,7 +98,7 @@ it('sends a false stock control', function (Provider $provider) {
     $payload = Item::update(ItemData::make(['id' => 1542, 'controlStock' => false]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('stock')['control'])->toBe('0'),
+        Provider::VENDUS => expect($payload->get('stock')['control'])->toBe('0'),
         Provider::MOLONI => expect($payload->get('has_stock'))->toBe(0),
     };
 })->with('providers');
@@ -109,7 +109,7 @@ it('sends a true stock control', function (Provider $provider) {
     $payload = Item::update(ItemData::make(['id' => 1542, 'controlStock' => true]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('stock')['control'])->toBe('1'),
+        Provider::VENDUS => expect($payload->get('stock')['control'])->toBe('1'),
         Provider::MOLONI => expect($payload->get('has_stock'))->toBe(1),
     };
 })->with('providers');
@@ -135,7 +135,7 @@ it('sends the enabled state', function (Provider $provider, bool $enabled, strin
     $payload = Item::update(ItemData::make(['id' => 1542, 'enabled' => $enabled]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('status'))->toBe($vendusStatus),
+        Provider::VENDUS => expect($payload->get('status'))->toBe($vendusStatus),
         Provider::MOLONI => expect($payload->get('visibility_id'))->toBe($moloniVisibility),
     };
 })->with('providers')->with([
@@ -185,7 +185,7 @@ it('fails when the unit is not mapped, without any request', function (Provider 
     config()->set('invoicing-integration.providers.'.$provider->value.'.units', []);
 
     $expectedException = match ($provider) {
-        Provider::CEGID_VENDUS => VendusCouldNotGetUnitIdException::class,
+        Provider::VENDUS => VendusCouldNotGetUnitIdException::class,
         Provider::MOLONI => MoloniCouldNotGetUnitIdException::class,
     };
 

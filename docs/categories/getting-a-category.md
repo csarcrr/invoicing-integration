@@ -12,13 +12,13 @@ $category = Category::fetch(CategoryData::make(['id' => 10]))->execute()->get();
 
 $category->id;
 $category->name;
-$category->parentId; // null for a top-level category and on Cegid Vendus
+$category->parentId; // null for a top-level category and on Vendus
 ```
 
 - Without an `id`, `execute()` throws `InvalidArgumentException` with `Category ID is required.`
 - When the provider has no category with that ID, `execute()` throws `RequestFailedException`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET products/categories/{id}`. `id` is mapped from `id` and `name` from `title`. `parentId` is always `null`.
 

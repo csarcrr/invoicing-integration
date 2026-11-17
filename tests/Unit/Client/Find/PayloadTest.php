@@ -35,7 +35,7 @@ it('does not send filters the provider cannot search by', function (Provider $pr
     expect($payload->keys()->intersect(['city', 'address', 'phone', 'notes', 'country', 'irs_retention']))->toBeEmpty();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->toArray())->not->toHaveKey('id'),
+        Provider::VENDUS => expect($payload->toArray())->not->toHaveKey('id'),
         Provider::MOLONI => expect($payload->get('number'))->toBe('1234567'),
     };
 })->with('providers');

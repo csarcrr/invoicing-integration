@@ -29,7 +29,7 @@ The request is sent to `companies/getAll`. It does not depend on the configured 
 | `name`       | `name`        |
 | `vat`        | `vat`         |
 
-## Cegid Vendus
+## Vendus
 
 Not supported: `Company::find()` throws `OperationNotSupportedException`.
 

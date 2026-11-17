@@ -74,7 +74,7 @@ it('sends only the client fields the provider accepts on a document', function (
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('client'))->toEqual([
+        Provider::VENDUS => expect($payload->get('client'))->toEqual([
             'id' => '12001',
             'name' => 'John Doe',
             'fiscal_id' => '123456789',
@@ -115,7 +115,7 @@ it('sends the client id to the provider', function (Provider $provider) {
     )->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('client')['id'])->toBe('12001'),
+        Provider::VENDUS => expect($payload->get('client')['id'])->toBe('12001'),
         Provider::MOLONI => expect($payload->get('customer_id'))->toBe(12001),
     };
 })->with('providers');
@@ -132,7 +132,7 @@ it('sends the client found by the client vat', function (Provider $provider) {
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('client')['fiscal_id'])->toBe('215783920'),
+        Provider::VENDUS => expect($payload->get('client')['fiscal_id'])->toBe('215783920'),
         Provider::MOLONI => expect($payload->get('customer_id'))->toBe($clients[0]['customer_id'])
             ->and(Http::recorded(fn (Request $request) => Str::contains($request->url(), 'customers/getByVat')
                 && Str::contains($request->body(), 'vat=215783920')))->toHaveCount(1),
@@ -152,7 +152,7 @@ it('sends the client whose vat matches the client vat exactly', function (Provid
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('client')['fiscal_id'])->toBe('215783920'),
+        Provider::VENDUS => expect($payload->get('client')['fiscal_id'])->toBe('215783920'),
         Provider::MOLONI => expect($payload->get('customer_id'))->toBe(12001),
     };
 })->with('providers');
@@ -167,7 +167,7 @@ it('fails when no client has the client vat', function (Provider $provider) {
     ]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->getPayload()->get('client')['fiscal_id'])->toBe('215783920'),
+        Provider::VENDUS => expect($invoice->getPayload()->get('client')['fiscal_id'])->toBe('215783920'),
         Provider::MOLONI => expect(fn () => $invoice->getPayload())->toThrow(CouldNotFindCustomerByVatException::class),
     };
 })->with('providers');
@@ -182,7 +182,7 @@ it('fails when only clients with a different vat contain the client vat', functi
     ]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->getPayload()->get('client')['fiscal_id'])->toBe('215783920'),
+        Provider::VENDUS => expect($invoice->getPayload()->get('client')['fiscal_id'])->toBe('215783920'),
         Provider::MOLONI => expect(fn () => $invoice->getPayload())->toThrow(CouldNotFindCustomerByVatException::class),
     };
 })->with('providers');
@@ -196,7 +196,7 @@ it('falls back to the configured client when no client is set', function (Provid
     )->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->has('client'))->toBeFalse(),
+        Provider::VENDUS => expect($payload->has('client'))->toBeFalse(),
         Provider::MOLONI => expect($payload->get('customer_id'))->toBe(999999),
     };
 })->with('providers');

@@ -20,13 +20,13 @@ function fixtures(): Fixtures
 }
 
 dataset('providers', [
-    'vendus' => fn () => cegidVendusProvider(),
+    'vendus' => fn () => vendusProvider(),
     'moloni' => fn () => moloniProvider(),
 ]);
 
-function cegidVendusProvider(): Provider
+function vendusProvider(): Provider
 {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     return ProviderConfiguration::getProvider();
 }
@@ -96,7 +96,7 @@ function mockConfiguration(Provider $provider): void
         ]);
     }
 
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         config()->set('invoicing-integration.provider', $provider->value);
         config()->set('invoicing-integration.providers.'.$provider->value, [
             'key' => 'test-api-key',
@@ -153,7 +153,7 @@ function fakeItemUpdate(Provider $provider, string $currentFixture = 'fetch'): v
 {
     $update = mockResponse(fixtures()->response()->item()->files('update'));
 
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         Http::fake($update);
 
         return;
@@ -166,7 +166,7 @@ function fakeItemUpdate(Provider $provider, string $currentFixture = 'fetch'): v
 
 function fakeItemCreate(Provider $provider, array $changes = []): void
 {
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         Http::fake(mockResponse([...fixtures()->response()->item()->files('create'), ...$changes]));
 
         return;

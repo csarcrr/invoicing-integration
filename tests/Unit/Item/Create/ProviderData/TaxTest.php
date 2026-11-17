@@ -18,7 +18,7 @@ it('sends the price and the tax of a taxed item', function (Provider $provider) 
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('prices')['gross'])->toBe(24.6)
+        Provider::VENDUS => expect($payload->get('prices')['gross'])->toBe(24.6)
             ->and($payload->get('tax'))->toBe(['id' => 'NOR']),
         Provider::MOLONI => expect($payload->get('price'))->toBe(20.0)
             ->and($payload->get('taxes'))->toBe([[
@@ -39,7 +39,7 @@ it('sends the price of an exempt item', function (Provider $provider) {
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('prices')['gross'])->toBe(20)
+        Provider::VENDUS => expect($payload->get('prices')['gross'])->toBe(20)
             ->and($payload->get('tax')['id'])->toBe('ISE'),
         Provider::MOLONI => expect($payload->get('price'))->toBe(20.0)
             ->and($payload->get('taxes'))->toBe([[

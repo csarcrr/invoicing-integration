@@ -5,7 +5,7 @@ Rules for every coding agent working in this repository.
 ## 1. Project
 
 - `csarcrr/invoicing-integration` is a Laravel package with a provider-agnostic API for Portuguese fiscal invoicing.
-- Providers: Cegid Vendus and Moloni.
+- Providers: Vendus and Moloni.
 - `GLOSSARY.md` defines the domain terms and the name each provider uses for them. Use its terms in code, tests and docs.
 
 ## 2. Stack
@@ -35,7 +35,7 @@ User calls a Facade → Action class → Provider implementation → HTTP → Pr
 ```
 Facades/Invoice::create(InvoiceData)
   → Actions/InvoiceAction (match on Provider enum)
-    → Provider/CegidVendus/Invoice/Create
+    → Provider/Vendus/Invoice/Create
       → buildPayload() assembles request
         → Http::provider() macro (configured HTTP client)
 ```
@@ -47,7 +47,7 @@ Facades/Invoice::create(InvoiceData)
 - `src/Data/`: Spatie Laravel Data DTOs, validated on construction.
 - `src/Enums/`: domain enums. `Tax/` holds `ItemTax`; `Providers/` holds the supported-property enums.
 - `src/Facades/`: one facade per resource (`Invoice`, `Client`, `Item`, ...).
-- `src/Provider/CegidVendus/` and `src/Provider/Moloni/`: provider-specific logic, mirroring the resource sub-folders.
+- `src/Provider/Vendus/` and `src/Provider/Moloni/`: provider-specific logic, mirroring the resource sub-folders.
 - `src/Exceptions/`: domain exceptions grouped by concern.
 - `src/Traits/`: shared traits such as `HasMakeValidation`, `HasPaginator`, `HasConfig`, `EnumOptions`.
 - `src/Configuration/HttpConfiguration.php`: provider HTTP configuration.
@@ -85,9 +85,9 @@ Two macros are registered in the service provider:
 | Provider | Local docs |
 | --- | --- |
 | Moloni | `providers-docs/moloni/` (HTML pages, e.g. `providers-docs/moloni/dev/settings/payment-methods/insert/index.html`) |
-| Cegid Vendus | `providers-docs/vendus/` (`openapi.json` is the full API spec; `index.html` is its Redoc viewer) |
+| Vendus | `providers-docs/vendus/` (`openapi.json` is the full API spec; `index.html` is its Redoc viewer) |
 
-- The package calls Cegid Vendus API v1.2 (`src/Configuration/HttpConfiguration.php`). The local `openapi.json` is the v1.2 spec and the source of truth for Vendus endpoints and field names.
+- The package calls Vendus API v1.2 (`src/Configuration/HttpConfiguration.php`). The local `openapi.json` is the v1.2 spec and the source of truth for Vendus endpoints and field names.
 - Vendus v1.2 nests product fields (`prices.gross`, `tax.id`, `stock.control`). Document line items keep flat names (`gross_price`, `tax_id`).
 
 ## 6. Domain decisions

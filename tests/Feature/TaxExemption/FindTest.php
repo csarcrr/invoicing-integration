@@ -27,7 +27,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
     $taxExemption = TaxExemption::find()->execute()->get()->first();
 
     expect($taxExemption->getAdditionalData())->toMatchArray(match ($provider) {
-        Provider::CEGID_VENDUS => ['law' => ['Artigo 9.º do CIVA']],
+        Provider::VENDUS => ['law' => ['Artigo 9.º do CIVA']],
         Provider::MOLONI => ['visibility' => 1],
     });
 })->with('providers');
@@ -38,8 +38,8 @@ test('returns an empty list when the provider has no tax exemptions', function (
     expect(TaxExemption::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
-test('returns an empty list when Cegid Vendus reports no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('returns an empty list when Vendus reports no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 

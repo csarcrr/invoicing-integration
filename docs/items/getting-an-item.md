@@ -57,7 +57,7 @@ $item->tax;         // ItemTax
 $item->price;       // Gross price in cents
 ```
 
-| Property       | Cegid Vendus field | Moloni field                         |
+| Property       | Vendus field | Moloni field                         |
 | -------------- | ------------------ | ------------------------------------ |
 | `category`     | `category_id`      | `category_id`                        |
 | `controlStock` | `stock.control`    | `has_stock`                          |
@@ -71,7 +71,7 @@ $item->price;       // Gross price in cents
 
 On Moloni, `tax` is the `ItemTax` whose `MOLONI_TAX_*_ID` matches `taxes[0].tax_id`, so a configured tax with no VAT type, such as a 0% exempt tax, still maps to its `ItemTax`. A tax that is not configured falls back to `taxes[0].tax.vat_type`, and is `null` when that is not an `ItemTax` value.
 
-`price` and `tax` are `null` when the provider sends no price or tax data. `taxExemptionReason` and `taxExemptionLaw` are only set when `tax` is `ItemTax::EXEMPT`. `taxExemptionReason` is the provider's code as given, and is `null` when the provider sends none. `type` is `null` when the provider sends an unknown type. `enabled` is `null` when the provider sends no status or visibility. `category` is always a `CategoryData`. Its `id` is the provider's `category_id`, and is `null` when the provider sends none. Cegid Vendus sends `category_id` `0` for an item with no category, so `id` is `0`. `unit` is the `Unit` case whose configured unit id matches `unit_id`, and is `null` when no configured unit matches or the key is a custom unit.
+`price` and `tax` are `null` when the provider sends no price or tax data. `taxExemptionReason` and `taxExemptionLaw` are only set when `tax` is `ItemTax::EXEMPT`. `taxExemptionReason` is the provider's code as given, and is `null` when the provider sends none. `type` is `null` when the provider sends an unknown type. `enabled` is `null` when the provider sends no status or visibility. `category` is always a `CategoryData`. Its `id` is the provider's `category_id`, and is `null` when the provider sends none. Vendus sends `category_id` `0` for an item with no category, so `id` is `0`. `unit` is the `Unit` case whose configured unit id matches `unit_id`, and is `null` when no configured unit matches or the key is a custom unit.
 
 On Moloni, the request sends `with_invisible=1`, so products with `visibility_id` `0` are returned too.
 
@@ -94,13 +94,13 @@ $item->stock->sum('quantity'); // total stock
 | Provider     | Response field | `warehouseId` from | `quantity` from |
 | ------------ | -------------- | ------------------ | --------------- |
 | Moloni       | `warehouses[]` | `warehouse_id`     | `stock`         |
-| Cegid Vendus | `stock.stores[]` | `store_id`       | `stock`         |
+| Vendus | `stock.stores[]` | `store_id`       | `stock`         |
 
 When the response has no stock entries, `stock` is an empty `Collection`.
 
 ### Additional response data
 
-Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Cegid Vendus, that is any field outside the provider's supported item properties. The `prices`, `tax` and `stock` objects are mapped, so they are not in additional data:
+Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Vendus, that is any field outside the provider's supported item properties. The `prices`, `tax` and `stock` objects are mapped, so they are not in additional data:
 
 ```php
 $item = Item::fetch($itemData)->execute()->get();

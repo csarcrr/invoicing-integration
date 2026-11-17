@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 test('a delete request sends one request and throws nothing', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(''),
+        Provider::VENDUS => mockResponse(''),
         Provider::MOLONI => mockResponse(fixtures()->response()->client()->files('delete')),
     });
 
@@ -21,7 +21,7 @@ test('a delete request sends one request and throws nothing', function (Provider
 
 test('fails with the provider error when the client is not deleted', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 400),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 400),
         Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Client is referenced by a document']),
     });
 

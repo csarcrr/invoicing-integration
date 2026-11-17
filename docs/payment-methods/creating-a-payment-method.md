@@ -44,7 +44,7 @@ Moloni has no flag for `MONEY_TRANSFER` or `CURRENT_ACCOUNT`, so a method create
 
 The returned `payment_method_id` is set as `id`. Other response fields are available through `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 Not supported: `PaymentMethod::create()` throws `OperationNotSupportedException`.
 

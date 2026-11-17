@@ -23,7 +23,7 @@ it('sends the client country', function (Provider $provider) {
     match ($provider) {
         Provider::MOLONI => expect($payload->get('country_id'))->toBe(70)
             ->and($payload->has('country'))->toBeFalse(),
-        Provider::CEGID_VENDUS => expect($payload->get('country'))->toBe('ES'),
+        Provider::VENDUS => expect($payload->get('country'))->toBe('ES'),
     };
 })->with('providers');
 

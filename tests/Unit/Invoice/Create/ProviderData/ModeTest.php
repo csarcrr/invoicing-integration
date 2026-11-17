@@ -17,7 +17,7 @@ it('issues the document in the configured mode', function (Provider $provider, s
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('mode'))->toBe($mode),
+        Provider::VENDUS => expect($payload->get('mode'))->toBe($mode),
         Provider::MOLONI => expect($payload->has('mode'))->toBeFalse(),
     };
 })->with('providers')->with(['tests', 'normal']);

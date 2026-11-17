@@ -13,7 +13,7 @@ it('is an instance of the correct when creating a tax', function (Provider $prov
     $create = fn () => Tax::create(TaxData::make(['name' => 'Isento']));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($create)->toThrow(OperationNotSupportedException::class),
+        Provider::VENDUS => expect($create)->toThrow(OperationNotSupportedException::class),
         Provider::MOLONI => expect($create())->toBeInstanceOf(ShouldCreateTax::class),
     };
 })->with('providers');
@@ -22,7 +22,7 @@ it('is an instance of the correct when finding taxes', function (Provider $provi
     $find = fn () => Tax::find();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
+        Provider::VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
         Provider::MOLONI => expect($find())->toBeInstanceOf(ShouldFindTax::class),
     };
 })->with('providers');

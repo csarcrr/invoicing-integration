@@ -9,7 +9,7 @@ it('builds the find url', function (Provider $provider) {
     $find = Warehouse::find();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find->getUrl())->toBe('stores'),
+        Provider::VENDUS => expect($find->getUrl())->toBe('stores'),
         Provider::MOLONI => expect($find->getUrl())->toBe('warehouses/getAll'),
     };
 })->with('providers');

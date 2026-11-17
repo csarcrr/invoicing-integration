@@ -26,7 +26,7 @@ test('returns the updated client', function (Provider $provider, string $respons
         ->and($data->name)->toBe('Alberto Albertino')
         ->and($data->getAdditionalData())->not->toBeEmpty();
 })->with([
-    'vendus' => [fn () => cegidVendusProvider(), 'response'],
+    'vendus' => [fn () => vendusProvider(), 'response'],
     'moloni' => [fn () => moloniProvider(), 'response_simple'],
 ]);
 
@@ -45,7 +45,7 @@ test('sends the update to the provider', function (Provider $provider, string $r
     ]))->execute();
 
     Http::assertSent(match ($provider) {
-        Provider::CEGID_VENDUS => fn (Request $request) => $request->method() === 'PATCH'
+        Provider::VENDUS => fn (Request $request) => $request->method() === 'PATCH'
             && Str::endsWith($request->url(), 'clients/99999'),
         Provider::MOLONI => fn (Request $request) => Str::contains($request->url(), 'customers/update')
             && Str::contains($request->body(), 'customer_id=99999')
@@ -53,7 +53,7 @@ test('sends the update to the provider', function (Provider $provider, string $r
             && Str::contains($request->body(), 'company_id=123456'),
     });
 })->with([
-    'vendus' => [fn () => cegidVendusProvider(), 'response'],
+    'vendus' => [fn () => vendusProvider(), 'response'],
     'moloni' => [fn () => moloniProvider(), 'response_simple'],
 ]);
 
@@ -72,7 +72,7 @@ test('fails when the provider rejects the update', function (Provider $provider)
     fakeProviderDueDates($provider);
 
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse([
+        Provider::VENDUS => mockResponse([
             'errors' => [
                 ['code' => 'A001', 'message' => 'NIF em duplicado, já existe um registo associado ao NIF indicado'],
             ],
@@ -90,7 +90,7 @@ test('fails when the provider rejects the update', function (Provider $provider)
         'address' => 'Rua das Flores 125',
         'city' => 'Porto',
     ]))->execute())->toThrow(RequestFailedException::class, match ($provider) {
-        Provider::CEGID_VENDUS => 'A001 - NIF em duplicado, já existe um registo associado ao NIF indicado',
+        Provider::VENDUS => 'A001 - NIF em duplicado, já existe um registo associado ao NIF indicado',
         Provider::MOLONI => "4 vat - Field 'vat' must be unique",
     });
 })->with('providers');

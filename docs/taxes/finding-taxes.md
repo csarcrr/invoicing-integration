@@ -39,7 +39,7 @@ The request is sent to `taxes/getAll`. Each row is mapped as:
 
 An account can hold several taxes of the same type, one per fiscal zone (`PT`, `PT-AC`, `PT-MA`) and sometimes more than one in the same zone.
 
-## Cegid Vendus
+## Vendus
 
 Not supported: `Tax::find()` throws `OperationNotSupportedException`.
 

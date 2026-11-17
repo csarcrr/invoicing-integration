@@ -10,7 +10,7 @@ it('builds the create url', function (Provider $provider) {
     $create = Warehouse::create(WarehouseData::make(['name' => 'Loja']));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($create->getUrl())->toBe('stores'),
+        Provider::VENDUS => expect($create->getUrl())->toBe('stores'),
         Provider::MOLONI => expect($create->getUrl())->toBe('warehouses/insert'),
     };
 })->with('providers');
@@ -24,7 +24,7 @@ it('builds the payload from the warehouse data', function (Provider $provider) {
     ]))->getPayload()->toArray();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload)->toBe([
+        Provider::VENDUS => expect($payload)->toBe([
             'title' => 'Armazém Principal',
             'address' => 'Rua Nova de Mil Fontes, 35',
             'local' => 'Setúbal',
@@ -39,8 +39,8 @@ it('builds the payload from the warehouse data', function (Provider $provider) {
     };
 })->with('providers');
 
-it('does not send the country to Cegid Vendus', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+it('does not send the country to Vendus', function () {
+    mockConfiguration(Provider::VENDUS);
 
     $payload = Warehouse::create(WarehouseData::make(['name' => 'Loja', 'country' => 'PT']))->getPayload();
 
@@ -51,7 +51,7 @@ it('leaves out the fields that are not set', function (Provider $provider) {
     $keys = Warehouse::create(WarehouseData::make(['name' => 'Loja']))->getPayload()->keys()->all();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($keys)->toBe(['title']),
+        Provider::VENDUS => expect($keys)->toBe(['title']),
         Provider::MOLONI => expect($keys)->toBe(['title', 'code']),
     };
 })->with('providers');

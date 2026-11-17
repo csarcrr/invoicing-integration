@@ -78,11 +78,11 @@ $client->date;             // Creation date (Carbon)
 > [!NOTE]
 > Properties not set in the provider are `Spatie\LaravelData\Optional`, not `null`.
 >
-> `id` is always a string. On Cegid Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
+> `id` is always a string. On Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
 > returned as `Days0`) and `status` is mapped; `date` is not set. Moloni does not return `status` or `date`.
-> `reference` is mapped on both providers: Cegid Vendus `external_reference`, Moloni `number`.
+> `reference` is mapped on both providers: Vendus `external_reference`, Moloni `number`.
 > Response fields the package does not map, such as `balance`, `mobile`,
-> `website` and `price_group` on Cegid Vendus, are available in
+> `website` and `price_group` on Vendus, are available in
 > `getAdditionalData()`.
 
 ## Complete Example

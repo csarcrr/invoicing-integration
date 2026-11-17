@@ -17,7 +17,7 @@ test('maps the provider response onto a list of PaymentMethodData', function (Pr
     $list = PaymentMethod::find()->execute()->get();
 
     expect($list)->toHaveCount(match ($provider) {
-        Provider::CEGID_VENDUS => 6,
+        Provider::VENDUS => 6,
         Provider::MOLONI => 5,
     })
         ->and($list->first())->toBeInstanceOf(PaymentMethodData::class)
@@ -31,7 +31,7 @@ test('maps the provider payment method kind onto the payment method type', funct
     $list = PaymentMethod::find()->execute()->get();
 
     expect($list->pluck('type')->toArray())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => [
+        Provider::VENDUS => [
             PaymentMethodEnum::MONEY,
             PaymentMethodEnum::MB,
             PaymentMethodEnum::CREDIT_CARD,
@@ -55,23 +55,23 @@ test('sends the request to the payment methods endpoint', function (Provider $pr
     PaymentMethod::find()->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => $request->method() === 'GET' && Str::contains($request->url(), 'documents/paymentmethods'),
+        Provider::VENDUS => $request->method() === 'GET' && Str::contains($request->url(), 'documents/paymentmethods'),
         Provider::MOLONI => Str::contains($request->url(), 'paymentMethods/getAll')
             && Str::contains($request->body(), 'qty=50')
             && Str::contains($request->body(), 'offset=0'),
     });
 })->with('providers');
 
-test('returns an empty list when Cegid Vendus reports no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('returns an empty list when Vendus reports no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
     expect(PaymentMethod::find()->execute()->get())->toBeEmpty();
 });
 
-test('reports a single page on Cegid Vendus', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('reports a single page on Vendus', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')));
 

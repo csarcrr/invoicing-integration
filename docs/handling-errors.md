@@ -21,14 +21,14 @@ These exceptions occur when something goes wrong with the provider API.
 
 **Common causes:**
 
-- Incorrect `CEGID_VENDUS_API_KEY` in your `.env`
+- Incorrect `VENDUS_API_KEY` in your `.env`
 - API key has expired or been revoked
 - Trailing spaces in the API key value
 - Copy/paste error when setting up credentials
 
 **How to fix:**
 
-1. Double-check your API key in the Cegid Vendus dashboard
+1. Double-check your API key in the Vendus dashboard
 2. Ensure there are no extra spaces in your `.env` file
 3. Verify the key matches the correct account/environment
 
@@ -138,7 +138,7 @@ try {
 ```
 
 ```php
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\CouldNotGetUnitIdException;
 
 try {
     Item::create($itemData)->execute()->get();
@@ -276,7 +276,7 @@ try {
 1. **Check the full error message** - Provider errors usually include specific details
 2. **Enable Laravel debug mode** temporarily to see stack traces
 3. **Use Laravel Ray or Telescope** to inspect the actual API request/response
-4. **Test in sandbox mode first** - Set `CEGID_VENDUS_MODE=tests` during development
+4. **Test in sandbox mode first** - Set `VENDUS_MODE=tests` during development
 
 ---
 

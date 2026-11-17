@@ -20,16 +20,16 @@ foreach ($results->get() as $exemption) {
 - `TaxExemption::find()` takes no filters and has no pagination: the provider returns every exemption reason in one response.
 - The extra fields the provider returns are kept as additional data, read with `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET taxes/exemptions`. Each row is mapped as:
 
-| Cegid Vendus field | `TaxExemptionData` |
+| Vendus field | `TaxExemptionData` |
 | ------------------ | ------------------ |
 | `id`               | `code`             |
 | `text`             | `description`      |
 
-The laws of each exemption are in `getAdditionalData()['law']`, as a list of texts. When Cegid Vendus reports no data, `get()` is empty.
+The laws of each exemption are in `getAdditionalData()['law']`, as a list of texts. When Vendus reports no data, `get()` is empty.
 
 ## Moloni
 

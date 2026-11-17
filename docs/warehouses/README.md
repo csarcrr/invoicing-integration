@@ -3,7 +3,7 @@
 A warehouse is a stock location stored in the provider. Each one has a provider-assigned ID, which you use wherever the provider asks for a warehouse or store ID.
 
 - **Moloni:** a warehouse (`warehouses/getAll`).
-- **Cegid Vendus:** a store (`stores`). On Cegid Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Cegid Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse. A store is not a Cegid Vendus register (a point-of-sale till).
+- **Vendus:** a store (`stores`). On Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse. A store is not a Vendus register (a point-of-sale till).
 
 ## Quick example
 
@@ -24,7 +24,7 @@ foreach (Warehouse::find()->execute()->get() as $warehouse) {
 
 ## Provider support
 
-| Operation        | Cegid Vendus | Moloni | Invoice Express |
+| Operation        | Vendus | Moloni | Invoice Express |
 | ---------------- | ------------ | ------ | --------------- |
 | Create Warehouse | ✅           | ✅     | ❌              |
 | Find Warehouses  | ✅           | ✅     | ❌              |

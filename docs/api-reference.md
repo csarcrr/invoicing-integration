@@ -32,7 +32,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 
 ## ShouldUpdateClient Contract
 
-The interface returned by `Client::update()`. Supported on Cegid Vendus and Moloni. See [Updating a Client](clients/updating-a-client.md).
+The interface returned by `Client::update()`. Supported on Vendus and Moloni. See [Updating a Client](clients/updating-a-client.md).
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
@@ -45,7 +45,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpda
 
 ## ShouldDeleteClient Contract
 
-The interface returned by `Client::delete()`. Supported on Cegid Vendus and Moloni. See [Deleting a Client](clients/deleting-a-client.md).
+The interface returned by `Client::delete()`. Supported on Vendus and Moloni. See [Deleting a Client](clients/deleting-a-client.md).
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDeleteClient;
@@ -55,7 +55,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDele
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()` | `void`      | Send the deletion request; returns nothing                    | `InvalidArgumentException` (if ID missing, thrown by `Client::delete()`), `RequestFailedException` (if the provider rejects the deletion) |
 | `getUrl()`  | `string`    | The request URL the deletion is sent to                       | -                                                                        |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `customer_id` on Moloni) | - |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus, `customer_id` on Moloni) | - |
 
 ## ShouldFetchClient Contract
 
@@ -69,7 +69,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetc
 | ----------- | ------------ | --------------------------------------------- | ------------------------------------------ |
 | `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing, thrown by `Client::fetch()`) |
 | `getUrl()`  | `string`     | The request URL the retrieval is sent to      | -                                          |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `customer_id` on Moloni) | - |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus, `customer_id` on Moloni) | - |
 
 ## ShouldFindClient Contract
 
@@ -125,7 +125,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFetchI
 | `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing, thrown by `Item::fetch()`) |
 | `get()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`, and additional data) | — |
 | `getUrl()`  | `string`    | The request URL the retrieval is sent to                    | —                                          |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `product_id` and `with_invisible` on Moloni) | — |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus, `product_id` and `with_invisible` on Moloni) | — |
 
 Provider response fields that the package does not explicitly map onto `ItemData` are accessible via `getAdditionalData()` on the returned DTO:
 
@@ -135,7 +135,7 @@ $item = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
 $item->name;                // mapped from provider's `title` field
 $item->description;         // mapped directly
 $item->reference;           // mapped directly
-$item->barcode;             // mapped from provider's `barcode` (Cegid Vendus) or `ean` (Moloni)
+$item->barcode;             // mapped from provider's `barcode` (Vendus) or `ean` (Moloni)
 $item->price;               // gross price in cents
 $item->getAdditionalData(); // provider fields the package does not handle
 ```
@@ -190,7 +190,7 @@ $created->getAdditionalData(); // fields from the provider response not handled 
 
 ## ShouldUpdateItem Contract
 
-The interface returned by `Item::update()`. Supported on Cegid Vendus and Moloni. See [Updating an Item](items/updating-an-item.md).
+The interface returned by `Item::update()`. Supported on Vendus and Moloni. See [Updating an Item](items/updating-an-item.md).
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdateItem;
@@ -206,7 +206,7 @@ Throws `InvalidArgumentException` when `id` is missing.
 
 ## ShouldDeleteItem Contract
 
-The interface returned by `Item::delete()`. Supported on Cegid Vendus and Moloni. See [Deleting an Item](items/deleting-an-item.md).
+The interface returned by `Item::delete()`. Supported on Vendus and Moloni. See [Deleting an Item](items/deleting-an-item.md).
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldDeleteItem;
@@ -216,13 +216,13 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldDelete
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()` | `void`      | Send the deletion request; returns nothing                    | `RequestFailedException` (if the provider rejects the deletion)          |
 | `getUrl()`  | `string`    | The request URL the deletion is sent to                       | —                                                                        |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `product_id` on Moloni) | — |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus, `product_id` on Moloni) | — |
 
 ---
 
 ## DueDate
 
-Entry point for managing due dates (payment terms). `find()` is supported on Moloni and Cegid Vendus; `create()` is supported on Moloni only, and throws `OperationNotSupportedException` on Cegid Vendus.
+Entry point for managing due dates (payment terms). `find()` is supported on Moloni and Vendus; `create()` is supported on Moloni only, and throws `OperationNotSupportedException` on Vendus.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\DueDate;
@@ -272,7 +272,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 
 ## ItemStock
 
-Entry point for moving item stock. Supported on Cegid Vendus and Moloni.
+Entry point for moving item stock. Supported on Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\ItemStock;
@@ -300,7 +300,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 
 ## Company (Facade)
 
-Entry point for listing the companies the provider user has access to. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`.
+Entry point for listing the companies the provider user has access to. Supported on Moloni; Vendus throws `OperationNotSupportedException`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Company;
@@ -327,7 +327,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Company\ShouldFin
 
 ## Tax (Facade)
 
-Entry point for managing the taxes stored in the provider. Supported on Moloni; Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`ItemTax` enum](#itemtax).
+Entry point for managing the taxes stored in the provider. Supported on Moloni; Vendus throws `OperationNotSupportedException`. Not to be confused with the [`ItemTax` enum](#itemtax).
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Tax;
@@ -369,7 +369,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldFindTax
 
 ## Unit (Facade)
 
-Entry point for the units stored in the provider. `find()` and `create()` are supported on Cegid Vendus and Moloni. Not to be confused with the [`Unit` enum](#unit).
+Entry point for the units stored in the provider. `find()` and `create()` are supported on Vendus and Moloni. Not to be confused with the [`Unit` enum](#unit).
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Unit;
@@ -393,7 +393,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldCreate
 | `execute()` | `self`      | Send the create request and populate the returned `UnitData`; throws `RequestFailedException` if the provider rejects the unit |
 | `get()` | `UnitData`  | The created unit, with the provider-assigned `id`                           |
 | `getUrl()`  | `string`    | The request URL the unit is sent to                                         |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (`title` on Cegid Vendus; `name` and `short_name` on Moloni) |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (`title` on Vendus; `name` and `short_name` on Moloni) |
 
 ## ShouldFindUnit Contract
 
@@ -412,7 +412,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 
 ## Warehouse (Facade)
 
-Entry point for managing the warehouses (Moloni) or stores (Cegid Vendus) stored in the provider. `find()` and `create()` are supported on Cegid Vendus and Moloni.
+Entry point for managing the warehouses (Moloni) or stores (Vendus) stored in the provider. `find()` and `create()` are supported on Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Warehouse;
@@ -434,7 +434,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 | Method             | Return Type     | Description                                                                                       |
 | ------------------ | --------------- | ------------------------------------------------------------------------------------------------- |
 | `execute()`        | `self`          | Send the create request and populate the returned `WarehouseData`; throws `RequestFailedException` if the provider rejects the warehouse |
-| `get()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()`; on Cegid Vendus the other response fields (such as `type`) are in `getAdditionalData()` |
+| `get()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()`; on Vendus the other response fields (such as `type`) are in `getAdditionalData()` |
 | `getUrl()`         | `string`        | The request URL the warehouse is sent to                                                          |
 | `getPayload()`     | `Collection`    | Inspect the payload sent to the provider (`title` and the optional fields)                        |
 
@@ -456,7 +456,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldF
 
 ## TaxExemption (Facade)
 
-Entry point for listing the tax exemption reasons stored in the provider. Supported on Cegid Vendus and Moloni.
+Entry point for listing the tax exemption reasons stored in the provider. Supported on Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
@@ -485,7 +485,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\TaxExemption\Shou
 
 ## DocumentType (Facade)
 
-Entry point for listing the document types stored in the provider. Supported on Cegid Vendus and Moloni.
+Entry point for listing the document types stored in the provider. Supported on Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\DocumentType;
@@ -508,13 +508,13 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DocumentType\Shou
 | `execute()`    | `self`       | Send the request                                                                             |
 | `get()`    | `Collection` | `Collection<DocumentTypeData>` results                                                       |
 | `getUrl()`     | `string`     | Request URL the operation builds                                                             |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus; `language_id` on Moloni, added during `execute()`) |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Vendus; `language_id` on Moloni, added during `execute()`) |
 
 ---
 
 ## Category (Facade)
 
-Entry point for the categories stored in the provider. Supported on Cegid Vendus and Moloni.
+Entry point for the categories stored in the provider. Supported on Vendus and Moloni.
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Category;
@@ -540,7 +540,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldCr
 | `execute()`     | `self`         | Send the create request and populate the returned `CategoryData`; throws `RequestFailedException` if the provider rejects the category |
 | `get()` | `CategoryData` | The created category, with the provider-assigned `id`                       |
 | `getUrl()`      | `string`       | The request URL the category is sent to                                     |
-| `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Cegid Vendus, `name` and `parent_id` on Moloni) |
+| `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Vendus, `name` and `parent_id` on Moloni) |
 
 ## ShouldFindCategory Contract
 
@@ -579,7 +579,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFe
 
 ## ShouldUpdateCategory Contract
 
-The interface returned by `Category::update()`. Supported on Cegid Vendus and Moloni. See [Updating a Category](categories/updating-a-category.md).
+The interface returned by `Category::update()`. Supported on Vendus and Moloni. See [Updating a Category](categories/updating-a-category.md).
 
 ```php
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUpdateCategory;
@@ -590,13 +590,13 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUp
 | `execute()`     | `self`         | Send the update request; returns `self`                                     | `InvalidArgumentException` (if ID missing, thrown by `Category::update()`), `RequestFailedException` (if the provider rejects the update) |
 | `get()` | `CategoryData` | The updated category; on Moloni, the `CategoryData` you passed in           | -                                                                                       |
 | `getUrl()`      | `string`       | The request URL the update is sent to                                       | -                                                                                       |
-| `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Cegid Vendus; `category_id`, `name` and `parent_id` on Moloni) | -                                    |
+| `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Vendus; `category_id`, `name` and `parent_id` on Moloni) | -                                    |
 
 ---
 
 ## PaymentMethod (Facade)
 
-Entry point for managing the payment methods stored in the provider. `find()` is supported on Cegid Vendus and Moloni; `create()` is supported on Moloni, and Cegid Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
+Entry point for managing the payment methods stored in the provider. `find()` is supported on Vendus and Moloni; `create()` is supported on Moloni, and Vendus throws `OperationNotSupportedException`. Not to be confused with the [`PaymentMethod` enum](#paymentmethod).
 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
@@ -675,7 +675,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCre
 | Method         | Return Type   | Description                                                       |
 | -------------- | ------------- | ----------------------------------------------------------------- |
 | `execute()`    | `self`        | Issue the HTTP request using the data contained in `InvoiceData`  |
-| `asDraft()`    | `static`      | Create the document as a draft (Moloni); ignored by Cegid Vendus  |
+| `asDraft()`    | `static`      | Create the document as a draft (Moloni); ignored by Vendus  |
 | `get()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
 | `getPayload()` | `Collection`  | Inspect the payload that will be sent to the provider (debugging) |
 
@@ -696,7 +696,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFet
 | `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing, thrown by `Invoice::fetch()`), `RequestFailedException` (if no document has the ID) |
 | `get()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
 | `getUrl()`      | `string`      | The request URL the retrieval is sent to                      | -                                                                    |
-| `getPayload()`  | `Collection`  | Inspect the payload sent to the provider (empty on Cegid Vendus, `document_id` on Moloni) | -                                                                    |
+| `getPayload()`  | `Collection`  | Inspect the payload sent to the provider (empty on Vendus, `document_id` on Moloni) | -                                                                    |
 
 ## ShouldGetInvoicePdf Contract
 
@@ -710,8 +710,8 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing, thrown by `Invoice::pdf()`), `RequestFailedException` (Moloni, if no PDF link is returned) |
 | `get()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
-| `getUrl()`      | `string`      | The URL of the first request (Moloni: the PDF link request; Cegid Vendus: the PDF document) | -                                       |
-| `getPayload()`  | `Collection`  | Inspect the payload of the first request (empty on Cegid Vendus, `document_id` on Moloni) | -                                       |
+| `getUrl()`      | `string`      | The URL of the first request (Moloni: the PDF link request; Vendus: the PDF document) | -                                       |
+| `getPayload()`  | `Collection`  | Inspect the payload of the first request (empty on Vendus, `document_id` on Moloni) | -                                       |
 
 ## ShouldCancelInvoice Contract
 
@@ -725,7 +725,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCan
 | ----------- | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()` | `void`      | Send the cancellation request; returns nothing                | `InvalidArgumentException` (if ID missing, thrown by `Invoice::cancel()`), `RequestFailedException` (if the provider rejects the cancellation) |
 | `getUrl()`  | `string`    | The request URL the cancellation is sent to                  | -                                                                        |
-| `getPayload()` | `Collection` | Inspect the payload sent to the provider (`status` on Cegid Vendus, `document_id` and optional `observation` on Moloni) | -                                                                        |
+| `getPayload()` | `Collection` | Inspect the payload sent to the provider (`status` on Vendus, `document_id` and optional `observation` on Moloni) | -                                                                        |
 
 ## ShouldFindInvoice Contract
 
@@ -740,10 +740,10 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFin
 | `execute()`        | `self`       | Execute the current page request                   | `RequestFailedException` (if the provider rejects the search)            |
 | `get()`        | `Collection` | `Collection<InvoiceData>` results                  | -                                                                        |
 | `getPayload()`     | `Collection` | Current request payload (type, client, pagination) | -                                                                        |
-| `getUrl()`         | `string`     | The request URL the search is sent to (Moloni: one endpoint per document type; Cegid Vendus: `/documents`) | - |
-| `next()`           | `self`       | Move to the next page                              | `NoMorePagesException` (Cegid Vendus, past the last page)                |
+| `getUrl()`         | `string`     | The request URL the search is sent to (Moloni: one endpoint per document type; Vendus: `/documents`) | - |
+| `next()`           | `self`       | Move to the next page                              | `NoMorePagesException` (Vendus, past the last page)                |
 | `previous()`       | `self`       | Go back one page                                   | `NoMorePagesException` (before the first page)                           |
-| `page(int $page)`  | `self`       | Jump to a specific page                            | `NoMorePagesException` (below 1, or past the total on Cegid Vendus)      |
+| `page(int $page)`  | `self`       | Jump to a specific page                            | `NoMorePagesException` (below 1, or past the total on Vendus)      |
 | `getCurrentPage()` | `int`        | Current page index                                 | -                                                                        |
 | `getTotalPages()`  | `?int`       | Total pages, `null` when not reported (Moloni)     | -                                                                        |
 
@@ -793,7 +793,7 @@ $invoiceData = InvoiceData::make([
 | `client`           | `?ClientData`             | Customer information                            |
 | `transport`        | `?TransportData`          | Transport/movement of goods info                |
 | `creditNoteReason` | `?string`                 | Required for credit notes                       |
-| `relatedDocument`  | `?string`                 | Related document of a non-credit-note document. On RG, the invoice it settles: its `sequence` on Cegid Vendus, its `id` on Moloni |
+| `relatedDocument`  | `?string`                 | Related document of a non-credit-note document. On RG, the invoice it settles: its `sequence` on Vendus, its `id` on Moloni |
 | `notes`            | `?string`                 | Additional notes (printed on document)          |
 | `dueDate`          | `?DueDateTerm`            | Payment term, sent on any document type |
 | `output`           | `OutputData`              | Preferred output format (PDF default)           |
@@ -834,11 +834,11 @@ ClientData::make([
 | `paymentMethodId`   | `Optional<int>`    | Payment method id (0 or more)       |
 | `paymentDay`        | `Optional<int>`    | Payment day (0 or more)             |
 | `salesmanId`        | `Optional<int>`    | Salesman id (0 or more)             |
-| `reference`         | `Optional<string>` | Your own code for the client (Cegid Vendus `external_reference`, Moloni `number`) |
+| `reference`         | `Optional<string>` | Your own code for the client (Vendus `external_reference`, Moloni `number`) |
 | `status`            | `Optional<string>` | Provider status                     |
 | `emailNotification` | `Optional<bool>`   | Whether to send documents via email |
 | `irsRetention`      | `Optional<bool>`   | IRS withholding flag                |
-| `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`); not set from Cegid Vendus responses |
+| `date`              | `Optional<Carbon>` | Provider creation date (`Y-m-d`); not set from Vendus responses |
 
 > Access DTO values directly: `$client->name`, `$client->vat`, etc. Use
 > `$client->toArray()` when you need a payload-friendly structure. Provider
@@ -955,10 +955,10 @@ $movement = StockMovementData::make([
 
 | Property      | Type              | Description                                                         |
 | ------------- | ----------------- | ------------------------------------------------------------------- |
-| `id`          | `?int`            | Provider-assigned movement ID; stays `null` on Cegid Vendus |
+| `id`          | `?int`            | Provider-assigned movement ID; stays `null` on Vendus |
 | `itemId`   | `?int`            | Item ID; required to move                                        |
 | `quantity`    | `null\|int\|float` | Units to add (positive) or remove (negative); required to move; never `0` |
-| `date`        | `?Carbon`         | Movement date and time; the current time on Moloni when `null`; sent in `obs` on Cegid Vendus |
+| `date`        | `?Carbon`         | Movement date and time; the current time on Moloni when `null`; sent in `obs` on Vendus |
 | `warehouseId` | `?int`            | Warehouse of the movement                                           |
 | `notes`       | `?string`         | Notes for the movement                                              |
 
@@ -973,7 +973,7 @@ The stock of an item in one warehouse, returned in `ItemData->stock` by `Item::f
 | Property      | Type         | Description                                                   |
 | ------------- | ------------ | ------------------------------------------------------------- |
 | `itemId`      | `int`        | ID of the item                                                |
-| `warehouseId` | `int`        | Warehouse (Moloni `warehouse_id`, Cegid Vendus `store_id`)    |
+| `warehouseId` | `int`        | Warehouse (Moloni `warehouse_id`, Vendus `store_id`)    |
 | `quantity`    | `int\|float` | Stock of the item in that warehouse                           |
 
 ---
@@ -1031,7 +1031,7 @@ use CsarCrr\InvoicingIntegration\Data\UnitData;
 
 ### WarehouseData
 
-Represents a warehouse (Moloni) or store (Cegid Vendus) stored in the provider.
+Represents a warehouse (Moloni) or store (Vendus) stored in the provider.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\WarehouseData;
@@ -1042,11 +1042,11 @@ use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 | `id`         | `?int`    | Provider-assigned warehouse or store ID                            |
 | `name`       | `?string` | Name of the warehouse or store                                     |
 | `address`    | `?string` | Street address                                                     |
-| `city`       | `?string` | City, sent as `city` on Moloni and `local` on Cegid Vendus         |
-| `postalCode` | `?string` | Postal code, sent as `zip_code` on Moloni and `postalcode` on Cegid Vendus |
-| `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni; not sent on Cegid Vendus |
+| `city`       | `?string` | City, sent as `city` on Moloni and `local` on Vendus         |
+| `postalCode` | `?string` | Postal code, sent as `zip_code` on Moloni and `postalcode` on Vendus |
+| `country`    | `?string` | ISO 3166-1 alpha-2 code, looked up as `country_id` on Moloni; not sent on Vendus |
 
-`address`, `city`, `postalCode` and `country` are inputs to `Warehouse::create()`; `Warehouse::find()` fills only `id` and `name`. Other fields the provider returns, and the code Moloni create generates, are available through `getAdditionalData()`. On Cegid Vendus, `Warehouse::create()` puts the response fields other than `id` and `title` there, such as `type`.
+`address`, `city`, `postalCode` and `country` are inputs to `Warehouse::create()`; `Warehouse::find()` fills only `id` and `name`. Other fields the provider returns, and the code Moloni create generates, are available through `getAdditionalData()`. On Vendus, `Warehouse::create()` puts the response fields other than `id` and `title` there, such as `type`.
 
 ---
 
@@ -1063,7 +1063,7 @@ use CsarCrr\InvoicingIntegration\Data\TaxExemptionData;
 | `code`        | `?string` | Exemption reason code, e.g. `M04`, used as `taxExemptionReason` and `exemptionReason` |
 | `description` | `?string` | Provider text describing the exemption reason                 |
 
-Other fields the provider returns, such as the Cegid Vendus `law`, are available through `getAdditionalData()`.
+Other fields the provider returns, such as the Vendus `law`, are available through `getAdditionalData()`.
 
 ---
 
@@ -1219,7 +1219,7 @@ use CsarCrr\InvoicingIntegration\Data\OutputData;
 | ---------- | -------------- | ------------ | ----------- |
 | `format`   | `OutputFormat` | `PDF_BASE64` | Output format. Set it on input to choose the format `Invoice::create()` requests |
 | `content`  | `?string`      | `null`       | The file, base64 encoded |
-| `fileName` | `?string`      | `null`       | File name used by `save()`. Cegid Vendus `Invoice::create()` sets it to the document number |
+| `fileName` | `?string`      | `null`       | File name used by `save()`. Vendus `Invoice::create()` sets it to the document number |
 | `url`      | `?string`      | `null`       | Provider download link. Set by `Invoice::pdf()` on Moloni only |
 
 **Methods:**
@@ -1253,7 +1253,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 ### DueDateTerm
 
-Payment terms for `InvoiceData->dueDate` and `ClientData->defaultPayDue`. The values are the ones Cegid Vendus accepts. An invoice is due today plus the term's days; `Days0` is today.
+Payment terms for `InvoiceData->dueDate` and `ClientData->defaultPayDue`. The values are the ones Vendus accepts. An invoice is due today plus the term's days; `Days0` is today.
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
@@ -1335,9 +1335,9 @@ Each case's `value` must have a corresponding entry in your config's `units` map
 ```php
 // config/invoicing-integration.php
 'units' => [
-    'litre' => env('CEGID_VENDUS_UNIT_LITRE_ID'),
-    'meter' => env('CEGID_VENDUS_UNIT_METER_ID'),
-    'hour'  => env('CEGID_VENDUS_UNIT_HOUR_ID'),
+    'litre' => env('VENDUS_UNIT_LITRE_ID'),
+    'meter' => env('VENDUS_UNIT_METER_ID'),
+    'hour'  => env('VENDUS_UNIT_HOUR_ID'),
 ],
 ```
 

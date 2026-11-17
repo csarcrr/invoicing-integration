@@ -15,12 +15,12 @@ test('moves stock', function (Provider $provider) {
     $result = ItemStock::move(StockMovementData::make(['itemId' => 1542, 'quantity' => -5]))->execute();
 
     expect($result->get()->id)->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => null,
+        Provider::VENDUS => null,
         Provider::MOLONI => 777,
     });
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => Str::contains($request->url(), 'products/stocks')
+        Provider::VENDUS => Str::contains($request->url(), 'products/stocks')
             && $request['type'] === 'remove'
             && $request['amount'] === 5,
         Provider::MOLONI => Str::contains($request->url(), 'productStocks/insert')

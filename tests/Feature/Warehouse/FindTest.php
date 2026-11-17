@@ -24,7 +24,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
     $warehouse = Warehouse::find()->execute()->get()->first();
 
     expect($warehouse->getAdditionalData())->toMatchArray(match ($provider) {
-        Provider::CEGID_VENDUS => ['type' => 'warehouse'],
+        Provider::VENDUS => ['type' => 'warehouse'],
         Provider::MOLONI => ['code' => 'AP'],
     });
 })->with('providers');
@@ -35,8 +35,8 @@ test('returns an empty list when the provider has no warehouses', function () {
     expect(Warehouse::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
-test('returns an empty list when Cegid Vendus reports no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('returns an empty list when Vendus reports no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 

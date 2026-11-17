@@ -67,7 +67,7 @@ test('sends the update to the provider', function (Provider $provider) {
     Item::update(ItemData::make(['id' => 1542, 'name' => 'New Title']))->execute();
 
     Http::assertSentInOrder(match ($provider) {
-        Provider::CEGID_VENDUS => [
+        Provider::VENDUS => [
             fn (Request $request) => $request->method() === 'PATCH'
                 && Str::endsWith($request->url(), 'products/1542'),
         ],

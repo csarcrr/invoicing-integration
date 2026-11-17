@@ -16,7 +16,7 @@ test('sends the category id in the request', function (Provider $provider) {
     Category::fetch(CategoryData::make(['id' => 29999]))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => $request->method() === 'GET'
+        Provider::VENDUS => $request->method() === 'GET'
             && Str::contains($request->url(), 'products/categories/29999'),
         Provider::MOLONI => Str::contains($request->url(), 'productCategories/getOne')
             && Str::contains($request->body(), 'category_id=29999'),
@@ -50,7 +50,7 @@ test('fails when no id is set', function (Provider $provider) {
 
 test('fails when no category has the id', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
         Provider::MOLONI => mockResponse([]),
     });
 

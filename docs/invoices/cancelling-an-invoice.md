@@ -16,7 +16,7 @@ Invoice::cancel(InvoiceData::make(['id' => 123]))->execute();
 - Without an `id`, `Invoice::cancel()` throws `InvalidArgumentException` with `Invoice ID is required.`
 - When the provider rejects the cancellation, `execute()` throws `RequestFailedException`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `PATCH documents/{id}` with `status` set to `A` (Canceled).
 

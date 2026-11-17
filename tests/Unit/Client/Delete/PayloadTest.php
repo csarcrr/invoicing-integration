@@ -10,7 +10,7 @@ it('sends the delete request for the client id', function (Provider $provider) {
     $delete = Client::delete(ClientData::from(['id' => '99999']));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($delete->getUrl())->toBe('clients/99999')
+        Provider::VENDUS => expect($delete->getUrl())->toBe('clients/99999')
             ->and($delete->getPayload()->toArray())->toBe([]),
         Provider::MOLONI => expect($delete->getUrl())->toBe('customers/delete')
             ->and($delete->getPayload()->toArray())->toBe(['customer_id' => '99999']),

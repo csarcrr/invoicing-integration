@@ -16,7 +16,7 @@ Client::delete(ClientData::make(['id' => '12345']))->execute();
 - Without an `id`, `Client::delete()` throws `InvalidArgumentException` with `Client ID is required.`
 - When the provider rejects the deletion, `execute()` throws `RequestFailedException`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `DELETE clients/{id}` with no body.
 

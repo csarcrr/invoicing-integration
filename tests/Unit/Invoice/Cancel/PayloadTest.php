@@ -10,7 +10,7 @@ it('sends the cancel request for the invoice id', function (Provider $provider) 
     $cancel = Invoice::cancel(InvoiceData::from(['id' => 123456]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($cancel->getUrl())->toBe('documents/123456')
+        Provider::VENDUS => expect($cancel->getUrl())->toBe('documents/123456')
             ->and($cancel->getPayload()->toArray())->toBe(['status' => 'A']),
         Provider::MOLONI => expect($cancel->getUrl())->toBe('documents/documentCancel')
             ->and($cancel->getPayload()->toArray())->toBe(['document_id' => 123456]),

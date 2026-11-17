@@ -22,11 +22,11 @@ $client = Client::update($clientData)->execute()->get();
 ```
 
 > [!NOTE]
-> On Moloni, `get()` returns the `ClientData` you passed in, because Moloni does not return the client. The Moloni `valid` and `customer_id` values are in `getAdditionalData()`. On Cegid Vendus, `get()` returns the client as stored after the update.
+> On Moloni, `get()` returns the `ClientData` you passed in, because Moloni does not return the client. The Moloni `valid` and `customer_id` values are in `getAdditionalData()`. On Vendus, `get()` returns the client as stored after the update.
 
 ## Requirements
 
-The `id` property is **required** when updating a client. It is the provider client id: the Moloni `customer_id` or the Cegid Vendus client id, the one `Client::fetch()` expects.
+The `id` property is **required** when updating a client. It is the provider client id: the Moloni `customer_id` or the Vendus client id, the one `Client::fetch()` expects.
 
 ```php
 // This will throw an InvalidArgumentException
@@ -40,7 +40,7 @@ Client::update($clientData)->execute(); // Works
 
 ## Updated Fields
 
-| Field        | Moloni                                              | Cegid Vendus                |
+| Field        | Moloni                                              | Vendus                |
 | ------------ | --------------------------------------------------- | --------------------------- |
 | `id`         | `customer_id` (required)                            | Path `/clients/{id}`        |
 | `reference`  | `number`                                            | `external_reference`        |
@@ -60,7 +60,7 @@ The other fields behave as they do in `Client::create()` on each provider. See [
 
 ### Fields You Do Not Set
 
-On Cegid Vendus, fields you do not set are not sent, so the provider keeps their stored values.
+On Vendus, fields you do not set are not sent, so the provider keeps their stored values.
 
 On Moloni, the update sends only the fields you set, as `Client::create()` does. Fields you leave unset are not sent.
 
@@ -71,7 +71,7 @@ On Moloni, the update sends only the fields you set, as `Client::create()` does.
 - Moloni ignores changes to `vat` and `number` once a document references the client.
 - The response has no client body. `get()` returns the `ClientData` you passed in, with the `valid` and `customer_id` values in `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 - `status` is sent only when you set it.
 - `get()` returns the stored client, the same as `Client::fetch()`.

@@ -43,8 +43,8 @@ function moloniSetupCommand(mixed $test, string $password = 'secret-password'): 
         ->expectsQuestion('Which Moloni company?', '5 - Empresa Demonstração');
 }
 
-test('writes the Cegid Vendus ids to the env file', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('writes the Vendus ids to the env file', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake([
         '*documents/paymentmethods*' => mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')),
@@ -52,22 +52,22 @@ test('writes the Cegid Vendus ids to the env file', function () {
     ]);
 
     $this->artisan('invoicing-integration:setup', ['--env-file' => $this->envFile])
-        ->expectsQuestion('Which provider do you want to set up?', 'CegidVendus')
-        ->expectsQuestion('Cegid Vendus API key', 'key-123')
-        ->expectsQuestion('Cegid Vendus mode', 'normal')
+        ->expectsQuestion('Which provider do you want to set up?', 'Vendus')
+        ->expectsQuestion('Vendus API key', 'key-123')
+        ->expectsQuestion('Vendus mode', 'normal')
         ->assertSuccessful();
 
     expect(setupEnv($this->envFile))
-        ->toContain("INVOICING_INTEGRATION_PROVIDER=CegidVendus\n")
-        ->toContain("CEGID_VENDUS_API_KEY=key-123\n")
-        ->toContain("CEGID_VENDUS_MODE=normal\n")
-        ->toContain("CEGID_VENDUS_PAYMENT_MONEY_ID=7001\n")
-        ->toContain("CEGID_VENDUS_PAYMENT_MB_ID=7002\n")
-        ->toContain("CEGID_VENDUS_PAYMENT_CREDIT_CARD_ID=7003\n")
-        ->toContain("CEGID_VENDUS_PAYMENT_MONEY_TRANSFER_ID=7004\n")
-        ->toContain("CEGID_VENDUS_PAYMENT_CURRENT_ACCOUNT_ID=7006\n")
-        ->toContain("CEGID_VENDUS_UNIT_KG_ID=19999\n")
-        ->toContain("CEGID_VENDUS_UNIT_UNIT_ID=29999\n");
+        ->toContain("INVOICING_INTEGRATION_PROVIDER=Vendus\n")
+        ->toContain("VENDUS_API_KEY=key-123\n")
+        ->toContain("VENDUS_MODE=normal\n")
+        ->toContain("VENDUS_PAYMENT_MONEY_ID=7001\n")
+        ->toContain("VENDUS_PAYMENT_MB_ID=7002\n")
+        ->toContain("VENDUS_PAYMENT_CREDIT_CARD_ID=7003\n")
+        ->toContain("VENDUS_PAYMENT_MONEY_TRANSFER_ID=7004\n")
+        ->toContain("VENDUS_PAYMENT_CURRENT_ACCOUNT_ID=7006\n")
+        ->toContain("VENDUS_UNIT_KG_ID=19999\n")
+        ->toContain("VENDUS_UNIT_UNIT_ID=29999\n");
 });
 
 test('writes the Moloni ids to the env file', function () {
@@ -159,8 +159,8 @@ test('asks which tax to use when several match', function () {
 });
 
 test('replaces the existing keys and keeps the other lines of the env file', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
-    file_put_contents($this->envFile, "APP_NAME=Test\nCEGID_VENDUS_API_KEY=old-key\n");
+    mockConfiguration(Provider::VENDUS);
+    file_put_contents($this->envFile, "APP_NAME=Test\nVENDUS_API_KEY=old-key\n");
 
     Http::fake([
         '*documents/paymentmethods*' => mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')),
@@ -168,15 +168,15 @@ test('replaces the existing keys and keeps the other lines of the env file', fun
     ]);
 
     $this->artisan('invoicing-integration:setup', ['--env-file' => $this->envFile])
-        ->expectsQuestion('Which provider do you want to set up?', 'CegidVendus')
-        ->expectsQuestion('Cegid Vendus API key', 'new-key')
-        ->expectsQuestion('Cegid Vendus mode', 'tests')
+        ->expectsQuestion('Which provider do you want to set up?', 'Vendus')
+        ->expectsQuestion('Vendus API key', 'new-key')
+        ->expectsQuestion('Vendus mode', 'tests')
         ->assertSuccessful();
 
     $env = setupEnv($this->envFile);
 
-    expect($env)->toStartWith("APP_NAME=Test\nCEGID_VENDUS_API_KEY=new-key\n")
-        ->and(substr_count($env, 'CEGID_VENDUS_API_KEY='))->toBe(1)
+    expect($env)->toStartWith("APP_NAME=Test\nVENDUS_API_KEY=new-key\n")
+        ->and(substr_count($env, 'VENDUS_API_KEY='))->toBe(1)
         ->and($env)->not->toContain('old-key');
 });
 

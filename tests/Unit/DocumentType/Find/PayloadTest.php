@@ -9,7 +9,7 @@ it('builds the find url', function (Provider $provider) {
     $find = DocumentType::find();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find->getUrl())->toBe('documents/types'),
+        Provider::VENDUS => expect($find->getUrl())->toBe('documents/types'),
         Provider::MOLONI => expect($find->getUrl())->toBe('documents/getAllDocumentTypes'),
     };
 })->with('providers');

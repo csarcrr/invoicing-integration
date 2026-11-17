@@ -11,7 +11,7 @@ it('handles an item without a category', function (Provider $provider) {
     $create = fn () => Item::create(ItemData::make(['name' => 'Item Title']))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($create()->has('category_id'))->toBeFalse(),
+        Provider::VENDUS => expect($create()->has('category_id'))->toBeFalse(),
         Provider::MOLONI => expect($create)->toThrow(MissingCategoryException::class),
     };
 })->with('providers');

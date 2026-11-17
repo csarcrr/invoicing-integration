@@ -41,7 +41,7 @@ test('sends the request to the categories endpoint', function (Provider $provide
     Category::find()->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => $request->method() === 'GET'
+        Provider::VENDUS => $request->method() === 'GET'
             && Str::contains($request->url(), 'products/categories')
             && Str::contains($request->url(), 'page=1'),
         Provider::MOLONI => Str::contains($request->url(), 'productCategories/getAll')
@@ -51,15 +51,15 @@ test('sends the request to the categories endpoint', function (Provider $provide
 
 test('returns an empty list when the provider has no categories', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
         Provider::MOLONI => mockResponse([]),
     });
 
     expect(Category::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
-test('fails when cegid vendus answers 404 with an error other than no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('fails when vendus answers 404 with an error other than no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A002', 'message' => 'Not found']]], 404));
 
@@ -76,13 +76,13 @@ test('reports the total pages the provider returns', function (Provider $provide
     $results = Category::find()->execute();
 
     expect($results->getTotalPages())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 5,
+        Provider::VENDUS => 5,
         Provider::MOLONI => 1,
     });
 })->with('providers');
 
-test('fetches the next cegid vendus page', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('fetches the next vendus page', function () {
+    mockConfiguration(Provider::VENDUS);
 
     $categories = fixtures()->response()->category()->files('response_multiple');
     $headers = ['X-Paginator-Items' => 3, 'X-Paginator-Pages' => 2];

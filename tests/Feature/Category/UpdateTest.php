@@ -27,7 +27,7 @@ test('sends the update to the provider', function (Provider $provider) {
     Category::update(CategoryData::make(['id' => 29999, 'name' => 'Produtos']))->execute();
 
     Http::assertSent(match ($provider) {
-        Provider::CEGID_VENDUS => fn (Request $request) => $request->method() === 'PATCH'
+        Provider::VENDUS => fn (Request $request) => $request->method() === 'PATCH'
             && Str::endsWith($request->url(), 'products/categories/29999')
             && Str::contains($request->body(), 'Produtos'),
         Provider::MOLONI => fn (Request $request) => Str::contains($request->url(), 'productCategories/update')
@@ -38,7 +38,7 @@ test('sends the update to the provider', function (Provider $provider) {
 
 test('fails with the provider error when the category is not updated', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 400),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 400),
         Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Invalid name']),
     });
 

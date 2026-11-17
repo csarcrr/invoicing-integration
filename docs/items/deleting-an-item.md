@@ -16,7 +16,7 @@ Item::delete(ItemData::make(['id' => 12345]))->execute();
 - Without an `id`, `Item::delete()` throws `InvalidArgumentException` with `Item ID is required.`
 - When the provider rejects the deletion, `execute()` throws `RequestFailedException`.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `DELETE products/{id}` with no body.
 

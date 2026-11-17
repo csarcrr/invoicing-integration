@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\TransportData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Validation\ValidationException;
 
@@ -84,7 +84,7 @@ it('does not send the transport countries when they are not set', function (Prov
     )->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('movement_of_goods')['loadpoint'])->not->toHaveKey('country')
+        Provider::VENDUS => expect($payload->get('movement_of_goods')['loadpoint'])->not->toHaveKey('country')
             ->and($payload->get('movement_of_goods')['landpoint'])->not->toHaveKey('country'),
         Provider::MOLONI => expect($payload)->not->toHaveKeys(['delivery_departure_country', 'delivery_destination_country']),
     };
@@ -126,7 +126,7 @@ it('only sends transport details on document types that accept them', function (
     $payload = $invoice->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload)->toHaveKey('movement_of_goods'),
+        Provider::VENDUS => expect($payload)->toHaveKey('movement_of_goods'),
         Provider::MOLONI => expect($payload)->not->toHaveKeys([
             'delivery_datetime',
             'delivery_departure_address',

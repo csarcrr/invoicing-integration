@@ -19,7 +19,7 @@ final class CompanyAction
     public function find(): ShouldFindCompany
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
+            Provider::VENDUS => throw new OperationNotSupportedException,
             Provider::MOLONI => new Find,
         };
     }

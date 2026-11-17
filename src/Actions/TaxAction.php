@@ -22,7 +22,7 @@ final class TaxAction
     public function create(TaxData $tax): ShouldCreateTax
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
+            Provider::VENDUS => throw new OperationNotSupportedException,
             Provider::MOLONI => new Create($tax),
         };
     }
@@ -30,7 +30,7 @@ final class TaxAction
     public function find(): ShouldFindTax
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => throw new OperationNotSupportedException,
+            Provider::VENDUS => throw new OperationNotSupportedException,
             Provider::MOLONI => new Find,
         };
     }

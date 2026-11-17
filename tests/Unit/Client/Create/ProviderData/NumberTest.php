@@ -19,7 +19,7 @@ it('uses the reference as the number', function (Provider $provider) {
 
     match ($provider) {
         Provider::MOLONI => expect($payload->get('number'))->toBe('CLIENT-1'),
-        Provider::CEGID_VENDUS => expect($payload->has('number'))->toBeFalse()
+        Provider::VENDUS => expect($payload->has('number'))->toBeFalse()
             ->and($payload->has('id'))->toBeFalse(),
     };
 })->with('providers');
@@ -37,7 +37,7 @@ it('does not use the id as the number when no reference is given', function (Pro
 
     match ($provider) {
         Provider::MOLONI => expect($payload->has('number'))->toBeFalse(),
-        Provider::CEGID_VENDUS => expect($payload->has('number'))->toBeFalse()
+        Provider::VENDUS => expect($payload->has('number'))->toBeFalse()
             ->and($payload->has('id'))->toBeFalse(),
     };
 })->with('providers');

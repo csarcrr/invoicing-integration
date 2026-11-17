@@ -24,7 +24,7 @@ it('sends the client discount, credit limit and delivery method', function (Prov
         Provider::MOLONI => expect($payload->get('discount'))->toBe(12.5)
             ->and($payload->get('credit_limit'))->toBe(500.0)
             ->and($payload->get('delivery_method_id'))->toBe(3),
-        Provider::CEGID_VENDUS => expect($payload->has('discount'))->toBeFalse()
+        Provider::VENDUS => expect($payload->has('discount'))->toBeFalse()
             ->and($payload->has('credit_limit'))->toBeFalse()
             ->and($payload->has('delivery_method_id'))->toBeFalse(),
     };

@@ -16,7 +16,7 @@ test('an invoice get request maps the provider response onto InvoiceData', funct
 
     expect($invoice->id)->toBe(123456)
         ->and($invoice->sequence)->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => 'FR 01P2026/12',
+            Provider::VENDUS => 'FR 01P2026/12',
             Provider::MOLONI => 'FR A/12',
         })
         ->and($invoice->total)->toBe(3000)
@@ -48,7 +48,7 @@ test('supported properties are not filled in additional data', function (Provide
     $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->getAdditionalData())
+        Provider::VENDUS => expect($invoice->getAdditionalData())
             ->not->toHaveKey('number')
             ->not->toHaveKey('amount_gross')
             ->not->toHaveKey('amount_net')
@@ -75,7 +75,7 @@ test('an unknown document type is null', function (Provider $provider) {
     $fixture = fixtures()->response()->invoice()->files('fetch');
 
     Http::fake(mockResponse(match ($provider) {
-        Provider::CEGID_VENDUS => [...$fixture, 'type' => 'XX'],
+        Provider::VENDUS => [...$fixture, 'type' => 'XX'],
         Provider::MOLONI => [...$fixture, 'document_type' => ['saft_code' => 'XX']],
     }));
 
@@ -86,7 +86,7 @@ test('an unknown document type is null', function (Provider $provider) {
 
 it('fails when the provider has no invoice with the id', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
         Provider::MOLONI => mockResponse([]),
     });
 

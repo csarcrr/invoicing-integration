@@ -49,7 +49,7 @@ The command matches taxes by `vat_type`, not by rate.
 - Files:
   - `ShouldFindUnit`
   - `Data/UnitData`
-  - `Provider/CegidVendus/Unit/Find` (`GET products/units`)
+  - `Provider/Vendus/Unit/Find` (`GET products/units`)
   - `Provider/Moloni/Unit/Find` (`measurementUnits/getAll`)
   - `UnitAction::find()`
   - `Facades/Unit`
@@ -62,7 +62,7 @@ The command matches taxes by `vat_type`, not by rate.
 
 ## ~~4. PaymentMethod find on Vendus~~ (done)
 
-- New class: `Provider/CegidVendus/PaymentMethod/Find` (`GET documents/paymentmethods`).
+- New class: `Provider/Vendus/PaymentMethod/Find` (`GET documents/paymentmethods`).
 - `PaymentMethodAction::find()`: the Vendus case no longer throws.
 - Type mapping: `NU`→MONEY, `CD`→MB, `CC`→CREDIT_CARD, `DNP`→CURRENT_ACCOUNT, `TB`→MONEY_TRANSFER, any other code → `null`.
 
@@ -70,7 +70,7 @@ The command matches taxes by `vat_type`, not by rate.
 
 - Files:
   - `src/Commands/SetupCommand.php`, registered with `hasCommand()`
-  - `src/Commands/Setup/CegidVendus.php` and `Moloni.php`, implementing `ShouldSetupProvider`; each returns its env keys and values
+  - `src/Commands/Setup/Vendus.php` and `Moloni.php`, implementing `ShouldSetupProvider`; each returns its env keys and values
 - Steps:
   1. Select the provider.
   2. Ask for the credentials (secrets with `password()`).

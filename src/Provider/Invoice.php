@@ -8,7 +8,7 @@ use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 
 /**
- * Base class for Cegid Vendus invoice operations, holding invoice data and supported API response properties.
+ * Base class for Vendus invoice operations, holding invoice data and supported API response properties.
  *
  * @extends Base<InvoiceData>
  */

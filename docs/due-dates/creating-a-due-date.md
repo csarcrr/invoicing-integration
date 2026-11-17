@@ -41,7 +41,7 @@ The request is sent to `maturityDates/insert`:
 
 The returned `maturity_date_id` is set as `id`. Other response fields are available through `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 Not supported: `DueDate::create()` throws `OperationNotSupportedException`.
 

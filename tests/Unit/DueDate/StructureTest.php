@@ -13,7 +13,7 @@ it('is an instance of the correct when creating a due date', function (Provider 
     $create = fn () => DueDate::create(DueDateData::make(['name' => '30 dias', 'days' => 30]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($create)->toThrow(OperationNotSupportedException::class),
+        Provider::VENDUS => expect($create)->toThrow(OperationNotSupportedException::class),
         Provider::MOLONI => expect($create())->toBeInstanceOf(ShouldCreateDueDate::class),
     };
 })->with('providers');

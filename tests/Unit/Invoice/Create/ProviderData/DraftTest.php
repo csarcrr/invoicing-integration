@@ -15,7 +15,7 @@ it('issues the final document by default', function (Provider $provider) {
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->has('status'))->toBeFalse(),
+        Provider::VENDUS => expect($payload->has('status'))->toBeFalse(),
         Provider::MOLONI => expect($payload->get('status'))->toBe(1),
     };
 })->with('providers');
@@ -27,7 +27,7 @@ it('can create the document as a draft', function (Provider $provider) {
     ]))->asDraft()->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->has('status'))->toBeFalse(),
+        Provider::VENDUS => expect($payload->has('status'))->toBeFalse(),
         Provider::MOLONI => expect($payload->get('status'))->toBe(0),
     };
 })->with('providers');

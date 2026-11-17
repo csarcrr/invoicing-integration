@@ -19,7 +19,7 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotFindCustomerByVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentMethodIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;

@@ -18,15 +18,15 @@ test('maps the provider response onto a list of DueDateData', function (Provider
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(DueDateData::class)
         ->and($list->pluck('id')->toArray())->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => [null, null],
+            Provider::VENDUS => [null, null],
             Provider::MOLONI => [4321, 4322],
         })
         ->and($list->pluck('name')->toArray())->toBe(['Pronto Pagamento', '30 dias'])
         ->and($list->pluck('days')->toArray())->toBe([0, 30]);
 })->with('providers');
 
-test('keeps the Cegid Vendus key as additional data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('keeps the Vendus key as additional data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
 
@@ -42,7 +42,7 @@ test('sends the request to the due dates endpoint', function (Provider $provider
     DueDate::find()->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => $request->method() === 'GET' && Str::contains($request->url(), 'documents/duedates'),
+        Provider::VENDUS => $request->method() === 'GET' && Str::contains($request->url(), 'documents/duedates'),
         Provider::MOLONI => Str::contains($request->url(), 'maturityDates/getAll')
             && Str::contains($request->body(), 'qty=50')
             && Str::contains($request->body(), 'offset=0'),
@@ -76,8 +76,8 @@ test('fails when attempting to go below the first page', function () {
     expect(fn () => DueDate::find()->page(0))->toThrow(NoMorePagesException::class);
 })->with('providers');
 
-test('returns an empty list when Cegid Vendus reports no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('returns an empty list when Vendus reports no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 

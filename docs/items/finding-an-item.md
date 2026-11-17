@@ -27,7 +27,7 @@ foreach ($results->get() as $item) {
 ```
 
 - `get()` returns a `Collection` of `ItemData` instances populated by the
-  provider response. Cegid Vendus items carry `id`, `name`, `description`,
+  provider response. Vendus items carry `id`, `name`, `description`,
   `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`
   and the gross `price`.
 - The same paginator object is returned, so you can immediately call
@@ -65,12 +65,12 @@ combines them):
 | `category`  | `?CategoryData` | Category to list; see each provider below |
 
 > [!NOTE]
-> Cegid Vendus maps `name` to the `title` query parameter internally. This is
+> Vendus maps `name` to the `title` query parameter internally. This is
 > handled transparently by the package — pass `name` on `ItemData` as usual.
 
-## Cegid Vendus
+## Vendus
 
-Cegid Vendus sends every filter you set, so several fields narrow the search
+Vendus sends every filter you set, so several fields narrow the search
 together.
 
 - `name`, `reference` and `barcode` match the whole value only. A partial value
@@ -79,7 +79,7 @@ together.
   category. Without one, all categories are listed.
 - The request sends `status=all`, so disabled items are listed too, with
   `enabled` set to `false`.
-- When nothing matches, Cegid Vendus answers `404` with error code `A001`
+- When nothing matches, Vendus answers `404` with error code `A001`
   (`No data`). The package returns an empty list instead of throwing. Any
   other `404` throws.
 
@@ -159,7 +159,7 @@ while ($results->get()->isNotEmpty()) {
   (Moloni), and before the first `execute()`: keep calling `next()` until a page
   comes back empty.
 - Calling `previous()` before page 1, or `page()` below 1, raises
-  `NoMorePagesException`. On Cegid Vendus, after the first `execute()`,
+  `NoMorePagesException`. On Vendus, after the first `execute()`,
   `next()` beyond the last page and `page()` above the total also raise it. On
   Moloni they return an empty list.
 

@@ -39,7 +39,7 @@ it('sends the amount discount only to providers that support it', function (Prov
     ]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->getPayload()->get('items')->first()['discount_amount'])->toBe(0.5),
+        Provider::VENDUS => expect($invoice->getPayload()->get('items')->first()['discount_amount'])->toBe(0.5),
         Provider::MOLONI => expect($invoice->getPayload()->get('products')[0])->not->toHaveKey('discount'),
     };
 })->with('providers');
@@ -113,7 +113,7 @@ it('sends the item id to the provider when it identifies items by id', function 
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['id'])->toBe(1542),
+        Provider::VENDUS => expect($payload->get('items')->first()['id'])->toBe(1542),
         Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
     };
 })->with('providers');
@@ -125,7 +125,7 @@ it('sends the item id to the provider when the item has no reference', function 
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first())->toHaveKey('id', 1542)
+        Provider::VENDUS => expect($payload->get('items')->first())->toHaveKey('id', 1542)
             ->not->toHaveKey('reference'),
         Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
     };
@@ -138,7 +138,7 @@ it('sends the item name as the line name', function (Provider $provider) {
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['title'])->toBe('Bananas'),
+        Provider::VENDUS => expect($payload->get('items')->first()['title'])->toBe('Bananas'),
         Provider::MOLONI => expect($payload->get('products')[0]['name'])->toBe('Bananas'),
     };
 })->with('providers');
@@ -150,13 +150,13 @@ it('sends a quantity of one when the item has no quantity', function (Provider $
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['qty'])->toBe(1),
+        Provider::VENDUS => expect($payload->get('items')->first()['qty'])->toBe(1),
         Provider::MOLONI => expect($payload->get('products')[0]['qty'])->toBe(1),
     };
 })->with('providers');
 
 it('sends the product type on vendus invoice lines when the item has no type', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     $payload = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::Invoice,

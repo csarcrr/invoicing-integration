@@ -15,7 +15,7 @@ it('authenticates the provider requests', function (Provider $provider) {
     Item::fetch(ItemData::make(['id' => 123]))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
-        Provider::CEGID_VENDUS => $request->hasHeader('Authorization', 'Bearer test-api-key'),
+        Provider::VENDUS => $request->hasHeader('Authorization', 'Bearer test-api-key'),
         Provider::MOLONI => Str::contains($request->url(), 'access_token')
             && Str::contains($request->body(), 'company_id=123456'),
     });

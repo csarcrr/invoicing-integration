@@ -12,10 +12,10 @@ $category = Category::update(CategoryData::make(['id' => 29999, 'name' => 'Bebid
 
 $category->id;
 $category->name;
-$category->parentId; // null on Cegid Vendus
+$category->parentId; // null on Vendus
 ```
 
-- `get()` returns the `CategoryData` you passed in on Moloni, and the category as stored after the update on Cegid Vendus.
+- `get()` returns the `CategoryData` you passed in on Moloni, and the category as stored after the update on Vendus.
 - When the provider does not update the category, `execute()` throws `RequestFailedException` with the provider's error message.
 
 ## Requirements
@@ -32,7 +32,7 @@ Category::update(CategoryData::make(['id' => 29999, 'name' => 'Bebidas']));
 
 ## Updated fields
 
-| Field      | Moloni                                | Cegid Vendus               |
+| Field      | Moloni                                | Vendus               |
 | ---------- | ------------------------------------- | -------------------------- |
 | `id`       | `category_id` (required)              | Path `products/categories/{id}` |
 | `name`     | `name`, sent only when set            | `title`, sent only when set |
@@ -40,9 +40,9 @@ Category::update(CategoryData::make(['id' => 29999, 'name' => 'Bebidas']));
 
 Fields you do not set are not sent, so the provider keeps their stored values.
 
-## Cegid Vendus
+## Vendus
 
-The request is sent as `PATCH products/categories/{id}`. `name` is sent as `title`. `parentId` is not supported by Cegid Vendus and is ignored.
+The request is sent as `PATCH products/categories/{id}`. `name` is sent as `title`. `parentId` is not supported by Vendus and is ignored.
 
 The returned category is mapped from the response: `id` from `id` and `name` from `title`. `parentId` is always `null`.
 

@@ -31,13 +31,13 @@ foreach ($results->get() as $client) {
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
-- On Cegid Vendus, each returned client has the same fields as a client from
+- On Vendus, each returned client has the same fields as a client from
   `Client::fetch()`, except `date` and `defaultPayDue`, which the list does not return.
 - Returned clients do not carry `getAdditionalData()`.
 
 ## Filtering by Email
 
-Cegid Vendus and Moloni support server-side email filtering:
+Vendus and Moloni support server-side email filtering:
 
 ```php
 $filters = ClientData::make(['email' => 'billing@example.com']);
@@ -45,7 +45,7 @@ $filters = ClientData::make(['email' => 'billing@example.com']);
 $results = Client::find($filters)->execute();
 ```
 
-Moloni matches part of the value and ignores case. Cegid Vendus matches the
+Moloni matches part of the value and ignores case. Vendus matches the
 whole value: `email` must be the full address with the same case, and `name`
 the full name in any case.
 
@@ -71,10 +71,10 @@ $results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
 - Each returned client has `id` set to the Moloni `customer_id`, ready for
   `Client::fetch()`.
 
-## Searching on Cegid Vendus
+## Searching on Vendus
 
-Cegid Vendus combines every filter set. The package sends only the fields
-Cegid Vendus can search by:
+Vendus combines every filter set. The package sends only the fields
+Vendus can search by:
 
 - `vat` (sent as `fiscal_id`)
 - `name`
@@ -89,7 +89,7 @@ $results = Client::find(ClientData::make(['name' => 'Acme', 'status' => 'active'
 
 - Other filters (`id`, `city`, `address`, `phone`, `notes`, `country`,
   `irsRetention`, ...) are not sent.
-- When nothing matches, Cegid Vendus answers `404` with error code `A001`
+- When nothing matches, Vendus answers `404` with error code `A001`
   (`No data`). The package returns an empty list instead of throwing. Any
   other `404` throws.
 
@@ -117,7 +117,7 @@ while ($results->get()->isNotEmpty()) {
   (Moloni), and before the first `execute()`: keep calling `next()` until a page
   comes back empty.
 - Calling `previous()` before page 1, or `page()` below 1, raises
-  `NoMorePagesException`. On Cegid Vendus, after the first `execute()`,
+  `NoMorePagesException`. On Vendus, after the first `execute()`,
   `next()` beyond the last page and `page()` above the total also raise it. On
   Moloni they return an empty list.
 

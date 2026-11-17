@@ -26,7 +26,7 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
     expect($output)->toBeString();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::VENDUS => Storage::disk('local')->assertExists($output),
         Provider::MOLONI => expect($output)->toBe(''),
     };
 })->with('providers', ['output_with_pdf']);
@@ -48,7 +48,7 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
     expect($output)->toBeString();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::VENDUS => Storage::disk('local')->assertExists($output),
         Provider::MOLONI => expect($output)->toBe(''),
     };
 })->with('providers', ['output_with_escpos']);
@@ -70,7 +70,7 @@ test('can save the output under a custom name and path', function (Provider $pro
     expect($output)->toBeString();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::VENDUS => Storage::disk('local')->assertExists($output),
         Provider::MOLONI => expect($output)->toBe(''),
     };
 })->with('providers', ['output_with_pdf']);
@@ -93,7 +93,7 @@ test('is able to sanitize the path and filename when saving', function (
     $savePath = $data->output->save($invalidPath);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($savePath)->toBe($expectedPath)
+        Provider::VENDUS => expect($savePath)->toBe($expectedPath)
             ->and(Storage::disk('local')->exists($savePath))->toBeTrue(),
         Provider::MOLONI => expect($savePath)->toBe(''),
     };

@@ -7,7 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Actions;
 use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\TaxExemption\ShouldFindTaxExemption;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\TaxExemption\Find as VendusFind;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\TaxExemption\Find as VendusFind;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\TaxExemption\Find as MoloniFind;
 
 final class TaxExemptionAction
@@ -19,7 +19,7 @@ final class TaxExemptionAction
     public function find(): ShouldFindTaxExemption
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new VendusFind,
+            Provider::VENDUS => new VendusFind,
             Provider::MOLONI => new MoloniFind,
         };
     }

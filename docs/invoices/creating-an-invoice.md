@@ -226,7 +226,7 @@ $invoiceData = InvoiceData::make([
 ```
 
 > [!WARNING]
-> Ensure payment method IDs are configured in your provider settings. See [Cegid Vendus Configuration](../providers/cegid-vendus/configuration.md).
+> Ensure payment method IDs are configured in your provider settings. See [Vendus Configuration](../providers/vendus/configuration.md).
 
 ## Document Types
 
@@ -344,19 +344,19 @@ Call `asDraft()` before `execute()` to create the document as a draft instead of
 $result = Invoice::create($invoiceData)->asDraft()->execute()->get();
 ```
 
-Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `asDraft()` and always issues the document.
+Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Vendus ignores `asDraft()` and always issues the document.
 
-## Cegid Vendus
+## Vendus
 
 All document types are sent to the `documents` endpoint, with the document type as `type`.
 
 - **Client**: sent as `client`, with `id`, `vat` as `fiscal_id`, `name`, `address`, `postalCode` as `postalcode`, `city`, `phone`, `email`, `notes`, `country` and `reference` as `external_reference`. `emailNotification` is sent as `send_email` and `irsRetention` as `irs_retention`, always, as `yes` or `no` (`no` when unset). Other `ClientData` fields are not sent. A client with an empty `vat` throws `InvoiceRequiresClientVatException`.
-- **Items**: `reference` is sent as `reference`; `id` as `id`; `name` as `title`; `price` as `gross_price`; `quantity` as `qty` (`1` when unset); `note` as `text`; `percentageDiscount` as `discount_percentage`; `amountDiscount` as `discount_amount`; `type` as `type_id` (product when unset); `tax` as `tax_id`; `taxExemptionReason` as `tax_exemption` and `taxExemptionLaw` as `tax_exemption_law`. Cegid Vendus needs `id` or `reference` to find the product; when the reference does not exist yet, Cegid Vendus creates the product and needs `name` as its title. When both `id` and `reference` are set, Cegid Vendus uses the product of `id`, but the document line shows the `reference` you sent; neither product is changed. `name` does not rename an existing product.
-- **Payments**: `payments`, with each payment's configured payment method `id` and `amount`. On an FT, Cegid Vendus records the payments and issues a receipt (RG) for the invoice automatically.
+- **Items**: `reference` is sent as `reference`; `id` as `id`; `name` as `title`; `price` as `gross_price`; `quantity` as `qty` (`1` when unset); `note` as `text`; `percentageDiscount` as `discount_percentage`; `amountDiscount` as `discount_amount`; `type` as `type_id` (product when unset); `tax` as `tax_id`; `taxExemptionReason` as `tax_exemption` and `taxExemptionLaw` as `tax_exemption_law`. Vendus needs `id` or `reference` to find the product; when the reference does not exist yet, Vendus creates the product and needs `name` as its title. When both `id` and `reference` are set, Vendus uses the product of `id`, but the document line shows the `reference` you sent; neither product is changed. `name` does not rename an existing product.
+- **Payments**: `payments`, with each payment's configured payment method `id` and `amount`. On an FT, Vendus records the payments and issues a receipt (RG) for the invoice automatically.
 - **Due date**: sent as `date_due`.
 - **Transport**: sent as `movement_of_goods`, with the origin as `loadpoint`, the destination as `landpoint` and the licence plate as `vehicle_id`. Each address sends `address`, `postalCode` as `postalcode`, `city` and, when set, `country`. The origin date and time are always sent; the destination ones only when set.
 - **Related document**: on RG, sent as `invoices` with `relatedDocument` as the `document_number` of the invoice the receipt settles, so it must be the invoice number (e.g. `FT 01P2025/1`), not its `id`. On FT, FR, FS and GT, a numeric `relatedDocument` is sent as `related_document_id`; any other value is not sent. Not sent on NC, whose items carry their own reference.
-- **Mode**: `mode` is sent only when `CEGID_VENDUS_MODE` is set; otherwise Cegid Vendus uses the register's mode. See [Cegid Vendus configuration](../providers/cegid-vendus/configuration.md#mode).
+- **Mode**: `mode` is sent only when `VENDUS_MODE` is set; otherwise Vendus uses the register's mode. See [Vendus configuration](../providers/vendus/configuration.md#mode).
 
 ## Moloni
 

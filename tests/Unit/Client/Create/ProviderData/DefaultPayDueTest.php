@@ -27,7 +27,7 @@ it('sends the client default pay due', function (Provider $provider) {
     match ($provider) {
         Provider::MOLONI => expect($payload->get('maturity_date_id'))->toBe(4322)
             ->and($payload->has('payment_day'))->toBeFalse(),
-        Provider::CEGID_VENDUS => expect($payload->get('default_pay_due'))->toBe('30'),
+        Provider::VENDUS => expect($payload->get('default_pay_due'))->toBe('30'),
     };
 })->with('providers');
 
@@ -47,7 +47,7 @@ it('does not send or look up the default pay due when the client has none', func
     Http::assertNotSent(fn (Request $request) => Str::contains($request->url(), 'maturityDates/getAll'));
 })->with('providers');
 
-it('sends a zero day default pay due as now on cegid vendus and as the closest due date on moloni', function (Provider $provider) {
+it('sends a zero day default pay due as now on vendus and as the closest due date on moloni', function (Provider $provider) {
     if ($provider === Provider::MOLONI) {
         Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
     }
@@ -62,7 +62,7 @@ it('sends a zero day default pay due as now on cegid vendus and as the closest d
 
     match ($provider) {
         Provider::MOLONI => expect($payload->get('maturity_date_id'))->toBe(4321),
-        Provider::CEGID_VENDUS => expect($payload->get('default_pay_due'))->toBe('now'),
+        Provider::VENDUS => expect($payload->get('default_pay_due'))->toBe('now'),
     };
 })->with('providers');
 

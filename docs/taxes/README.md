@@ -25,10 +25,10 @@ $exempt = Tax::find()->execute()->get()
 
 ## Provider support
 
-| Operation           | Cegid Vendus | Moloni | Invoice Express |
+| Operation           | Vendus | Moloni | Invoice Express |
 | ------------------- | ------------ | ------ | --------------- |
 | Create Tax          | ❌           | ✅     | ❌              |
 | Find Taxes          | ❌           | ✅     | ❌              |
 | Find Tax Exemptions | ✅           | ✅     | ❌              |
 
-On Cegid Vendus both tax operations throw `OperationNotSupportedException`: Vendus takes the tax code (`NOR`, `ISE`, ...), not a tax record ID. `TaxExemption::find()` works on both providers. Tax exemption codes are listed by [Finding Tax Exemptions](finding-tax-exemptions.md).
+On Vendus both tax operations throw `OperationNotSupportedException`: Vendus takes the tax code (`NOR`, `ISE`, ...), not a tax record ID. `TaxExemption::find()` works on both providers. Tax exemption codes are listed by [Finding Tax Exemptions](finding-tax-exemptions.md).

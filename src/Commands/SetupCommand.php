@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Commands;
 
-use CsarCrr\InvoicingIntegration\Commands\Setup\CegidVendus;
+use CsarCrr\InvoicingIntegration\Commands\Setup\Vendus;
 use CsarCrr\InvoicingIntegration\Commands\Setup\Moloni;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use Illuminate\Console\Command;
@@ -26,7 +26,7 @@ class SetupCommand extends Command
         $provider = Provider::from($choice);
 
         $setup = match ($provider) {
-            Provider::CEGID_VENDUS => new CegidVendus,
+            Provider::VENDUS => new Vendus,
             Provider::MOLONI => new Moloni,
         };
 

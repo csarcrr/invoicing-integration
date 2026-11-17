@@ -41,7 +41,7 @@ $invoiceData = InvoiceData::make([
 2. Pick the `TaxExemptionData` that applies. Show `description` to the person who chooses, or select by `code`.
 3. Set the item tax rate to `ItemTax::EXEMPT`.
 4. Set `taxExemptionReason` to the `code` of that `TaxExemptionData`. The package sends the code as given and does not check it.
-5. Optionally set `taxExemptionLaw` to the legal article (recommended for audit trails and AT requirements). Cegid Vendus returns the laws of each exemption as a list of texts in `getAdditionalData()['law']`; pick the one that applies. Moloni returns none, so write the text yourself.
+5. Optionally set `taxExemptionLaw` to the legal article (recommended for audit trails and AT requirements). Vendus returns the laws of each exemption as a list of texts in `getAdditionalData()['law']`; pick the one that applies. Moloni returns none, so write the text yourself.
 
 `TaxExemption::find()` sends one request to the provider each time it is executed. `taxExemptionReason` only needs the code, so an item can also take a code you already know, such as `'M04'`, with no request.
 

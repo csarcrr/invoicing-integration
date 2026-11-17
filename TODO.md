@@ -50,10 +50,10 @@
 
 Operations one provider supports and the other does not expose yet.
 
-- Cegid Vendus has an endpoint, the package does not use it yet:
+- Vendus has an endpoint, the package does not use it yet:
     - `PaymentMethod::create`: `POST /documents/paymentmethods`
     - `Tax::find`: `GET /taxes` (`providers-docs/vendus/openapi.json` line 3606)
     - `Company::find`: `GET /account` (`providers-docs/vendus/openapi.json` line 1010), mapping unverified
-- Cegid Vendus has no endpoint, so these cannot be implemented until Vendus adds one:
+- Vendus has no endpoint, so these cannot be implemented until Vendus adds one:
     - `DueDate::create`
     - `Tax::create`

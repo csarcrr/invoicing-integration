@@ -29,7 +29,7 @@ foreach (Unit::find()->execute()->get() as $unit) {
 
 ## Provider support
 
-| Operation   | Cegid Vendus | Moloni | Invoice Express |
+| Operation   | Vendus | Moloni | Invoice Express |
 | ----------- | ------------ | ------ | --------------- |
 | Create Unit | ✅           | ✅     | ❌              |
 | Find Units  | ✅           | ✅     | ❌              |

@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Facades\DueDate;
 
 it('builds the payload for the first page', function (Provider $provider) {
     expect(DueDate::find()->getPayload()->toArray())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => [],
+        Provider::VENDUS => [],
         Provider::MOLONI => ['qty' => 50, 'offset' => 0],
     });
 })->with('providers');

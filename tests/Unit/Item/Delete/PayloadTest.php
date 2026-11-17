@@ -10,7 +10,7 @@ it('builds the delete url for the item id', function (Provider $provider) {
     $delete = Item::delete(ItemData::from(['id' => 99999]));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($delete->getUrl())->toBe('products/99999'),
+        Provider::VENDUS => expect($delete->getUrl())->toBe('products/99999'),
         Provider::MOLONI => expect($delete->getUrl())->toBe('products/delete'),
     };
 })->with('providers');
@@ -19,7 +19,7 @@ it('builds the delete payload for the item id', function (Provider $provider) {
     $payload = Item::delete(ItemData::from(['id' => 99999]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->toArray())->toBe([]),
+        Provider::VENDUS => expect($payload->toArray())->toBe([]),
         Provider::MOLONI => expect($payload->toArray())->toBe(['product_id' => 99999]),
     };
 })->with('providers');

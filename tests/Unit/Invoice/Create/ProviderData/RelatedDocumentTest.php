@@ -26,7 +26,7 @@ it('transforms to provider payload with related document', function (Provider $p
         'items' => [ItemData::from(['reference' => 'reference-1'])],
         'payments' => [PaymentData::from(['amount' => 1000, 'method' => PaymentMethod::CREDIT_CARD])],
         'relatedDocument' => match ($provider) {
-            Provider::CEGID_VENDUS => 'FT 01P2025/1',
+            Provider::VENDUS => 'FT 01P2025/1',
             Provider::MOLONI => '99999999',
         },
     ]));
@@ -52,7 +52,7 @@ it('transforms to provider payload with related document on invoice types', func
     $payload = $invoice->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload)->toMatchArray($data),
+        Provider::VENDUS => expect($payload)->toMatchArray($data),
         Provider::MOLONI => expect($payload)->not->toHaveKey('associated_documents'),
     };
 })->with('providers')->with([

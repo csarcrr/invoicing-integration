@@ -12,11 +12,11 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Delete;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Fetch;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Update;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Client\Create;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Client\Delete;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Client\Fetch;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Client\Find;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Client\Update;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Delete as MoloniDelete;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Fetch as MoloniFetch;
@@ -38,7 +38,7 @@ final class ClientAction
     public function create(ClientData $client): ShouldCreateClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Create($client),
+            Provider::VENDUS => new Create($client),
             Provider::MOLONI => new MoloniCreate($client),
         };
     }
@@ -49,7 +49,7 @@ final class ClientAction
     public function update(ClientData $client): ShouldUpdateClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Update($client),
+            Provider::VENDUS => new Update($client),
             Provider::MOLONI => new MoloniUpdate($client),
         };
     }
@@ -60,7 +60,7 @@ final class ClientAction
     public function delete(ClientData $client): ShouldDeleteClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Delete($client),
+            Provider::VENDUS => new Delete($client),
             Provider::MOLONI => new MoloniDelete($client),
         };
     }
@@ -71,7 +71,7 @@ final class ClientAction
     public function fetch(ClientData $client): ShouldFetchClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Fetch($client),
+            Provider::VENDUS => new Fetch($client),
             Provider::MOLONI => new MoloniFetch($client),
         };
     }
@@ -82,7 +82,7 @@ final class ClientAction
     public function find(?ClientData $client = null): ShouldFindClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Find($client),
+            Provider::VENDUS => new Find($client),
             Provider::MOLONI => new MoloniFind($client),
         };
     }

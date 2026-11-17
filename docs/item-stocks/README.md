@@ -24,7 +24,7 @@ echo $move->get()->id;           // provider-assigned movement ID
 
 ## Provider support
 
-| Operation       | Cegid Vendus | Moloni | Invoice Express |
+| Operation       | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Move Stock      | ✅           | ✅     | ❌              |
 

@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 
 it('builds the pagination payload for the first page', function (Provider $provider) {
     expect(PaymentMethod::find()->getPayload()->toArray())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => [],
+        Provider::VENDUS => [],
         Provider::MOLONI => ['qty' => 50, 'offset' => 0],
     });
 })->with('providers');

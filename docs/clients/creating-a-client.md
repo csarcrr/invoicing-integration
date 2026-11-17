@@ -77,14 +77,14 @@ $clientData = ClientData::make([
 | `notes`             | Internal notes (not on invoices)       |
 | `irsRetention`      | Portuguese IRS withholding flag        |
 | `emailNotification` | Auto-send invoices via email           |
-| `defaultPayDue`     | Default payment due, a [`DueDateTerm`](../api-reference.md#duedateterm). On Cegid Vendus, `Days0` is sent as `now` |
+| `defaultPayDue`     | Default payment due, a [`DueDateTerm`](../api-reference.md#duedateterm). On Vendus, `Days0` is sent as `now` |
 | `discount`          | Discount percentage (0 to 100)         |
 | `creditLimit`       | Credit limit (0 or more)               |
 | `deliveryMethodId`  | Provider delivery method id (0 or more) |
 | `paymentMethodId`   | Provider payment method id (0 or more)  |
 | `paymentDay`        | Provider payment day (0 or more)        |
 | `salesmanId`        | Provider salesman id (0 or more)        |
-| `reference`         | Your own code for the client. Sent as Cegid Vendus `external_reference` on invoices, and as Moloni `number` on create |
+| `reference`         | Your own code for the client. Sent as Vendus `external_reference` on invoices, and as Moloni `number` on create |
 
 > [!NOTE]
 > Required fields vary by provider. If a required field is missing, the provider will return an explicit error message.
@@ -99,13 +99,13 @@ $clientData = ClientData::make([
 - `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, no lookup runs and no `country_id` is sent. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
 - `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, no lookup runs and no `language_id` is sent. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
 - `defaultPayDue` is sent as the Moloni `maturity_date_id`: the account due date with the same or closest number of days (a tie picks the shorter one), found with a `maturityDates/getAll` lookup. Without it, no lookup runs and no `maturity_date_id` is sent. When the account has no due dates, no `maturity_date_id` is sent.
-- `discount`, `creditLimit`, `deliveryMethodId`, `paymentMethodId`, `paymentDay` and `salesmanId` are sent as `discount`, `credit_limit`, `delivery_method_id`, `payment_method_id`, `payment_day` and `salesman_id`, only when you set them. Cegid Vendus does not send them.
+- `discount`, `creditLimit`, `deliveryMethodId`, `paymentMethodId`, `paymentDay` and `salesmanId` are sent as `discount`, `credit_limit`, `delivery_method_id`, `payment_method_id`, `payment_day` and `salesman_id`, only when you set them. Vendus does not send them.
 - `irsRetention` and `emailNotification` are not sent.
 
-### Cegid Vendus
+### Vendus
 
 - Fields you do not set are not sent.
-- `irsRetention` and `emailNotification` are sent as `irs_retention` and `send_email` (`yes` or `no`) only when you set them. Without them, Cegid Vendus stores `no`.
+- `irsRetention` and `emailNotification` are sent as `irs_retention` and `send_email` (`yes` or `no`) only when you set them. Without them, Vendus stores `no`.
 
 ## Complete Example
 

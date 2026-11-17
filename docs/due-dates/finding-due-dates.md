@@ -36,7 +36,7 @@ while ($results->get()->isNotEmpty()) {
 ```
 
 - Moloni: each page holds up to 50 due dates. `getTotalPages()` returns `null`, because Moloni does not report a total.
-- Cegid Vendus: the provider returns every due date in one response, so `getTotalPages()` is `1` after `execute()`, and `next()` raises `NoMorePagesException`.
+- Vendus: the provider returns every due date in one response, so `getTotalPages()` is `1` after `execute()`, and `next()` raises `NoMorePagesException`.
 - `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException` on both providers.
 
 ## Moloni
@@ -51,17 +51,17 @@ The request is sent to `maturityDates/getAll` with `qty` and `offset`. Each row 
 
 `associated_discount` is not mapped.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `GET documents/duedates`, with no parameters. The response is an object keyed by `now` or by a number of days, with the name as value. Each entry is mapped as:
 
-| Cegid Vendus field                          | `DueDateData`                                         |
+| Vendus field                          | `DueDateData`                                         |
 | ------------------------------------------- | ----------------------------------------------------- |
 | value                                       | `name`                                                |
 | key (`now` is `0`, otherwise the number)    | `days`                                                |
 | key                                         | additional data `key`, the raw key (`now`, `30`)      |
 
-Cegid Vendus has no due date ID, so `id` is `null`. Read the raw key with `getAdditionalData()['key']`. The rows keep the order the provider returns them.
+Vendus has no due date ID, so `id` is `null`. Read the raw key with `getAdditionalData()['key']`. The rows keep the order the provider returns them.
 
 ## Reference
 

@@ -1,6 +1,6 @@
 # Invoicing Integration Documentation
 
-A unified, fluent API for integrating with Portuguese invoicing systems from your Laravel application. Currently supports **Cegid Vendus**.
+A unified, fluent API for integrating with Portuguese invoicing systems from your Laravel application. Currently supports **Vendus**.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\ClientData;
@@ -172,7 +172,7 @@ This package facilitates invoicing provider API usage and is not intended to ser
 
 ### Providers
 
-- [Cegid Vendus](providers/cegid-vendus/configuration.md)
+- [Vendus](providers/vendus/configuration.md)
 - [Moloni](providers/moloni/configuration.md)
 - [Invoice Express](providers/invoice-express/configuration.md)
 

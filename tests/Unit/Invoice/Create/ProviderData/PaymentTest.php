@@ -70,7 +70,7 @@ it('fetches the provider payment methods once per invoice', function (Provider $
         ])
     )->getPayload();
 
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         Http::assertNothingSent();
 
         return;
@@ -96,7 +96,7 @@ it('only sends payments on document types that accept them', function (Provider 
     $payload = $invoice->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload)->toHaveKey('payments'),
+        Provider::VENDUS => expect($payload)->toHaveKey('payments'),
         Provider::MOLONI => expect($payload)->not->toHaveKey('payments'),
     };
 
@@ -104,7 +104,7 @@ it('only sends payments on document types that accept them', function (Provider 
 })->with('providers');
 
 it('throws error when the payment method is not available', function (Provider $provider) {
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         config()->set('invoicing-integration.providers.'.$provider->value.'.payments', [
             PaymentMethod::CREDIT_CARD->value => null,
             PaymentMethod::MONEY->value => null,
@@ -127,7 +127,7 @@ it('throws error when the payment method is not available', function (Provider $
     );
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect(fn () => $invoice->getPayload())
+        Provider::VENDUS => expect(fn () => $invoice->getPayload())
             ->toThrow(Exception::class, 'Payment method not configured.'),
         Provider::MOLONI => expect(fn () => $invoice->getPayload())
             ->toThrow(CouldNotGetPaymentMethodIdException::class),
@@ -146,7 +146,7 @@ it('throws error when the provider has no payment method of that type', function
     );
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($invoice->getPayload())->toHaveKey('payments'),
+        Provider::VENDUS => expect($invoice->getPayload())->toHaveKey('payments'),
         Provider::MOLONI => expect(fn () => $invoice->getPayload())
             ->toThrow(CouldNotGetPaymentMethodIdException::class),
     };

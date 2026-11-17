@@ -26,7 +26,7 @@ test('maps each stored document onto InvoiceData', function (Provider $provider)
 
     expect($first->id)->toBe(1001)
         ->and($first->sequence)->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => 'FT 01P2026/12',
+            Provider::VENDUS => 'FT 01P2026/12',
             Provider::MOLONI => 'FT A/12',
         })
         ->and($first->total)->toBe(3000)
@@ -49,14 +49,14 @@ test('reports the total pages the provider returns', function (Provider $provide
     $results = Invoice::find()->execute();
 
     expect($results->getTotalPages())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 5,
+        Provider::VENDUS => 5,
         Provider::MOLONI => null,
     });
 })->with('providers');
 
 test('returns an empty list when the provider has no invoices', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
         Provider::MOLONI => mockResponse([]),
     });
 

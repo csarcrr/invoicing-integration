@@ -12,11 +12,11 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdateItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Create as VendusCreate;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Delete as VendusDelete;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Fetch;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Find;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item\Update as VendusUpdate;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Item\Create as VendusCreate;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Item\Delete as VendusDelete;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Item\Fetch;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Item\Find;
+use CsarCrr\InvoicingIntegration\Provider\Vendus\Item\Update as VendusUpdate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Delete as MoloniDelete;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Item\Fetch as MoloniFetch;
@@ -38,7 +38,7 @@ final class ItemAction
     public function create(ItemData $item): ShouldCreateItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => (new VendusCreate($item))->config($this->provider->getConfig()),
+            Provider::VENDUS => (new VendusCreate($item))->config($this->provider->getConfig()),
             Provider::MOLONI => (new MoloniCreate($item))->config($this->provider->getConfig()),
         };
     }
@@ -46,7 +46,7 @@ final class ItemAction
     public function update(ItemData $item): ShouldUpdateItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => (new VendusUpdate($item))->config($this->provider->getConfig()),
+            Provider::VENDUS => (new VendusUpdate($item))->config($this->provider->getConfig()),
             Provider::MOLONI => (new MoloniUpdate($item))->config($this->provider->getConfig()),
         };
     }
@@ -54,7 +54,7 @@ final class ItemAction
     public function delete(ItemData $item): ShouldDeleteItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => (new VendusDelete($item))->config($this->provider->getConfig()),
+            Provider::VENDUS => (new VendusDelete($item))->config($this->provider->getConfig()),
             Provider::MOLONI => (new MoloniDelete($item))->config($this->provider->getConfig()),
         };
     }
@@ -62,7 +62,7 @@ final class ItemAction
     public function fetch(ItemData $item): ShouldFetchItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => (new Fetch($item))->config($this->provider->getConfig()),
+            Provider::VENDUS => (new Fetch($item))->config($this->provider->getConfig()),
             Provider::MOLONI => (new MoloniFetch($item))->config($this->provider->getConfig()),
         };
     }
@@ -70,7 +70,7 @@ final class ItemAction
     public function find(?ItemData $item = null): ShouldFindItem
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => (new Find($item))->config($this->provider->getConfig()),
+            Provider::VENDUS => (new Find($item))->config($this->provider->getConfig()),
             Provider::MOLONI => (new MoloniFind($item))->config($this->provider->getConfig()),
         };
     }

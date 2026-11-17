@@ -38,7 +38,7 @@ test('automagically injects provider pagination details into the request', funct
 
     Http::assertSent(function (Request $request) use ($provider) {
         return match ($provider) {
-            Provider::CEGID_VENDUS => Str::contains($request->url(), 'page=1'),
+            Provider::VENDUS => Str::contains($request->url(), 'page=1'),
             Provider::MOLONI => Str::contains($request->body(), 'offset=0'),
         };
     });
@@ -50,7 +50,7 @@ test('reports the total pages the provider returns', function (Provider $provide
     $results = Client::find($this->filters)->execute();
 
     expect($results->getTotalPages())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 5,
+        Provider::VENDUS => 5,
         Provider::MOLONI => null,
     });
 })->with('providers', ['response_multiple']);
@@ -100,7 +100,7 @@ test('maps all response fields onto the returned ClientData', function (Provider
         ->and($client->reference)->toBe('VEN-2024-001');
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($client->emailNotification)->toBeTrue()
+        Provider::VENDUS => expect($client->emailNotification)->toBeTrue()
             ->and($client->irsRetention)->toBeFalse(),
         Provider::MOLONI => expect($client->id)->toBe('12001')
             ->and($client->country)->toBe('PT'),
@@ -144,7 +144,7 @@ test('fails when attempting to go above the known total of pages', function (Pro
     $goAbove = fn () => $results->page(10)->execute();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($goAbove)->toThrow(NoMorePagesException::class),
+        Provider::VENDUS => expect($goAbove)->toThrow(NoMorePagesException::class),
         Provider::MOLONI => expect($goAbove)->not->toThrow(NoMorePagesException::class),
     };
 })->with('providers');
@@ -178,7 +178,7 @@ test('searches moloni clients on the endpoint of the search field', function (ar
 
 test('returns an empty list when the provider finds no clients', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
         Provider::MOLONI => mockResponse([]),
     });
 
@@ -187,8 +187,8 @@ test('returns an empty list when the provider finds no clients', function (Provi
     expect($results->get())->toBeEmpty();
 })->with('providers');
 
-test('fails when cegid vendus answers 404 with an error other than no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('fails when vendus answers 404 with an error other than no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A002', 'message' => 'Not found']]], 404));
 
@@ -197,7 +197,7 @@ test('fails when cegid vendus answers 404 with an error other than no data', fun
 
 test('fails when the provider rejects the search', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'P005', 'message' => 'Allowed values for param status are active, inactive']]], 403),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'P005', 'message' => 'Allowed values for param status are active, inactive']]], 403),
         Provider::MOLONI => mockResponse([['code' => 'invalid', 'description' => 'Invalid field']]),
     });
 

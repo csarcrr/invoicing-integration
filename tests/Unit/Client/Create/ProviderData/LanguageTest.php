@@ -22,7 +22,7 @@ it('sends the client language', function (Provider $provider) {
 
     match ($provider) {
         Provider::MOLONI => expect($payload->get('language_id'))->toBe(2),
-        Provider::CEGID_VENDUS => expect($payload->has('language_id'))->toBeFalse()
+        Provider::VENDUS => expect($payload->has('language_id'))->toBeFalse()
             ->and($payload->has('language'))->toBeFalse(),
     };
 })->with('providers');

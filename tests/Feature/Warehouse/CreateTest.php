@@ -27,7 +27,7 @@ test('maps the created warehouse onto WarehouseData', function (Provider $provid
         ->and($warehouse->address)->toBe('Rua Nova de Mil Fontes, 35');
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($warehouse->getAdditionalData()['type'])->toBe('store'),
+        Provider::VENDUS => expect($warehouse->getAdditionalData()['type'])->toBe('store'),
         Provider::MOLONI => expect($warehouse->getAdditionalData()['code'])->toBe($code),
     };
 })->with('providers');
@@ -52,7 +52,7 @@ test('sends the Moloni country id for the country code', function () {
 
 test('fails with the provider error when the warehouse is not created', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'P003', 'message' => 'Param title is required for this action. Please add it.']]], 400),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'P003', 'message' => 'Param title is required for this action. Please add it.']]], 400),
         Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Invalid code']),
     });
 

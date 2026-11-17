@@ -31,7 +31,7 @@ it('sends the creation defaults for omitted fields', function (Provider $provide
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('type_id'))->toBe('P')
+        Provider::VENDUS => expect($payload->get('type_id'))->toBe('P')
             ->and($payload->get('stock')['control'])->toBe('1')
             ->and($payload->get('status'))->toBe('on'),
         Provider::MOLONI => expect($payload->get('type'))->toBe(1)
@@ -46,7 +46,7 @@ it('sends whether the item is enabled', function (Provider $provider, bool $enab
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('status'))->toBe($vendusStatus),
+        Provider::VENDUS => expect($payload->get('status'))->toBe($vendusStatus),
         Provider::MOLONI => expect($payload->get('visibility_id'))->toBe($moloniVisibility),
     };
 })->with('providers')->with([

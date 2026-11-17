@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 function fakeDocumentTypeResponse(Provider $provider, mixed $response, int $status = 200): void
 {
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         Http::fake(mockResponse($response, $status));
 
         return;
@@ -41,7 +41,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
     $documentType = DocumentType::find()->execute()->get()->first();
 
     expect($documentType->getAdditionalData())->toMatchArray(match ($provider) {
-        Provider::CEGID_VENDUS => ['visible_filter' => 'yes'],
+        Provider::VENDUS => ['visible_filter' => 'yes'],
         Provider::MOLONI => ['document_type_id' => 1],
     });
 })->with('providers');
@@ -52,8 +52,8 @@ test('returns an empty list when the provider has no document types', function (
     expect(DocumentType::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
-test('returns an empty list when Cegid Vendus reports no data', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('returns an empty list when Vendus reports no data', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
@@ -82,8 +82,8 @@ test('sends the Moloni language id for the given language', function () {
         && Str::contains($request->body(), 'language_id=2'));
 });
 
-test('does not send a language to Cegid Vendus', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+test('does not send a language to Vendus', function () {
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(fixtures()->response()->documentType()->files('response_multiple')));
 

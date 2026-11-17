@@ -1,6 +1,6 @@
 # Creating a Warehouse
 
-Use `Warehouse::create()` to create a warehouse in the provider. Supported on Moloni and Cegid Vendus.
+Use `Warehouse::create()` to create a warehouse in the provider. Supported on Moloni and Vendus.
 
 ## Basic usage
 
@@ -43,11 +43,11 @@ The returned warehouse is mapped from the response: `id` from `warehouse_id`. Th
 > [!NOTE]
 > Moloni moves all stock to the first warehouse created.
 
-## Cegid Vendus
+## Vendus
 
 The request is sent to `stores` with `POST`. The fields are mapped as follows:
 
-| `WarehouseData` | Cegid Vendus field |
+| `WarehouseData` | Vendus field |
 | --------------- | ------------------ |
 | `name`          | `title`            |
 | `address`       | `address`          |
@@ -55,13 +55,13 @@ The request is sent to `stores` with `POST`. The fields are mapped as follows:
 | `postalCode`    | `postalcode`       |
 | `country`       | not sent           |
 
-- `country` is not sent, because the Cegid Vendus store request has no country field.
+- `country` is not sent, because the Vendus store request has no country field.
 - The package does not generate a `code`.
 - Fields that are not set are left out of the request.
 
 The returned warehouse is mapped from the response: `id` from the response `id`. The other fields are kept from the input. The remaining response fields, such as `type`, `city`, `country` and `status`, are in `getAdditionalData()`.
 
-On Cegid Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Cegid Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse.
+On Vendus, a store is a record tied to the account's subscription, and each store record has a `type`: `store` or `warehouse`. A Vendus warehouse is a store record whose type is `warehouse`. The package calls both a warehouse.
 
 > [!NOTE]
 > The provider decides whether the account can have another store.

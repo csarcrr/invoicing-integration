@@ -47,7 +47,7 @@ echo $created->id; // provider-assigned ID
 
 ## Provider support
 
-| Operation   | Cegid Vendus | Moloni | Invoice Express |
+| Operation   | Vendus | Moloni | Invoice Express |
 | ----------- | ------------ | ------ | --------------- |
 | Create Item | ✅           | ✅     | ❌              |
 | Update Item | ✅           | ✅     | ❌              |

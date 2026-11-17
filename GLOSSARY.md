@@ -5,7 +5,7 @@ A provider-agnostic vocabulary for issuing Portuguese fiscal documents and manag
 ## Providers
 
 **Provider**:
-An external invoicing platform certified by the Portuguese tax authority that issues and stores fiscal documents on the user's behalf (Cegid Vendus, Moloni).
+An external invoicing platform certified by the Portuguese tax authority that issues and stores fiscal documents on the user's behalf (Vendus, Moloni).
 _Avoid_: Integration, platform, vendor
 
 **Operation**:
@@ -13,7 +13,7 @@ One action a provider can perform on one kind of record, such as creating an inv
 _Avoid_: Endpoint, feature
 
 **Company**:
-The business account in a provider that issues invoices. Cegid Vendus calls it the account.
+The business account in a provider that issues invoices. Vendus calls it the account.
 _Avoid_: Account, tenant
 
 ## Fiscal documents
@@ -77,7 +77,7 @@ The person or organization an invoice is issued to.
 _Avoid_: Customer, buyer, account
 
 **Reference**:
-A code the developer chooses to identify a client in their own system. Moloni calls it the client number; Cegid Vendus calls it the external reference.
+A code the developer chooses to identify a client in their own system. Moloni calls it the client number; Vendus calls it the external reference.
 _Avoid_: External reference, client number
 
 **VAT Number**:
@@ -118,7 +118,7 @@ The measure an item's quantity is expressed in, such as units or kilograms.
 ## Stock
 
 **Warehouse**:
-A location within a provider account where an item's stock is held. Cegid Vendus calls it a store: a record tied to the account's subscription whose type is either store or warehouse, so a Cegid Vendus warehouse is a store of type warehouse. Not a Cegid Vendus register, which is a point-of-sale till.
+A location within a provider account where an item's stock is held. Vendus calls it a store: a record tied to the account's subscription whose type is either store or warehouse, so a Vendus warehouse is a store of type warehouse. Not a Vendus register, which is a point-of-sale till.
 _Avoid_: Store, location, register
 
 **Item Stock**:
@@ -153,7 +153,7 @@ _Avoid_: Due date (when meaning one invoice)
 
 The name each provider uses for a package term, where it differs or is worth stating.
 
-| Package term | Moloni | Cegid Vendus |
+| Package term | Moloni | Vendus |
 | --- | --- | --- |
 | Company | company | account |
 | Client | customer | client |

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 test('a cancel request sends one request and throws nothing', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['id' => 123456, 'status' => 'A']),
+        Provider::VENDUS => mockResponse(['id' => 123456, 'status' => 'A']),
         Provider::MOLONI => mockResponse(fixtures()->response()->invoice()->files('cancel')),
     });
 
@@ -21,7 +21,7 @@ test('a cancel request sends one request and throws nothing', function (Provider
 
 test('fails with the provider error when the document is not cancelled', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 400),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 400),
         Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Document is not closed']),
     });
 

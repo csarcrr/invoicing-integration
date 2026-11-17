@@ -19,7 +19,7 @@ test('maps the created unit onto UnitData', function (Provider $provider) {
         ->and($unit->id)->toBe(29999)
         ->and($unit->name)->toBe('Kilograma')
         ->and($unit->shortName)->toBe(match ($provider) {
-            Provider::CEGID_VENDUS => null,
+            Provider::VENDUS => null,
             Provider::MOLONI => 'Kg',
         });
 })->with('providers');
@@ -30,7 +30,7 @@ test('sends the unit to the provider', function (Provider $provider) {
     Unit::create(UnitData::make(['name' => 'Kilograma', 'shortName' => 'Kg']))->execute();
 
     Http::assertSent(match ($provider) {
-        Provider::CEGID_VENDUS => fn (Request $request) => $request->method() === 'POST'
+        Provider::VENDUS => fn (Request $request) => $request->method() === 'POST'
             && Str::endsWith($request->url(), 'products/units')
             && Str::contains($request->body(), 'Kilograma'),
         Provider::MOLONI => fn (Request $request) => Str::contains($request->url(), 'measurementUnits/insert')
@@ -41,7 +41,7 @@ test('sends the unit to the provider', function (Provider $provider) {
 
 test('fails with the provider error when the unit is not created', function (Provider $provider) {
     Http::fake(match ($provider) {
-        Provider::CEGID_VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 400),
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'Poorly filled parameters']]], 400),
         Provider::MOLONI => mockResponse(['valid' => 0, 'message' => 'Invalid name']),
     });
 

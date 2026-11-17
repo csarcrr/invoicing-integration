@@ -11,7 +11,7 @@ it('is an instance of the correct when finding companies', function (Provider $p
     $find = fn () => Company::find();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
+        Provider::VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
         Provider::MOLONI => expect($find())->toBeInstanceOf(ShouldFindCompany::class),
     };
 })->with('providers');
