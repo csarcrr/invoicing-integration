@@ -91,7 +91,6 @@ $clientData = ClientData::make([
 
 ### Moloni
 
-- `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
 - Moloni requires `number` (`reference`), `name`, `vat`, `address`, `city`, `country_id` (`country`), `language_id` (`language`), `maturity_date_id` (`defaultPayDue`) and `payment_method_id` (`paymentMethodId`) on create, per the Moloni `customers/insert` documentation. The package sends only the fields you set, so when you leave one of them out, Moloni's error reaches you as `RequestFailedException`.
 - `reference` is sent as the Moloni customer `number`. Moloni requires it on create, and the package does not generate one: without `reference`, no `number` is sent and Moloni rejects the request. `id` is not used for it.
 - After `execute()`, `id` holds the Moloni `customer_id`, the one `Client::fetch()` expects.

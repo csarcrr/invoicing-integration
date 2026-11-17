@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 
-it('fails when a field required by the provider is missing', function (Provider $provider, string $field) {
+it('builds the payload when a field the provider requires is missing', function (Provider $provider, string $field) {
     $client = collect([
         'name' => 'Alberto Albertino',
         'vat' => '223098091',
@@ -17,8 +16,5 @@ it('fails when a field required by the provider is missing', function (Provider 
 
     $payload = fn () => Client::create(ClientData::from($client))->getPayload();
 
-    match ($provider) {
-        Provider::MOLONI => expect($payload)->toThrow(MissingClientDataException::class),
-        Provider::VENDUS => expect($payload)->not->toThrow(Exception::class),
-    };
+    expect($payload)->not->toThrow(Exception::class);
 })->with('providers', ['name', 'vat', 'address', 'city']);

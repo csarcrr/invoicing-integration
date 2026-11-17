@@ -12,7 +12,6 @@ use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Client;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Fetch as FetchCountry;
@@ -23,7 +22,6 @@ use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
 use function collect;
-use function throw_if;
 
 class Create extends Client implements ShouldCreateClient
 {
@@ -43,7 +41,6 @@ class Create extends Client implements ShouldCreateClient
     }
 
     /**
-     * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
      * @throws CouldNotGetLanguageIdException
      */
@@ -67,14 +64,11 @@ class Create extends Client implements ShouldCreateClient
     /**
      * @return Collection<string, mixed>
      *
-     * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
      * @throws CouldNotGetLanguageIdException
      */
     public function getPayload(): Collection
     {
-        $this->ensureRequiredData();
-
         $this->buildNumber();
         $this->buildName();
         $this->buildVat();
@@ -92,20 +86,6 @@ class Create extends Client implements ShouldCreateClient
         return $this->payload;
     }
 
-    /**
-     * @throws MissingClientDataException
-     */
-    protected function ensureRequiredData(): void
-    {
-        foreach (['name', 'vat', 'address', 'city'] as $field) {
-            throw_if(
-                Properties::isNotValid($this->data->{$field}),
-                MissingClientDataException::class,
-                "Moloni requires the {$field} for a client."
-            );
-        }
-    }
-
     protected function buildNumber(): void
     {
         if (Properties::isNotValid($this->data->reference)) {
@@ -117,11 +97,19 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildName(): void
     {
+        if (Properties::isNotValid($this->data->name)) {
+            return;
+        }
+
         $this->payload->put('name', $this->data->name);
     }
 
     protected function buildVat(): void
     {
+        if (Properties::isNotValid($this->data->vat)) {
+            return;
+        }
+
         /** @var string|int $vat */
         $vat = $this->data->vat;
 
@@ -130,8 +118,13 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildAddress(): void
     {
-        $this->payload->put('address', $this->data->address);
-        $this->payload->put('city', $this->data->city);
+        if (Properties::isValid($this->data->address)) {
+            $this->payload->put('address', $this->data->address);
+        }
+
+        if (Properties::isValid($this->data->city)) {
+            $this->payload->put('city', $this->data->city);
+        }
 
         if (Properties::isNotValid($this->data->postalCode)) {
             return;

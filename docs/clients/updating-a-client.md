@@ -66,7 +66,6 @@ On Moloni, the update sends only the fields you set, as `Client::create()` does.
 
 ## Moloni
 
-- `name`, `vat`, `address` and `city` are required, as on create. A missing one throws `MissingClientDataException` before the request.
 - `reference` is sent as the Moloni customer `number`. Moloni requires it, and the package does not generate one. Without `reference`, no `number` is sent.
 - Moloni ignores changes to `vat` and `number` once a document references the client.
 - The response has no client body. `get()` returns the `ClientData` you passed in, with the `valid` and `customer_id` values in `getAdditionalData()`.

@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
@@ -31,7 +30,6 @@ class Update extends Create implements ShouldUpdateClient
     /**
      * @return Collection<string, mixed>
      *
-     * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
      * @throws CouldNotGetLanguageIdException
      */
