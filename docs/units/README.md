@@ -15,7 +15,7 @@ A unit is an account-level record stored in the provider (for example "Kg" or "U
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Unit;
 
-foreach (Unit::find()->execute()->getList() as $unit) {
+foreach (Unit::find()->execute()->get() as $unit) {
     echo $unit->id.' '.$unit->name;
 }
 ```

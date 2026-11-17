@@ -17,7 +17,7 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $path = "invoices/{$data->output->fileName}";
 
@@ -39,7 +39,7 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $path = "invoices/{$data->output->fileName}";
 
@@ -61,7 +61,7 @@ test('can save the output under a custom name and path', function (Provider $pro
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $path = 'invoices/custom-name.pdf';
 
@@ -88,7 +88,7 @@ test('is able to sanitize the path and filename when saving', function (
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $savePath = $data->output->save($invalidPath);
 
@@ -129,7 +129,7 @@ test('outputs null when there is no invoice output provided', function (Provider
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     expect($data->output)->toBeInstanceOf(OutputData::class)->and($data->output->content)->toBeNull();
 })->with('providers', ['output_with_no_output']);

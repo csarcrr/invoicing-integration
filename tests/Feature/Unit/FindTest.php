@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 test('maps the provider response onto a list of UnitData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->unit()->files('response_multiple')));
 
-    $list = Unit::find()->execute()->getList();
+    $list = Unit::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(UnitData::class)
@@ -38,7 +38,7 @@ test('sends the request to the units endpoint', function (Provider $provider) {
 test('returns an empty list when the provider has no units', function (Provider $provider) {
     Http::fake(mockResponse([]));
 
-    expect(Unit::find()->execute()->getList())->toBeEmpty();
+    expect(Unit::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
 test('returns an empty list when Cegid Vendus reports no data', function () {
@@ -46,5 +46,5 @@ test('returns an empty list when Cegid Vendus reports no data', function () {
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
-    expect(Unit::find()->execute()->getList())->toBeEmpty();
+    expect(Unit::find()->execute()->get())->toBeEmpty();
 });

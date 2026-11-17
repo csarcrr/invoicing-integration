@@ -12,5 +12,5 @@ interface ShouldCreateClient extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getClient(): ClientData;
+    public function get(): ClientData;
 }

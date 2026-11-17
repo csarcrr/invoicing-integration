@@ -23,7 +23,7 @@ test('creates a tax', function () {
         'type' => ItemTax::EXEMPT,
         'fiscalZone' => 'PT',
         'exemptionReason' => 'M07',
-    ]))->execute()->getTax();
+    ]))->execute()->get();
 
     expect($tax->id)->toBe(3951900)
         ->and($tax->name)->toBe('Isento')

@@ -10,5 +10,5 @@ interface ShouldCreateItem extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getItem(): ItemData;
+    public function get(): ItemData;
 }

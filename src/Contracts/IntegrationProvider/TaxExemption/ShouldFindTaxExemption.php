@@ -16,7 +16,7 @@ interface ShouldFindTaxExemption extends ShouldExecute, ShouldHavePayload
     /**
      * @return Collection<int, TaxExemptionData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 
     public function getUrl(): string;
 }

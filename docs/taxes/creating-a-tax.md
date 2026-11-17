@@ -15,7 +15,7 @@ $tax = Tax::create(TaxData::make([
     'type' => ItemTax::EXEMPT,
     'fiscalZone' => 'PT',
     'exemptionReason' => 'M07',
-]))->execute()->getTax();
+]))->execute()->get();
 
 echo $tax->id; // provider-assigned ID
 ```

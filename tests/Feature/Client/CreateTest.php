@@ -14,7 +14,7 @@ test('create client request is successful', function (Provider $provider, string
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
-    $data = Client::create($client)->execute()->getClient();
+    $data = Client::create($client)->execute()->get();
 
     expect($data->id)->toBeString()
         ->and($data->name)->toBeString()
@@ -29,7 +29,7 @@ test('unsupported properties are kept in additional data', function (Provider $p
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
-    $data = Client::create($client)->execute()->getClient();
+    $data = Client::create($client)->execute()->get();
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($data->getAdditionalData())->toHaveKey('balance'),
@@ -46,7 +46,7 @@ test('client create returns the id as a string and the default pay due as a due 
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
 
     $client = ClientData::from(['name' => 'Quim', 'vat' => 123456789, 'address' => 'Rua das Flores 125', 'city' => 'Porto']);
-    $data = Client::create($client)->execute()->getClient();
+    $data = Client::create($client)->execute()->get();
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($data->id)->toBe('99999')

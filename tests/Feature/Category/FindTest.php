@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 test('maps the provider response onto a list of CategoryData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->category()->files('response_multiple')));
 
-    $list = Category::find()->execute()->getList();
+    $list = Category::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(CategoryData::class)
@@ -26,9 +26,9 @@ test('maps the provider response onto a list of CategoryData', function (Provide
 test('maps the moloni parent id of a subcategory', function () {
     mockConfiguration(Provider::MOLONI);
 
-    Http::fake(mockResponse([fixtures()->response()->category()->files('get_child')]));
+    Http::fake(mockResponse([fixtures()->response()->category()->files('fetch_child')]));
 
-    $category = Category::find(CategoryData::make(['parentId' => 29999]))->execute()->getList()->first();
+    $category = Category::find(CategoryData::make(['parentId' => 29999]))->execute()->get()->first();
 
     expect($category->id)->toBe(39999)
         ->and($category->name)->toBe('Fast-Food')
@@ -55,7 +55,7 @@ test('returns an empty list when the provider has no categories', function (Prov
         Provider::MOLONI => mockResponse([]),
     });
 
-    expect(Category::find()->execute()->getList())->toBeEmpty();
+    expect(Category::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
 test('fails when cegid vendus answers 404 with an error other than no data', function () {
@@ -95,7 +95,7 @@ test('fetches the next cegid vendus page', function () {
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList())->toHaveCount(1);
+        ->and($results->get())->toHaveCount(1);
 
     Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'page=2'));
 });

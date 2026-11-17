@@ -7,7 +7,7 @@ use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 it('can set the invoice id', function (Provider $provider) {
-    $get = Invoice::get(InvoiceData::from(['id' => 123456]));
+    $get = Invoice::fetch(InvoiceData::from(['id' => 123456]));
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($get->getUrl())->toBe('documents/123456')
@@ -20,5 +20,5 @@ it('can set the invoice id', function (Provider $provider) {
 it('fails when no id is set', function (Provider $provider) {
     $invoice = InvoiceData::from([]);
 
-    Invoice::get($invoice)->execute();
+    Invoice::fetch($invoice)->execute();
 })->with('providers')->throws(InvalidArgumentException::class, 'Invoice ID is required.');

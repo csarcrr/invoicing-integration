@@ -36,7 +36,7 @@ These exceptions occur when something goes wrong with the provider API.
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 } catch (UnauthorizedException $e) {
     Log::error('Invalid API credentials', [
         'message' => $e->getMessage(),
@@ -71,7 +71,7 @@ try {
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 } catch (FailedReachingProviderException $e) {
     Log::warning('Provider temporarily unavailable', [
         'message' => $e->getMessage(),
@@ -105,7 +105,7 @@ try {
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 } catch (RequestFailedException $e) {
     Log::error('Provider rejected request', [
         'message' => $e->getMessage(),
@@ -141,7 +141,7 @@ try {
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
 
 try {
-    Item::create($itemData)->execute()->getItem();
+    Item::create($itemData)->execute()->get();
 } catch (CouldNotGetUnitIdException $e) {
     // Missing unit mapping in config
     Log::error('Unit configuration missing', ['message' => $e->getMessage()]);
@@ -186,7 +186,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
 ]);
 
-Invoice::create($invoiceData)->execute()->getInvoice();
+Invoice::create($invoiceData)->execute()->get();
 // Throws CreditNoteReasonIsMissingException
 
 // Right: provide reason
@@ -195,7 +195,7 @@ $invoiceData = InvoiceData::make([
     'creditNoteReason' => 'Customer return - item defective',
 ]);
 
-Invoice::create($invoiceData)->execute()->getInvoice();
+Invoice::create($invoiceData)->execute()->get();
 ```
 
 ### Item Validation
@@ -242,7 +242,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 
     // Success - save the result
     $order->invoice_sequence = $result->sequence;

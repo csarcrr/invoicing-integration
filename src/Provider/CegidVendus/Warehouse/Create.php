@@ -50,7 +50,7 @@ class Create extends Warehouse implements ShouldCreateWarehouse
         return $this->payload;
     }
 
-    public function getWarehouse(): WarehouseData
+    public function get(): WarehouseData
     {
         return $this->data;
     }

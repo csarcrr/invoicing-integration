@@ -33,7 +33,7 @@ class CegidVendus extends ProviderSetup
      */
     protected function paymentMethodIds(Command $command): array
     {
-        $paymentMethods = PaymentMethod::find()->execute()->getList();
+        $paymentMethods = PaymentMethod::find()->execute()->get();
 
         return collect(PaymentMethodEnum::cases())
             ->mapWithKeys(fn (PaymentMethodEnum $type) => [$type->name => $this->pick(

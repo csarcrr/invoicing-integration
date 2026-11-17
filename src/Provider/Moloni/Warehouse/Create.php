@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\WarehouseData;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Fetch as FetchCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Warehouse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -60,7 +60,7 @@ class Create extends Warehouse implements ShouldCreateWarehouse
         return $this->payload;
     }
 
-    public function getWarehouse(): WarehouseData
+    public function get(): WarehouseData
     {
         return $this->data;
     }
@@ -94,7 +94,7 @@ class Create extends Warehouse implements ShouldCreateWarehouse
             return;
         }
 
-        $country = (new GetCountry(CountryData::from(['iso' => $this->data->country])))->execute()->getCountry();
+        $country = (new FetchCountry(CountryData::from(['iso' => $this->data->country])))->execute()->get();
 
         $this->payload->put('country_id', $country->id);
     }

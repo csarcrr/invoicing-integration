@@ -8,14 +8,14 @@ Use `Category::create()` to create a product category in the provider.
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Facades\Category;
 
-$category = Category::create(CategoryData::make(['name' => 'Produtos', 'parentId' => 10]))->execute()->getCategory();
+$category = Category::create(CategoryData::make(['name' => 'Produtos', 'parentId' => 10]))->execute()->get();
 
 $category->id;
 $category->name;
 $category->parentId; // null on Cegid Vendus
 ```
 
-- `getCategory()` returns the `CategoryData` with the provider-assigned `id`.
+- `get()` returns the `CategoryData` with the provider-assigned `id`.
 - When the provider does not create the category, `execute()` throws `RequestFailedException` with the provider's error message.
 
 ## Cegid Vendus

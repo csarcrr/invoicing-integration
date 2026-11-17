@@ -14,12 +14,12 @@ $warehouse = Warehouse::create(WarehouseData::make([
     'city' => 'Setúbal',
     'postalCode' => '1100-234',
     'country' => 'PT',
-]))->execute()->getWarehouse();
+]))->execute()->get();
 
 echo $warehouse->id; // provider-assigned ID
 ```
 
-- `getWarehouse()` returns the `WarehouseData` with the provider-assigned `id`.
+- `get()` returns the `WarehouseData` with the provider-assigned `id`.
 - When the provider does not create the warehouse, `execute()` throws `RequestFailedException` with the provider's error message.
 
 ## Moloni

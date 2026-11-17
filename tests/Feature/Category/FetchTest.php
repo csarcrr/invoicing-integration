@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 test('sends the category id in the request', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->category()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->category()->files('fetch')));
 
-    Category::get(CategoryData::make(['id' => 29999]))->execute();
+    Category::fetch(CategoryData::make(['id' => 29999]))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
         Provider::CEGID_VENDUS => $request->method() === 'GET'
@@ -24,9 +24,9 @@ test('sends the category id in the request', function (Provider $provider) {
 })->with('providers');
 
 test('maps the provider response onto CategoryData', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->category()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->category()->files('fetch')));
 
-    $category = Category::get(CategoryData::make(['id' => 29999]))->execute()->getCategory();
+    $category = Category::fetch(CategoryData::make(['id' => 29999]))->execute()->get();
 
     expect($category)->toBeInstanceOf(CategoryData::class)
         ->and($category->id)->toBe(29999)
@@ -37,15 +37,15 @@ test('maps the provider response onto CategoryData', function (Provider $provide
 test('maps the moloni parent id of a subcategory', function () {
     mockConfiguration(Provider::MOLONI);
 
-    Http::fake(mockResponse(fixtures()->response()->category()->files('get_child')));
+    Http::fake(mockResponse(fixtures()->response()->category()->files('fetch_child')));
 
-    $category = Category::get(CategoryData::make(['id' => 39999]))->execute()->getCategory();
+    $category = Category::fetch(CategoryData::make(['id' => 39999]))->execute()->get();
 
     expect($category->parentId)->toBe(29999);
 });
 
 test('fails when no id is set', function (Provider $provider) {
-    Category::get(CategoryData::make([]))->execute();
+    Category::fetch(CategoryData::make([]))->execute();
 })->with('providers')->throws(InvalidArgumentException::class, 'Category ID is required.');
 
 test('fails when no category has the id', function (Provider $provider) {
@@ -54,5 +54,5 @@ test('fails when no category has the id', function (Provider $provider) {
         Provider::MOLONI => mockResponse([]),
     });
 
-    Category::get(CategoryData::make(['id' => 1]))->execute();
+    Category::fetch(CategoryData::make(['id' => 1]))->execute();
 })->with('providers')->throws(RequestFailedException::class);

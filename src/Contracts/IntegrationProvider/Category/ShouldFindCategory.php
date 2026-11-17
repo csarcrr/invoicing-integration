@@ -17,5 +17,5 @@ interface ShouldFindCategory extends ShouldExecute, ShouldHavePagination, Should
     /**
      * @return Collection<int, CategoryData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 }

@@ -1,6 +1,6 @@
 # Getting an Invoice
 
-Use `Invoice::get()` to read back one stored document by its provider ID, for example a document created earlier with `Invoice::create()`.
+Use `Invoice::fetch()` to read back one stored document by its provider ID, for example a document created earlier with `Invoice::create()`.
 
 ## Basic usage
 
@@ -8,7 +8,7 @@ Use `Invoice::get()` to read back one stored document by its provider ID, for ex
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$invoice = Invoice::get(InvoiceData::make(['id' => 123456]))->execute()->getInvoice();
+$invoice = Invoice::fetch(InvoiceData::make(['id' => 123456]))->execute()->get();
 
 $invoice->id;
 $invoice->sequence;  // e.g. "FR A/12" on Moloni, "FR 01P2026/12" on Cegid Vendus
@@ -19,9 +19,9 @@ $invoice->atcud;     // null when the provider returns no ATCUD or an empty one
 ```
 
 - Pass the provider ID (`id`), not the sequence.
-- Without an `id`, `Invoice::get()` throws `InvalidArgumentException` with `Invoice ID is required.`
+- Without an `id`, `Invoice::fetch()` throws `InvalidArgumentException` with `Invoice ID is required.`
 - When the provider has no document with that ID, `execute()` throws `RequestFailedException`.
-- `output` is not filled. `Invoice::get()` does not fetch the PDF or the ESC/POS output.
+- `output` is not filled. `Invoice::fetch()` does not fetch the PDF or the ESC/POS output.
 - Response fields the package does not map are kept with `getAdditionalData()`.
 
 ## Cegid Vendus
@@ -40,4 +40,4 @@ See also:
 
 - [Invoices Overview](README.md)
 - [Creating an Invoice](creating-an-invoice.md)
-- [API Reference – ShouldGetInvoice](../api-reference.md#shouldgetinvoice-contract)
+- [API Reference – ShouldFetchInvoice](../api-reference.md#shouldfetchinvoice-contract)

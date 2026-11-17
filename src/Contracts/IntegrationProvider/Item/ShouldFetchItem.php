@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item;
+
+use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
+use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+
+interface ShouldFetchItem extends ShouldExecute, ShouldHavePayload
+{
+    public function execute(): self;
+
+    public function get(): ItemData;
+
+    public function getUrl(): string;
+}

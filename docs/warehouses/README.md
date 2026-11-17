@@ -10,7 +10,7 @@ A warehouse is a stock location stored in the provider. Each one has a provider-
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Warehouse;
 
-foreach (Warehouse::find()->execute()->getList() as $warehouse) {
+foreach (Warehouse::find()->execute()->get() as $warehouse) {
     echo $warehouse->id.' '.$warehouse->name;
 }
 ```

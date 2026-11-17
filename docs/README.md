@@ -43,7 +43,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName);

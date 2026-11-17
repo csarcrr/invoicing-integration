@@ -23,7 +23,7 @@ test('creates an item', function (Provider $provider) {
         'category' => CategoryData::make(['id' => 1]),
         'price' => 2000,
         'tax' => ItemTax::NORMAL,
-    ]))->execute()->getItem();
+    ]))->execute()->get();
 
     expect($data->id)->toBe(1542)
         ->and($data->name)->toBeString()
@@ -36,7 +36,7 @@ test('reads the created item from the provider', function (Provider $provider) {
     $data = Item::create(ItemData::make([
         'name' => 'Item Title',
         'category' => CategoryData::make(['id' => 1]),
-    ]))->execute()->getItem();
+    ]))->execute()->get();
 
     expect($data->id)->toBe(1542)
         ->and($data->reference)->toBe('reference-1')
@@ -60,7 +60,7 @@ test('reads an item created as disabled', function (Provider $provider) {
         'name' => 'Item Title',
         'category' => CategoryData::make(['id' => 1]),
         'enabled' => false,
-    ]))->execute()->getItem();
+    ]))->execute()->get();
 
     expect($data->enabled)->toBeFalse();
 })->with('providers');
@@ -89,7 +89,7 @@ test('reads the exemption law only from cegid vendus', function (Provider $provi
         'tax' => ItemTax::EXEMPT,
         'taxExemptionReason' => 'M40',
         'taxExemptionLaw' => $law,
-    ]))->execute()->getItem();
+    ]))->execute()->get();
 
     expect($data->tax)->toBe(ItemTax::EXEMPT)
         ->and($data->taxExemptionReason)->toBe('M40')

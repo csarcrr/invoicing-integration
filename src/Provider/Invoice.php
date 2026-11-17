@@ -25,14 +25,6 @@ class Invoice extends Base
     }
 
     /**
-     * Returns the current invoice DTO after an operation has been executed.
-     */
-    public function getInvoice(): InvoiceData
-    {
-        return $this->data;
-    }
-
-    /**
      * @param  array<string, mixed>  $document
      */
     protected function atcud(array $document): ?string

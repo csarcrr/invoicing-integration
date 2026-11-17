@@ -14,7 +14,7 @@ $paymentMethod = PaymentMethodData::make([
     'type' => PaymentMethodEnum::MB,
 ]);
 
-$created = PaymentMethod::create($paymentMethod)->execute()->getPaymentMethod();
+$created = PaymentMethod::create($paymentMethod)->execute()->get();
 
 echo $created->id; // provider-assigned ID
 ```
@@ -54,7 +54,7 @@ Not supported: `PaymentMethod::create()` throws `OperationNotSupportedException`
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $created = PaymentMethod::create($paymentMethod)->execute()->getPaymentMethod();
+    $created = PaymentMethod::create($paymentMethod)->execute()->get();
 } catch (RequestFailedException $e) {
     Log::error('Payment method creation failed', ['message' => $e->getMessage()]);
 }

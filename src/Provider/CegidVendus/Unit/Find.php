@@ -50,7 +50,7 @@ class Find implements ShouldFindUnit
     /**
      * @return Collection<int, UnitData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

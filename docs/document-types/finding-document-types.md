@@ -7,7 +7,7 @@ Use `DocumentType::find()` to list the document types the provider knows, such a
 ```php
 use CsarCrr\InvoicingIntegration\Facades\DocumentType;
 
-$types = DocumentType::find()->execute()->getList();
+$types = DocumentType::find()->execute()->get();
 
 foreach ($types as $type) {
     $type->code;                // e.g. FT
@@ -16,7 +16,7 @@ foreach ($types as $type) {
 }
 ```
 
-- `getList()` returns a `Collection` of `DocumentTypeData` instances.
+- `get()` returns a `Collection` of `DocumentTypeData` instances.
 - `DocumentType::find()` takes no filters and has no pagination: the provider returns every document type in one response.
 - The extra fields the provider returns are kept as additional data, read with `getAdditionalData()`.
 
@@ -29,7 +29,7 @@ The request is sent to `GET documents/types`. Each row is mapped as:
 | `id`               | `code`             |
 | `title`            | `name`             |
 
-The `visible_filter` and `visible_finalize` fields are kept as additional data, read with `getAdditionalData()`. The endpoint's `visible_filter` and `visible_finalize` filters are not exposed. Cegid Vendus has no language parameter, so a `LanguageData` passed to `find()` is ignored. When Cegid Vendus reports no data, `getList()` is empty.
+The `visible_filter` and `visible_finalize` fields are kept as additional data, read with `getAdditionalData()`. The endpoint's `visible_filter` and `visible_finalize` filters are not exposed. Cegid Vendus has no language parameter, so a `LanguageData` passed to `find()` is ignored. When Cegid Vendus reports no data, `get()` is empty.
 
 ## Moloni
 
@@ -48,7 +48,7 @@ Moloni requires a language. When `execute()` runs, the package looks up the lang
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
 use CsarCrr\InvoicingIntegration\Facades\DocumentType;
 
-$types = DocumentType::find(LanguageData::from(['code' => 'en']))->execute()->getList();
+$types = DocumentType::find(LanguageData::from(['code' => 'en']))->execute()->get();
 ```
 
 An unknown language code throws `CouldNotGetLanguageIdException`. Before `execute()`, `getPayload()` is empty on Moloni; the `language_id` is added during `execute()`.

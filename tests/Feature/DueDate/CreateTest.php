@@ -16,7 +16,7 @@ beforeEach(function () {
 test('creates a due date', function () {
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('create')));
 
-    $dueDate = DueDate::create(DueDateData::make(['name' => '30 dias', 'days' => 30]))->execute()->getDueDate();
+    $dueDate = DueDate::create(DueDateData::make(['name' => '30 dias', 'days' => 30]))->execute()->get();
 
     expect($dueDate->id)->toBe(4321)
         ->and($dueDate->name)->toBe('30 dias')

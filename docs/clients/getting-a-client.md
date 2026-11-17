@@ -1,6 +1,6 @@
 # Getting a Client
 
-Retrieve an existing client from your invoicing provider using `Client::get()`.
+Retrieve an existing client from your invoicing provider using `Client::fetch()`.
 
 ## Basic Example
 
@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 $clientData = ClientData::make(['id' => 12345]);
 
 // Fetch the client from the provider
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // Access client data via public properties or $client->toArray()
 $payload = $client->toArray();
@@ -41,20 +41,20 @@ The `id` property is **required** when retrieving a client:
 ```php
 // This will throw an InvalidArgumentException
 $clientData = ClientData::make([]);
-Client::get($clientData)->execute()->getClient(); // Error: Client ID is required.
+Client::fetch($clientData)->execute()->get(); // Error: Client ID is required.
 
 // Correct usage
 $clientData = ClientData::make(['id' => 12345]);
-Client::get($clientData)->execute()->getClient(); // Works
+Client::fetch($clientData)->execute()->get(); // Works
 ```
 
 ## Retrieved Properties
 
-After calling `execute()->getClient()`, the `ClientData` object is populated with all available data from the provider:
+After calling `execute()->get()`, the `ClientData` object is populated with all available data from the provider:
 
 ```php
 $clientData = ClientData::make(['id' => 12345]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // All properties are now available via public attributes
 $client->id;               // "12345" (string)
@@ -96,7 +96,7 @@ $storedClientId = 12345;
 
 // Retrieve the client
 $clientData = ClientData::make(['id' => $storedClientId]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // $client now holds the hydrated ClientData instance (see JSON example below)
 ```
@@ -129,7 +129,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Retrieve existing client
 $clientData = ClientData::make(['id' => 12345]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // Use client in invoice
 $invoiceData = InvoiceData::make([
@@ -143,7 +143,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 ## Error Handling
@@ -156,7 +156,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 try {
     $clientData = ClientData::make(['id' => 12345]);
-    $client = Client::get($clientData)->execute()->getClient();
+    $client = Client::fetch($clientData)->execute()->get();
 } catch (InvalidArgumentException $e) {
     // Client ID was not provided
 } catch (UnauthorizedException $e) {

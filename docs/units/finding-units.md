@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Facades\Unit;
 
 $results = Unit::find()->execute();
 
-foreach ($results->getList() as $unit) {
+foreach ($results->get() as $unit) {
     $unit->id;
     $unit->name;
     $unit->shortName; // null on Cegid Vendus
 }
 ```
 
-- `getList()` returns a `Collection` of `UnitData` instances.
+- `get()` returns a `Collection` of `UnitData` instances.
 - `Unit::find()` takes no filters and has no pagination: the provider returns every unit in one response.
 
 ## Cegid Vendus
@@ -28,7 +28,7 @@ The request is sent to `GET products/units`. Each row is mapped as:
 | `id`               | `id`       |
 | `title`            | `name`     |
 
-`shortName` is always `null`. When Cegid Vendus reports no data, `getList()` is empty.
+`shortName` is always `null`. When Cegid Vendus reports no data, `get()` is empty.
 
 ## Moloni
 

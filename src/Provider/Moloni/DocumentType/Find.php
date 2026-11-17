@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Data\DocumentTypeData;
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentType;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get as GetLanguage;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Fetch as FetchLanguage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -53,7 +53,7 @@ class Find extends DocumentType implements ShouldFindDocumentType
     /**
      * @return Collection<int, DocumentTypeData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }
@@ -68,7 +68,7 @@ class Find extends DocumentType implements ShouldFindDocumentType
 
     protected function buildLanguage(): void
     {
-        $language = (new GetLanguage($this->language ?? LanguageData::from(['code' => 'pt'])))->execute()->getLanguage();
+        $language = (new FetchLanguage($this->language ?? LanguageData::from(['code' => 'pt'])))->execute()->get();
 
         $this->payload->put('language_id', $language->id);
     }

@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 test('maps the updated category onto CategoryData', function () {
     Http::fake(mockResponse(fixtures()->response()->category()->files('create')));
 
-    $category = Category::update(CategoryData::make(['id' => 29999, 'name' => 'Produtos']))->execute()->getCategory();
+    $category = Category::update(CategoryData::make(['id' => 29999, 'name' => 'Produtos']))->execute()->get();
 
     expect($category)->toBeInstanceOf(CategoryData::class)
         ->and($category->id)->toBe(29999)

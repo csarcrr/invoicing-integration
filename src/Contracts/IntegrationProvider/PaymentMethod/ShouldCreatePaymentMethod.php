@@ -12,5 +12,5 @@ interface ShouldCreatePaymentMethod extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getPaymentMethod(): PaymentMethodData;
+    public function get(): PaymentMethodData;
 }

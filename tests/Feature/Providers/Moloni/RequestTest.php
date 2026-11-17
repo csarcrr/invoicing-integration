@@ -12,9 +12,9 @@ beforeEach(function () {
 });
 
 it('asks for human readable errors', function () {
-    Http::fake(mockResponse(fixtures()->response()->item()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->item()->files('fetch')));
 
-    Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+    Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
 
     $recorded = Http::recorded(function (Request $request) {
         return Str::contains($request->url(), 'human_errors=true');

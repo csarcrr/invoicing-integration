@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 test('returns the updated item', function (Provider $provider) {
     fakeItemUpdate($provider);
 
-    $data = Item::update(ItemData::make(['id' => 1542, 'name' => 'New Title']))->execute()->getItem();
+    $data = Item::update(ItemData::make(['id' => 1542, 'name' => 'New Title']))->execute()->get();
 
     expect($data->id)->toBe(1542)
         ->and($data->name)->toBe('New Title')
@@ -30,7 +30,7 @@ test('keeps the moloni gross price when only the tax changes', function () {
     mockConfiguration(Provider::MOLONI);
     fakeItemUpdate(Provider::MOLONI);
 
-    $data = Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::REDUCED]))->execute()->getItem();
+    $data = Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::REDUCED]))->execute()->get();
 
     expect($data->tax)->toBe(ItemTax::REDUCED)
         ->and($data->price)->toBe(2460);
@@ -40,7 +40,7 @@ test('returns the moloni enabled state that was set', function () {
     mockConfiguration(Provider::MOLONI);
     fakeItemUpdate(Provider::MOLONI);
 
-    $data = Item::update(ItemData::make(['id' => 1542, 'enabled' => false]))->execute()->getItem();
+    $data = Item::update(ItemData::make(['id' => 1542, 'enabled' => false]))->execute()->get();
 
     expect($data->enabled)->toBeFalse();
 });
@@ -48,14 +48,14 @@ test('returns the moloni enabled state that was set', function () {
 test('clears the moloni exemption reason when the tax is no longer exempt', function () {
     mockConfiguration(Provider::MOLONI);
 
-    $current = fixtures()->response()->item()->files('get');
+    $current = fixtures()->response()->item()->files('fetch');
     $current = [...$current, 'exemption_reason' => 'M01', 'taxes' => [[...$current['taxes'][0], 'tax_id' => 5]]];
 
     Http::fakeSequence()
         ->pushResponse(mockResponse($current))
         ->pushResponse(mockResponse(fixtures()->response()->item()->files('update')));
 
-    $data = Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::NORMAL]))->execute()->getItem();
+    $data = Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::NORMAL]))->execute()->get();
 
     expect($data->tax)->toBe(ItemTax::NORMAL)
         ->and($data->taxExemptionReason)->toBeNull();

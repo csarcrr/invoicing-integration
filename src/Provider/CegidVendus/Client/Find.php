@@ -56,7 +56,7 @@ class Find extends Client implements ShouldFindClient
     /**
      * @return Collection<int, ClientData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

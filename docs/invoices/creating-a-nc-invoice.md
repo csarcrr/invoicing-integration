@@ -56,7 +56,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Product arrived defective - customer return',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 ```
 
 Sample credit note response:
@@ -112,7 +112,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Customer return - item not needed',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 ```
 
 ## Multiple Items in One Credit Note
@@ -164,7 +164,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Product quality issue - full return',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 ```
 
 ## Requirements
@@ -263,7 +263,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Customer return within 14-day cooling-off period',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 
 if ($result->output) {
     $result->output->save('credit-notes/' . $result->output->fileName);

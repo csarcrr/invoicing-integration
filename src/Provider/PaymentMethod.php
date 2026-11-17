@@ -11,8 +11,4 @@ use CsarCrr\InvoicingIntegration\Data\PaymentMethodData;
  */
 class PaymentMethod extends Base
 {
-    public function getPaymentMethod(): PaymentMethodData
-    {
-        return $this->data;
-    }
 }

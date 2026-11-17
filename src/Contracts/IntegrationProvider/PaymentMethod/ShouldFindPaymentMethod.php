@@ -17,5 +17,5 @@ interface ShouldFindPaymentMethod extends ShouldExecute, ShouldHavePagination, S
     /**
      * @return Collection<int, PaymentMethodData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 }

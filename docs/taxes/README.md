@@ -11,7 +11,7 @@ A tax is an account-level record stored in the provider (for example "IVA Normal
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Facades\Tax;
 
-$exempt = Tax::find()->execute()->getList()
+$exempt = Tax::find()->execute()->get()
     ->first(fn ($tax) => $tax->type === ItemTax::EXEMPT);
 ```
 

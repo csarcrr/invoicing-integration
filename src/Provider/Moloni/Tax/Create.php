@@ -26,6 +26,11 @@ class Create extends Tax implements ShouldCreateTax
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Tax);
     }
 
+    public function get(): TaxData
+    {
+        return $this->data;
+    }
+
     public function execute(): self
     {
         $response = Http::provider()->post('taxes/insert', $this->getPayload()->toArray());

@@ -42,7 +42,7 @@ class Find implements ShouldFindCompany
     /**
      * @return Collection<int, CompanyData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

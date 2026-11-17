@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 test('maps the created category onto CategoryData', function () {
     Http::fake(mockResponse(fixtures()->response()->category()->files('create')));
 
-    $category = Category::create(CategoryData::make(['name' => 'Produtos']))->execute()->getCategory();
+    $category = Category::create(CategoryData::make(['name' => 'Produtos']))->execute()->get();
 
     expect($category)->toBeInstanceOf(CategoryData::class)
         ->and($category->id)->toBe(29999)

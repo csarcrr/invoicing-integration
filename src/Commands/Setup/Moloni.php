@@ -39,7 +39,7 @@ class Moloni extends ProviderSetup
         $company = $this->pick(
             $command,
             'Which Moloni company?',
-            Company::find()->execute()->getList(),
+            Company::find()->execute()->get(),
             fn (CompanyData $data) => "{$data->id} - {$data->name}",
         );
 
@@ -76,7 +76,7 @@ class Moloni extends ProviderSetup
      */
     protected function noVatClientId(Command $command): array
     {
-        $client = Client::find(ClientData::from(['vat' => $this->noVatNumber]))->execute()->getList()->first();
+        $client = Client::find(ClientData::from(['vat' => $this->noVatNumber]))->execute()->get()->first();
 
         if (is_null($client)) {
             $this->missing($command, "No client with VAT {$this->noVatNumber} found.");
@@ -92,7 +92,7 @@ class Moloni extends ProviderSetup
      */
     protected function taxIds(Command $command): array
     {
-        $taxes = Tax::find()->execute()->getList()->filter(fn (TaxData $tax) => $tax->fiscalZone === $this->fiscalZone);
+        $taxes = Tax::find()->execute()->get()->filter(fn (TaxData $tax) => $tax->fiscalZone === $this->fiscalZone);
 
         $ids = collect([ItemTax::NORMAL, ItemTax::INTERMEDIATE, ItemTax::REDUCED, ItemTax::EXEMPT])
             ->mapWithKeys(fn (ItemTax $type) => [$type->name => $this->pickTax($command, $taxes, $type)
@@ -119,7 +119,7 @@ class Moloni extends ProviderSetup
 
     protected function createExemptTax(Command $command): ?TaxData
     {
-        $reasons = TaxExemption::find()->execute()->getList()->pluck('code')->all();
+        $reasons = TaxExemption::find()->execute()->get()->pluck('code')->all();
 
         /** @var string $reason */
         $reason = $command->choice('Exemption reason for the new exempt tax', $reasons);
@@ -131,7 +131,7 @@ class Moloni extends ProviderSetup
                 'type' => ItemTax::EXEMPT,
                 'fiscalZone' => $this->fiscalZone,
                 'exemptionReason' => $reason,
-            ]))->execute()->getTax();
+            ]))->execute()->get();
         } catch (RequestFailedException $exception) {
             return $this->missing($command, "Moloni rejected the exempt tax ({$exception->getMessage()}). Create a 0% exempt tax in Moloni.");
         }

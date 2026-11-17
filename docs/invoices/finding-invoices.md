@@ -12,7 +12,7 @@ Use `find()` when you need to:
 - List the invoices of one client
 - Find an invoice without knowing its provider ID
 
-If you already know the provider ID, prefer `Invoice::get()` for a direct lookup.
+If you already know the provider ID, prefer `Invoice::fetch()` for a direct lookup.
 
 ## Basic Usage
 
@@ -21,17 +21,17 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $results = Invoice::find()->execute();
 
-foreach ($results->getList() as $invoice) {
+foreach ($results->get() as $invoice) {
     // do stuff
 }
 ```
 
-- `getList()` returns a `Collection` of `InvoiceData` instances populated by
+- `get()` returns a `Collection` of `InvoiceData` instances populated by
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
 - Each returned invoice has the same fields as an invoice from
-  `Invoice::get()`. See [Getting an Invoice](getting-an-invoice.md#basic-usage).
+  `Invoice::fetch()`. See [Getting an Invoice](getting-an-invoice.md#basic-usage).
 - Response fields the package does not map are kept with `getAdditionalData()`.
 
 ## Filtering by Type
@@ -63,7 +63,7 @@ $results = Invoice::find(InvoiceData::make(['client' => ['id' => '12001']]))->ex
 ```
 
 - The client filter uses `id`, the provider client ID, as returned by
-  `Client::find()` or `Client::get()`. It does not use the VAT number.
+  `Client::find()` or `Client::fetch()`. It does not use the VAT number.
 
 ## Pagination API
 
@@ -73,7 +73,7 @@ the `HasPaginator` trait.
 ```php
 $results = Invoice::find()->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     if ($results->getCurrentPage() === $results->getTotalPages()) {
@@ -153,8 +153,8 @@ $invoices = Invoice::find(InvoiceData::make([
     'client' => ['id' => '12001'],
 ]))->execute();
 
-while ($invoices->getList()->isNotEmpty()) {
-    foreach ($invoices->getList() as $invoice) {
+while ($invoices->get()->isNotEmpty()) {
+    foreach ($invoices->get() as $invoice) {
         // do stuff
     }
 

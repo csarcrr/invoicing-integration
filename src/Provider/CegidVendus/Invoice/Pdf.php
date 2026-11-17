@@ -50,7 +50,7 @@ class Pdf extends Invoice implements ShouldGetInvoicePdf
         return $this;
     }
 
-    public function getOutput(): OutputData
+    public function get(): OutputData
     {
         return $this->output;
     }

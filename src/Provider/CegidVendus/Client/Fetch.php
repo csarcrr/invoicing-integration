@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetchClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
@@ -17,7 +17,7 @@ use function collect;
 use function is_string;
 use function throw_if;
 
-class Get extends Client implements ShouldGetClient
+class Fetch extends Client implements ShouldFetchClient
 {
     /** @var Collection<string, mixed> */
     protected Collection $payload;
@@ -29,6 +29,11 @@ class Get extends Client implements ShouldGetClient
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
 
         $this->buildUrl();
+    }
+
+    public function get(): ClientData
+    {
+        return $this->data;
     }
 
     /**

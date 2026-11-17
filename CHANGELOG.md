@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Invoice::find()` to list stored documents by type and client on Moloni and Cegid Vendus.
 - `Invoice::cancel()` to cancel a stored document on Moloni and Cegid Vendus.
 - `Invoice::pdf()` to get a stored document's PDF on Moloni and Cegid Vendus. `OutputData` gains `url`.
-- `Invoice::get()` to read a stored document by its provider ID on Moloni and Cegid Vendus.
-- `Category::find()` and `Category::get()` on Moloni and Cegid Vendus.
+- `Invoice::fetch()` to read a stored document by its provider ID on Moloni and Cegid Vendus.
+- `Category::find()` and `Category::fetch()` on Moloni and Cegid Vendus.
 - `invoicing-integration:setup` command, which writes the provider IDs (payment methods, units, taxes, ...) to `.env`.
 - `PaymentMethod::find()` on Cegid Vendus.
 - `Unit::find()` to list the provider's units on Moloni and Cegid Vendus.
@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** the result getters are renamed to `get()`: `getInvoice()`, `getClient()`, `getItem()`, `getCategory()`, `getUnit()`, `getWarehouse()`, `getMovement()`, `getOutput()`, `getTax()`, `getPaymentMethod()`, `getDueDate()`, `getLanguage()` and `getCountry()`. `getList()` on find operations is also `get()`.
+- **Breaking:** the `get` operation is renamed to `fetch`: `Client::get()`, `Item::get()`, `Invoice::get()` and `Category::get()` are now `Client::fetch()`, `Item::fetch()`, `Invoice::fetch()` and `Category::fetch()`. Their contracts are `ShouldFetchClient`, `ShouldFetchItem`, `ShouldFetchInvoice` and `ShouldFetchCategory`.
 - `InvoiceData::$type` is now `?InvoiceType` and no longer defaults to `FT`. Without a type, Cegid Vendus requests do not send `type`, Moloni `Invoice::create()` posts to `documents/insert` and Moloni `Invoice::find()` lists from `documents/getAll`. An unknown document type in a provider response is `null` instead of `FT`.
 - `InvoiceData::$dueDate` is sent on any document type. Setting it on a type other than FT no longer throws; the provider decides whether to accept it.
 - Cegid Vendus requests now use API v1.2 (`https://www.vendus.pt/ws/v1.2/`). Item fields in `getAdditionalData()` use the v1.2 nested names: `prices.gross`, `tax.id`, `tax.exemption`, `tax.exemption_law`, `stock.control`, `stock.stores`.

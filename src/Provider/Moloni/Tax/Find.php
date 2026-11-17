@@ -46,7 +46,7 @@ class Find implements ShouldFindTax
     /**
      * @return Collection<int, TaxData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

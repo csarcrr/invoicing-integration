@@ -37,7 +37,7 @@ $receiptData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($receiptData)->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->get();
 ```
 
 Sample receipt response:
@@ -82,7 +82,7 @@ $invoiceData = InvoiceData::make([
     'notes' => 'NET30 payment terms as agreed',
 ]);
 
-$invoiceResult = Invoice::create($invoiceData)->execute()->getInvoice();
+$invoiceResult = Invoice::create($invoiceData)->execute()->get();
 $invoiceReference = $invoiceResult->sequence; // Moloni: $invoiceResult->id
 ```
 
@@ -99,7 +99,7 @@ $receiptData = InvoiceData::make([
     ],
 ]);
 
-$receiptResult = Invoice::create($receiptData)->execute()->getInvoice();
+$receiptResult = Invoice::create($receiptData)->execute()->get();
 
 if ($receiptResult->output) {
     $receiptResult->output->save('receipts/' . $receiptResult->output->fileName);
@@ -158,7 +158,7 @@ $receiptData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($receiptData)->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->get();
 ```
 
 ## Requirements
@@ -192,7 +192,7 @@ $receiptData = InvoiceData::make([
     'notes' => 'Thank you for your prompt payment!',
 ]);
 
-$result = Invoice::create($receiptData)->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->get();
 
 if ($result->output) {
     $result->output->save('receipts/' . $result->output->fileName);

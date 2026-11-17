@@ -8,19 +8,19 @@ Use `Category::update()` to change the name or the parent of a stored category i
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Facades\Category;
 
-$category = Category::update(CategoryData::make(['id' => 29999, 'name' => 'Bebidas', 'parentId' => 10]))->execute()->getCategory();
+$category = Category::update(CategoryData::make(['id' => 29999, 'name' => 'Bebidas', 'parentId' => 10]))->execute()->get();
 
 $category->id;
 $category->name;
 $category->parentId; // null on Cegid Vendus
 ```
 
-- `getCategory()` returns the `CategoryData` you passed in on Moloni, and the category as stored after the update on Cegid Vendus.
+- `get()` returns the `CategoryData` you passed in on Moloni, and the category as stored after the update on Cegid Vendus.
 - When the provider does not update the category, `execute()` throws `RequestFailedException` with the provider's error message.
 
 ## Requirements
 
-The `id` property is **required** when updating a category. It is the provider category id, the one `Category::get()` expects.
+The `id` property is **required** when updating a category. It is the provider category id, the one `Category::fetch()` expects.
 
 ```php
 // This will throw an InvalidArgumentException

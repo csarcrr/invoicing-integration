@@ -51,6 +51,11 @@ class Create extends Invoice implements ShouldCreateInvoice
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Invoice);
     }
 
+    public function get(): InvoiceData
+    {
+        return $this->data;
+    }
+
     /**
      * @throws \Throwable
      * @throws \Exception

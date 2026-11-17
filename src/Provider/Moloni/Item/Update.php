@@ -74,6 +74,11 @@ class Update extends Item implements ShouldUpdateItem
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
     }
 
+    public function get(): ItemData
+    {
+        return $this->data;
+    }
+
     /**
      * @throws CouldNotGetUnitIdException
      * @throws CouldNotGetTaxIdException

@@ -3,7 +3,7 @@
 `InvoiceData` serves a dual role in this package:
 
 1. **Input DTO** — You populate it and pass it to `Invoice::create(InvoiceData $invoice)` to describe the invoice you want to issue (items, payments, client, output format, etc.).
-2. **Response object** — After calling `execute()->getInvoice()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`).
+2. **Response object** — After calling `execute()->get()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`).
 
 This means you work with the same class on both sides of the HTTP boundary; there is no separate "response" type to import.
 
@@ -22,7 +22,7 @@ $invoiceData = InvoiceData::make([
     'items' => [ItemData::make(['reference' => 'SKU-001'])],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Find the invoice sequence number (provider's reference)
 $sequence = $result->sequence; // e.g., "FT 01P2025/1"
@@ -50,7 +50,7 @@ $output = $result->output;
 The sequence number is the official invoice identifier used in Portugal:
 
 ```php
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 $sequence = $result->sequence;
 // Format: "{TYPE} {SERIES}/{NUMBER}"
@@ -68,7 +68,7 @@ The provider's internal ID is useful for API operations like creating receipts o
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 $relatedDocument = $result->id; // Cegid Vendus: $result->sequence
 
@@ -89,7 +89,7 @@ Invoice::create($receiptData)->execute();
 The output object provides access to the generated document:
 
 ```php
-$result = $invoice->execute()->getInvoice();
+$result = $invoice->execute()->get();
 $output = $result->output;
 
 if ($output) {
@@ -129,7 +129,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Log the result
 logger()->info('Invoice issued', [

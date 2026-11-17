@@ -12,5 +12,5 @@ interface ShouldCreateTax extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getTax(): TaxData;
+    public function get(): TaxData;
 }

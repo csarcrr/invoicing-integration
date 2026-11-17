@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Facades\DueDate;
 
 $results = DueDate::find()->execute();
 
-foreach ($results->getList() as $dueDate) {
+foreach ($results->get() as $dueDate) {
     $dueDate->id;
     $dueDate->name;
     $dueDate->days;
 }
 ```
 
-- `getList()` returns a `Collection` of `DueDateData` instances.
+- `get()` returns a `Collection` of `DueDateData` instances.
 - `DueDate::find()` takes no filters: the provider returns every due date of the account.
 
 ## Pagination
@@ -28,7 +28,7 @@ On Moloni, keep calling `next()` until a page comes back empty:
 ```php
 $results = DueDate::find()->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     $results->next()->execute();

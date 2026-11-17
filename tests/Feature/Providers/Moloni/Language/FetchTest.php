@@ -5,7 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Fetch;
 use Illuminate\Support\Facades\Cache;
 
 beforeEach(function () {
@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 it('fills the language id and name matching the code', function (string $code, int $expectedId, string $expectedName) {
-    $language = (new Get(LanguageData::from(['code' => $code])))->execute()->getLanguage();
+    $language = (new Fetch(LanguageData::from(['code' => $code])))->execute()->get();
 
     expect($language->id)->toBe($expectedId)
         ->and($language->name)->toBe($expectedName)
@@ -26,5 +26,5 @@ it('fills the language id and name matching the code', function (string $code, i
 ]);
 
 it('fails when the code is not a moloni language', function () {
-    (new Get(LanguageData::from(['code' => 'XX'])))->execute();
+    (new Fetch(LanguageData::from(['code' => 'XX'])))->execute();
 })->throws(CouldNotGetLanguageIdException::class);

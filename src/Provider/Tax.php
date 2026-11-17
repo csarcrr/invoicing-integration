@@ -11,8 +11,4 @@ use CsarCrr\InvoicingIntegration\Data\TaxData;
  */
 class Tax extends Base
 {
-    public function getTax(): TaxData
-    {
-        return $this->data;
-    }
 }

@@ -103,7 +103,7 @@ it('sends the exemption reason', function (Provider $provider) {
 
 it('resolves the moloni exemption reason from the tax', function (array $data, string $expected) {
     mockConfiguration(Provider::MOLONI);
-    fakeItemUpdate(Provider::MOLONI, 'get_with_relations');
+    fakeItemUpdate(Provider::MOLONI, 'fetch_with_relations');
 
     $payload = Item::update(ItemData::make(['id' => 1542, ...$data]))->getPayload();
 

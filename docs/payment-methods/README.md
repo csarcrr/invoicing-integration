@@ -21,7 +21,7 @@ use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 $paymentMethod = PaymentMethod::create(PaymentMethodData::make([
     'name' => 'Multibanco',
     'type' => PaymentMethodEnum::MB,
-]))->execute()->getPaymentMethod();
+]))->execute()->get();
 
 echo $paymentMethod->id; // provider-assigned ID
 ```

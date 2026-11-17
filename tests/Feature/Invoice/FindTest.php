@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 test('finding invoices returns a list of InvoiceData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('find')));
 
-    $results = Invoice::find(InvoiceData::from(['type' => InvoiceType::Invoice]))->execute()->getList();
+    $results = Invoice::find(InvoiceData::from(['type' => InvoiceType::Invoice]))->execute()->get();
 
     expect($results)->toBeInstanceOf(Collection::class)
         ->and($results)->toHaveCount(2)
@@ -22,7 +22,7 @@ test('finding invoices returns a list of InvoiceData', function (Provider $provi
 test('maps each stored document onto InvoiceData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('find')));
 
-    $first = Invoice::find()->execute()->getList()->first();
+    $first = Invoice::find()->execute()->get()->first();
 
     expect($first->id)->toBe(1001)
         ->and($first->sequence)->toBe(match ($provider) {
@@ -37,7 +37,7 @@ test('maps each stored document onto InvoiceData', function (Provider $provider)
 test('keeps unlisted response fields as additional data on each invoice', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->files('find')));
 
-    $results = Invoice::find()->execute()->getList();
+    $results = Invoice::find()->execute()->get();
 
     expect($results->first()->getAdditionalData())->toHaveKey('date')
         ->and($results->last()->getAdditionalData())->toHaveKey('date');
@@ -60,5 +60,5 @@ test('returns an empty list when the provider has no invoices', function (Provid
         Provider::MOLONI => mockResponse([]),
     });
 
-    expect(Invoice::find()->execute()->getList())->toBeEmpty();
+    expect(Invoice::find()->execute()->get())->toBeEmpty();
 })->with('providers');

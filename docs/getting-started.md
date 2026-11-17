@@ -115,7 +115,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 Sample invoice response:
@@ -150,7 +150,7 @@ $invoiceData = InvoiceData::make([
 ]);
 
 $action = Invoice::create($invoiceData);
-$result = $action->execute()->getInvoice();
+$result = $action->execute()->get();
 ```
 
 Need to adjust the payload dynamically (e.g., append a payment when a queue job

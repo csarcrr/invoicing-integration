@@ -17,7 +17,7 @@ interface ShouldFindInvoice extends ShouldExecute, ShouldHavePagination, ShouldH
     /**
      * @return Collection<int, InvoiceData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 
     public function getUrl(): string;
 }

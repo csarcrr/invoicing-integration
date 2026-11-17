@@ -1,6 +1,6 @@
 # Getting an Item
 
-Retrieve an existing item from your provider's catalog using `Item::get()`.
+Retrieve an existing item from your provider's catalog using `Item::fetch()`.
 
 ## Basic example
 
@@ -12,7 +12,7 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 $itemData = ItemData::make(['id' => 123]);
 
 // Fetch the item from the provider
-$item = Item::get($itemData)->execute()->getItem();
+$item = Item::fetch($itemData)->execute()->get();
 
 // Access item data via public properties or $item->toArray()
 $item->id;          // 123
@@ -29,20 +29,20 @@ The `id` property is **required** when retrieving an item:
 ```php
 // This will throw an InvalidArgumentException
 $itemData = ItemData::make([]);
-Item::get($itemData)->execute(); // Error: Item ID is required.
+Item::fetch($itemData)->execute(); // Error: Item ID is required.
 
 // Correct usage
 $itemData = ItemData::make(['id' => 123]);
-Item::get($itemData)->execute()->getItem(); // Works
+Item::fetch($itemData)->execute()->get(); // Works
 ```
 
 ## Retrieved properties
 
-After calling `execute()->getItem()`, the `ItemData` object is populated with the data returned by the provider:
+After calling `execute()->get()`, the `ItemData` object is populated with the data returned by the provider:
 
 ```php
 $itemData = ItemData::make(['id' => 123]);
-$item = Item::get($itemData)->execute()->getItem();
+$item = Item::fetch($itemData)->execute()->get();
 
 $item->id;          // 123
 $item->name;        // Product name
@@ -80,7 +80,7 @@ On Moloni, the request sends `with_invisible=1`, so products with `visibility_id
 `stock` is a `Collection` of `ItemStockData`, one entry per warehouse:
 
 ```php
-$item = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+$item = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
 
 foreach ($item->stock as $stock) {
     $stock->itemId;      // 123
@@ -103,7 +103,7 @@ When the response has no stock entries, `stock` is an empty `Collection`.
 Provider response fields that the package does not handle are stored as additional data on the returned DTO and are accessible via `getAdditionalData()`. For Cegid Vendus, that is any field outside the provider's supported item properties. The `prices`, `tax` and `stock` objects are mapped, so they are not in additional data:
 
 ```php
-$item = Item::get($itemData)->execute()->getItem();
+$item = Item::fetch($itemData)->execute()->get();
 
 $item->getAdditionalData();
 // [
@@ -124,7 +124,7 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 $storedItemId = 123;
 
 $itemData = ItemData::make(['id' => $storedItemId]);
-$item = Item::get($itemData)->execute()->getItem();
+$item = Item::fetch($itemData)->execute()->get();
 
 // Use the mapped fields directly
 echo $item->name;        // e.g. "Widget Pro"
@@ -145,7 +145,7 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 
 try {
     $itemData = ItemData::make(['id' => 123]);
-    $item = Item::get($itemData)->execute()->getItem();
+    $item = Item::fetch($itemData)->execute()->get();
 } catch (InvalidArgumentException $e) {
     // Item ID was not provided
 } catch (UnauthorizedException $e) {

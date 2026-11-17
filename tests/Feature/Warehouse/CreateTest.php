@@ -19,7 +19,7 @@ test('maps the created warehouse onto WarehouseData', function (Provider $provid
     ]));
     $code = $create->getPayload()->get('code');
 
-    $warehouse = $create->execute()->getWarehouse();
+    $warehouse = $create->execute()->get();
 
     expect($warehouse)->toBeInstanceOf(WarehouseData::class)
         ->and($warehouse->id)->toBe(29999)

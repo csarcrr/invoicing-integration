@@ -11,7 +11,7 @@ $item = Item::update(ItemData::make([
     'name'        => 'Widget Pro 2',
     'description' => '',
     'price'       => 3499,
-]))->execute()->getItem();
+]))->execute()->get();
 ```
 
 ## Field values
@@ -26,10 +26,10 @@ $item = Item::update(ItemData::make([
 
 ## Return value
 
-`getItem()` returns the updated item, mapped like [`Item::get()`](getting-an-item.md). Unhandled fields from the update response are in `getAdditionalData()`.
+`get()` returns the updated item, mapped like [`Item::fetch()`](getting-an-item.md). Unhandled fields from the update response are in `getAdditionalData()`.
 
 - **Cegid Vendus:** the item is mapped from the `PATCH` response, which is the full product.
-- **Moloni:** `products/update` only returns the product id, so the item is the product read with `products/getOne` before the update, with the fields you set merged over it. A tax other than `EXEMPT` clears `taxExemptionReason`, and a new `tax` without `price` keeps the gross price. It is what was sent, not re-read from Moloni, so the net price Moloni stores can round the gross `price` of a later `Item::get()` by a cent.
+- **Moloni:** `products/update` only returns the product id, so the item is the product read with `products/getOne` before the update, with the fields you set merged over it. A tax other than `EXEMPT` clears `taxExemptionReason`, and a new `tax` without `price` keeps the gross price. It is what was sent, not re-read from Moloni, so the net price Moloni stores can round the gross `price` of a later `Item::fetch()` by a cent.
 
 ## Stock
 

@@ -7,8 +7,8 @@ namespace CsarCrr\InvoicingIntegration\Facades;
 use CsarCrr\InvoicingIntegration\Actions\ClientAction;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDeleteClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetchClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Illuminate\Support\Facades\Facade;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ShouldCreateClient create(ClientData $client)
  * @method static ShouldUpdateClient update(ClientData $client)
  * @method static ShouldDeleteClient delete(ClientData $client)
- * @method static ShouldGetClient get(ClientData $client)
+ * @method static ShouldFetchClient fetch(ClientData $client)
  * @method static ShouldFindClient find(?ClientData $client = null)
  *
  * @see \CsarCrr\InvoicingIntegration\Actions\ClientAction

@@ -17,7 +17,7 @@ beforeEach(function () {
 test('maps the provider response onto a list of TaxData', function () {
     Http::fake(mockResponse(fixtures()->response()->tax()->files('response_multiple')));
 
-    $list = Tax::find()->execute()->getList();
+    $list = Tax::find()->execute()->get();
 
     expect($list)->toHaveCount(5)
         ->and($list->first())->toBeInstanceOf(TaxData::class)
@@ -30,7 +30,7 @@ test('maps the provider response onto a list of TaxData', function () {
 test('maps the provider vat type onto the tax type', function () {
     Http::fake(mockResponse(fixtures()->response()->tax()->files('response_multiple')));
 
-    expect(Tax::find()->execute()->getList()->pluck('type')->toArray())->toBe([
+    expect(Tax::find()->execute()->get()->pluck('type')->toArray())->toBe([
         ItemTax::NORMAL,
         ItemTax::REDUCED,
         ItemTax::NORMAL,
@@ -42,7 +42,7 @@ test('maps the provider vat type onto the tax type', function () {
 test('maps the provider exemption reason', function () {
     Http::fake(mockResponse(fixtures()->response()->tax()->files('response_multiple')));
 
-    expect(Tax::find()->execute()->getList()->pluck('exemptionReason')->toArray())->toBe([
+    expect(Tax::find()->execute()->get()->pluck('exemptionReason')->toArray())->toBe([
         null,
         null,
         null,

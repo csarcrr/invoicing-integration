@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 test('maps the provider response onto a list of WarehouseData', function () {
     Http::fake(mockResponse(fixtures()->response()->warehouse()->files('response_multiple')));
 
-    $list = Warehouse::find()->execute()->getList();
+    $list = Warehouse::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(WarehouseData::class)
@@ -21,7 +21,7 @@ test('maps the provider response onto a list of WarehouseData', function () {
 test('keeps the extra response fields as additional data', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->warehouse()->files('response_multiple')));
 
-    $warehouse = Warehouse::find()->execute()->getList()->first();
+    $warehouse = Warehouse::find()->execute()->get()->first();
 
     expect($warehouse->getAdditionalData())->toMatchArray(match ($provider) {
         Provider::CEGID_VENDUS => ['type' => 'warehouse'],
@@ -32,7 +32,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
 test('returns an empty list when the provider has no warehouses', function () {
     Http::fake(mockResponse([]));
 
-    expect(Warehouse::find()->execute()->getList())->toBeEmpty();
+    expect(Warehouse::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
 test('returns an empty list when Cegid Vendus reports no data', function () {
@@ -40,5 +40,5 @@ test('returns an empty list when Cegid Vendus reports no data', function () {
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
-    expect(Warehouse::find()->execute()->getList())->toBeEmpty();
+    expect(Warehouse::find()->execute()->get())->toBeEmpty();
 });

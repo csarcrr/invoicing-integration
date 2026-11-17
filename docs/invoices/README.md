@@ -3,7 +3,7 @@
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 ## Choosing a Document Type

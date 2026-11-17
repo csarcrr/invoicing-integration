@@ -1,6 +1,6 @@
 # Getting a Category
 
-Use `Category::get()` to fetch one category by its provider ID.
+Use `Category::fetch()` to fetch one category by its provider ID.
 
 ## Basic usage
 
@@ -8,7 +8,7 @@ Use `Category::get()` to fetch one category by its provider ID.
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Facades\Category;
 
-$category = Category::get(CategoryData::make(['id' => 10]))->execute()->getCategory();
+$category = Category::fetch(CategoryData::make(['id' => 10]))->execute()->get();
 
 $category->id;
 $category->name;
@@ -32,4 +32,4 @@ See also:
 
 - [Categories Overview](README.md)
 - [Finding Categories](finding-categories.md)
-- [API Reference – ShouldGetCategory](../api-reference.md#shouldgetcategory-contract)
+- [API Reference – ShouldFetchCategory](../api-reference.md#shouldfetchcategory-contract)

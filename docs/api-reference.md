@@ -15,7 +15,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 | `Client::create(ClientData $client)`        | `ShouldCreateClient` | Creates a new client builder instance |
 | `Client::update(ClientData $client)`        | `ShouldUpdateClient` | Creates a client update instance      |
 | `Client::delete(ClientData $client)`        | `ShouldDeleteClient` | Creates a client deletion instance    |
-| `Client::get(ClientData $client)`           | `ShouldGetClient`    | Creates a client retrieval instance   |
+| `Client::fetch(ClientData $client)`           | `ShouldFetchClient`    | Creates a client retrieval instance   |
 | `Client::find(?ClientData $filters = null)` | `ShouldFindClient`   | Lists/paginates provider clients      |
 
 ## ShouldCreateClient Contract
@@ -41,7 +41,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpda
 | Method      | Return Type  | Description                                                    | Throws                                     |
 | ----------- | ------------ | -------------------------------------------------------------- | ------------------------------------------ |
 | `execute()` | `self`       | Send the update request and store unhandled response fields as additional data | `InvalidArgumentException` (if ID missing) |
-| `getClient()` | `ClientData` | The updated client. On Moloni, the `ClientData` you passed in | -                                    |
+| `get()` | `ClientData` | The updated client. On Moloni, the `ClientData` you passed in | -                                    |
 
 ## ShouldDeleteClient Contract
 
@@ -57,17 +57,17 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDele
 | `getUrl()`  | `string`    | The request URL the deletion is sent to                       | -                                                                        |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `customer_id` on Moloni) | - |
 
-## ShouldGetClient Contract
+## ShouldFetchClient Contract
 
-The interface returned by `Client::get()`.
+The interface returned by `Client::fetch()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetchClient;
 ```
 
 | Method      | Return Type  | Description                                   | Throws                                     |
 | ----------- | ------------ | --------------------------------------------- | ------------------------------------------ |
-| `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing, thrown by `Client::get()`) |
+| `execute()` | `ClientData` | Retrieve the client and return populated data | `InvalidArgumentException` (if ID missing, thrown by `Client::fetch()`) |
 | `getUrl()`  | `string`     | The request URL the retrieval is sent to      | -                                          |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `customer_id` on Moloni) | - |
 
@@ -82,14 +82,14 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFind
 | Method             | Return Type  | Description                                   |
 | ------------------ | ------------ | --------------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request              |
-| `getList()`        | `Collection` | `Collection<ClientData>` results              |
+| `get()`        | `Collection` | `Collection<ClientData>` results              |
 | `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
 | `next()`           | `self`       | Move to the next page                         |
 | `previous()`       | `self`       | Go back one page                              |
 | `page(int $page)`  | `self`       | Jump to a specific page                       |
 | `getCurrentPage()` | `int`        | Current page index                            |
 | `getTotalPages()`  | `?int`       | Total pages, `null` when not reported         |
-| `getClient()`      | `ClientData` | Current filter DTO (email, VAT, status, etc.) |
+| `get()`      | `ClientData` | Current filter DTO (email, VAT, status, etc.) |
 
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
 > outside the available range.
@@ -109,28 +109,28 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 | `Item::create(ItemData $item)`      | `ShouldCreateItem` | Creates a new item builder instance  |
 | `Item::update(ItemData $item)`      | `ShouldUpdateItem` | Creates a partial item update instance |
 | `Item::delete(ItemData $item)`      | `ShouldDeleteItem` | Creates an item deletion instance    |
-| `Item::get(ItemData $item)`         | `ShouldGetItem`    | Creates an item retrieval instance   |
+| `Item::fetch(ItemData $item)`         | `ShouldFetchItem`    | Creates an item retrieval instance   |
 | `Item::find(?ItemData $item = null)` | `ShouldFindItem`  | Lists/paginates provider catalog items |
 
-## ShouldGetItem Contract
+## ShouldFetchItem Contract
 
-The interface returned by `Item::get()`.
+The interface returned by `Item::fetch()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFetchItem;
 ```
 
 | Method      | Return Type | Description                                                  | Throws                                     |
 | ----------- | ----------- | ------------------------------------------------------------ | ------------------------------------------ |
-| `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing, thrown by `Item::get()`) |
-| `getItem()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`, and additional data) | — |
+| `execute()` | `self`      | Send the GET request and populate the returned `ItemData`    | `InvalidArgumentException` (if ID missing, thrown by `Item::fetch()`) |
+| `get()` | `ItemData`  | Access the hydrated DTO (`name`, `description`, `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`, `price`, and additional data) | — |
 | `getUrl()`  | `string`    | The request URL the retrieval is sent to                    | —                                          |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus, `product_id` and `with_invisible` on Moloni) | — |
 
 Provider response fields that the package does not explicitly map onto `ItemData` are accessible via `getAdditionalData()` on the returned DTO:
 
 ```php
-$item = Item::get(ItemData::make(['id' => 123]))->execute()->getItem();
+$item = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
 
 $item->name;                // mapped from provider's `title` field
 $item->description;         // mapped directly
@@ -151,7 +151,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFindIt
 | Method             | Return Type  | Description                                   |
 | ------------------ | ------------ | --------------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request              |
-| `getList()`        | `Collection` | `Collection<ItemData>` results                |
+| `get()`        | `Collection` | `Collection<ItemData>` results                |
 | `getPayload()`     | `Collection` | Current request payload (filters, pagination) |
 | `next()`           | `self`       | Move to the next page                         |
 | `previous()`       | `self`       | Go back one page                              |
@@ -175,13 +175,13 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldCreate
 | Method         | Return Type  | Description                                                                                 |
 | -------------- | ------------ | ------------------------------------------------------------------------------------------- |
 | `execute()`    | `self`       | Send the create request and populate the response                                           |
-| `getItem()`    | `ItemData`   | Access the hydrated DTO (includes provider-assigned `id`)                                   |
+| `get()`    | `ItemData`   | Access the hydrated DTO (includes provider-assigned `id`)                                   |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)                                        |
 
 Fields from the provider response that the package does not explicitly handle are stored on the returned `ItemData` and accessible via `getAdditionalData()`:
 
 ```php
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 $created->getAdditionalData(); // fields from the provider response not handled by the package
 ```
@@ -199,7 +199,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldUpdate
 | Method         | Return Type  | Description                                                                                          |
 | -------------- | ------------ | ---------------------------------------------------------------------------------------------------- |
 | `execute()`    | `self`       | Send the update request and store unhandled response fields as additional data                       |
-| `getItem()`    | `ItemData`   | The updated item. On Moloni, the current product with the updated fields merged over it              |
+| `get()`    | `ItemData`   | The updated item. On Moloni, the current product with the updated fields merged over it              |
 | `getPayload()` | `Collection` | Inspect the payload. On Moloni this requests the current product first                               |
 
 Throws `InvalidArgumentException` when `id` is missing.
@@ -244,7 +244,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldCre
 | Method         | Return Type   | Description                                               |
 | -------------- | ------------- | --------------------------------------------------------- |
 | `execute()`    | `self`        | Send the create request and populate the response         |
-| `getDueDate()` | `DueDateData` | Access the hydrated DTO (includes provider-assigned `id`) |
+| `get()` | `DueDateData` | Access the hydrated DTO (includes provider-assigned `id`) |
 | `getPayload()` | `Collection`  | Inspect the payload sent to the provider (debugging)      |
 
 ## ShouldFindDueDate Contract
@@ -258,7 +258,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DueDate\ShouldFin
 | Method             | Return Type  | Description                           |
 | ------------------ | ------------ | ------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request      |
-| `getList()`        | `Collection` | `Collection<DueDateData>` results     |
+| `get()`        | `Collection` | `Collection<DueDateData>` results     |
 | `getPayload()`     | `Collection` | Current request payload (pagination)  |
 | `next()`           | `self`       | Move to the next page                 |
 | `previous()`       | `self`       | Go back one page                      |
@@ -293,7 +293,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\ItemStock\ShouldM
 | Method              | Return Type            | Description                                                   |
 | ------------------- | ---------------------- | ------------------------------------------------------------- |
 | `execute()`         | `self`                 | Send the movement                                             |
-| `getMovement()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
+| `get()`     | `StockMovementData` | Access the movement (includes provider-assigned `id`)         |
 | `getPayload()`      | `Collection`           | Inspect the payload sent to the provider (debugging)          |
 
 ---
@@ -321,7 +321,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Company\ShouldFin
 | Method      | Return Type  | Description                       |
 | ----------- | ------------ | --------------------------------- |
 | `execute()` | `self`       | Send the request                  |
-| `getList()` | `Collection` | `Collection<CompanyData>` results |
+| `get()` | `Collection` | `Collection<CompanyData>` results |
 
 ---
 
@@ -349,7 +349,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldCreateT
 | Method         | Return Type  | Description                                               |
 | -------------- | ------------ | --------------------------------------------------------- |
 | `execute()`    | `self`       | Send the create request and populate the response         |
-| `getTax()`     | `TaxData`    | Access the hydrated DTO (includes provider-assigned `id`) |
+| `get()`     | `TaxData`    | Access the hydrated DTO (includes provider-assigned `id`) |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)      |
 
 ## ShouldFindTax Contract
@@ -363,7 +363,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Tax\ShouldFindTax
 | Method      | Return Type  | Description                   |
 | ----------- | ------------ | ----------------------------- |
 | `execute()` | `self`       | Send the request              |
-| `getList()` | `Collection` | `Collection<TaxData>` results |
+| `get()` | `Collection` | `Collection<TaxData>` results |
 
 ---
 
@@ -391,7 +391,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldCreate
 | Method      | Return Type | Description                                                                 |
 | ----------- | ----------- | --------------------------------------------------------------------------- |
 | `execute()` | `self`      | Send the create request and populate the returned `UnitData`; throws `RequestFailedException` if the provider rejects the unit |
-| `getUnit()` | `UnitData`  | The created unit, with the provider-assigned `id`                           |
+| `get()` | `UnitData`  | The created unit, with the provider-assigned `id`                           |
 | `getUrl()`  | `string`    | The request URL the unit is sent to                                         |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (`title` on Cegid Vendus; `name` and `short_name` on Moloni) |
 
@@ -406,7 +406,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Unit\ShouldFindUn
 | Method      | Return Type  | Description                    |
 | ----------- | ------------ | ------------------------------ |
 | `execute()` | `self`       | Send the request               |
-| `getList()` | `Collection` | `Collection<UnitData>` results |
+| `get()` | `Collection` | `Collection<UnitData>` results |
 
 ---
 
@@ -434,7 +434,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldC
 | Method             | Return Type     | Description                                                                                       |
 | ------------------ | --------------- | ------------------------------------------------------------------------------------------------- |
 | `execute()`        | `self`          | Send the create request and populate the returned `WarehouseData`; throws `RequestFailedException` if the provider rejects the warehouse |
-| `getWarehouse()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()`; on Cegid Vendus the other response fields (such as `type`) are in `getAdditionalData()` |
+| `get()`   | `WarehouseData` | The created warehouse, with the provider-assigned `id`; on Moloni the generated `code` is in `getAdditionalData()`; on Cegid Vendus the other response fields (such as `type`) are in `getAdditionalData()` |
 | `getUrl()`         | `string`        | The request URL the warehouse is sent to                                                          |
 | `getPayload()`     | `Collection`    | Inspect the payload sent to the provider (`title` and the optional fields)                        |
 
@@ -449,7 +449,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Warehouse\ShouldF
 | Method      | Return Type  | Description                          |
 | ----------- | ------------ | ------------------------------------ |
 | `execute()` | `self`       | Send the request                     |
-| `getList()` | `Collection` | `Collection<WarehouseData>` results  |
+| `get()` | `Collection` | `Collection<WarehouseData>` results  |
 | `getUrl()`  | `string`     | Request URL the operation builds     |
 
 ---
@@ -477,7 +477,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\TaxExemption\Shou
 | Method         | Return Type  | Description                                                 |
 | -------------- | ------------ | ----------------------------------------------------------- |
 | `execute()`    | `self`       | Send the request                                            |
-| `getList()`    | `Collection` | `Collection<TaxExemptionData>` results                      |
+| `get()`    | `Collection` | `Collection<TaxExemptionData>` results                      |
 | `getUrl()`     | `string`     | Request URL the operation builds                            |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (debugging)        |
 
@@ -506,7 +506,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\DocumentType\Shou
 | Method         | Return Type  | Description                                                                                  |
 | -------------- | ------------ | -------------------------------------------------------------------------------------------- |
 | `execute()`    | `self`       | Send the request                                                                             |
-| `getList()`    | `Collection` | `Collection<DocumentTypeData>` results                                                       |
+| `get()`    | `Collection` | `Collection<DocumentTypeData>` results                                                       |
 | `getUrl()`     | `string`     | Request URL the operation builds                                                             |
 | `getPayload()` | `Collection` | Inspect the payload sent to the provider (empty on Cegid Vendus; `language_id` on Moloni, added during `execute()`) |
 
@@ -524,7 +524,7 @@ use CsarCrr\InvoicingIntegration\Facades\Category;
 | ---------------------------------------------- | -------------------- | ---------------------------------------------------- |
 | `Category::create(CategoryData $category)`     | `ShouldCreateCategory` | Creates a new category builder instance            |
 | `Category::find(?CategoryData $category = null)` | `ShouldFindCategory` | Lists the provider's categories, by `parentId` level |
-| `Category::get(CategoryData $category)`        | `ShouldGetCategory`  | Fetches one category by `id`                         |
+| `Category::fetch(CategoryData $category)`        | `ShouldFetchCategory`  | Fetches one category by `id`                         |
 | `Category::update(CategoryData $category)`     | `ShouldUpdateCategory` | Creates a category update instance                 |
 
 ## ShouldCreateCategory Contract
@@ -538,7 +538,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldCr
 | Method          | Return Type    | Description                                                                 |
 | --------------- | -------------- | --------------------------------------------------------------------------- |
 | `execute()`     | `self`         | Send the create request and populate the returned `CategoryData`; throws `RequestFailedException` if the provider rejects the category |
-| `getCategory()` | `CategoryData` | The created category, with the provider-assigned `id`                       |
+| `get()` | `CategoryData` | The created category, with the provider-assigned `id`                       |
 | `getUrl()`      | `string`       | The request URL the category is sent to                                     |
 | `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Cegid Vendus, `name` and `parent_id` on Moloni) |
 
@@ -553,7 +553,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFi
 | Method             | Return Type  | Description                                  |
 | ------------------ | ------------ | -------------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request             |
-| `getList()`        | `Collection` | `Collection<CategoryData>` results           |
+| `get()`        | `Collection` | `Collection<CategoryData>` results           |
 | `getPayload()`     | `Collection` | Current request payload (parent, pagination) |
 | `next()`           | `self`       | Move to the next page                        |
 | `previous()`       | `self`       | Go back one page                             |
@@ -564,18 +564,18 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFi
 > `next()`, `previous()`, and `page()` throw `NoMorePagesException` when you move
 > outside the available range.
 
-## ShouldGetCategory Contract
+## ShouldFetchCategory Contract
 
-The interface returned by `Category::get()`.
+The interface returned by `Category::fetch()`.
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGetCategory;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFetchCategory;
 ```
 
 | Method          | Return Type    | Description                                                    |
 | --------------- | -------------- | -------------------------------------------------------------- |
 | `execute()`     | `self`         | Send the request; throws `InvalidArgumentException` without an `id` |
-| `getCategory()` | `CategoryData` | The fetched category                                           |
+| `get()` | `CategoryData` | The fetched category                                           |
 
 ## ShouldUpdateCategory Contract
 
@@ -588,7 +588,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUp
 | Method          | Return Type    | Description                                                                 | Throws                                                                                  |
 | --------------- | -------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `execute()`     | `self`         | Send the update request; returns `self`                                     | `InvalidArgumentException` (if ID missing, thrown by `Category::update()`), `RequestFailedException` (if the provider rejects the update) |
-| `getCategory()` | `CategoryData` | The updated category; on Moloni, the `CategoryData` you passed in           | -                                                                                       |
+| `get()` | `CategoryData` | The updated category; on Moloni, the `CategoryData` you passed in           | -                                                                                       |
 | `getUrl()`      | `string`       | The request URL the update is sent to                                       | -                                                                                       |
 | `getPayload()`  | `Collection`   | Inspect the payload sent to the provider (`title` on Cegid Vendus; `category_id`, `name` and `parent_id` on Moloni) | -                                    |
 
@@ -618,7 +618,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\Sho
 | Method               | Return Type         | Description                                               |
 | -------------------- | ------------------- | --------------------------------------------------------- |
 | `execute()`          | `self`              | Send the create request and populate the response         |
-| `getPaymentMethod()` | `PaymentMethodData` | Access the hydrated DTO (includes provider-assigned `id`) |
+| `get()` | `PaymentMethodData` | Access the hydrated DTO (includes provider-assigned `id`) |
 | `getPayload()`       | `Collection`        | Inspect the payload sent to the provider (debugging)      |
 
 ## ShouldFindPaymentMethod Contract
@@ -632,7 +632,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\PaymentMethod\Sho
 | Method             | Return Type  | Description                             |
 | ------------------ | ------------ | --------------------------------------- |
 | `execute()`        | `self`       | Execute the current page request        |
-| `getList()`        | `Collection` | `Collection<PaymentMethodData>` results |
+| `get()`        | `Collection` | `Collection<PaymentMethodData>` results |
 | `getPayload()`     | `Collection` | Current request payload (pagination)    |
 | `next()`           | `self`       | Move to the next page                   |
 | `previous()`       | `self`       | Go back one page                        |
@@ -655,7 +655,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 | Method                                  | Return Type     | Description                                          |
 | --------------------------------------- | --------------- | ---------------------------------------------------- |
 | `Invoice::create(InvoiceData $invoice)` | `ShouldCreateInvoice` | Creates a builder seeded with the provided DTO state |
-| `Invoice::get(InvoiceData $invoice)`   | `ShouldGetInvoice`    | Creates a retrieval instance for a stored document   |
+| `Invoice::fetch(InvoiceData $invoice)`   | `ShouldFetchInvoice`    | Creates a retrieval instance for a stored document   |
 | `Invoice::pdf(InvoiceData $invoice)`   | `ShouldGetInvoicePdf` | Creates a retrieval instance for the PDF of a stored document |
 | `Invoice::cancel(InvoiceData $invoice)` | `ShouldCancelInvoice` | Creates a cancellation instance for a stored document |
 | `Invoice::find(?InvoiceData $invoice = null)` | `ShouldFindInvoice` | Lists/paginates stored documents of one type, optionally for one client |
@@ -676,25 +676,25 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCre
 | -------------- | ------------- | ----------------------------------------------------------------- |
 | `execute()`    | `self`        | Issue the HTTP request using the data contained in `InvoiceData`  |
 | `asDraft()`    | `static`      | Create the document as a draft (Moloni); ignored by Cegid Vendus  |
-| `getInvoice()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
+| `get()` | `InvoiceData` | Access the hydrated DTO (includes provider response data/output)  |
 | `getPayload()` | `Collection`  | Inspect the payload that will be sent to the provider (debugging) |
 
 > Need to change values after instantiating your DTO? Mutate the
 > `InvoiceData` instance (its properties are public) before passing it to
 > `Invoice::create()`, or create a new DTO via `InvoiceData::from([...])`.
 
-## ShouldGetInvoice Contract
+## ShouldFetchInvoice Contract
 
-The contract returned by `Invoice::get()`. See [Getting an Invoice](invoices/getting-an-invoice.md).
+The contract returned by `Invoice::fetch()`. See [Getting an Invoice](invoices/getting-an-invoice.md).
 
 ```php
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFetchInvoice;
 ```
 
 | Method          | Return Type   | Description                                                   | Throws                                                                   |
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing, thrown by `Invoice::get()`), `RequestFailedException` (if no document has the ID) |
-| `getInvoice()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
+| `execute()`     | `self`        | Send the GET request and populate the returned `InvoiceData`  | `InvalidArgumentException` (if ID missing, thrown by `Invoice::fetch()`), `RequestFailedException` (if no document has the ID) |
+| `get()`  | `InvoiceData` | The fetched invoice; unmapped response fields are additional data | -                                                                    |
 | `getUrl()`      | `string`      | The request URL the retrieval is sent to                      | -                                                                    |
 | `getPayload()`  | `Collection`  | Inspect the payload sent to the provider (empty on Cegid Vendus, `document_id` on Moloni) | -                                                                    |
 
@@ -709,7 +709,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGet
 | Method          | Return Type   | Description                                                   | Throws                                                                   |
 | --------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()`     | `self`        | Send the request and populate the returned `OutputData`       | `InvalidArgumentException` (if ID missing, thrown by `Invoice::pdf()`), `RequestFailedException` (Moloni, if no PDF link is returned) |
-| `getOutput()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
+| `get()`   | `OutputData`  | The PDF as base64 `content`; `url` is the Moloni PDF link     | -                                                                        |
 | `getUrl()`      | `string`      | The URL of the first request (Moloni: the PDF link request; Cegid Vendus: the PDF document) | -                                       |
 | `getPayload()`  | `Collection`  | Inspect the payload of the first request (empty on Cegid Vendus, `document_id` on Moloni) | -                                       |
 
@@ -738,7 +738,7 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFin
 | Method             | Return Type  | Description                                        | Throws                                                                   |
 | ------------------ | ------------ | -------------------------------------------------- | ------------------------------------------------------------------------ |
 | `execute()`        | `self`       | Execute the current page request                   | `RequestFailedException` (if the provider rejects the search)            |
-| `getList()`        | `Collection` | `Collection<InvoiceData>` results                  | -                                                                        |
+| `get()`        | `Collection` | `Collection<InvoiceData>` results                  | -                                                                        |
 | `getPayload()`     | `Collection` | Current request payload (type, client, pagination) | -                                                                        |
 | `getUrl()`         | `string`     | The request URL the search is sent to (Moloni: one endpoint per document type; Cegid Vendus: `/documents`) | - |
 | `next()`           | `self`       | Move to the next page                              | `NoMorePagesException` (Cegid Vendus, past the last page)                |
@@ -769,7 +769,7 @@ new ItemData(discount: Optional::create());
 
 ### InvoiceData
 
-`InvoiceData` serves a dual role: it is the **input DTO** you populate and pass to `Invoice::create()`, and it is also the **response object** returned by `execute()->getInvoice()`. After a successful call the same class is returned, now hydrated with provider response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`). There is no separate response type to import.
+`InvoiceData` serves a dual role: it is the **input DTO** you populate and pass to `Invoice::create()`, and it is also the **response object** returned by `execute()->get()`. After a successful call the same class is returned, now hydrated with provider response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`). There is no separate response type to import.
 
 Entry point for invoice creation.
 
@@ -895,13 +895,13 @@ $item = ItemData::make([
 | `controlStock`       | `?bool`                         | `null`               | Whether to track stock; create sends `true` when `null`               | -                                                                         |
 | `enabled`            | `?bool`                         | `null`               | Whether the item is active; create sends `true` when `null`. Read from Vendus `status` and Moloni `visibility_id` | -                                                                         |
 | `relatedDocument`    | `?RelatedDocumentReferenceData` | `null`               | Reference to original document row (NC items)      | Required when issuing credit notes                                        |
-| `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::get()`       | -                                                                         |
+| `stock`              | `?Collection<int, ItemStockData>` | `null`             | Stock per warehouse, filled by `Item::fetch()`       | -                                                                         |
 
 ---
 
 ### CategoryData
 
-Represents a product category for catalog items, and the categories returned by `Category::create()`, `Category::find()` and `Category::get()`.
+Represents a product category for catalog items, and the categories returned by `Category::create()`, `Category::find()` and `Category::fetch()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
@@ -968,7 +968,7 @@ $movement = StockMovementData::make([
 
 ### ItemStockData
 
-The stock of an item in one warehouse, returned in `ItemData->stock` by `Item::get()`.
+The stock of an item in one warehouse, returned in `ItemData->stock` by `Item::fetch()`.
 
 | Property      | Type         | Description                                                   |
 | ------------- | ------------ | ------------------------------------------------------------- |
@@ -1207,7 +1207,7 @@ The hydrated `InvoiceData` returned after issuing an invoice. Contains the provi
 
 ### OutputData
 
-Holds a document's file. Returned in `InvoiceData->output` by `Invoice::create()` and by `Invoice::pdf()->execute()->getOutput()`.
+Holds a document's file. Returned in `InvoiceData->output` by `Invoice::create()` and by `Invoice::pdf()->execute()->get()`.
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\OutputData;

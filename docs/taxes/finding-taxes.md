@@ -9,7 +9,7 @@ use CsarCrr\InvoicingIntegration\Facades\Tax;
 
 $results = Tax::find()->execute();
 
-foreach ($results->getList() as $tax) {
+foreach ($results->get() as $tax) {
     $tax->id;
     $tax->name;
     $tax->rate;            // float
@@ -19,7 +19,7 @@ foreach ($results->getList() as $tax) {
 }
 ```
 
-- `getList()` returns a `Collection` of `TaxData` instances.
+- `get()` returns a `Collection` of `TaxData` instances.
 - `Tax::find()` takes no filters and has no pagination: the provider returns every tax in one response.
 
 ## Moloni

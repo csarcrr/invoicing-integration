@@ -149,7 +149,7 @@ function fakeProviderDueDates(Provider $provider): void
     ]);
 }
 
-function fakeItemUpdate(Provider $provider, string $currentFixture = 'get'): void
+function fakeItemUpdate(Provider $provider, string $currentFixture = 'fetch'): void
 {
     $update = mockResponse(fixtures()->response()->item()->files('update'));
 
@@ -174,7 +174,7 @@ function fakeItemCreate(Provider $provider, array $changes = []): void
 
     Http::fakeSequence()
         ->pushResponse(mockResponse(fixtures()->response()->item()->files('create')))
-        ->pushResponse(mockResponse([...fixtures()->response()->item()->files('get'), ...$changes]));
+        ->pushResponse(mockResponse([...fixtures()->response()->item()->files('fetch'), ...$changes]));
 }
 
 function mockResponse(

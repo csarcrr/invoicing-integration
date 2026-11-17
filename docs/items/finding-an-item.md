@@ -12,7 +12,7 @@ Use `find()` when you need to:
 - Display an item picker sourced from the provider
 - Sync catalog items from the provider back into your application
 
-If you already know the provider ID, prefer `Item::get()` for a direct lookup.
+If you already know the provider ID, prefer `Item::fetch()` for a direct lookup.
 
 ## Basic Usage
 
@@ -21,12 +21,12 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 
 $results = Item::find()->execute();
 
-foreach ($results->getList() as $item) {
+foreach ($results->get() as $item) {
     // do stuff
 }
 ```
 
-- `getList()` returns a `Collection` of `ItemData` instances populated by the
+- `get()` returns a `Collection` of `ItemData` instances populated by the
   provider response. Cegid Vendus items carry `id`, `name`, `description`,
   `reference`, `barcode`, `category`, `controlStock`, `enabled`, `type`, `tax`
   and the gross `price`.
@@ -126,7 +126,7 @@ $results = Item::find($filters)->execute();
 - Each page holds up to 50 items.
 - Both a search and a category listing send `with_invisible=1`, so products
   with `visibility_id` `0` are listed too, with `enabled` set to `false`.
-- Each item is mapped like [`Item::get()`](getting-an-item.md), including the
+- Each item is mapped like [`Item::fetch()`](getting-an-item.md), including the
   category, description, stock control and stock.
 - When nothing matches, the list is empty.
 
@@ -143,7 +143,7 @@ the `HasPaginator` trait.
 ```php
 $results = Item::find(ItemData::make(['name' => 'Widget']))->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     if ($results->getCurrentPage() === $results->getTotalPages()) {
@@ -172,8 +172,8 @@ use CsarCrr\InvoicingIntegration\Facades\Item;
 $filters = ItemData::make(['name' => 'Widget']);
 $items = Item::find($filters)->execute();
 
-while ($items->getList()->isNotEmpty()) {
-    foreach ($items->getList() as $item) {
+while ($items->get()->isNotEmpty()) {
+    foreach ($items->get() as $item) {
         // do stuff
     }
 

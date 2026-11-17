@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use function collect;
 use function throw_if;
 
-class Get
+class Fetch
 {
     protected string $url;
 
@@ -50,7 +50,7 @@ class Get
         return $this->url;
     }
 
-    public function getLanguage(): LanguageData
+    public function get(): LanguageData
     {
         return $this->language;
     }

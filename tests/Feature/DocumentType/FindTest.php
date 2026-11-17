@@ -27,7 +27,7 @@ function fakeDocumentTypeResponse(Provider $provider, mixed $response, int $stat
 test('maps the provider response onto a list of DocumentTypeData', function (Provider $provider) {
     fakeDocumentTypeResponse($provider, fixtures()->response()->documentType()->files('response_multiple'));
 
-    $list = DocumentType::find()->execute()->getList();
+    $list = DocumentType::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(DocumentTypeData::class)
@@ -38,7 +38,7 @@ test('maps the provider response onto a list of DocumentTypeData', function (Pro
 test('keeps the extra response fields as additional data', function (Provider $provider) {
     fakeDocumentTypeResponse($provider, fixtures()->response()->documentType()->files('response_multiple'));
 
-    $documentType = DocumentType::find()->execute()->getList()->first();
+    $documentType = DocumentType::find()->execute()->get()->first();
 
     expect($documentType->getAdditionalData())->toMatchArray(match ($provider) {
         Provider::CEGID_VENDUS => ['visible_filter' => 'yes'],
@@ -49,7 +49,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
 test('returns an empty list when the provider has no document types', function (Provider $provider) {
     fakeDocumentTypeResponse($provider, []);
 
-    expect(DocumentType::find()->execute()->getList())->toBeEmpty();
+    expect(DocumentType::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
 test('returns an empty list when Cegid Vendus reports no data', function () {
@@ -57,7 +57,7 @@ test('returns an empty list when Cegid Vendus reports no data', function () {
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
-    expect(DocumentType::find()->execute()->getList())->toBeEmpty();
+    expect(DocumentType::find()->execute()->get())->toBeEmpty();
 });
 
 test('sends the Portuguese Moloni language id when no language is given', function () {

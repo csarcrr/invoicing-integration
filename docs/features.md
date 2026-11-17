@@ -34,7 +34,7 @@ Features for managing items (product catalog) independently of invoices.
 
 ## Item Stock Management
 
-Features for moving item stock. Current stock is read through `Item::get()`; see [Getting an Item](items/getting-an-item.md#stock).
+Features for moving item stock. Current stock is read through `Item::fetch()`; see [Getting an Item](items/getting-an-item.md#stock).
 
 |                 | Cegid Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |

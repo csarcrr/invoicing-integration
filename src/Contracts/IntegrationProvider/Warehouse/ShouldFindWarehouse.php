@@ -16,7 +16,7 @@ interface ShouldFindWarehouse extends ShouldExecute, ShouldHavePayload
     /**
      * @return Collection<int, WarehouseData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 
     public function getUrl(): string;
 }

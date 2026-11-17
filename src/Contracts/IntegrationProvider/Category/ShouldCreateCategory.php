@@ -12,7 +12,7 @@ interface ShouldCreateCategory extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getCategory(): CategoryData;
+    public function get(): CategoryData;
 
     public function getUrl(): string;
 }

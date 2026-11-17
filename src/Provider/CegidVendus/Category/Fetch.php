@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Category;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGetCategory;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFetchCategory;
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use Illuminate\Support\Facades\Http;
 
-class Get implements ShouldGetCategory
+class Fetch implements ShouldFetchCategory
 {
     public function __construct(protected CategoryData $category) {}
 
@@ -31,7 +31,7 @@ class Get implements ShouldGetCategory
         return $this;
     }
 
-    public function getCategory(): CategoryData
+    public function get(): CategoryData
     {
         return $this->category;
     }

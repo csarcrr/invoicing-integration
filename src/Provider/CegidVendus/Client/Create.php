@@ -27,6 +27,11 @@ class Create extends Client implements ShouldCreateClient
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Client);
     }
 
+    public function get(): ClientData
+    {
+        return $this->data;
+    }
+
     /**
      * @throws \Throwable
      */

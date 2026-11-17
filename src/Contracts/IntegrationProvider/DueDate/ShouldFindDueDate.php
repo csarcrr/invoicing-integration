@@ -17,5 +17,5 @@ interface ShouldFindDueDate extends ShouldExecute, ShouldHavePagination, ShouldH
     /**
      * @return Collection<int, DueDateData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 }

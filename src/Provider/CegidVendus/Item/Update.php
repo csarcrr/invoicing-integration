@@ -26,6 +26,11 @@ class Update extends Item implements ShouldUpdateItem
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
     }
 
+    public function get(): ItemData
+    {
+        return $this->data;
+    }
+
     /**
      * @throws CouldNotGetUnitIdException
      */

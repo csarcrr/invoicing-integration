@@ -10,7 +10,7 @@ A document type is a kind of fiscal document stored in the provider, identified 
 ```php
 use CsarCrr\InvoicingIntegration\Facades\DocumentType;
 
-foreach (DocumentType::find()->execute()->getList() as $type) {
+foreach (DocumentType::find()->execute()->get() as $type) {
     echo $type->code.' '.$type->name;
 }
 ```

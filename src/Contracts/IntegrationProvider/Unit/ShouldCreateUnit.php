@@ -12,7 +12,7 @@ interface ShouldCreateUnit extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getUnit(): UnitData;
+    public function get(): UnitData;
 
     public function getUrl(): string;
 }

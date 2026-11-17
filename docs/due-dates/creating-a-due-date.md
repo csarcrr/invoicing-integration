@@ -13,7 +13,7 @@ $dueDate = DueDateData::make([
     'days' => 30,
 ]);
 
-$created = DueDate::create($dueDate)->execute()->getDueDate();
+$created = DueDate::create($dueDate)->execute()->get();
 
 echo $created->id; // provider-assigned ID
 ```
@@ -51,7 +51,7 @@ Not supported: `DueDate::create()` throws `OperationNotSupportedException`.
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $created = DueDate::create($dueDate)->execute()->getDueDate();
+    $created = DueDate::create($dueDate)->execute()->get();
 } catch (RequestFailedException $e) {
     Log::error('Due date creation failed', ['message' => $e->getMessage()]);
 }

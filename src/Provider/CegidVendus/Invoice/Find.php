@@ -61,7 +61,7 @@ class Find extends Invoice implements ShouldFindInvoice
     /**
      * @return Collection<int, InvoiceData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

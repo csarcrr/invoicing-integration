@@ -10,9 +10,9 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Support\Facades\Http;
 
 test('an invoice get request maps the provider response onto InvoiceData', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('fetch')));
 
-    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+    $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect($invoice->id)->toBe(123456)
         ->and($invoice->sequence)->toBe(match ($provider) {
@@ -27,25 +27,25 @@ test('an invoice get request maps the provider response onto InvoiceData', funct
 })->with('providers');
 
 test('maps the provider atcud', function () {
-    Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('fetch')));
 
-    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+    $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect($invoice->atcud)->toBe('JFD5B7DW-12');
 })->with('providers');
 
 test('an empty provider atcud is null', function () {
-    Http::fake(mockResponse([...fixtures()->response()->invoice()->files('get'), 'atcud' => '']));
+    Http::fake(mockResponse([...fixtures()->response()->invoice()->files('fetch'), 'atcud' => '']));
 
-    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+    $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect($invoice->atcud)->toBeNull();
 })->with('providers');
 
 test('supported properties are not filled in additional data', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('fetch')));
 
-    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+    $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($invoice->getAdditionalData())
@@ -64,22 +64,22 @@ test('supported properties are not filled in additional data', function (Provide
 })->with('providers');
 
 test('unsupported properties are kept in additional data', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->invoice()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->invoice()->files('fetch')));
 
-    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+    $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect($invoice->getAdditionalData())->toHaveKey('date');
 })->with('providers');
 
 test('an unknown document type is null', function (Provider $provider) {
-    $fixture = fixtures()->response()->invoice()->files('get');
+    $fixture = fixtures()->response()->invoice()->files('fetch');
 
     Http::fake(mockResponse(match ($provider) {
         Provider::CEGID_VENDUS => [...$fixture, 'type' => 'XX'],
         Provider::MOLONI => [...$fixture, 'document_type' => ['saft_code' => 'XX']],
     }));
 
-    $invoice = Invoice::get(InvoiceData::from(['id' => 123456]))->execute()->getInvoice();
+    $invoice = Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect($invoice->type)->toBeNull();
 })->with('providers');
@@ -90,5 +90,5 @@ it('fails when the provider has no invoice with the id', function (Provider $pro
         Provider::MOLONI => mockResponse([]),
     });
 
-    Invoice::get(InvoiceData::from(['id' => 123456]))->execute();
+    Invoice::fetch(InvoiceData::from(['id' => 123456]))->execute();
 })->with('providers')->throws(RequestFailedException::class);

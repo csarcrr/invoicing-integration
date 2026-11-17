@@ -31,6 +31,11 @@ class Create extends Item implements ShouldCreateItem
         $this->payload = collect();
     }
 
+    public function get(): ItemData
+    {
+        return $this->data;
+    }
+
     /**
      * @throws CouldNotGetUnitIdException
      * @throws CouldNotGetTaxIdException
@@ -42,10 +47,10 @@ class Create extends Item implements ShouldCreateItem
 
         Http::handleUnwantedFailures($response);
 
-        $this->data = (new Get(ItemData::make(['id' => $response->json('product_id')])))
+        $this->data = (new Fetch(ItemData::make(['id' => $response->json('product_id')])))
             ->config($this->getConfig())
             ->execute()
-            ->getItem();
+            ->get();
 
         return $this;
     }

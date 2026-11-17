@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 
 $results = PaymentMethod::find()->execute();
 
-foreach ($results->getList() as $paymentMethod) {
+foreach ($results->get() as $paymentMethod) {
     $paymentMethod->id;
     $paymentMethod->name;
     $paymentMethod->type; // PaymentMethod enum case, or null
 }
 ```
 
-- `getList()` returns a `Collection` of `PaymentMethodData` instances.
+- `get()` returns a `Collection` of `PaymentMethodData` instances.
 - `PaymentMethod::find()` takes no filters: the provider returns every payment method of the account.
 
 ## Pagination
@@ -26,7 +26,7 @@ foreach ($results->getList() as $paymentMethod) {
 ```php
 $results = PaymentMethod::find()->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     $results->next()->execute();
@@ -77,7 +77,7 @@ The request is sent to `GET documents/paymentmethods`, with no parameters. Each 
 | `TB`                | `PaymentMethod::MONEY_TRANSFER`  |
 | any other           | `null`                           |
 
-When Cegid Vendus reports no data, `getList()` is empty.
+When Cegid Vendus reports no data, `get()` is empty.
 
 ## Reference
 

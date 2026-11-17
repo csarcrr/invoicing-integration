@@ -31,7 +31,7 @@ class Move implements ShouldMoveItemStock
         return $this;
     }
 
-    public function getMovement(): StockMovementData
+    public function get(): StockMovementData
     {
         return $this->movement;
     }

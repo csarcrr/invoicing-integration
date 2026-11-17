@@ -18,7 +18,7 @@ use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
 
-$exemptions = TaxExemption::find()->execute()->getList();
+$exemptions = TaxExemption::find()->execute()->get();
 
 /** @var TaxExemptionData $exemption */
 $exemption = $exemptions->firstWhere('code', 'M04');

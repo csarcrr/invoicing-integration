@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Category;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGetCategory;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFetchCategory;
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Category;
 use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
 use Illuminate\Support\Facades\Http;
 
-class Get extends Category implements ShouldGetCategory
+class Fetch extends Category implements ShouldFetchCategory
 {
     use DetectsNoData;
 
@@ -35,7 +35,7 @@ class Get extends Category implements ShouldGetCategory
         return $this;
     }
 
-    public function getCategory(): CategoryData
+    public function get(): CategoryData
     {
         return $this->category;
     }

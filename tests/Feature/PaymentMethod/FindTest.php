@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 test('maps the provider response onto a list of PaymentMethodData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')));
 
-    $list = PaymentMethod::find()->execute()->getList();
+    $list = PaymentMethod::find()->execute()->get();
 
     expect($list)->toHaveCount(match ($provider) {
         Provider::CEGID_VENDUS => 6,
@@ -28,7 +28,7 @@ test('maps the provider response onto a list of PaymentMethodData', function (Pr
 test('maps the provider payment method kind onto the payment method type', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->paymentMethod()->files('response_multiple')));
 
-    $list = PaymentMethod::find()->execute()->getList();
+    $list = PaymentMethod::find()->execute()->get();
 
     expect($list->pluck('type')->toArray())->toBe(match ($provider) {
         Provider::CEGID_VENDUS => [
@@ -67,7 +67,7 @@ test('returns an empty list when Cegid Vendus reports no data', function () {
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
-    expect(PaymentMethod::find()->execute()->getList())->toBeEmpty();
+    expect(PaymentMethod::find()->execute()->get())->toBeEmpty();
 });
 
 test('reports a single page on Cegid Vendus', function () {
@@ -95,12 +95,12 @@ test('can go to the next page and then go back on Moloni', function () {
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList())->toHaveCount(1);
+        ->and($results->get())->toHaveCount(1);
 
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList())->toHaveCount(5)
+        ->and($results->get())->toHaveCount(5)
         ->and($results->getTotalPages())->toBeNull();
 });
 

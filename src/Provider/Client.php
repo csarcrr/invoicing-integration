@@ -15,11 +15,4 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 #[AllowDynamicProperties]
 class Client extends Base
 {
-    /**
-     * Returns the current client DTO after an operation has been executed.
-     */
-    public function getClient(): ClientData
-    {
-        return $this->data;
-    }
 }

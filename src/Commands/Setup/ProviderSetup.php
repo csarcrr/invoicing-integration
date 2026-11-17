@@ -53,7 +53,7 @@ abstract class ProviderSetup implements ShouldSetupProvider
      */
     protected function unitIds(Command $command, string $prefix): array
     {
-        $units = Unit::find()->execute()->getList();
+        $units = Unit::find()->execute()->get();
         $patterns = [
             UnitEnum::KG->name => '/\bkg\b|quilo/i',
             UnitEnum::UNIT->name => '/^uni/i',

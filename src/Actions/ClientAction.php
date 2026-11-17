@@ -7,20 +7,20 @@ namespace CsarCrr\InvoicingIntegration\Actions;
 use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldDeleteClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetchClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldUpdateClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Create;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Delete;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Fetch;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Find;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Get;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Client\Update;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Create as MoloniCreate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Delete as MoloniDelete;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Fetch as MoloniFetch;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as MoloniFind;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Get as MoloniGet;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Update as MoloniUpdate;
 
 /**
@@ -68,11 +68,11 @@ final class ClientAction
     /**
      * Returns a provider-specific implementation to retrieve a single client by ID.
      */
-    public function get(ClientData $client): ShouldGetClient
+    public function fetch(ClientData $client): ShouldFetchClient
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new Get($client),
-            Provider::MOLONI => new MoloniGet($client),
+            Provider::CEGID_VENDUS => new Fetch($client),
+            Provider::MOLONI => new MoloniFetch($client),
         };
     }
 

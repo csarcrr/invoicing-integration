@@ -2,42 +2,43 @@
 
 declare(strict_types=1);
 
-namespace CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
+namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldGetItem;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item\ShouldFetchItem;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Item;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Item;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 
 use function collect;
 
-class Get extends Item implements ShouldGetItem
+class Fetch extends Item implements ShouldFetchItem
 {
     use HasConfig;
 
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
-    public function __construct(ItemData $itemData)
+    public function __construct(ItemData $item)
     {
-        $this->data = $itemData;
+        $this->data = $item;
         $this->payload = collect();
-        $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
+        $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
 
         $this->buildUrl();
+        $this->buildPayload();
+    }
+
+    public function get(): ItemData
+    {
+        return $this->data;
     }
 
     public function execute(): self
     {
-        $request = Http::provider()->get($this->getUrl());
-
-        Http::handleUnwantedFailures($request);
-
-        $data = $request->json();
+        $data = $this->getProduct($this->getPayload()->toArray());
 
         $this->fillProperties($data);
         $this->fillAdditionalProperties($data);
@@ -55,9 +56,15 @@ class Get extends Item implements ShouldGetItem
 
     protected function buildUrl(): void
     {
+        $this->url = 'products/getOne';
+    }
+
+    protected function buildPayload(): void
+    {
         throw_if(! is_int($this->data->id), \InvalidArgumentException::class, 'Item ID is required.');
 
-        $this->url = "/products/{$this->data->id}";
+        $this->payload->put('product_id', $this->data->id);
+        $this->payload->put('with_invisible', 1);
     }
 
     /**

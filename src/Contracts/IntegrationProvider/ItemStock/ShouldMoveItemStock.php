@@ -12,5 +12,5 @@ interface ShouldMoveItemStock extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getMovement(): StockMovementData;
+    public function get(): StockMovementData;
 }

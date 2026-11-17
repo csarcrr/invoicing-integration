@@ -27,7 +27,7 @@ test('handles invoice response correctly', function (Provider $provider, string 
         'payments' => [PaymentData::make(['method' => PaymentMethod::MB, 'amount' => 1000])],
     ]));
 
-    $invoice = $invoice->execute()->getInvoice();
+    $invoice = $invoice->execute()->get();
 
     expect($invoice->id)->toBeInt()
         ->and($invoice->sequence)->toBeString()
@@ -46,7 +46,7 @@ test('fills the sequence and totals from the provider response', function (Provi
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
-    ]))->execute()->getInvoice();
+    ]))->execute()->get();
 
     expect($invoice->total)->toBe(3000)
         ->and($invoice->totalNet)->toBe(2439);
@@ -63,7 +63,7 @@ test('returns the atcud of the created invoice', function (Provider $provider, s
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
-    ]))->execute()->getInvoice();
+    ]))->execute()->get();
 
     expect($invoice->atcud)->toBe('INVALIDO-1');
 })->with('providers', ['full']);
@@ -74,7 +74,7 @@ test('does not keep the provider document lines as additional data', function (P
     $invoice = Invoice::create(InvoiceData::make([
         'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'reference-1'])],
-    ]))->execute()->getInvoice();
+    ]))->execute()->get();
 
     expect($invoice->getAdditionalData())->not->toHaveKeys(['products', 'items']);
 })->with('providers', ['full']);
@@ -159,7 +159,7 @@ test('records the credit note payments as a refund', function (Provider $provide
         ])],
         'payments' => [PaymentData::from(['method' => PaymentMethod::MONEY, 'amount' => 1000])],
         'creditNoteReason' => 'Broken product',
-    ]))->execute()->getInvoice();
+    ]))->execute()->get();
 
     match ($provider) {
         Provider::CEGID_VENDUS => Http::assertSent(fn (Request $request) => Str::contains($request->url(), 'documents')

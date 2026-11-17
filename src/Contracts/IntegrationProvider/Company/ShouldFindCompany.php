@@ -15,5 +15,5 @@ interface ShouldFindCompany extends ShouldExecute
     /**
      * @return Collection<int, CompanyData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 }

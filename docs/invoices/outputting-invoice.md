@@ -27,7 +27,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Save the PDF
 if ($result->output) {
@@ -74,7 +74,7 @@ matches the provider requirements.
 Sometimes the provider might not return output data (rare, but possible). Always check before saving:
 
 ```php
-$result = $invoice->execute()->getInvoice();
+$result = $invoice->execute()->get();
 
 if (! $result->output) {
     // Log for investigation
@@ -95,7 +95,7 @@ $result->output->save('invoices/' . $result->output->fileName);
 Save with custom paths or filenames:
 
 ```php
-$result = $invoice->execute()->getInvoice();
+$result = $invoice->execute()->get();
 $output = $result->output;
 
 if ($output) {
@@ -119,7 +119,7 @@ Use `Invoice::pdf()` to fetch the PDF of a document already stored in the provid
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
-$output = Invoice::pdf(InvoiceData::make(['id' => 123]))->execute()->getOutput();
+$output = Invoice::pdf(InvoiceData::make(['id' => 123]))->execute()->get();
 
 $output->content; // base64-encoded PDF; null when the provider did not return the file (Moloni)
 $output->format;  // OutputFormat::PDF_BASE64
@@ -182,7 +182,7 @@ $invoiceData = InvoiceData::make([
     ]),
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 if ($result->output) {
     // Save the ESC/POS data
@@ -241,7 +241,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Store in your database
 $order = Order::find($orderId);

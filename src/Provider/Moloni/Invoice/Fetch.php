@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldGetInvoice;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldFetchInvoice;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
@@ -19,7 +19,7 @@ use function collect;
 use function is_int;
 use function throw_if;
 
-class Get extends Invoice implements ShouldGetInvoice
+class Fetch extends Invoice implements ShouldFetchInvoice
 {
     use DetectsNoData;
 
@@ -34,6 +34,11 @@ class Get extends Invoice implements ShouldGetInvoice
 
         $this->buildUrl();
         $this->buildPayload();
+    }
+
+    public function get(): InvoiceData
+    {
+        return $this->data;
     }
 
     public function execute(): self

@@ -54,7 +54,7 @@ class Find extends DocumentType implements ShouldFindDocumentType
     /**
      * @return Collection<int, DocumentTypeData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

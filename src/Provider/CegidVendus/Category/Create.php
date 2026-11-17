@@ -45,7 +45,7 @@ class Create extends Category implements ShouldCreateCategory
         return $this->payload;
     }
 
-    public function getCategory(): CategoryData
+    public function get(): CategoryData
     {
         return $this->data;
     }

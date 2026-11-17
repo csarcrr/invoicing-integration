@@ -145,7 +145,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$invoice = Invoice::create($invoiceData)->execute()->getInvoice();
+$invoice = Invoice::create($invoiceData)->execute()->get();
 
 if ($invoice->output) {
     $invoice->output->save('invoices/' . $invoice->output->fileName());
@@ -193,10 +193,10 @@ $client = Client::create(
         'postalCode' => '4100-000',
         'country' => 'PT',
     ])
-)->execute()->getClient();
+)->execute()->get();
 
 // Retrieve the customer later by their provider ID
-$fetched = Client::get(ClientData::make(['id' => $client->id]))->execute()->getClient();
+$fetched = Client::fetch(ClientData::make(['id' => $client->id]))->execute()->get();
 
 // Search for customers by email domain
 $filters = ClientData::make(['email' => 'techstore.pt']);

@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Item;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Data\ItemData;
 use Illuminate\Support\Collection;
 
 interface ShouldFindItem extends ShouldExecute, ShouldHavePagination, ShouldHavePayload
@@ -17,7 +16,5 @@ interface ShouldFindItem extends ShouldExecute, ShouldHavePagination, ShouldHave
     /**
      * @return Collection<int, mixed>
      */
-    public function getList(): Collection;
-
-    public function getItem(): ItemData;
+    public function get(): Collection;
 }

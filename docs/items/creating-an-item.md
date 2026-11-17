@@ -15,7 +15,7 @@ $item = ItemData::make([
     'price' => 5000, // €50.00 (in cents)
 ]);
 
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 echo $created->id; // provider-assigned ID
 ```
@@ -44,7 +44,7 @@ $item = ItemData::make([
     'enabled'      => true,
 ]);
 
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 ```
 
 ## Available fields
@@ -138,10 +138,10 @@ $item = ItemData::make([
 
 ## Accessing the result
 
-After `execute()`, `getItem()` returns the created item as the provider stored it, mapped like [`Item::get()`](getting-an-item.md). Fields you did not set hold the provider's values, such as a generated `reference` on Cegid Vendus.
+After `execute()`, `get()` returns the created item as the provider stored it, mapped like [`Item::fetch()`](getting-an-item.md). Fields you did not set hold the provider's values, such as a generated `reference` on Cegid Vendus.
 
 ```php
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 $created->id;        // provider-assigned ID
 $created->name;      // item name
@@ -158,7 +158,7 @@ $created->enabled;   // whether the item is active
 The provider response may contain fields that the package does not explicitly map onto `ItemData`. Those fields are stored as additional data on the DTO and can be accessed via `getAdditionalData()`:
 
 ```php
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 $created->getAdditionalData(); // fields from the provider response not handled by the package
 ```
@@ -170,7 +170,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUni
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $created = Item::create($item)->execute()->getItem();
+    $created = Item::create($item)->execute()->get();
 } catch (CouldNotGetUnitIdException $e) {
     // Unit not mapped in config
     Log::error('Unit configuration missing', ['message' => $e->getMessage()]);

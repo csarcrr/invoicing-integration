@@ -30,7 +30,7 @@ $item = ItemData::make([
     'enabled'      => true,
 ]);
 
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 echo $created->id; // provider-assigned ID
 ```

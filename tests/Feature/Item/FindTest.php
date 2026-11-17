@@ -26,8 +26,8 @@ test('getting list of items returns expected instances', function (Provider $pro
 
     $results = Item::find($this->filters)->execute();
 
-    expect($results->getList())->toBeInstanceOf(Collection::class)
-        ->and($results->getList()->first())->toBeInstanceOf(ItemData::class);
+    expect($results->get())->toBeInstanceOf(Collection::class)
+        ->and($results->get()->first())->toBeInstanceOf(ItemData::class);
 })->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {
@@ -82,7 +82,7 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList()->count())->toBe(2);
+        ->and($results->get()->count())->toBe(2);
 })->with('providers', ['response_multiple']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
@@ -100,7 +100,7 @@ test('can go to the next page and then go back', function (Provider $provider, s
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList()->count())->toBe(5);
+        ->and($results->get()->count())->toBe(5);
 })->with('providers', ['response_multiple']);
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
@@ -129,7 +129,7 @@ test('maps the vendus items onto the item list', function () {
 
     Http::fake(mockResponse(fixtures()->response()->item()->files('response_multiple')));
 
-    $list = Item::find()->execute()->getList();
+    $list = Item::find()->execute()->get();
 
     expect($list)->toHaveCount(3)
         ->and($list->first()->id)->toBe(1001)
@@ -156,7 +156,7 @@ test('maps the moloni products onto the item list', function () {
 
     Http::fake(mockResponse(fixtures()->response()->item()->files('response_multiple')));
 
-    $list = Item::find($this->filters)->execute()->getList();
+    $list = Item::find($this->filters)->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first()->id)->toBe(1542)
@@ -190,7 +190,7 @@ test('maps a moloni tax by its configured tax id when finding items', function (
 
     $results = Item::find($this->filters)->execute();
 
-    expect($results->getList()->first()->tax)->toBe(ItemTax::EXEMPT);
+    expect($results->get()->first()->tax)->toBe(ItemTax::EXEMPT);
 });
 
 test('maps the tax exemption of exempt items when finding items', function (Provider $provider, string $fixtureName) {
@@ -203,7 +203,7 @@ test('maps the tax exemption of exempt items when finding items', function (Prov
 
     Http::fake(mockResponse($response));
 
-    $item = Item::find($this->filters)->execute()->getList()->first();
+    $item = Item::find($this->filters)->execute()->get()->first();
 
     expect($item->tax)->toBe(ItemTax::EXEMPT)
         ->and($item->taxExemptionReason)->toBe('M01');
@@ -216,7 +216,7 @@ test('returns an empty list when cegid vendus finds no items', function () {
 
     $results = Item::find(ItemData::make(['reference' => 'missing']))->execute();
 
-    expect($results->getList())->toBeEmpty();
+    expect($results->get())->toBeEmpty();
 });
 
 test('fails when cegid vendus answers 404 with an error other than no data', function () {

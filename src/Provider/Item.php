@@ -22,14 +22,6 @@ abstract class Item extends Base
      */
     abstract public function getConfig(): Collection;
 
-    /**
-     * Returns the current item DTO after an operation has been executed.
-     */
-    public function getItem(): ItemData
-    {
-        return $this->data;
-    }
-
     protected function toUnit(mixed $unitId): ?Unit
     {
         if (empty($unitId)) {

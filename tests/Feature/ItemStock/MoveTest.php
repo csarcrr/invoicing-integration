@@ -14,7 +14,7 @@ test('moves stock', function (Provider $provider) {
 
     $result = ItemStock::move(StockMovementData::make(['itemId' => 1542, 'quantity' => -5]))->execute();
 
-    expect($result->getMovement()->id)->toBe(match ($provider) {
+    expect($result->get()->id)->toBe(match ($provider) {
         Provider::CEGID_VENDUS => null,
         Provider::MOLONI => 777,
     });

@@ -6,18 +6,18 @@ namespace CsarCrr\InvoicingIntegration\Actions;
 
 use CsarCrr\InvoicingIntegration\Configuration\ProviderConfigurationService;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldCreateCategory;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFetchCategory;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldFindCategory;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldGetCategory;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category\ShouldUpdateCategory;
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Category\Create as VendusCreate;
+use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Category\Fetch as VendusFetch;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Category\Find as VendusFind;
-use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Category\Get as VendusGet;
 use CsarCrr\InvoicingIntegration\Provider\CegidVendus\Category\Update as VendusUpdate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Category\Create as MoloniCreate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Category\Fetch as MoloniFetch;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Category\Find as MoloniFind;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Category\Get as MoloniGet;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Category\Update as MoloniUpdate;
 
 final class CategoryAction
@@ -34,11 +34,11 @@ final class CategoryAction
         };
     }
 
-    public function get(CategoryData $category): ShouldGetCategory
+    public function fetch(CategoryData $category): ShouldFetchCategory
     {
         return match ($this->provider->getProvider()) {
-            Provider::CEGID_VENDUS => new VendusGet($category),
-            Provider::MOLONI => new MoloniGet($category),
+            Provider::CEGID_VENDUS => new VendusFetch($category),
+            Provider::MOLONI => new MoloniFetch($category),
         };
     }
 

@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Facades\Category;
 
 $results = Category::find()->execute();
 
-foreach ($results->getList() as $category) {
+foreach ($results->get() as $category) {
     $category->id;
     $category->name;
     $category->parentId; // null for a top-level category and on Cegid Vendus
@@ -19,7 +19,7 @@ foreach ($results->getList() as $category) {
 $subcategories = Category::find(CategoryData::make(['parentId' => 10]))->execute();
 ```
 
-- `getList()` returns a `Collection` of `CategoryData` instances.
+- `get()` returns a `Collection` of `CategoryData` instances.
 - `parentId` lists the subcategories of that category. Without it, the top-level categories are listed.
 
 ## Pagination
@@ -28,7 +28,7 @@ $subcategories = Category::find(CategoryData::make(['parentId' => 10]))->execute
 
 ## Cegid Vendus
 
-The request is sent to `GET products/categories` with `page`. Cegid Vendus categories have no hierarchy, so `parentId` is not sent and is always `null` in the results. `getTotalPages()` reads the `X-Paginator-Pages` header. When Cegid Vendus reports no data, `getList()` is empty.
+The request is sent to `GET products/categories` with `page`. Cegid Vendus categories have no hierarchy, so `parentId` is not sent and is always `null` in the results. `getTotalPages()` reads the `X-Paginator-Pages` header. When Cegid Vendus reports no data, `get()` is empty.
 
 Each row is mapped as:
 

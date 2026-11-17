@@ -8,14 +8,14 @@ Use `Unit::create()` to create a unit in the provider.
 use CsarCrr\InvoicingIntegration\Data\UnitData;
 use CsarCrr\InvoicingIntegration\Facades\Unit;
 
-$unit = Unit::create(UnitData::make(['name' => 'Kilograma', 'shortName' => 'Kg']))->execute()->getUnit();
+$unit = Unit::create(UnitData::make(['name' => 'Kilograma', 'shortName' => 'Kg']))->execute()->get();
 
 $unit->id;
 $unit->name;
 $unit->shortName; // null on Cegid Vendus
 ```
 
-- `getUnit()` returns the `UnitData` with the provider-assigned `id`.
+- `get()` returns the `UnitData` with the provider-assigned `id`.
 - When the provider does not create the unit, `execute()` throws `RequestFailedException` with the provider's error message.
 
 ## Cegid Vendus

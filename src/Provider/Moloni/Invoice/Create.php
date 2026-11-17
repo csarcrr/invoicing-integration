@@ -25,7 +25,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentM
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as FindClient;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Fetch as FetchCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
@@ -56,6 +56,11 @@ class Create extends Invoice implements ShouldCreateInvoice
         $this->data = $invoice;
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Invoice);
+    }
+
+    public function get(): InvoiceData
+    {
+        return $this->data;
     }
 
     /**
@@ -181,7 +186,7 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         $client = (new FindClient(ClientData::from(['vat' => $vat])))
             ->execute()
-            ->getList()
+            ->get()
             ->first(fn (ClientData $found) => ! ($found->vat instanceof Optional) && (string) $found->vat === (string) $vat);
 
         throw_if(is_null($client), CouldNotFindCustomerByVatException::class);
@@ -315,7 +320,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             return;
         }
 
-        $paymentMethods = (new FindPaymentMethod)->execute()->getList();
+        $paymentMethods = (new FindPaymentMethod)->execute()->get();
 
         $payments = $this->data->payments->map(function (PaymentData $payment) use ($paymentMethods): array {
             $method = $payment->method;
@@ -385,7 +390,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'delivery_destination_country' => $transport->destination->country,
         ])
             ->filter(fn (?string $iso) => ! is_null($iso))
-            ->map(fn (string $iso) => (new GetCountry(CountryData::from(['iso' => $iso])))->execute()->getCountry()->id);
+            ->map(fn (string $iso) => (new FetchCountry(CountryData::from(['iso' => $iso])))->execute()->get()->id);
 
         $this->payload = $this->payload->merge($delivery)->merge($countries);
     }

@@ -18,15 +18,15 @@ $clientData = ClientData::make([
     'email' => 'invoices@techstore.pt',
 ]);
 
-$client = Client::update($clientData)->execute()->getClient();
+$client = Client::update($clientData)->execute()->get();
 ```
 
 > [!NOTE]
-> On Moloni, `getClient()` returns the `ClientData` you passed in, because Moloni does not return the client. The Moloni `valid` and `customer_id` values are in `getAdditionalData()`. On Cegid Vendus, `getClient()` returns the client as stored after the update.
+> On Moloni, `get()` returns the `ClientData` you passed in, because Moloni does not return the client. The Moloni `valid` and `customer_id` values are in `getAdditionalData()`. On Cegid Vendus, `get()` returns the client as stored after the update.
 
 ## Requirements
 
-The `id` property is **required** when updating a client. It is the provider client id: the Moloni `customer_id` or the Cegid Vendus client id, the one `Client::get()` expects.
+The `id` property is **required** when updating a client. It is the provider client id: the Moloni `customer_id` or the Cegid Vendus client id, the one `Client::fetch()` expects.
 
 ```php
 // This will throw an InvalidArgumentException
@@ -69,12 +69,12 @@ On Moloni, the update sends only the fields you set, as `Client::create()` does.
 - `name`, `vat`, `address` and `city` are required, as on create. A missing one throws `MissingClientDataException` before the request.
 - `reference` is sent as the Moloni customer `number`. Moloni requires it, and the package does not generate one. Without `reference`, no `number` is sent.
 - Moloni ignores changes to `vat` and `number` once a document references the client.
-- The response has no client body. `getClient()` returns the `ClientData` you passed in, with the `valid` and `customer_id` values in `getAdditionalData()`.
+- The response has no client body. `get()` returns the `ClientData` you passed in, with the `valid` and `customer_id` values in `getAdditionalData()`.
 
 ## Cegid Vendus
 
 - `status` is sent only when you set it.
-- `getClient()` returns the stored client, the same as `Client::get()`.
+- `get()` returns the stored client, the same as `Client::fetch()`.
 
 ## Error Handling
 
@@ -83,7 +83,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $client = Client::update($clientData)->execute()->getClient();
+    $client = Client::update($clientData)->execute()->get();
 } catch (UnauthorizedException $e) {
     // Invalid API credentials - check your .env
     Log::error('Invalid API credentials', ['error' => $e->getMessage()]);
@@ -96,7 +96,7 @@ try {
 
 ---
 
-Keep the provider-assigned `id` with your customer record, so you can update the client later. Use `Client::get()` to read the stored client before you change it.
+Keep the provider-assigned `id` with your customer record, so you can update the client later. Use `Client::fetch()` to read the stored client before you change it.
 
 ---
 

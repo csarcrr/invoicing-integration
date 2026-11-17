@@ -17,7 +17,7 @@ test('returns the invoice pdf content and the provider pdf url', function (Provi
         ],
     });
 
-    $output = Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute()->getOutput();
+    $output = Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect(base64_decode($output->content))->toBe('%PDF-1.7 test')
         ->and($output->format)->toBe(OutputFormat::PDF_BASE64);
@@ -38,7 +38,7 @@ test('falls back to the pdf url when the provider download does not return a pdf
         'www.moloni.pt/downloads/index.php*' => mockResponse('<html></html>', 200, ['Content-Type' => 'text/html']),
     ]);
 
-    $output = Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute()->getOutput();
+    $output = Invoice::pdf(InvoiceData::from(['id' => 123456]))->execute()->get();
 
     expect($output->content)->toBeNull()
         ->and($output->url)->toBe('https://www.moloni.pt/downloads/?h=abc.def.ghi');

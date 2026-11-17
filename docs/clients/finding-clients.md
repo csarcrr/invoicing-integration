@@ -12,7 +12,7 @@ Use `find()` when you need to:
 - Audit existing provider records before creating duplicates
 - Sync clients from the provider back into your application
 
-If you already know the provider ID, prefer `Client::get()` for a direct lookup.
+If you already know the provider ID, prefer `Client::fetch()` for a direct lookup.
 
 ## Basic Usage
 
@@ -22,17 +22,17 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 $results = Client::find()->execute();
 
-foreach ($results->getList() as $client) {
+foreach ($results->get() as $client) {
     // do stuff
 }
 ```
 
-- `getList()` returns a `Collection` of `ClientData` instances populated by
+- `get()` returns a `Collection` of `ClientData` instances populated by
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
 - On Cegid Vendus, each returned client has the same fields as a client from
-  `Client::get()`, except `date` and `defaultPayDue`, which the list does not return.
+  `Client::fetch()`, except `date` and `defaultPayDue`, which the list does not return.
 - Returned clients do not carry `getAdditionalData()`.
 
 ## Filtering by Email
@@ -69,7 +69,7 @@ $results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
 
 - Other filters (`status`, `date`) are ignored. `reference` is only sent when `vat` and `email` are not set, and `name` only when `reference` is not set.
 - Each returned client has `id` set to the Moloni `customer_id`, ready for
-  `Client::get()`.
+  `Client::fetch()`.
 
 ## Searching on Cegid Vendus
 
@@ -101,7 +101,7 @@ the `HasPaginator` trait.
 ```php
 $results = Client::find()->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     if ($results->getCurrentPage() === $results->getTotalPages()) {
@@ -130,8 +130,8 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 $filters = ClientData::make(['email' => 'billing@example.com']);
 $clients = Client::find($filters)->execute();
 
-while ($clients->getList()->isNotEmpty()) {
-    foreach ($clients->getList() as $client) {
+while ($clients->get()->isNotEmpty()) {
+    foreach ($clients->get() as $client) {
         // do stuff
     }
 

@@ -14,7 +14,7 @@ use CsarCrr\InvoicingIntegration\Facades\DueDate;
 $dueDate = DueDate::create(DueDateData::make([
     'name' => '30 dias',
     'days' => 30,
-]))->execute()->getDueDate();
+]))->execute()->get();
 
 echo $dueDate->id; // provider-assigned ID
 ```

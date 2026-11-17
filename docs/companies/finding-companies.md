@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Facades\Company;
 
 $results = Company::find()->execute();
 
-foreach ($results->getList() as $company) {
+foreach ($results->get() as $company) {
     $company->id;
     $company->name;
     $company->vat;
 }
 ```
 
-- `getList()` returns a `Collection` of `CompanyData` instances.
+- `get()` returns a `Collection` of `CompanyData` instances.
 - `Company::find()` takes no filters and has no pagination: the provider returns every company in one response.
 
 ## Moloni

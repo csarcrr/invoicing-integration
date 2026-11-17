@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 test('maps the created unit onto UnitData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->unit()->files('create')));
 
-    $unit = Unit::create(UnitData::make(['name' => 'Kilograma', 'shortName' => 'Kg']))->execute()->getUnit();
+    $unit = Unit::create(UnitData::make(['name' => 'Kilograma', 'shortName' => 'Kg']))->execute()->get();
 
     expect($unit)->toBeInstanceOf(UnitData::class)
         ->and($unit->id)->toBe(29999)

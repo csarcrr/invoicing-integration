@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Facades\Warehouse;
 
 $results = Warehouse::find()->execute();
 
-foreach ($results->getList() as $warehouse) {
+foreach ($results->get() as $warehouse) {
     $warehouse->id;
     $warehouse->name;
     $warehouse->getAdditionalData(); // the other fields the provider returns
 }
 ```
 
-- `getList()` returns a `Collection` of `WarehouseData` instances.
+- `get()` returns a `Collection` of `WarehouseData` instances.
 - `Warehouse::find()` takes no filters and has no pagination: the provider returns every warehouse in one response.
 - The extra fields the provider returns are kept as additional data, read with `getAdditionalData()`.
 
@@ -29,7 +29,7 @@ The request is sent to `GET stores`. On Cegid Vendus, a store is a record tied t
 | `id`               | `id`            |
 | `title`            | `name`          |
 
-Every other field, such as `type`, `address` or `status`, is available through `getAdditionalData()`. When Cegid Vendus reports no data, `getList()` is empty.
+Every other field, such as `type`, `address` or `status`, is available through `getAdditionalData()`. When Cegid Vendus reports no data, `get()` is empty.
 
 ## Moloni
 

@@ -54,7 +54,7 @@ class Find extends TaxExemption implements ShouldFindTaxExemption
     /**
      * @return Collection<int, TaxExemptionData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

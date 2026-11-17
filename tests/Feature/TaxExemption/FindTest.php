@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 test('maps the provider response onto a list of TaxExemptionData', function () {
     Http::fake(mockResponse(fixtures()->response()->taxExemption()->files('response_multiple')));
 
-    $list = TaxExemption::find()->execute()->getList();
+    $list = TaxExemption::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(TaxExemptionData::class)
@@ -24,7 +24,7 @@ test('maps the provider response onto a list of TaxExemptionData', function () {
 test('keeps the extra response fields as additional data', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->taxExemption()->files('response_multiple')));
 
-    $taxExemption = TaxExemption::find()->execute()->getList()->first();
+    $taxExemption = TaxExemption::find()->execute()->get()->first();
 
     expect($taxExemption->getAdditionalData())->toMatchArray(match ($provider) {
         Provider::CEGID_VENDUS => ['law' => ['Artigo 9.º do CIVA']],
@@ -35,7 +35,7 @@ test('keeps the extra response fields as additional data', function (Provider $p
 test('returns an empty list when the provider has no tax exemptions', function () {
     Http::fake(mockResponse([]));
 
-    expect(TaxExemption::find()->execute()->getList())->toBeEmpty();
+    expect(TaxExemption::find()->execute()->get())->toBeEmpty();
 })->with('providers');
 
 test('returns an empty list when Cegid Vendus reports no data', function () {
@@ -43,5 +43,5 @@ test('returns an empty list when Cegid Vendus reports no data', function () {
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
-    expect(TaxExemption::find()->execute()->getList())->toBeEmpty();
+    expect(TaxExemption::find()->execute()->get())->toBeEmpty();
 });

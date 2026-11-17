@@ -60,7 +60,7 @@ class Find implements ShouldFindPaymentMethod
     /**
      * @return Collection<int, PaymentMethodData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

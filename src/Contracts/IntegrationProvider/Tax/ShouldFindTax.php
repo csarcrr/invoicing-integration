@@ -15,5 +15,5 @@ interface ShouldFindTax extends ShouldExecute
     /**
      * @return Collection<int, TaxData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 }

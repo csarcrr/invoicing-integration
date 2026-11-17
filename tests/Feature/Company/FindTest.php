@@ -16,7 +16,7 @@ beforeEach(function () {
 test('maps the provider response onto a list of CompanyData', function () {
     Http::fake(mockResponse(fixtures()->response()->company()->files('response_multiple')));
 
-    $list = Company::find()->execute()->getList();
+    $list = Company::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(CompanyData::class)
@@ -37,5 +37,5 @@ test('sends the request to the companies endpoint', function () {
 test('returns an empty list when the user has no companies', function () {
     Http::fake(mockResponse([]));
 
-    expect(Company::find()->execute()->getList())->toBeEmpty();
+    expect(Company::find()->execute()->get())->toBeEmpty();
 });

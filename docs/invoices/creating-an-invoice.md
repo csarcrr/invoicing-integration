@@ -27,7 +27,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 This creates an **FR (Invoice-Receipt)** document for a final consumer.
@@ -79,7 +79,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 if ($result->output) {
     $result->output->save('invoices/' . $result->output->fileName);
@@ -167,7 +167,7 @@ $item = ItemData::make([
 ]);
 
 // Tax-exempt item (e.g., educational materials)
-$exemption = TaxExemption::find()->execute()->getList()->firstWhere('code', 'M04');
+$exemption = TaxExemption::find()->execute()->get()->firstWhere('code', 'M04');
 
 $items[] = ItemData::make([
     'reference' => 'TEXTBOOK-MATH',
@@ -341,7 +341,7 @@ $invoiceData = InvoiceData::make([
 Call `asDraft()` before `execute()` to create the document as a draft instead of issuing it:
 
 ```php
-$result = Invoice::create($invoiceData)->asDraft()->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->asDraft()->execute()->get();
 ```
 
 Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `asDraft()` and always issues the document.
@@ -426,7 +426,7 @@ $invoiceData = InvoiceData::make([
     'notes' => 'Order #12345 - Priority shipping requested',
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 if ($result->output) {
     $pdfPath = $result->output->save('invoices/' . $result->output->fileName);

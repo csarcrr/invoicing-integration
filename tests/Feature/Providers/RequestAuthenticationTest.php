@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 it('authenticates the provider requests', function (Provider $provider) {
-    Http::fake(mockResponse(fixtures()->response()->item()->files('get')));
+    Http::fake(mockResponse(fixtures()->response()->item()->files('fetch')));
 
-    Item::get(ItemData::make(['id' => 123]))->execute();
+    Item::fetch(ItemData::make(['id' => 123]))->execute();
 
     Http::assertSent(fn (Request $request) => match ($provider) {
         Provider::CEGID_VENDUS => $request->hasHeader('Authorization', 'Bearer test-api-key'),

@@ -45,7 +45,7 @@ class Find extends Warehouse implements ShouldFindWarehouse
     /**
      * @return Collection<int, WarehouseData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

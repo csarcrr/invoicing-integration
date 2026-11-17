@@ -7,7 +7,7 @@ A company is a business the provider account has access to. On Moloni one user c
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Company;
 
-$companies = Company::find()->execute()->getList();
+$companies = Company::find()->execute()->get();
 
 foreach ($companies as $company) {
     echo $company->id.' '.$company->name;

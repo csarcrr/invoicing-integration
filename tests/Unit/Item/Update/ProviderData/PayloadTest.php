@@ -156,7 +156,7 @@ it('does not send moloni read-only or nested fields', function () {
 it('carries the moloni visibility so a hidden product stays hidden', function () {
     mockConfiguration(Provider::MOLONI);
 
-    $current = [...fixtures()->response()->item()->files('get'), 'visibility_id' => 0];
+    $current = [...fixtures()->response()->item()->files('fetch'), 'visibility_id' => 0];
 
     Http::fakeSequence()
         ->pushResponse(mockResponse($current))
@@ -169,7 +169,7 @@ it('carries the moloni visibility so a hidden product stays hidden', function ()
 
 it('reduces the moloni suppliers and properties to their documented keys', function () {
     mockConfiguration(Provider::MOLONI);
-    fakeItemUpdate(Provider::MOLONI, 'get_with_relations');
+    fakeItemUpdate(Provider::MOLONI, 'fetch_with_relations');
 
     $payload = Item::update(ItemData::make(['id' => 1542]))->getPayload();
 

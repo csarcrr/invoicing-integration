@@ -60,7 +60,7 @@ class Find implements ShouldFindCategory
     /**
      * @return Collection<int, CategoryData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

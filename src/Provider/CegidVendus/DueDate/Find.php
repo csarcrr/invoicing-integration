@@ -60,7 +60,7 @@ class Find extends DueDate implements ShouldFindDueDate
     /**
      * @return Collection<int, DueDateData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

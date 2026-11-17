@@ -13,7 +13,7 @@ test('a client get request is successful', function (Provider $provider, string 
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute()->getClient();
+    $data = Client::fetch($client)->execute()->get();
 
     expect($data->name)->toBeString()
         ->and($data->email)->toBeString()
@@ -32,7 +32,7 @@ test('supported properties are not filled in additional data', function (Provide
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute()->getClient();
+    $data = Client::fetch($client)->execute()->get();
 
     expect($data->getAdditionalData())
         ->not->toHaveKey('postalCode')
@@ -45,7 +45,7 @@ test('unsupported properties are kept in additional data', function (Provider $p
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute()->getClient();
+    $data = Client::fetch($client)->execute()->get();
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($data->getAdditionalData())->toHaveKey('balance'),
@@ -58,7 +58,7 @@ test('client get returns the id as a string and the default pay due as a due dat
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute()->getClient();
+    $data = Client::fetch($client)->execute()->get();
 
     match ($provider) {
         Provider::CEGID_VENDUS => expect($data->id)->toBe('99999')
@@ -73,7 +73,7 @@ test('reference and status are mapped properties', function (Provider $provider,
 
     $client = ClientData::from(['id' => 999999]);
 
-    $data = Client::get($client)->execute()->getClient();
+    $data = Client::fetch($client)->execute()->get();
 
     expect($data->reference)->toBe('AB892798/19');
 
@@ -94,7 +94,7 @@ test('cegid vendus client get maps a default pay due of now to the zero day term
 
     Http::fake(mockResponse(['id' => 99999, 'default_pay_due' => 'now']));
 
-    $data = Client::get(ClientData::from(['id' => 99999]))->execute()->getClient();
+    $data = Client::fetch(ClientData::from(['id' => 99999]))->execute()->get();
 
     expect($data->defaultPayDue)->toBe(DueDateTerm::Days0);
 });
@@ -105,5 +105,5 @@ it('fails when the provider has no client with the id', function (Provider $prov
         Provider::MOLONI => mockResponse([]),
     });
 
-    Client::get(ClientData::from(['id' => '999999']))->execute();
+    Client::fetch(ClientData::from(['id' => '999999']))->execute();
 })->with('providers')->throws(RequestFailedException::class);

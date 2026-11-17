@@ -15,7 +15,7 @@ it('has pdf has the default output', function (Provider $provider) {
         'type' => InvoiceType::Invoice,
     ]));
 
-    expect($invoice->getInvoice()->output->format)->toBe(OutputFormat::PDF_BASE64);
+    expect($invoice->get()->output->format)->toBe(OutputFormat::PDF_BASE64);
 })->with('providers');
 
 it('transforms to provider payload with pdf output format', function (Provider $provider, string $fixtureName) {

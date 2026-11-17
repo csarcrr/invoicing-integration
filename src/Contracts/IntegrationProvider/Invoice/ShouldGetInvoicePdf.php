@@ -12,7 +12,7 @@ interface ShouldGetInvoicePdf extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getOutput(): OutputData;
+    public function get(): OutputData;
 
     public function getUrl(): string;
 }

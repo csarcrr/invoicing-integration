@@ -15,5 +15,5 @@ interface ShouldFindUnit extends ShouldExecute
     /**
      * @return Collection<int, UnitData>
      */
-    public function getList(): Collection;
+    public function get(): Collection;
 }

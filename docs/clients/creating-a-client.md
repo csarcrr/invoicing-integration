@@ -14,7 +14,7 @@ $clientData = ClientData::make([
     'email' => 'invoices@techstore.pt',
 ]);
 
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 // Store the provider ID for future orders
 $providerClientId = $client->id; // e.g., 12345
@@ -94,7 +94,7 @@ $clientData = ClientData::make([
 - `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
 - Moloni requires `number` (`reference`), `name`, `vat`, `address`, `city`, `country_id` (`country`), `language_id` (`language`), `maturity_date_id` (`defaultPayDue`) and `payment_method_id` (`paymentMethodId`) on create, per the Moloni `customers/insert` documentation. The package sends only the fields you set, so when you leave one of them out, Moloni's error reaches you as `RequestFailedException`.
 - `reference` is sent as the Moloni customer `number`. Moloni requires it on create, and the package does not generate one: without `reference`, no `number` is sent and Moloni rejects the request. `id` is not used for it.
-- After `execute()`, `id` holds the Moloni `customer_id`, the one `Client::get()` expects.
+- After `execute()`, `id` holds the Moloni `customer_id`, the one `Client::fetch()` expects.
 - Moloni stores at most 20 characters of the `number` and cuts a longer one without an error. The returned `reference` keeps the full value, so it no longer matches the stored number and `Client::find()` by that `reference` returns nothing.
 - `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, no lookup runs and no `country_id` is sent. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
 - `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, no lookup runs and no `language_id` is sent. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
@@ -132,7 +132,7 @@ $clientData = ClientData::make([
 ]);
 
 // Register with the invoicing provider
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 // Store in your database for future reference
 $customer = new Customer();
@@ -173,7 +173,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Option 1: Create and immediately use
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
@@ -187,11 +187,11 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Option 2: Use stored client ID later
 $storedClientId = $customer->provider_client_id;
-$client = Client::get(ClientData::make(['id' => $storedClientId]))->execute()->getClient();
+$client = Client::fetch(ClientData::make(['id' => $storedClientId]))->execute()->get();
 
 $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
@@ -217,9 +217,9 @@ $clientData = ClientData::make([
 ]);
 
 try {
-    $client = Client::create($clientData)->execute()->getClient();
+    $client = Client::create($clientData)->execute()->get();
 } catch (RequestFailedException $e) {
-    $client = Client::find(ClientData::make(['vat' => '509876543']))->execute()->getList()->first();
+    $client = Client::find(ClientData::make(['vat' => '509876543']))->execute()->get()->first();
 
     throw_if(is_null($client), $e);
 }
@@ -232,7 +232,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $client = Client::create($clientData)->execute()->getClient();
+    $client = Client::create($clientData)->execute()->get();
 } catch (UnauthorizedException $e) {
     // Invalid API credentials - check your .env
     Log::error('Invalid API credentials', ['error' => $e->getMessage()]);

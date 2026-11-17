@@ -7,7 +7,7 @@ A category is an account-level record stored in the provider (for example "Produ
 ```php
 use CsarCrr\InvoicingIntegration\Facades\Category;
 
-foreach (Category::find()->execute()->getList() as $category) {
+foreach (Category::find()->execute()->get() as $category) {
     echo $category->id.' '.$category->name;
 }
 ```

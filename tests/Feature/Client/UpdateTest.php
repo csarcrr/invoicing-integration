@@ -20,7 +20,7 @@ test('returns the updated client', function (Provider $provider, string $respons
         'vat' => '223098091',
         'address' => 'Rua das Flores 125',
         'city' => 'Porto',
-    ]))->execute()->getClient();
+    ]))->execute()->get();
 
     expect($data->id)->toBe('99999')
         ->and($data->name)->toBe('Alberto Albertino')

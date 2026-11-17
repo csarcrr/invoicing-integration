@@ -15,9 +15,9 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguage
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Client;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Fetch as FetchCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get as GetLanguage;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Fetch as FetchLanguage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
@@ -35,6 +35,11 @@ class Create extends Client implements ShouldCreateClient
         $this->data = $client;
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
+    }
+
+    public function get(): ClientData
+    {
+        return $this->data;
     }
 
     /**
@@ -144,7 +149,7 @@ class Create extends Client implements ShouldCreateClient
             return;
         }
 
-        $country = (new GetCountry(CountryData::from(['iso' => $this->data->country])))->execute()->getCountry();
+        $country = (new FetchCountry(CountryData::from(['iso' => $this->data->country])))->execute()->get();
 
         $this->payload->put('country_id', $country->id);
     }
@@ -158,7 +163,7 @@ class Create extends Client implements ShouldCreateClient
             return;
         }
 
-        $this->payload->put('language_id', (new GetLanguage($this->data->language))->execute()->getLanguage()->id);
+        $this->payload->put('language_id', (new FetchLanguage($this->data->language))->execute()->get()->id);
     }
 
     protected function buildMaturityDate(): void

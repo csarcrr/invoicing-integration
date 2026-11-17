@@ -65,7 +65,7 @@ class Find extends Item implements ShouldFindItem
     /**
      * @return Collection<int, ItemData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

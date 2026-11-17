@@ -36,6 +36,11 @@ class Create extends Item implements ShouldCreateItem
         $this->supportedProperties = Provider::CEGID_VENDUS->supportedProperties(Property::Item);
     }
 
+    public function get(): ItemData
+    {
+        return $this->data;
+    }
+
     /**
      * Sends the create request to the Cegid Vendus products endpoint.
      *

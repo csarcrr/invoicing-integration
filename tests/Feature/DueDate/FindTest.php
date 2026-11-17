@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 test('maps the provider response onto a list of DueDateData', function (Provider $provider) {
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
 
-    $list = DueDate::find()->execute()->getList();
+    $list = DueDate::find()->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first())->toBeInstanceOf(DueDateData::class)
@@ -30,7 +30,7 @@ test('keeps the Cegid Vendus key as additional data', function () {
 
     Http::fake(mockResponse(fixtures()->response()->dueDate()->files('response_multiple')));
 
-    $list = DueDate::find()->execute()->getList();
+    $list = DueDate::find()->execute()->get();
 
     expect($list->first()->getAdditionalData())->toMatchArray(['key' => 'now'])
         ->and($list->last()->getAdditionalData())->toMatchArray(['key' => '30']);
@@ -63,12 +63,12 @@ test('can go to the next page and then go back', function () {
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList())->toHaveCount(1);
+        ->and($results->get())->toHaveCount(1);
 
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList())->toHaveCount(2)
+        ->and($results->get())->toHaveCount(2)
         ->and($results->getTotalPages())->toBeNull();
 });
 
@@ -81,5 +81,5 @@ test('returns an empty list when Cegid Vendus reports no data', function () {
 
     Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
 
-    expect(DueDate::find()->execute()->getList())->toBeEmpty();
+    expect(DueDate::find()->execute()->get())->toBeEmpty();
 });

@@ -58,7 +58,7 @@ class Create extends Unit implements ShouldCreateUnit
         return $this->payload;
     }
 
-    public function getUnit(): UnitData
+    public function get(): UnitData
     {
         return $this->data;
     }

@@ -7,9 +7,9 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Category;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Data\CategoryData;
 
-interface ShouldGetCategory extends ShouldExecute
+interface ShouldFetchCategory extends ShouldExecute
 {
     public function execute(): self;
 
-    public function getCategory(): CategoryData;
+    public function get(): CategoryData;
 }

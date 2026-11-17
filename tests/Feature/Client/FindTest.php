@@ -23,8 +23,8 @@ test('getting list of clients returns expected instances', function (Provider $p
 
     $results = Client::find($this->filters)->execute();
 
-    expect($results->getList())->toBeInstanceOf(Collection::class)
-        ->and($results->getList()->first())->toBeInstanceOf(ClientData::class);
+    expect($results->get())->toBeInstanceOf(Collection::class)
+        ->and($results->get()->first())->toBeInstanceOf(ClientData::class);
 })->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {
@@ -68,7 +68,7 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList()->count())->toBe(2);
+        ->and($results->get()->count())->toBe(2);
 })->with('providers', ['response']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
@@ -86,13 +86,13 @@ test('can go to the next page and then go back', function (Provider $provider, s
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList()->count())->toBe(5);
+        ->and($results->get()->count())->toBe(5);
 })->with('providers', ['response']);
 
 test('maps all response fields onto the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
-    $client = Client::find($this->filters)->execute()->getList()->first();
+    $client = Client::find($this->filters)->execute()->get()->first();
 
     expect($client->name)->toBe('Marta Silva')
         ->and($client->email)->toBe('marta.silva@example.com')
@@ -110,7 +110,7 @@ test('maps all response fields onto the returned ClientData', function (Provider
 test('the client date stays Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
-    $client = Client::find($this->filters)->execute()->getList()->first();
+    $client = Client::find($this->filters)->execute()->get()->first();
 
     expect($client->date)->toBeInstanceOf(Optional::class);
 })->with('providers', ['response_multiple']);
@@ -118,7 +118,7 @@ test('the client date stays Optional on the returned ClientData', function (Prov
 test('absent response fields remain Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
-    $client = Client::find($this->filters)->execute()->getList()->first();
+    $client = Client::find($this->filters)->execute()->get()->first();
 
     expect($client->id)->toBeInstanceOf(Optional::class)
         ->and($client->email)->toBeInstanceOf(Optional::class)
@@ -184,7 +184,7 @@ test('returns an empty list when the provider finds no clients', function (Provi
 
     $results = Client::find(ClientData::from(['name' => 'missing']))->execute();
 
-    expect($results->getList())->toBeEmpty();
+    expect($results->get())->toBeEmpty();
 })->with('providers');
 
 test('fails when cegid vendus answers 404 with an error other than no data', function () {

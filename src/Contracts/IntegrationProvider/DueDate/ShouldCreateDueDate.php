@@ -12,5 +12,5 @@ interface ShouldCreateDueDate extends ShouldExecute, ShouldHavePayload
 {
     public function execute(): self;
 
-    public function getDueDate(): DueDateData;
+    public function get(): DueDateData;
 }
