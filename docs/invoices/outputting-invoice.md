@@ -64,10 +64,10 @@ matches the provider requirements.
 
 ## Available Formats
 
-| Format  | Enum Value                 | Use Case                        |
-| ------- | -------------------------- | ------------------------------- |
-| PDF     | `OutputFormat::PDF_BASE64` | Email, archive, customer portal |
-| ESC/POS | `OutputFormat::ESCPOS`     | Thermal receipt printers at POS |
+| Format  | Enum Value                 | Use Case                        | Providers            |
+| ------- | -------------------------- | ------------------------------- | -------------------- |
+| PDF     | `OutputFormat::PDF_BASE64` | Email, archive, customer portal | Cegid Vendus, Moloni |
+| ESC/POS | `OutputFormat::ESCPOS`     | Thermal receipt printers at POS | Cegid Vendus         |
 
 ## Handling Missing Output
 
@@ -194,7 +194,7 @@ if ($result->output) {
 ```
 
 > [!NOTE]
-> ESC/POS support depends on the provider. Check [Features](../features.md) for provider compatibility.
+> ESC/POS is supported on Cegid Vendus only. Moloni has no ESC/POS output: the format is not sent and `content` stays `null`.
 
 ## OutputData Properties and Methods
 
