@@ -2,8 +2,7 @@
 
 ## Quality of Life
 
-1. In tests/Feature/Client/UpdateTest.php on the test `returns the updated client`, that is not how we usually reference the files, nor the providers we are testing on the `with` method
-2. Unit tests that fake the lookups a provider class sends while building its payload are a temporary exception. Replace them with a different approach.
+1. Unit tests that fake the lookups a provider class sends while building its payload are a temporary exception. Replace them with a different approach.
     - Moloni due dates (`maturityDates/getAll`): `tests/Unit/Client/Create/ProviderData/{PayloadTest,DefaultPayDueTest,CommercialTermsTest,CountryTest,LanguageTest,NumberTest}.php`, `tests/Unit/Client/Update/ProviderData/PayloadTest.php`, `tests/Unit/Invoice/Create/ProviderData/DueDateTest.php`
     - Payment methods: `tests/Unit/Invoice/Create/ProviderData/{PaymentTest,DueDateTest,TypeTest,RelatedDocumentTest}.php`, `tests/Unit/Invoice/Create/ProviderData/CreditNote/CreditNoteReasonTest.php`
     - Client by VAT: `tests/Unit/Invoice/Create/ProviderData/{ClientTest,TransportTest}.php`
@@ -14,10 +13,10 @@
         - `tests/Unit/Invoice/Create/ProviderData/DueDateTest.php`: "fetches the provider due dates in a single page", "does not fetch the provider due dates when no due date is set"
         - `tests/Unit/Item/Update/ProviderData/PayloadTest.php`: "fails when no id is set, without any request", "fails when the unit is not mapped, without any request"
         - `tests/Unit/Item/Update/ProviderData/TaxTest.php`: "fails when the moloni tax is not configured, without any request"
-3. .claude/rules/provider-operations.md contains a rule:
+2. .claude/rules/provider-operations.md contains a rule:
     - - When a provider requires a value no DTO field carries, build it in the provider class (e.g. a random token) and keep it in the returned DTO's additional data. Never add a DTO field for one provider (see `.claude/rules/dtos.md`).
     - This is incorrect. We cannot always default to a random string. We need to find a way to support these fields without breaking the rule of not inventing fields
-4. on Vendus, creating a wharehouse, in nowhere it is getting specified that the type is a wharehouse
+3. on Vendus, creating a wharehouse, in nowhere it is getting specified that the type is a wharehouse
     - https://www.vendus.pt/ws/v1.2/#tag/Stores/paths/~1stores/post
     - this is a problem because, stores in vendus, are registers and these registers are tied to the subscription
         - this means that creating a register will create a new item for the subscription which will not work
