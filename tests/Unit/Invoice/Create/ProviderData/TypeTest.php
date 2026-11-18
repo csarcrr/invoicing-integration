@@ -16,15 +16,13 @@ beforeEach(function () {
     Carbon::setTestNow('2025-06-15');
 });
 
-it('transforms to provider payload with default invoice type', function (Provider $provider, string $fixtureName) {
-    $data = fixtures()->request()->invoice()->type()->files($fixtureName);
-
+it('does not send a document type when no type is set', function () {
     $invoice = Invoice::create(InvoiceData::make([
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]));
 
-    expect($invoice->getPayload())->toMatchArray($data);
-})->with('providers', ['default_type']);
+    expect($invoice->getPayload()->toArray())->not->toHaveKey('type');
+})->with('providers');
 
 it('transforms to provider payload with correct invoice type', function (Provider $provider, string $fixtureName, InvoiceType $type) {
     fakeProviderPaymentMethods($provider);

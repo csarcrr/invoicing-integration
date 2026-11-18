@@ -19,7 +19,7 @@ $movement = StockMovementData::make([
 
 $move = ItemStock::move($movement)->execute();
 
-$move->getMovement()->id; // provider-assigned movement ID
+$move->get()->id; // provider-assigned movement ID
 ```
 
 ## Available fields
@@ -48,13 +48,13 @@ The movement is sent to `productStocks/insert`:
 | `warehouseId`          | `warehouse_id` (only sent when set)      |
 | `notes`                | `notes` (only sent when set)             |
 
-The returned `product_stock_id` is set as `id`. To read the stock after the movement, use `Item::get()`. See [Getting an Item](../items/getting-an-item.md#stock).
+The returned `product_stock_id` is set as `id`. To read the stock after the movement, use `Item::fetch()`. See [Getting an Item](../items/getting-an-item.md#stock).
 
-## Cegid Vendus
+## Vendus
 
 The movement is sent to `products/stocks`:
 
-| `StockMovementData` | Cegid Vendus field                                                        |
+| `StockMovementData` | Vendus field                                                        |
 | ------------------- | ------------------------------------------------------------------------- |
 | `itemId`            | `product_id`                                                              |
 | `quantity`          | `type` (`add` when positive, `remove` when negative) and `amount` (absolute value) |
@@ -63,7 +63,8 @@ The movement is sent to `products/stocks`:
 
 - `obs` is `Y-m-d H:i:s - notes` when both are set, otherwise whichever one is set. The date is not defaulted to the current time.
 - Without `warehouseId`, Vendus chooses the store; its API docs do not say which one.
-- Cegid Vendus returns no movement ID, so `id` stays `null`.
+- Vendus returns no movement ID, so `id` stays `null`.
+- Decimal quantities, such as `2.5` for an item sold by the kg, are accepted. Vendus stores stock with 2 decimals, so `0.125` is stored as `0.13`.
 - The `reset` and `transfer` operation types are not supported.
 
 ## Error handling

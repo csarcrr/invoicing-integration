@@ -1,7 +1,7 @@
 # Providers - Moloni - Configuration
 
 > [!NOTE]
-> Moloni support is actively being built. Authentication, client management (create, get, find), item create, get and find, and invoice creation are implemented; other features are coming soon. Check the [Features](/features.md) page to track implementation progress.
+> Check the [Features](/features.md) page for the operations each provider supports.
 
 ## Authentication
 
@@ -67,7 +67,9 @@ The same `access_token` works for looking up the other IDs this page asks for (c
 
 ### Environment Variables
 
-Add the following to your `.env` file:
+`php artisan invoicing-integration:setup` fetches these values and writes them to `.env`. See [Getting Started – With the setup command](../../getting-started.md#with-the-setup-command).
+
+To set them by hand, add the following to your `.env` file:
 
 ```bash
 # Moloni credentials
@@ -113,7 +115,7 @@ The ID of the Moloni company to operate on. It is sent automatically with every 
 
 #### `MOLONI_NO_VAT_CLIENT_ID`
 
-The ID of the Moloni customer used on invoices that have no client, or whose client has no `id`. When it is not set, `customer_id` is sent as `0` and Moloni rejects the document.
+The ID of the Moloni customer used on invoices that have no client. When it is not set, `customer_id` is sent as `0` and Moloni rejects the document.
 
 #### `MOLONI_UNIT_*_ID`
 

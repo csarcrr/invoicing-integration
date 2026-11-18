@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Closure;
 use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Traits\HasMakeValidation;
-use Illuminate\Support\Optional;
 use League\ISO3166\ISO3166;
 use Spatie\LaravelData\Attributes\MergeValidationRules;
 use Spatie\LaravelData\Data;
@@ -22,7 +21,7 @@ class AddressData extends Data implements DataNeedsValidation
         public ?string $address = null,
         public ?string $city = null,
         public ?string $postalCode = null,
-        public Optional|string $country = 'PT',
+        public ?string $country = null,
         public ?Carbon $dateTime = null,
     ) {}
 

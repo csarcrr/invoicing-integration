@@ -14,7 +14,7 @@ use CsarCrr\InvoicingIntegration\Facades\DueDate;
 $dueDate = DueDate::create(DueDateData::make([
     'name' => '30 dias',
     'days' => 30,
-]))->execute()->getDueDate();
+]))->execute()->get();
 
 echo $dueDate->id; // provider-assigned ID
 ```
@@ -28,9 +28,9 @@ echo $dueDate->id; // provider-assigned ID
 
 ## Provider support
 
-| Operation       | Cegid Vendus | Moloni | Invoice Express |
+| Operation       | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Create Due Date | ❌           | ✅     | ❌              |
-| Find Due Dates  | ❌           | ✅     | ❌              |
+| Find Due Dates  | ✅           | ✅     | ❌              |
 
-On Cegid Vendus both operations throw `OperationNotSupportedException`.
+On Vendus, `DueDate::create()` throws `OperationNotSupportedException`.

@@ -33,7 +33,7 @@ class Find extends Client implements ShouldFindClient
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $endpoint = match ($this->searchFilter()->keys()->first()) {
             'vat' => 'customers/getByVat',
@@ -55,7 +55,7 @@ class Find extends Client implements ShouldFindClient
     /**
      * @return Collection<int, ClientData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }
@@ -79,7 +79,7 @@ class Find extends Client implements ShouldFindClient
         return collect([
             'vat' => $this->data->vat,
             'email' => $this->data->email,
-            'number' => $this->data->id,
+            'number' => $this->data->reference,
             'name' => $this->data->name,
         ])->filter(fn (mixed $value) => Properties::isValid($value))->take(1);
     }

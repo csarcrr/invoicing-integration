@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
@@ -22,20 +22,33 @@ it('transforms to provider payload with all item properties', function (Provider
         'price' => 1000,
         'note' => 'This is a test item',
         'percentageDiscount' => 10,
-        'amountDiscount' => 50,
     ]);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [$item],
     ]));
 
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['item']);
 
+it('sends the amount discount only to providers that support it', function (Provider $provider) {
+    $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
+        'items' => [ItemData::from(['reference' => 'reference-1', 'amountDiscount' => 50])],
+    ]));
+
+    match ($provider) {
+        Provider::VENDUS => expect($invoice->getPayload()->get('items')->first()['discount_amount'])->toBe(0.5),
+        Provider::MOLONI => expect($invoice->getPayload()->get('products')[0])->not->toHaveKey('discount'),
+    };
+})->with('providers');
+
 it('transforms to provider payload with multiple items', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->item()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [
             ItemData::from(['reference' => 'reference-1']),
             ItemData::from(['reference' => 'reference-2']),
@@ -49,6 +62,7 @@ it('transforms to provider payload with correct item type', function (Provider $
     $data = fixtures()->request()->invoice()->item()->type()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [
             ItemData::from(['reference' => 'reference-1', 'type' => $type]),
         ],
@@ -72,11 +86,12 @@ it('transforms to provider payload with correct tax type', function (Provider $p
     ];
 
     if ($taxType === ItemTax::EXEMPT) {
-        $attributes['taxExemptionReason'] = TaxExemptionReason::M04;
-        $attributes['taxExemptionLaw'] = TaxExemptionReason::M04->laws()[0];
+        $attributes['taxExemptionReason'] = 'M04';
+        $attributes['taxExemptionLaw'] = 'Artigo 13.º do CIVA';
     }
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [
             ItemData::from($attributes),
         ],
@@ -93,30 +108,58 @@ it('transforms to provider payload with correct tax type', function (Provider $p
 
 it('sends the item id to the provider when it identifies items by id', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['id' => 1542, 'reference' => 'reference-1'])],
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['reference'])->toBe('reference-1'),
+        Provider::VENDUS => expect($payload->get('items')->first()['id'])->toBe(1542),
         Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
+    };
+})->with('providers');
+
+it('sends the item id to the provider when the item has no reference', function (Provider $provider) {
+    $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
+        'items' => [ItemData::from(['id' => 1542])],
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::VENDUS => expect($payload->get('items')->first())->toHaveKey('id', 1542)
+            ->not->toHaveKey('reference'),
+        Provider::MOLONI => expect($payload->get('products')[0]['product_id'])->toBe(1542),
+    };
+})->with('providers');
+
+it('sends the item name as the line name', function (Provider $provider) {
+    $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
+        'items' => [ItemData::from(['reference' => 'reference-1', 'name' => 'Bananas'])],
+    ]))->getPayload();
+
+    match ($provider) {
+        Provider::VENDUS => expect($payload->get('items')->first()['title'])->toBe('Bananas'),
+        Provider::MOLONI => expect($payload->get('products')[0]['name'])->toBe('Bananas'),
     };
 })->with('providers');
 
 it('sends a quantity of one when the item has no quantity', function (Provider $provider) {
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('items')->first()['qty'])->toBe(1),
+        Provider::VENDUS => expect($payload->get('items')->first()['qty'])->toBe(1),
         Provider::MOLONI => expect($payload->get('products')[0]['qty'])->toBe(1),
     };
 })->with('providers');
 
 it('sends the product type on vendus invoice lines when the item has no type', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     $payload = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from(['reference' => 'reference-1'])],
     ]))->getPayload();
 
@@ -143,7 +186,7 @@ it('fails when attempting to use tax exemption with non-exempt tax', function ()
     ItemData::from([
         'reference' => 'reference-1',
         'tax' => ItemTax::NORMAL,
-        'taxExemptionReason' => TaxExemptionReason::M04,
+        'taxExemptionReason' => 'M04',
     ]);
 })->throws(ExemptionCanOnlyBeUsedWithExemptTaxException::class);
 
@@ -151,6 +194,6 @@ it('fails when attempting to set tax exemption law without exemption reason', fu
     ItemData::from([
         'reference' => 'reference-1',
         'tax' => ItemTax::EXEMPT,
-        'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+        'taxExemptionLaw' => 'Artigo 13.º do CIVA',
     ]);
 })->throws(ExemptionLawCanOnlyBeUsedWithExemptionException::class);

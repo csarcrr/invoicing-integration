@@ -73,6 +73,29 @@
       "Bash(npx graft:*)",
       "Bash(graft-dev:*)",
       "Bash(node dist/cli.js:*)"
+    ],
+    "deny": [
+      "Bash(composer test:*)",
+      "Bash(composer analyse:*)",
+      "Bash(composer format:*)",
+      "Bash(composer complete:*)",
+      "Bash(composer run test:*)",
+      "Bash(composer run analyse:*)",
+      "Bash(composer run format:*)",
+      "Bash(composer run complete:*)",
+      "Bash(vendor/bin/pest:*)",
+      "Bash(vendor/bin/phpstan:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(./vendor/bin/pest:*)",
+      "Bash(./vendor/bin/phpstan:*)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(php vendor/bin/pest:*)",
+      "Bash(php vendor/bin/phpstan:*)",
+      "Bash(php vendor/bin/pint:*)",
+      "Bash(php bin/test-group.php:*)",
+      "Bash(pest:*)",
+      "Bash(phpstan:*)",
+      "Bash(pint:*)"
     ]
   }
 }

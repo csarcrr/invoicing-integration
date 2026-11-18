@@ -10,11 +10,11 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
     'email' => 'invoices@techstore.pt',
 ]);
 
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 // Store the provider ID for future orders
 $providerClientId = $client->id; // e.g., 12345
@@ -26,7 +26,7 @@ Example response (`$client->toArray()`):
 {
     "id": 12345,
     "name": "TechStore Portugal Lda",
-    "vat": "PT509876543",
+    "vat": "509876543",
     "email": "invoices@techstore.pt"
 }
 ```
@@ -39,7 +39,7 @@ Build complete customer profiles with all available fields:
 $clientData = ClientData::make([
     // Business identity
     'name' => 'Distribuidor Norte Lda',
-    'vat' => 'PT509999888',
+    'vat' => '509999888',
 
     // Contact information
     'email' => 'finance@distrinorte.pt',
@@ -77,24 +77,34 @@ $clientData = ClientData::make([
 | `notes`             | Internal notes (not on invoices)       |
 | `irsRetention`      | Portuguese IRS withholding flag        |
 | `emailNotification` | Auto-send invoices via email           |
-| `defaultPayDue`     | Default payment due, a [`DueDateTerm`](../api-reference.md#duedateterm). On Cegid Vendus, `Days0` is sent as `now` |
+| `defaultPayDue`     | Default payment due, a [`DueDateTerm`](../api-reference.md#duedateterm). On Vendus, `Days0` is sent as `now` |
 | `discount`          | Discount percentage (0 to 100)         |
 | `creditLimit`       | Credit limit (0 or more)               |
 | `deliveryMethodId`  | Provider delivery method id (0 or more) |
+| `paymentMethodId`   | Provider payment method id (0 or more)  |
+| `paymentDay`        | Provider payment day (0 or more)        |
+| `salesmanId`        | Provider salesman id (0 or more)        |
+| `reference`         | Your own code for the client. Sent as Vendus `external_reference` on invoices, and as Moloni `number` on create |
 
 > [!NOTE]
 > Required fields vary by provider. If a required field is missing, the provider will return an explicit error message.
 
 ### Moloni
 
-- `name`, `vat`, `address` and `city` are required; a missing one throws `MissingClientDataException` before the request.
-- `id` is optional and is sent as the Moloni customer `number`. Without it, a number is generated from the VAT plus a random string.
-- After `execute()`, `id` holds that number. The Moloni `customer_id` (the one `Client::get()` expects) is in `getAdditionalData()`.
-- `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, Portugal (`PT`) is used. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
-- `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, Portuguese (`pt`) is used. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
-- `defaultPayDue` is sent as the Moloni `maturity_date_id`: the account due date with the same or closest number of days (a tie picks the shorter one), found with a `maturityDates/getAll` lookup. Without it, `DueDateTerm::Days15` is used. When the account has no due dates, `0` is sent. `payment_day` is not sent.
-- `discount`, `creditLimit` and `deliveryMethodId` are sent as `discount`, `credit_limit` and `delivery_method_id`. Without them, `0` is used. Cegid Vendus does not send them.
-- `irsRetention` and `emailNotification` are not sent. The payment method and salesman ids are sent as `0` for now.
+- Moloni requires `number` (`reference`), `name`, `vat`, `address`, `city`, `country_id` (`country`), `language_id` (`language`), `maturity_date_id` (`defaultPayDue`) and `payment_method_id` (`paymentMethodId`) on create, per the Moloni `customers/insert` documentation. The package sends only the fields you set, so when you leave one of them out, Moloni's error reaches you as `RequestFailedException`.
+- `reference` is sent as the Moloni customer `number`. Moloni requires it on create, and the package does not generate one: without `reference`, no `number` is sent and Moloni rejects the request. `id` is not used for it.
+- After `execute()`, `id` holds the Moloni `customer_id`, the one `Client::fetch()` expects.
+- Moloni stores at most 20 characters of the `number` and cuts a longer one without an error. The returned `reference` keeps the full value, so it no longer matches the stored number and `Client::find()` by that `reference` returns nothing.
+- `country` is turned into the Moloni `country_id` with a `countries/getAll` lookup. Without it, no lookup runs and no `country_id` is sent. An ISO code Moloni does not know throws `CouldNotGetCountryIdException`.
+- `language` is turned into the Moloni `language_id` with a `languages/getAll` lookup. Without it, no lookup runs and no `language_id` is sent. A code Moloni does not know throws `CouldNotGetLanguageIdException`.
+- `defaultPayDue` is sent as the Moloni `maturity_date_id`: the account due date with the same or closest number of days (a tie picks the shorter one), found with a `maturityDates/getAll` lookup. Without it, no lookup runs and no `maturity_date_id` is sent. When the account has no due dates, no `maturity_date_id` is sent.
+- `discount`, `creditLimit`, `deliveryMethodId`, `paymentMethodId`, `paymentDay` and `salesmanId` are sent as `discount`, `credit_limit`, `delivery_method_id`, `payment_method_id`, `payment_day` and `salesman_id`, only when you set them. Vendus does not send them.
+- `irsRetention` and `emailNotification` are not sent.
+
+### Vendus
+
+- Fields you do not set are not sent.
+- `irsRetention` and `emailNotification` are sent as `irs_retention` and `send_email` (`yes` or `no`) only when you set them. Without them, Vendus stores `no`.
 
 ## Complete Example
 
@@ -108,7 +118,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 // Collect customer information from your form
 $clientData = ClientData::make([
     'name' => 'Empresa ABC - Comércio de Eletrónica Lda',
-    'vat' => 'PT501234567',
+    'vat' => '501234567',
     'email' => 'accounting@empresaabc.pt',
     'phone' => '210000000',
     'address' => 'Avenida da República, 50 - 3º Andar',
@@ -121,7 +131,7 @@ $clientData = ClientData::make([
 ]);
 
 // Register with the invoicing provider
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 // Store in your database for future reference
 $customer = new Customer();
@@ -137,7 +147,7 @@ Example provider response:
 {
     "id": 54321,
     "name": "Empresa ABC - Comércio de Eletrónica Lda",
-    "vat": "PT501234567",
+    "vat": "501234567",
     "email": "accounting@empresaabc.pt",
     "phone": "210000000",
     "address": "Avenida da República, 50 - 3º Andar",
@@ -157,13 +167,15 @@ Once registered, use the client for all their invoices:
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Option 1: Create and immediately use
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [
         ItemData::make([
@@ -174,13 +186,14 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Option 2: Use stored client ID later
 $storedClientId = $customer->provider_client_id;
-$client = Client::get(ClientData::make(['id' => $storedClientId]))->execute()->getClient();
+$client = Client::fetch(ClientData::make(['id' => $storedClientId]))->execute()->get();
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     // ... add items, payments, etc.
 ]);
@@ -189,31 +202,26 @@ Invoice::create($invoiceData)->execute();
 
 ## Handling Duplicate Clients
 
-Some providers reject duplicate VAT numbers. Handle this gracefully:
+Providers reject a client whose VAT number already exists, and the package throws `RequestFailedException`. The message comes from the provider and differs per provider, so do not match on it. Look the client up by VAT instead:
 
 ```php
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
+    'address' => 'Rua das Flores 125',
+    'city' => 'Porto',
     'email' => 'invoices@techstore.pt',
 ]);
 
 try {
-    $client = Client::create($clientData)->execute()->getClient();
+    $client = Client::create($clientData)->execute()->get();
 } catch (RequestFailedException $e) {
-    // Check if it's a duplicate error
-    if (str_contains($e->getMessage(), 'duplicate') || str_contains($e->getMessage(), 'already exists')) {
-        // Search for existing client
-        $results = Client::find(ClientData::make(['vat' => 'PT509876543']))->execute();
-        $client = $results->getList()->first();
-    } else {
-        throw $e;
-    }
-}
+    $client = Client::find(ClientData::make(['vat' => '509876543']))->execute()->get()->first();
 
-// Now you have the client, whether new or existing
+    throw_if(is_null($client), $e);
+}
 ```
 
 ## Error Handling
@@ -223,7 +231,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $client = Client::create($clientData)->execute()->getClient();
+    $client = Client::create($clientData)->execute()->get();
 } catch (UnauthorizedException $e) {
     // Invalid API credentials - check your .env
     Log::error('Invalid API credentials', ['error' => $e->getMessage()]);

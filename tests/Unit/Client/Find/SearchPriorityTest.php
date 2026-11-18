@@ -10,7 +10,7 @@ it('prioritizes the search criteria', function (Provider $provider, array $filte
     $payload = Client::find(ClientData::from($filters))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->toArray())->toMatchArray($vendusExpected),
+        Provider::VENDUS => expect($payload->toArray())->toMatchArray($vendusExpected),
         Provider::MOLONI => expect($payload->except(['qty', 'offset'])->toArray())->toBe($moloniExpected),
     };
 })->with('providers', [
@@ -25,7 +25,7 @@ it('prioritizes the search criteria', function (Provider $provider, array $filte
         ['email' => 'email@test.com'],
     ],
     'number third' => [
-        ['name' => 'Name', 'id' => '1234567'],
+        ['name' => 'Name', 'reference' => '1234567'],
         ['name' => 'Name'],
         ['number' => '1234567'],
     ],

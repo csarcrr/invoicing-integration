@@ -15,7 +15,7 @@ $item = ItemData::make([
     'price' => 5000, // €50.00 (in cents)
 ]);
 
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 echo $created->id; // provider-assigned ID
 ```
@@ -44,7 +44,7 @@ $item = ItemData::make([
     'enabled'      => true,
 ]);
 
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 ```
 
 ## Available fields
@@ -58,14 +58,31 @@ The `Default` column shows what is sent when a field is omitted on create. `Item
 | `description`  | `?string`       | `null`              | Longer description                              |
 | `price`        | `?int`          | `null`              | Gross price in cents (e.g. `2999` = €29.99)     |
 | `tax`          | `?ItemTax`      | `null`              | VAT rate                                        |
-| `taxExemptionReason` | `?TaxExemptionReason` | `null`  | Required when `tax` is `ItemTax::EXEMPT`        |
-| `taxExemptionLaw`    | `?string`       | `null`  | Legal reference for the exemption               |
+| `taxExemptionReason` | `?string`       | `null`  | Exemption reason code (see [Finding Tax Exemptions](../taxes/finding-tax-exemptions.md)), only with `tax` `ItemTax::EXEMPT` |
+| `taxExemptionLaw`    | `?string`       | `null`  | Legal reference for the exemption. Vendus only; Moloni does not store it |
 | `type`         | `?ItemType`     | `ItemType::Product` | Product or service classification               |
 | `barcode`      | `?string`       | `null`              | EAN/barcode                                     |
 | `category`     | `?CategoryData` | `null`              | Product category (must have provider `id`)      |
 | `unit`         | `?ShouldBeUnit` | `null`              | Unit of measure — use `Unit` enum               |
 | `controlStock` | `?bool`         | `true`              | Track stock for this item                       |
-| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider. Cegid Vendus only; Moloni ignores it |
+| `enabled`      | `?bool`         | `true`              | Whether the item is active in the provider. Sent as `status` on Vendus and `visibility_id` on Moloni |
+
+> [!WARNING]
+> Moloni does not document `visibility_id` as a `products/insert` parameter. The package relies on Moloni accepting it, which was confirmed against the API, but Moloni can change this without notice.
+
+## Fields the provider requires
+
+The package sends what you set and does not check these fields itself. When one is missing, the provider rejects the request and `execute()` throws `RequestFailedException` with the provider's message.
+
+| Field                | Vendus                     | Moloni                                         |
+| -------------------- | -------------------------------- | ---------------------------------------------- |
+| `unit`               | Required                         | Required                                       |
+| `reference`          | Optional, generated when omitted | Required, unique                               |
+| `price`              | Optional, `0` when omitted       | Required                                       |
+| `tax`                | Optional, `ItemTax::NORMAL` when omitted | Required, unless `taxExemptionReason` is set |
+| `taxExemptionReason` | Optional                         | Required when `tax` is `ItemTax::EXEMPT`       |
+
+On Moloni, a missing `category` throws `MissingCategoryException` before any request.
 
 ## Units
 
@@ -95,14 +112,16 @@ Every unit's string `value` must be mapped to a provider ID in your config. The 
 ```php
 // config/invoicing-integration.php
 'units' => [
-    'unit'  => env('CEGID_VENDUS_UNIT_UNIT_ID'),
-    'kg'    => env('CEGID_VENDUS_UNIT_KG_ID'),
-    'litre' => env('CEGID_VENDUS_UNIT_LITRE_ID'),
-    'hour'  => env('CEGID_VENDUS_UNIT_HOUR_ID'),
+    'unit'  => env('VENDUS_UNIT_UNIT_ID'),
+    'kg'    => env('VENDUS_UNIT_KG_ID'),
+    'litre' => env('VENDUS_UNIT_LITRE_ID'),
+    'hour'  => env('VENDUS_UNIT_HOUR_ID'),
 ],
 ```
 
 If the unit value has no matching key in the config, a `CouldNotGetUnitIdException` is thrown.
+
+The created item reads its unit back from the provider's unit id, so `unit` is always a `Unit` case. A custom unit, such as `MyUnit::LITRE`, reads back as `null`.
 
 ## Categories
 
@@ -119,25 +138,27 @@ $item = ItemData::make([
 
 ## Accessing the result
 
-After `execute()`, call `getItem()` to retrieve the populated DTO including the provider-assigned `id`:
+After `execute()`, `get()` returns the created item as the provider stored it, mapped like [`Item::fetch()`](getting-an-item.md). Fields you did not set hold the provider's values, such as a generated `reference` on Vendus.
 
 ```php
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 $created->id;        // provider-assigned ID
 $created->name;      // item name
 $created->reference; // SKU
+$created->unit;      // Unit enum, read back from the provider's unit id
 $created->enabled;   // whether the item is active
 ```
 
-`enabled` comes from the response `status` on Cegid Vendus. Moloni does not return it, and creates every product visible, so `enabled` is `true`.
+- **Vendus:** the item is mapped from the create response, which is the full product.
+- **Moloni:** `products/insert` only returns the product id, so the package reads the product with `products/getOne` (a second request). Moloni does not store `taxExemptionLaw`, so it is `null`.
 
 ### Additional response data
 
 The provider response may contain fields that the package does not explicitly map onto `ItemData`. Those fields are stored as additional data on the DTO and can be accessed via `getAdditionalData()`:
 
 ```php
-$created = Item::create($item)->execute()->getItem();
+$created = Item::create($item)->execute()->get();
 
 $created->getAdditionalData(); // fields from the provider response not handled by the package
 ```
@@ -145,11 +166,11 @@ $created->getAdditionalData(); // fields from the provider response not handled 
 ## Error handling
 
 ```php
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\CouldNotGetUnitIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $created = Item::create($item)->execute()->getItem();
+    $created = Item::create($item)->execute()->get();
 } catch (CouldNotGetUnitIdException $e) {
     // Unit not mapped in config
     Log::error('Unit configuration missing', ['message' => $e->getMessage()]);

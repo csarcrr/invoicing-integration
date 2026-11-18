@@ -11,8 +11,4 @@ use CsarCrr\InvoicingIntegration\Data\DueDateData;
  */
 class DueDate extends Base
 {
-    public function getDueDate(): DueDateData
-    {
-        return $this->data;
-    }
 }

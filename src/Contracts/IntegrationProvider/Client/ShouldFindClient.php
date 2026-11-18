@@ -7,7 +7,6 @@ namespace CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldExecute;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePagination;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldHavePayload;
-use CsarCrr\InvoicingIntegration\Data\ClientData;
 use Illuminate\Support\Collection;
 
 interface ShouldFindClient extends ShouldExecute, ShouldHavePagination, ShouldHavePayload
@@ -15,7 +14,5 @@ interface ShouldFindClient extends ShouldExecute, ShouldHavePagination, ShouldHa
     /**
      * @return Collection<int, mixed>
      */
-    public function getList(): Collection;
-
-    public function getClient(): ClientData;
+    public function get(): Collection;
 }

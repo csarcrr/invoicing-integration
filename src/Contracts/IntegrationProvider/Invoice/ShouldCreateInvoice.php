@@ -12,5 +12,5 @@ interface ShouldCreateInvoice extends ShouldHaveConfig, ShouldHavePayload
 {
     public function asDraft(): static;
 
-    public function getInvoice(): InvoiceData;
+    public function get(): InvoiceData;
 }

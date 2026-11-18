@@ -74,11 +74,16 @@ class Update extends Item implements ShouldUpdateItem
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Item);
     }
 
+    public function get(): ItemData
+    {
+        return $this->data;
+    }
+
     /**
      * @throws CouldNotGetUnitIdException
      * @throws CouldNotGetTaxIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $response = Http::provider()->post('products/update', $this->getPayload()->toArray());
 
@@ -114,11 +119,7 @@ class Update extends Item implements ShouldUpdateItem
      */
     protected function currentProduct(): array
     {
-        $response = Http::provider()->post('products/getOne', ['product_id' => $this->data->id, 'with_invisible' => 1]);
-
-        Http::handleUnwantedFailures($response);
-
-        return $response->json();
+        return $this->getProduct(['product_id' => $this->data->id, 'with_invisible' => 1]);
     }
 
     /**
@@ -235,7 +236,7 @@ class Update extends Item implements ShouldUpdateItem
     protected function exemptionReason(): ?string
     {
         if (! is_null($this->data->taxExemptionReason)) {
-            return $this->data->taxExemptionReason->value;
+            return $this->data->taxExemptionReason;
         }
 
         if (is_null($this->data->tax) || $this->data->tax === ItemTax::EXEMPT) {

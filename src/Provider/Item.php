@@ -6,20 +6,33 @@ namespace CsarCrr\InvoicingIntegration\Provider;
 
 use AllowDynamicProperties;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\Unit;
+use Illuminate\Support\Collection;
 
 /**
- * Base class for Cegid Vendus item operations, holding item data and supported API response properties.
+ * Base class for Vendus item operations, holding item data and supported API response properties.
  *
  * @extends Base<ItemData>
  */
 #[AllowDynamicProperties]
-class Item extends Base
+abstract class Item extends Base
 {
     /**
-     * Returns the current item DTO after an operation has been executed.
+     * @return Collection<string, mixed>
      */
-    public function getItem(): ItemData
+    abstract public function getConfig(): Collection;
+
+    protected function toUnit(mixed $unitId): ?Unit
     {
-        return $this->data;
+        if (empty($unitId)) {
+            return null;
+        }
+
+        /** @var array<string, mixed> $units */
+        $units = $this->getConfig()->get('units', []);
+
+        $unitKey = collect($units)->search(fn (mixed $configured): bool => (int) $configured === (int) $unitId);
+
+        return $unitKey === false ? null : Unit::tryFrom($unitKey);
     }
 }

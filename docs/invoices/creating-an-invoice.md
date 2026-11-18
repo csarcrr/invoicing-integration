@@ -27,7 +27,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 This creates an **FR (Invoice-Receipt)** document for a final consumer.
@@ -49,7 +49,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
-        'vat' => 'PT987654321',
+        'vat' => '987654321',
         'email' => 'ana.rodrigues@email.pt',
         'address' => 'Rua do Comércio, 88',
         'city' => 'Porto',
@@ -79,10 +79,10 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 if ($result->output) {
-    $result->output->save('invoices/' . $result->output->fileName());
+    $result->output->save('invoices/' . $result->output->fileName);
 }
 ```
 
@@ -148,13 +148,16 @@ $item = ItemData::make([
 ]);
 ```
 
+> [!WARNING]
+> Moloni does not support `amountDiscount`. It is not sent, so the item is invoiced without that discount. Use `percentageDiscount` instead.
+
 ### Tax Configuration
 
 Set specific tax rates or exemptions:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
+use CsarCrr\InvoicingIntegration\Facades\TaxExemption;
 
 // Standard VAT (default behavior)
 $item = ItemData::make([
@@ -164,19 +167,21 @@ $item = ItemData::make([
 ]);
 
 // Tax-exempt item (e.g., educational materials)
+$exemption = TaxExemption::find()->execute()->get()->firstWhere('code', 'M04');
+
 $items[] = ItemData::make([
     'reference' => 'TEXTBOOK-MATH',
     'note' => 'Mathematics Textbook - University Level',
     'price' => 4500,
     'tax' => ItemTax::EXEMPT,
-    'taxExemptionReason' => TaxExemptionReason::M04,
-    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'taxExemptionReason' => $exemption->code,
+    'taxExemptionLaw' => $exemption->getAdditionalData()['law'][0] ?? null,
 ]);
 ```
 
 > [!NOTE]
-> Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. See
-> [Tax Exemptions](invoices/tax-exemption.md?id=working-with-tax-exemptions-1) for the complete list of `M` codes and validation rules.
+> Tax exemption reason is only valid when `ItemTax::EXEMPT` is set. `TaxExemption::find()` lists the exemption reasons stored in your provider. See
+> [Tax Exemptions](invoices/tax-exemption.md?id=working-with-tax-exemptions-1) for the steps and validation rules.
 
 ## Adding Payments
 
@@ -185,9 +190,11 @@ Payments are **required** for certain document types (FR, FS, RG, NC):
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::InvoiceReceipt,
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::CREDIT_CARD,
@@ -219,7 +226,7 @@ $invoiceData = InvoiceData::make([
 ```
 
 > [!WARNING]
-> Ensure payment method IDs are configured in your provider settings. See [Cegid Vendus Configuration](../providers/cegid-vendus/configuration.md).
+> Ensure payment method IDs are configured in your provider settings. See [Vendus Configuration](../providers/vendus/configuration.md).
 
 ## Document Types
 
@@ -238,7 +245,7 @@ $invoiceData = InvoiceData::make([
 
 | Type                          | Code | When to Use                          |
 | ----------------------------- | ---- | ------------------------------------ |
-| `InvoiceType::Invoice`        | FT   | Customer will pay later (default)    |
+| `InvoiceType::Invoice`        | FT   | Customer will pay later              |
 | `InvoiceType::InvoiceReceipt` | FR   | Customer paid at time of sale        |
 | `InvoiceType::InvoiceSimple`  | FS   | Simplified invoice, requires payment |
 | `InvoiceType::Receipt`        | RG   | Receipt for an existing FT invoice   |
@@ -247,7 +254,7 @@ $invoiceData = InvoiceData::make([
 
 ## Due Date
 
-For FT invoices where payment comes later, set a due date with a `DueDateTerm`:
+When payment comes later, set a due date with a `DueDateTerm`:
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -263,8 +270,7 @@ Invoice::create($invoiceData)->execute();
 
 Available terms: `Days0`, `Days1`, `Days7`, `Days15`, `Days30`, `Days45`, `Days60` and `Days90`. The due date sent to the provider is today plus the term's days; `Days0` is today.
 
-> [!NOTE]
-> Setting a due date on non-FT document types throws an exception.
+The due date is sent on any document type. The provider decides whether that type accepts it.
 
 ## Notes
 
@@ -287,6 +293,7 @@ use CsarCrr\InvoicingIntegration\Data\AddressData;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\TransportData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
 // Where the order ships from (your warehouse)
 $origin = AddressData::make([
@@ -313,9 +320,10 @@ $transport = TransportData::make([
 ]);
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
-        'vat' => 'PT987654321',
+        'vat' => '987654321',
     ]),
     'transport' => $transport,
 ]);
@@ -326,29 +334,42 @@ $invoiceData = InvoiceData::make([
 - Client information is **required** when transport details are provided
 - Origin date is **required** when setting transport details
 - Country codes must be valid ISO 2-letter codes (PT, ES, FR, etc.)
+- `country` has no default: an address without one is sent without a country, and the provider decides whether it needs one. Moloni rejects a transport document without both countries
 
 ## Drafts
 
 Call `asDraft()` before `execute()` to create the document as a draft instead of issuing it:
 
 ```php
-$result = Invoice::create($invoiceData)->asDraft()->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->asDraft()->execute()->get();
 ```
 
-Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Cegid Vendus ignores `asDraft()` and always issues the document.
+Moloni creates the document with `status` `0` (documents are issued, `status` `1`, by default). Vendus ignores `asDraft()` and always issues the document.
+
+## Vendus
+
+All document types are sent to the `documents` endpoint, with the document type as `type`.
+
+- **Client**: sent as `client`, with `id`, `vat` as `fiscal_id`, `name`, `address`, `postalCode` as `postalcode`, `city`, `phone`, `email`, `notes`, `country` and `reference` as `external_reference`. `emailNotification` is sent as `send_email` and `irsRetention` as `irs_retention`, always, as `yes` or `no` (`no` when unset). Other `ClientData` fields are not sent. A client with an empty `vat` throws `InvoiceRequiresClientVatException`.
+- **Items**: `reference` is sent as `reference`; `id` as `id`; `name` as `title`; `price` as `gross_price`; `quantity` as `qty` (`1` when unset); `note` as `text`; `percentageDiscount` as `discount_percentage`; `amountDiscount` as `discount_amount`; `type` as `type_id` (product when unset); `tax` as `tax_id`; `taxExemptionReason` as `tax_exemption` and `taxExemptionLaw` as `tax_exemption_law`. Vendus needs `id` or `reference` to find the product; when the reference does not exist yet, Vendus creates the product and needs `name` as its title. When both `id` and `reference` are set, Vendus uses the product of `id`, but the document line shows the `reference` you sent; neither product is changed. `name` does not rename an existing product.
+- **Payments**: `payments`, with each payment's configured payment method `id` and `amount`. On an FT, Vendus records the payments and issues a receipt (RG) for the invoice automatically.
+- **Due date**: sent as `date_due`.
+- **Transport**: sent as `movement_of_goods`, with the origin as `loadpoint`, the destination as `landpoint` and the licence plate as `vehicle_id`. Each address sends `address`, `postalCode` as `postalcode`, `city` and, when set, `country`. The origin date and time are always sent; the destination ones only when set.
+- **Related document**: on RG, sent as `invoices` with `relatedDocument` as the `document_number` of the invoice the receipt settles, so it must be the invoice number (e.g. `FT 01P2025/1`), not its `id`. On FT, FR, FS and GT, a numeric `relatedDocument` is sent as `related_document_id`; any other value is not sent. Not sent on NC, whose items carry their own reference.
+- **Mode**: `mode` is sent only when `VENDUS_MODE` is set; otherwise Vendus uses the register's mode. See [Vendus configuration](../providers/vendus/configuration.md#mode).
 
 ## Moloni
 
-Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`.
+Each type is sent to its own Moloni endpoint: FT `invoices`, FR `invoiceReceipts`, FS `simplifiedInvoices`, RG `receipts`, GT `billsOfLading`, NC `creditNotes`. Without a type, the request is sent to `documents/insert` and Moloni decides the outcome.
 
-- **Client**: only `id` is sent, as `customer_id`. Use a client returned by `Client::get()` or `Client::find()`. Without a client, or without an `id`, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
+- **Client**: the client's `id` is sent as `customer_id`. A client without an `id` is looked up by `vat` with one request to `customers/getByVat`, and the `id` of the first customer whose `vat` is exactly the client's is sent. Moloni also returns customers whose `vat` only contains the client's; they are ignored. When no customer has that exact `vat`, `CouldNotFindCustomerByVatException` is thrown; the customer is not created, so create it first with `Client::create()`. Without a client, the customer configured in `MOLONI_NO_VAT_CLIENT_ID` is used. A client with an empty `vat` still throws `InvoiceRequiresClientVatException`.
 - **Items**: `id` is sent as `product_id` and `name` as the line name (`0` and empty when unset). `note`, `quantity`, `price`, `percentageDiscount`, `tax` and `taxExemptionReason` are sent; `price` is converted to a net price using the configured tax rate. `reference`, `type`, `amountDiscount` and `taxExemptionLaw` are not sent.
-- **Payments**: one request to `paymentMethods/getAll` (first 50 payment methods) resolves each `payment_method_id`: the first account payment method whose type matches the payment's `method` (`MONEY`, `MB` or `CREDIT_CARD`, see [Finding Payment Methods](../payment-methods/finding-payment-methods.md#moloni)). A payment with no matching method throws `CouldNotGetPaymentMethodIdException`; `MONEY_TRANSFER` and `CURRENT_ACCOUNT` always do, because Moloni has no flag for them. Not sent on FT, whose endpoint has no payments, so FT makes no lookup. On RG the sum of the payments is sent as `net_value`.
+- **Payments**: one request to `paymentMethods/getAll` (first 50 payment methods) resolves each `payment_method_id`: the first account payment method whose type matches the payment's `method` (`MONEY`, `MB` or `CREDIT_CARD`, see [Finding Payment Methods](../payment-methods/finding-payment-methods.md#moloni)). A payment with no matching method throws `CouldNotGetPaymentMethodIdException`; `MONEY_TRANSFER` and `CURRENT_ACCOUNT` always do, because Moloni has no flag for them. Not sent on FT, whose endpoint has no payments, so FT makes no lookup. On RG the sum of the payments is sent as `net_value`. On NC the payments are not sent with the credit note, whose endpoint has no payments: they are recorded as a refund, see [Credit Notes](creating-a-nc-invoice.md).
 - **Due date**: sent as `expiration_date`; today when not set. Not sent on RG. When set, one request to `maturityDates/getAll` (first 50 due dates) resolves `maturity_date_id`: the due date with the same number of days, or the closest one when none matches (the shorter one on a tie). `maturity_date_id` is not sent when the account has no due dates.
-- **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Countries and the destination date are not. Nothing is sent on RG.
+- **Transport**: the origin date, both addresses, cities and postal codes, and the licence plate are sent. Each `country` that is set is sent as `delivery_departure_country` or `delivery_destination_country`: one request to `countries/getAll` per country resolves the Moloni country id, and a code Moloni does not list throws `CouldNotGetCountryIdException`. A country that is not set is not sent; Moloni then rejects the document with `5 delivery_departure_country` (or `delivery_destination_country`). The destination date is not sent. Nothing is sent on RG.
 - **Related document**: only sent on RG, as the invoice the receipt settles. It must be the numeric Moloni `document_id` and is sent with the payments total as its value. FT, FR and FS do not send it.
 - **Document series**: one request to `documentSets/getAll` (first 50 document series) resolves `document_set_id`: the account's default document series (`active_by_default`), or the first one when none is marked as default.
-- **Response**: after the insert, a second request to `documents/getOne` fetches the created document. `id` is the Moloni `document_id`, `sequence` is built as `{type} {document set name}/{number}` (e.g. `FT A/12`), `total` is the document `net_value` and `totalNet` is `net_value` minus `taxes_value`. The other fields of the fetched document are available through `getAdditionalData()`, except `products`: the document lines are the invoice `items`. The ATCUD is not returned. No output is returned, see [Output Formats](outputting-invoice.md).
+- **Response**: after the insert, a second request to `documents/getOne` fetches the created document. `id` is the Moloni `document_id`, `sequence` is built as `{type} {document set name}/{number}` (e.g. `FT A/12`), `total` is the document `net_value` and `totalNet` is `net_value` minus `taxes_value`. The other fields of the fetched document are available through `getAdditionalData()`, except `products`: the document lines are the invoice `items`, and `atcud`, which is mapped to `atcud` (an empty value is `null`). On an NC with payments, `getAdditionalData()` also holds `payment_return_id`, the `document_id` of the refund. No output is returned, see [Output Formats](outputting-invoice.md).
 
 ## Complete Example
 
@@ -388,7 +409,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Carlos Ferreira',
-        'vat' => 'PT567890123',
+        'vat' => '567890123',
         'email' => 'carlos@empresa.pt',
         'address' => 'Av. da República, 200',
         'city' => 'Lisboa',
@@ -405,10 +426,10 @@ $invoiceData = InvoiceData::make([
     'notes' => 'Order #12345 - Priority shipping requested',
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 if ($result->output) {
-    $pdfPath = $result->output->save('invoices/' . $result->output->fileName());
+    $pdfPath = $result->output->save('invoices/' . $result->output->fileName);
 }
 ```
 

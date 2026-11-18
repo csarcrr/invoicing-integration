@@ -10,5 +10,5 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 
 interface ShouldCreateClient extends ShouldExecute, ShouldHavePayload
 {
-    public function getClient(): ClientData;
+    public function get(): ClientData;
 }

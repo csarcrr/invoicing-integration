@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: "Use this agent when code has recently been written or modified and needs a thorough review. Trigger this agent after implementing a new feature, fixing a bug, or making significant changes to existing code. Examples:\\n\\n<example>\\nContext: The user has just implemented a new provider for the invoicing integration package.\\nuser: \"I've just finished implementing the Moloni provider integration, can you review it?\"\\nassistant: \"I'll launch the code-reviewer agent to thoroughly review your Moloni provider implementation.\"\\n<commentary>\\nSince the user has written new provider code, use the Agent tool to launch the code-reviewer agent to check it against project conventions, contracts, and quality standards.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user has added a new DTO and action class.\\nuser: \"I added a new CreditNoteData DTO and CreditNoteAction, please check if everything looks good.\"\\nassistant: \"Let me use the code-reviewer agent to review your new DTO and action class.\"\\n<commentary>\\nNew Data and Action classes were written, so the code-reviewer agent should be used to verify compliance with Spatie Laravel Data conventions, strict types, PHPStan level 7, and routing logic.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user just wrote a new test file.\\nuser: \"Done writing tests for the CegidVendus Create invoice flow.\"\\nassistant: \"I'll use the code-reviewer agent to review your new test file before we run the suite.\"\\n<commentary>\\nNew tests were written, so use the code-reviewer agent to ensure they follow Pest syntax conventions and mirror the correct directory structure.\\n</commentary>\\n</example>"
+description: "Use this agent when code has recently been written or modified and needs a thorough review. Trigger this agent after implementing a new feature, fixing a bug, or making significant changes to existing code. Examples:\\n\\n<example>\\nContext: The user has just implemented a new provider for the invoicing integration package.\\nuser: \"I've just finished implementing the Moloni provider integration, can you review it?\"\\nassistant: \"I'll launch the code-reviewer agent to thoroughly review your Moloni provider implementation.\"\\n<commentary>\\nSince the user has written new provider code, use the Agent tool to launch the code-reviewer agent to check it against project conventions, contracts, and quality standards.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user has added a new DTO and action class.\\nuser: \"I added a new CreditNoteData DTO and CreditNoteAction, please check if everything looks good.\"\\nassistant: \"Let me use the code-reviewer agent to review your new DTO and action class.\"\\n<commentary>\\nNew Data and Action classes were written, so the code-reviewer agent should be used to verify compliance with Spatie Laravel Data conventions, strict types, PHPStan level 7, and routing logic.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user just wrote a new test file.\\nuser: \"Done writing tests for the Vendus Create invoice flow.\"\\nassistant: \"I'll use the code-reviewer agent to review your new test file before we run the suite.\"\\n<commentary>\\nNew tests were written, so use the code-reviewer agent to ensure they follow Pest syntax conventions and mirror the correct directory structure.\\n</commentary>\\n</example>"
 model: sonnet
 color: blue
 memory: project
@@ -78,7 +78,7 @@ One-paragraph overall assessment with a clear recommendation: **Approve**, **App
 
 Before finalizing your review, ask yourself:
 - Did I check every file for `declare(strict_types=1);`?
-- Did I verify all namespaces match the path conventions in CLAUDE.md?
+- Did I verify all namespaces match the path conventions in AGENTS.md?
 - Did I check PHPStan level 7 compliance for all type annotations?
 - Did I verify Pest-only syntax in test files?
 - Did I check that the Request Flow architecture is respected?
@@ -89,10 +89,10 @@ If code is ambiguous or context is missing, state your assumptions clearly rathe
 
 Examples of what to record:
 - Common PHPStan violations found in this codebase and their fixes
-- Patterns used in existing provider implementations (e.g., how `buildPayload()` is structured in CegidVendus)
+- Patterns used in existing provider implementations (e.g., how `buildPayload()` is structured in Vendus)
 - DTO field naming conventions and how `Optional` is used in practice
 - Recurring test patterns and how HTTP faking is set up
-- Any project-specific idioms or conventions not captured in CLAUDE.md
+- Any project-specific idioms or conventions not captured in AGENTS.md
 
 # Persistent Agent Memory
 
@@ -116,7 +116,7 @@ What to save:
 What NOT to save:
 - Session-specific context (current task details, in-progress work, temporary state)
 - Information that might be incomplete — verify against project docs before writing
-- Anything that duplicates or contradicts existing CLAUDE.md instructions
+- Anything that duplicates or contradicts existing AGENTS.md instructions
 - Speculative or unverified conclusions from reading a single file
 
 Explicit user requests:

@@ -8,5 +8,5 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 
 interface ShouldCreateItem extends ShouldExecute, ShouldHavePayload
 {
-    public function getItem(): ItemData;
+    public function get(): ItemData;
 }

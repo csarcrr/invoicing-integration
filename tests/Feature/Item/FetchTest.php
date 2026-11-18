@@ -1,0 +1,282 @@
+<?php
+
+use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Data\ItemStockData;
+use CsarCrr\InvoicingIntegration\Enums\ItemType;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
+use CsarCrr\InvoicingIntegration\Enums\Unit;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Facades\Item;
+use Illuminate\Support\Facades\Http;
+
+test('an item get request is successful', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $item = ItemData::make(['id' => 123]);
+
+    $data = Item::fetch($item)->execute()->get();
+
+    expect($data->id)->toBe(123)
+        ->and($data->name)->toBe('Item Title')
+        ->and($data->description)->toBe('A small product description used for testing purposes.')
+        ->and($data->reference)->toBe('reference-1')
+        ->and($data->barcode)->toBe('barcode-1')
+        ->and($data->getAdditionalData())->not->toBeEmpty()
+        ->and($data->getAdditionalData())->not->toHaveKeys(['reference', 'barcode']);
+
+    Http::assertSentCount(1);
+})->with('providers', ['fetch']);
+
+test('supported properties are not filled in additional data', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $item = ItemData::make(['id' => 123]);
+
+    $data = Item::fetch($item)->execute()->get();
+
+    [$unmapped, $mapped] = match ($provider) {
+        Provider::VENDUS => [
+            ['lot_control'],
+            ['title', 'description', 'reference', 'barcode', 'prices', 'type_id', 'tax', 'category_id', 'stock', 'status', 'unit_id'],
+        ],
+        Provider::MOLONI => [
+            ['image', 'stock', 'category'],
+            ['name', 'summary', 'reference', 'ean', 'price', 'taxes', 'type', 'category_id', 'has_stock', 'visibility_id', 'unit_id'],
+        ],
+    };
+
+    expect($data->getAdditionalData())
+        ->toHaveKeys($unmapped)
+        ->not->toHaveKeys($mapped);
+})->with('providers', ['fetch']);
+
+test('maps the category and the stock control', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->category->id)->toBe(1)
+        ->and($data->controlStock)->toBeTrue();
+})->with('providers', ['fetch']);
+
+test('builds the category without an id when the provider sends no category id', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+    unset($response['category_id']);
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->category->id)->toBeNull();
+})->with('providers', ['fetch']);
+
+test('maps the unit by its configured unit id', function (Provider $provider, int $unitId, ?Unit $expected) {
+    Http::fake(mockResponse([...fixtures()->response()->item()->files('fetch'), 'unit_id' => $unitId]));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->unit)->toBe($expected);
+})->with('providers')->with([
+    'kg' => [19999, Unit::KG],
+    'unit' => [29999, Unit::UNIT],
+    'unconfigured unit' => [99, null],
+]);
+
+test('maps a disabled stock control', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::VENDUS => $response['stock']['control'] = '0',
+        Provider::MOLONI => $response['has_stock'] = 0,
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->controlStock)->toBeFalse();
+})->with('providers', ['fetch']);
+
+test('maps an enabled item', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->enabled)->toBeTrue();
+})->with('providers', ['fetch']);
+
+test('maps a disabled item', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::VENDUS => $response['status'] = 'off',
+        Provider::MOLONI => $response['visibility_id'] = 0,
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->enabled)->toBeFalse();
+})->with('providers', ['fetch']);
+
+test('leaves the enabled state empty when the provider sends none', function (Provider $provider, string $responseFixture) {
+    $response = collect(fixtures()->response()->item()->files($responseFixture))
+        ->except(['status', 'visibility_id'])
+        ->all();
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->enabled)->toBeNull();
+})->with('providers', ['fetch']);
+
+test('maps the gross price and the tax', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->price)->toBe(2460)
+        ->and($data->tax)->toBe(ItemTax::NORMAL);
+})->with('providers', ['fetch']);
+
+test('leaves the price and the tax empty when the provider sends none', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    $response = match ($provider) {
+        Provider::VENDUS => collect($response)->except(['prices', 'tax'])->all(),
+        Provider::MOLONI => [...$response, 'taxes' => []],
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->price)->toBeNull()
+        ->and($data->tax)->toBeNull();
+})->with('providers', ['fetch']);
+
+test('maps the provider type to the item type', function (Provider $provider, ItemType $expected, string $vendusType, int $moloniType) {
+    $response = fixtures()->response()->item()->files('fetch');
+
+    match ($provider) {
+        Provider::VENDUS => $response['type_id'] = $vendusType,
+        Provider::MOLONI => $response['type'] = $moloniType,
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->type)->toBe($expected);
+})->with('providers')->with([
+    [ItemType::Product, 'P', 1],
+    [ItemType::Service, 'S', 2],
+    [ItemType::Other, 'O', 3],
+]);
+
+test('maps the vendus tax item types', function (string $vendusType, ItemType $expected) {
+    mockConfiguration(Provider::VENDUS);
+
+    $response = fixtures()->response()->item()->files('fetch');
+    $response['type_id'] = $vendusType;
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->type)->toBe($expected);
+})->with([
+    ['I', ItemType::Tax],
+    ['E', ItemType::SpecialTax],
+]);
+
+test('maps the stock of each warehouse', function (Provider $provider, string $responseFixture) {
+    Http::fake(mockResponse(fixtures()->response()->item()->files($responseFixture)));
+
+    $item = ItemData::make(['id' => 1542]);
+
+    $data = Item::fetch($item)->execute()->get();
+
+    $stockKey = match ($provider) {
+        Provider::VENDUS => 'stock',
+        Provider::MOLONI => 'warehouses',
+    };
+
+    expect($data->stock)->toHaveCount(2)
+        ->each->toBeInstanceOf(ItemStockData::class)
+        ->and($data->stock->first()->itemId)->toBe(1542)
+        ->and($data->stock->first()->warehouseId)->toBe(1)
+        ->and($data->stock->first()->quantity)->toBe(40)
+        ->and($data->stock->last()->itemId)->toBe(1542)
+        ->and($data->stock->last()->warehouseId)->toBe(2)
+        ->and($data->stock->last()->quantity)->toBe(2.5)
+        ->and($data->getAdditionalData())->not->toHaveKey($stockKey);
+})->with('providers', ['fetch']);
+
+test('maps a moloni tax by its configured tax id', function (int $taxId, string $vatType, ?ItemTax $expected) {
+    mockConfiguration(Provider::MOLONI);
+
+    $response = fixtures()->response()->item()->files('fetch');
+    $response['taxes'][0]['tax_id'] = $taxId;
+    $response['taxes'][0]['tax']['tax_id'] = $taxId;
+    $response['taxes'][0]['tax']['vat_type'] = $vatType;
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->tax)->toBe($expected);
+})->with([
+    'configured exempt tax without a vat type' => [5, '0', ItemTax::EXEMPT],
+    'configured tax with another vat type' => [3, 'NOR', ItemTax::REDUCED],
+    'unconfigured tax with a known vat type' => [99, 'INT', ItemTax::INTERMEDIATE],
+    'unconfigured tax without a vat type' => [99, '0', null],
+]);
+
+test('maps the tax exemption of an exempt item', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::VENDUS => $response = [...$response, 'tax' => ['id' => 'ISE', 'exemption' => 'M01', 'exemption_law' => 'Artigo 16.º, n.º 6 do CIVA']],
+        Provider::MOLONI => $response = [...$response, 'exemption_reason' => 'M01', 'taxes' => [[...$response['taxes'][0], 'tax_id' => 5]]],
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->tax)->toBe(ItemTax::EXEMPT)
+        ->and($data->taxExemptionReason)->toBe('M01')
+        ->and($data->taxExemptionLaw)->toBe(match ($provider) {
+            Provider::VENDUS => 'Artigo 16.º, n.º 6 do CIVA',
+            Provider::MOLONI => null,
+        });
+})->with('providers', ['fetch']);
+
+test('ignores a tax exemption on an item that is not exempt', function (Provider $provider, string $responseFixture) {
+    $response = fixtures()->response()->item()->files($responseFixture);
+
+    match ($provider) {
+        Provider::VENDUS => $response = [...$response, 'tax' => [...$response['tax'], 'exemption' => 'M01', 'exemption_law' => 'Artigo 16.º, n.º 6 do CIVA']],
+        Provider::MOLONI => $response['exemption_reason'] = 'M01',
+    };
+
+    Http::fake(mockResponse($response));
+
+    $data = Item::fetch(ItemData::make(['id' => 123]))->execute()->get();
+
+    expect($data->tax)->toBe(ItemTax::NORMAL)
+        ->and($data->taxExemptionReason)->toBeNull()
+        ->and($data->taxExemptionLaw)->toBeNull();
+})->with('providers', ['fetch']);
+
+test('fails when moloni has no item with the id', function () {
+    mockConfiguration(Provider::MOLONI);
+
+    Http::fake(mockResponse([]));
+
+    Item::fetch(ItemData::make(['id' => 1]))->execute();
+})->throws(RequestFailedException::class);

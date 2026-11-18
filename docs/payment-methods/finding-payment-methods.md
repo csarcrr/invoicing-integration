@@ -9,14 +9,14 @@ use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 
 $results = PaymentMethod::find()->execute();
 
-foreach ($results->getList() as $paymentMethod) {
+foreach ($results->get() as $paymentMethod) {
     $paymentMethod->id;
     $paymentMethod->name;
     $paymentMethod->type; // PaymentMethod enum case, or null
 }
 ```
 
-- `getList()` returns a `Collection` of `PaymentMethodData` instances.
+- `get()` returns a `Collection` of `PaymentMethodData` instances.
 - `PaymentMethod::find()` takes no filters: the provider returns every payment method of the account.
 
 ## Pagination
@@ -26,15 +26,15 @@ foreach ($results->getList() as $paymentMethod) {
 ```php
 $results = PaymentMethod::find()->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     $results->next()->execute();
 }
 ```
 
-- Each page holds up to 50 payment methods.
-- `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
+- On Moloni each page holds up to 50 payment methods. `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
+- On Vendus every payment method comes back on one page. After `execute()`, `getTotalPages()` returns `1`, and `next()` raises `NoMorePagesException`.
 - `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException`.
 
 ## Moloni
@@ -58,9 +58,26 @@ The request is sent to `paymentMethods/getAll` with `qty` and `offset`. Each row
 
 A flag that is missing from the response counts as not set. `MONEY_TRANSFER` and `CURRENT_ACCOUNT` are never returned, because Moloni has no flag for them.
 
-## Cegid Vendus
+## Vendus
 
-Not supported: `PaymentMethod::find()` throws `OperationNotSupportedException`.
+The request is sent to `GET documents/paymentmethods`, with no parameters. Each row is mapped as:
+
+| Vendus field | `PaymentMethodData` |
+| ------------------ | ------------------- |
+| `id`               | `id`                |
+| `title`            | `name`              |
+| `type`             | `type`              |
+
+| Vendus `type` | `type`                           |
+| ------------------- | -------------------------------- |
+| `NU`                | `PaymentMethod::MONEY`           |
+| `CD`                | `PaymentMethod::MB`              |
+| `CC`                | `PaymentMethod::CREDIT_CARD`     |
+| `DNP`               | `PaymentMethod::CURRENT_ACCOUNT` |
+| `TB`                | `PaymentMethod::MONEY_TRANSFER`  |
+| any other           | `null`                           |
+
+When Vendus reports no data, `get()` is empty.
 
 ## Reference
 

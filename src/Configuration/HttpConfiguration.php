@@ -18,19 +18,19 @@ final class HttpConfiguration
     public static function get(): PendingRequest
     {
         return match (ProviderConfiguration::getProvider()) {
-            Provider::CEGID_VENDUS => self::cegidVendus(),
+            Provider::VENDUS => self::vendus(),
             Provider::MOLONI => self::Moloni(),
         };
     }
 
-    private static function cegidVendus(): PendingRequest
+    private static function vendus(): PendingRequest
     {
         $config = ProviderConfiguration::getConfig();
 
         return Http::withHeaders([
             'Authorization' => 'Bearer '.$config['key'],
         ])
-            ->baseUrl('https://www.vendus.pt/ws/v1.1/')
+            ->baseUrl('https://www.vendus.pt/ws/v1.2/')
             ->timeout(30)
             ->connectTimeout(10);
     }

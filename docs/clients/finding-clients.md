@@ -12,7 +12,7 @@ Use `find()` when you need to:
 - Audit existing provider records before creating duplicates
 - Sync clients from the provider back into your application
 
-If you already know the provider ID, prefer `Client::get()` for a direct lookup.
+If you already know the provider ID, prefer `Client::fetch()` for a direct lookup.
 
 ## Basic Usage
 
@@ -22,22 +22,22 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 $results = Client::find()->execute();
 
-foreach ($results->getList() as $client) {
+foreach ($results->get() as $client) {
     // do stuff
 }
 ```
 
-- `getList()` returns a `Collection` of `ClientData` instances populated by
+- `get()` returns a `Collection` of `ClientData` instances populated by
   the provider response.
 - The same paginator object is returned, so you can immediately call
   `next()->execute()` to fetch additional pages.
-- On Cegid Vendus, each returned client has the same fields as a client from
-  `Client::get()`, including `date`.
+- On Vendus, each returned client has the same fields as a client from
+  `Client::fetch()`, except `date` and `defaultPayDue`, which the list does not return.
 - Returned clients do not carry `getAdditionalData()`.
 
 ## Filtering by Email
 
-Cegid Vendus and Moloni support server-side email filtering:
+Vendus and Moloni support server-side email filtering:
 
 ```php
 $filters = ClientData::make(['email' => 'billing@example.com']);
@@ -45,8 +45,12 @@ $filters = ClientData::make(['email' => 'billing@example.com']);
 $results = Client::find($filters)->execute();
 ```
 
+Moloni matches part of the value and ignores case. Vendus matches the
+whole value: `email` must be the full address with the same case, and `name`
+the full name in any case.
+
 Filterable fields depend on the provider, but the `ClientData` DTO supports
-common attributes such as `email`, `vat`, `status`, and `externalReference`.
+common attributes such as `email`, `vat`, `status`, and `reference`.
 
 ## Searching on Moloni
 
@@ -56,16 +60,38 @@ in this order:
 
 1. `vat`
 2. `email`
-3. `id` (sent as the customer number)
+3. `reference` (sent as the customer number)
 4. `name`
 
 ```php
 $results = Client::find(ClientData::make(['vat' => '215783920']))->execute();
 ```
 
-- Other filters (`status`, `externalReference`, `date`) are ignored.
+- Other filters (`status`, `date`) are ignored. `reference` is only sent when `vat` and `email` are not set, and `name` only when `reference` is not set.
 - Each returned client has `id` set to the Moloni `customer_id`, ready for
-  `Client::get()`.
+  `Client::fetch()`.
+
+## Searching on Vendus
+
+Vendus combines every filter set. The package sends only the fields
+Vendus can search by:
+
+- `vat` (sent as `fiscal_id`)
+- `name`
+- `email`
+- `reference`
+- `status`
+- `date` (sent as `Y-m-d`)
+
+```php
+$results = Client::find(ClientData::make(['name' => 'Acme', 'status' => 'active']))->execute();
+```
+
+- Other filters (`id`, `city`, `address`, `phone`, `notes`, `country`,
+  `irsRetention`, ...) are not sent.
+- When nothing matches, Vendus answers `404` with error code `A001`
+  (`No data`). The package returns an empty list instead of throwing. Any
+  other `404` throws.
 
 ## Pagination API
 
@@ -75,10 +101,13 @@ the `HasPaginator` trait.
 ```php
 $results = Client::find()->execute();
 
-while ($results->getCurrentPage() < $results->getTotalPages()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
-    // Move to the next provider page
+    if ($results->getCurrentPage() === $results->getTotalPages()) {
+        break;
+    }
+
     $results->next()->execute();
 }
 ```
@@ -87,30 +116,30 @@ while ($results->getCurrentPage() < $results->getTotalPages()) {
   `1` if absent). It returns `null` when the provider does not report a total
   (Moloni), and before the first `execute()`: keep calling `next()` until a page
   comes back empty.
-- Calling `next()` beyond the last page, `previous()` before page 1, or
-  `page()` with an invalid value raises `NoMorePagesException`.
+- Calling `previous()` before page 1, or `page()` below 1, raises
+  `NoMorePagesException`. On Vendus, after the first `execute()`,
+  `next()` beyond the last page and `page()` above the total also raise it. On
+  Moloni they return an empty list.
 
 ## Putting It Together
 
 ```php
+use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Facades\Client;
-use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
 
-try {
-    $filters = ClientData::make(['email' => 'acme.com']);
-    $clients = Client::find($filters)->execute();
+$filters = ClientData::make(['email' => 'billing@example.com']);
+$clients = Client::find($filters)->execute();
 
-    do {
-        foreach ($clients->getList() as $client) {
-            // do stuff
-        }
+while ($clients->get()->isNotEmpty()) {
+    foreach ($clients->get() as $client) {
+        // do stuff
+    }
 
-        if ($clients->getCurrentPage() < $clients->getTotalPages()) {
-            $clients->next()->execute();
-        }
-    } while ($clients->getCurrentPage() < $clients->getTotalPages());
-} catch (NoMorePagesException $e) {
-    report($e);
+    if ($clients->getCurrentPage() === $clients->getTotalPages()) {
+        break;
+    }
+
+    $clients->next()->execute();
 }
 ```
 

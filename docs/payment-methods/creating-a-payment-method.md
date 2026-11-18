@@ -14,7 +14,7 @@ $paymentMethod = PaymentMethodData::make([
     'type' => PaymentMethodEnum::MB,
 ]);
 
-$created = PaymentMethod::create($paymentMethod)->execute()->getPaymentMethod();
+$created = PaymentMethod::create($paymentMethod)->execute()->get();
 
 echo $created->id; // provider-assigned ID
 ```
@@ -44,7 +44,7 @@ Moloni has no flag for `MONEY_TRANSFER` or `CURRENT_ACCOUNT`, so a method create
 
 The returned `payment_method_id` is set as `id`. Other response fields are available through `getAdditionalData()`.
 
-## Cegid Vendus
+## Vendus
 
 Not supported: `PaymentMethod::create()` throws `OperationNotSupportedException`.
 
@@ -54,7 +54,7 @@ Not supported: `PaymentMethod::create()` throws `OperationNotSupportedException`
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $created = PaymentMethod::create($paymentMethod)->execute()->getPaymentMethod();
+    $created = PaymentMethod::create($paymentMethod)->execute()->get();
 } catch (RequestFailedException $e) {
     Log::error('Payment method creation failed', ['message' => $e->getMessage()]);
 }

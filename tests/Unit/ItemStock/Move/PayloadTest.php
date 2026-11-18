@@ -27,7 +27,7 @@ it('omits optional fields', function (Provider $provider) {
         ->toArray();
 
     expect($payload)->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => [
+        Provider::VENDUS => [
             'product_id' => 1542,
             'type' => 'add',
             'amount' => 5,
@@ -46,14 +46,14 @@ it('sends a float quantity unchanged', function (Provider $provider) {
         ->toArray();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload['amount'])->toBe(0.5)
+        Provider::VENDUS => expect($payload['amount'])->toBe(0.5)
             ->and($payload['type'])->toBe('remove'),
         Provider::MOLONI => expect($payload['qty'])->toBe(-0.5),
     };
 })->with('providers');
 
 it('builds the observations from the date and the notes', function (array $data, string $observations) {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     $payload = ItemStock::move(StockMovementData::make(['itemId' => 1542, 'quantity' => 5, ...$data]))
         ->getPayload()

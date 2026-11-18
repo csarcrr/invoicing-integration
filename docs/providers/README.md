@@ -1,12 +1,12 @@
 # Providers
 
-## Cegid Vendus
+## Vendus
 
-See [Cegid Vendus Configuration](cegid-vendus/configuration.md) for details on configuring and using the Cegid Vendus provider.
+See [Vendus Configuration](vendus/configuration.md) for details on configuring and using the Vendus provider.
 
 ## Moloni
 
-See [Moloni Configuration](moloni/configuration.md) - Coming soon.
+See [Moloni Configuration](moloni/configuration.md) for details on configuring and using the Moloni provider.
 
 ## Invoice Express
 

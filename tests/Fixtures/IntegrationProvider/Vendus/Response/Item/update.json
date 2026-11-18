@@ -1,0 +1,58 @@
+{
+    "id": 1542,
+    "order": 0,
+    "reference": "reference-1",
+    "barcode": "barcode-1",
+    "supplier_code": "",
+    "title": "New Title",
+    "description": "A small product description used for testing purposes.",
+    "include_description": "",
+    "supply_price": "0.00",
+    "prices": {
+        "supply": "0.00",
+        "markup": 0,
+        "gross": "24.60",
+        "net": "20.00"
+    },
+    "unit_id": 19999,
+    "class_name": "",
+    "type_id": "P",
+    "lot_control": 0,
+    "stock": {
+        "control": 1,
+        "type": "M",
+        "stores": [
+            {
+                "store_id": 1,
+                "stock": 40,
+                "alert": 0
+            },
+            {
+                "store_id": 2,
+                "stock": 2.5,
+                "alert": 0
+            }
+        ]
+    },
+    "tax": {
+        "id": "NOR",
+        "title": "IVA - Taxa Normal (23%)",
+        "rate": 23,
+        "type": "IVA",
+        "exemption": "",
+        "exemption_law": ""
+    },
+    "category_id": 1,
+    "brand_id": 0,
+    "status": "on",
+    "stores": [
+        {
+            "store": "Store 1",
+            "store_id": 1
+        },
+        {
+            "store": "Store 2",
+            "store_id": 2
+        }
+    ]
+}

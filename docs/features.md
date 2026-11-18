@@ -2,7 +2,7 @@
 
 Need to check if a feature is supported before you start coding? This page provides a quick reference matrix showing what's implemented across different providers and document types.
 
-The columns show what's implemented for each provider: **Cegid Vendus**, **Moloni**, and **Invoice Express**.
+The columns show what's implemented for each provider: **Vendus**, **Moloni**, and **Invoice Express**.
 
 **Document types at a glance:**
 
@@ -24,18 +24,19 @@ The columns show what's implemented for each provider: **Cegid Vendus**, **Molon
 
 Features for managing items (product catalog) independently of invoices.
 
-|               | Cegid Vendus | Moloni | Invoice Express |
+|               | Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
 | Create Item   | ✅           | ✅     | ❌              |
 | Update Item   | ✅           | ✅     | ❌              |
-| Delete Item   | ❌           | ❌     | ❌              |
+| Delete Item   | ✅           | ✅     | ❌              |
+| Get Item      | ✅           | ✅     | ❌              |
 | List Items    | ✅           | ✅     | ❌              |
 
 ## Item Stock Management
 
-Features for moving item stock. Current stock is read through `Item::get()`; see [Getting an Item](items/getting-an-item.md#stock).
+Features for moving item stock. Current stock is read through `Item::fetch()`; see [Getting an Item](items/getting-an-item.md#stock).
 
-|                 | Cegid Vendus | Moloni | Invoice Express |
+|                 | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Move Stock      | ✅           | ✅     | ❌              |
 
@@ -43,31 +44,97 @@ Features for moving item stock. Current stock is read through `Item::get()`; see
 
 Features for managing clients independently of invoices.
 
-|               | Cegid Vendus | Moloni | Invoice Express |
+|               | Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
 | Create Client | ✅           | ✅     | ❌              |
 | Get Client    | ✅           | ✅     | ❌              |
-| Update Client | ❌           | ❌     | ❌              |
-| Delete Client | ❌           | ❌     | ❌              |
+| Update Client | ✅           | ✅     | ❌              |
+| Delete Client | ✅           | ✅     | ❌              |
 | List Clients  | ✅           | ✅     | ❌              |
 
 ## Due Date Management
 
 Features for managing due dates (payment terms) independently of invoices.
 
-|                 | Cegid Vendus | Moloni | Invoice Express |
+|                 | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Create Due Date | ❌           | ✅     | ❌              |
-| List Due Dates  | ❌           | ✅     | ❌              |
+| List Due Dates  | ✅           | ✅     | ❌              |
 
 ## Payment Method Management
 
 Features for managing the payment methods stored in the provider.
 
-|                       | Cegid Vendus | Moloni | Invoice Express |
+|                       | Vendus | Moloni | Invoice Express |
 | --------------------- | ------------ | ------ | --------------- |
 | Create Payment Method | ❌           | ✅     | ❌              |
-| List Payment Methods  | ❌           | ✅     | ❌              |
+| List Payment Methods  | ✅           | ✅     | ❌              |
+
+## Company Management
+
+Features for listing the companies the provider user has access to.
+
+|                | Vendus | Moloni | Invoice Express |
+| -------------- | ------------ | ------ | --------------- |
+| List Companies | ❌           | ✅     | ❌              |
+
+## Tax Management
+
+Features for managing the taxes stored in the provider.
+
+|             | Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Create Tax  | ❌           | ✅     | ❌              |
+| List Taxes  | ❌           | ✅     | ❌              |
+| List Tax Exemptions | ✅    | ✅     | ❌              |
+
+## Category Management
+
+Features for managing the categories stored in the provider.
+
+|                 | Vendus | Moloni | Invoice Express |
+| --------------- | ------------ | ------ | --------------- |
+| Create Category | ✅           | ✅     | ❌              |
+| List Categories | ✅           | ✅     | ❌              |
+| Get Category    | ✅           | ✅     | ❌              |
+| Update Category | ✅           | ✅     | ❌              |
+
+## Unit Management
+
+Features for managing the units stored in the provider.
+
+|             | Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Create Unit | ✅           | ✅     | ❌              |
+| List Units  | ✅           | ✅     | ❌              |
+
+## Warehouse Management
+
+Features for managing the warehouses (Moloni) or stores (Vendus) stored in the provider.
+
+|                  | Vendus | Moloni | Invoice Express |
+| ---------------- | ------------ | ------ | --------------- |
+| Create Warehouse | ✅           | ✅     | ❌              |
+| List Warehouses  | ✅           | ✅     | ❌              |
+
+## Document Type Management
+
+Features for listing the document types stored in the provider.
+
+|                     | Vendus | Moloni | Invoice Express |
+| ------------------- | ------------ | ------ | --------------- |
+| List Document Types | ✅           | ✅     | ❌              |
+
+## Invoice Management
+
+Features for reading the invoices stored in the provider.
+
+|             | Vendus | Moloni | Invoice Express |
+| ----------- | ------------ | ------ | --------------- |
+| Get Invoice | ✅           | ✅     | ❌              |
+| Find Invoices | ✅         | ✅     | ❌              |
+| Get Invoice PDF | ✅       | ✅     | ❌              |
+| Cancel Invoice | ✅       | ✅     | ❌              |
 
 ## Invoicing
 
@@ -86,11 +153,11 @@ Features that apply when issuing an Invoicing.
       <th colspan="3">NC</th>
     </tr>
     <tr>
-      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
-      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
-      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
-      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
-      <th>Cegid Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Vendus</th><th>Moloni</th><th>Invoice Express</th>
+      <th>Vendus</th><th>Moloni</th><th>Invoice Express</th>
     </tr>
   </thead>
 
@@ -154,16 +221,16 @@ Features that are "shared" between multiple Invoicing types.
 
 #### Outputting
 
-|               | Cegid Vendus | Moloni | Invoice Express |
+|               | Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
-| Save as PDF   | ✅           | ❌     | ❌              |
+| Save as PDF   | ✅           | ✅     | ❌              |
 | Obtain ESCPOS | ✅           | ❌     | ❌              |
 
 Moloni documents can also be created as drafts with `asDraft()`.
 
 #### Client
 
-|               | Cegid Vendus | Moloni | Invoice Express |
+|               | Vendus | Moloni | Invoice Express |
 | ------------- | ------------ | ------ | --------------- |
 | Name          | ✅           | ❌     | ❌              |
 | VAT           | ✅           | ❌     | ❌              |
@@ -179,7 +246,7 @@ On Moloni the client is linked through its `id` (the Moloni `customer_id`); the 
 
 #### Item
 
-|                                 | Cegid Vendus | Moloni | Invoice Express |
+|                                 | Vendus | Moloni | Invoice Express |
 | ------------------------------- | ------------ | ------ | --------------- |
 | Reference                       | ✅           | ❌     | ❌              |
 | Item ID                         | ❌           | ✅     | ❌              |
@@ -194,7 +261,7 @@ On Moloni the client is linked through its `id` (the Moloni `customer_id`); the 
 
 #### Payment
 
-|                              | Cegid Vendus | Moloni | Invoice Express |
+|                              | Vendus | Moloni | Invoice Express |
 | ---------------------------- | ------------ | ------ | --------------- |
 | Amount                       | ✅           | ✅     | ❌              |
 | Method (with integration ID) | ✅           | ✅     | ❌              |
@@ -203,7 +270,7 @@ On Moloni the client is linked through its `id` (the Moloni `customer_id`); the 
 
 Only applies to certain types of documents - See "Transport" compatibility in each type.
 
-|                                                   | Cegid Vendus | Moloni | Invoice Express |
+|                                                   | Vendus | Moloni | Invoice Express |
 | ------------------------------------------------- | ------------ | ------ | --------------- |
 | Origin (address, postal_code, city, country)      | ✅           | ❌     | ❌              |
 | Destination (address, postal_code, city, country) | ✅           | ❌     | ❌              |

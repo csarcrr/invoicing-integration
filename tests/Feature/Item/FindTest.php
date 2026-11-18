@@ -7,8 +7,9 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
@@ -25,8 +26,8 @@ test('getting list of items returns expected instances', function (Provider $pro
 
     $results = Item::find($this->filters)->execute();
 
-    expect($results->getList())->toBeInstanceOf(Collection::class)
-        ->and($results->getList()->first())->toBeInstanceOf(ItemData::class);
+    expect($results->get())->toBeInstanceOf(Collection::class)
+        ->and($results->get()->first())->toBeInstanceOf(ItemData::class);
 })->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {
@@ -36,7 +37,7 @@ test('automagically injects provider pagination details into the request', funct
 
     Http::assertSent(function (Request $request) use ($provider) {
         return match ($provider) {
-            Provider::CEGID_VENDUS => Str::contains($request->url(), 'page=1'),
+            Provider::VENDUS => Str::contains($request->url(), 'page=1'),
             Provider::MOLONI => Str::contains($request->url(), 'products/getAll')
                 && Str::contains($request->body(), 'category_id=12')
                 && Str::contains($request->body(), 'qty=50')
@@ -63,7 +64,7 @@ test('reports the total pages the provider returns', function (Provider $provide
     $results = Item::find($this->filters)->execute();
 
     expect($results->getTotalPages())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 5,
+        Provider::VENDUS => 5,
         Provider::MOLONI => null,
     });
 })->with('providers', ['response_multiple']);
@@ -81,7 +82,7 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList()->count())->toBe(2);
+        ->and($results->get()->count())->toBe(2);
 })->with('providers', ['response_multiple']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
@@ -99,7 +100,7 @@ test('can go to the next page and then go back', function (Provider $provider, s
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList()->count())->toBe(5);
+        ->and($results->get()->count())->toBe(5);
 })->with('providers', ['response_multiple']);
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
@@ -113,7 +114,7 @@ test('fails when attempting to go below the first page', function (Provider $pro
 
 // Moloni does not report its total pages, so there is no known upper limit to exceed.
 test('fails when attempting to go above the total pages', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     Http::fakeSequence()
         ->push([], 200, $this->headers)
@@ -124,11 +125,11 @@ test('fails when attempting to go above the total pages', function () {
 })->throws(NoMorePagesException::class);
 
 test('maps the vendus items onto the item list', function () {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     Http::fake(mockResponse(fixtures()->response()->item()->files('response_multiple')));
 
-    $list = Item::find()->execute()->getList();
+    $list = Item::find()->execute()->get();
 
     expect($list)->toHaveCount(3)
         ->and($list->first()->id)->toBe(1001)
@@ -141,10 +142,12 @@ test('maps the vendus items onto the item list', function () {
         ->and($list->first()->price)->toBe(2000)
         ->and($list->first()->controlStock)->toBeTrue()
         ->and($list->first()->enabled)->toBeTrue()
+        ->and($list->first()->category->id)->toBe(0)
         ->and($list->get(1)->type)->toBe(ItemType::Service)
         ->and($list->get(1)->tax)->toBe(ItemTax::NORMAL)
         ->and($list->get(1)->price)->toBe(4500)
         ->and($list->get(1)->controlStock)->toBeFalse()
+        ->and($list->last()->stock)->toBeEmpty()
         ->and($list->last()->enabled)->toBeFalse();
 });
 
@@ -153,7 +156,7 @@ test('maps the moloni products onto the item list', function () {
 
     Http::fake(mockResponse(fixtures()->response()->item()->files('response_multiple')));
 
-    $list = Item::find($this->filters)->execute()->getList();
+    $list = Item::find($this->filters)->execute()->get();
 
     expect($list)->toHaveCount(2)
         ->and($list->first()->id)->toBe(1542)
@@ -164,7 +167,11 @@ test('maps the moloni products onto the item list', function () {
         ->and($list->first()->tax)->toBe(ItemTax::NORMAL)
         ->and($list->first()->price)->toBe(2460)
         ->and($list->first()->enabled)->toBeTrue()
+        ->and($list->first()->description)->toBe('Over-ear headphones with noise cancelling.')
+        ->and($list->first()->category->id)->toBe(1)
+        ->and($list->first()->controlStock)->toBeTrue()
         ->and($list->last()->id)->toBe(1543)
+        ->and($list->last()->controlStock)->toBeFalse()
         ->and($list->last()->type)->toBe(ItemType::Service)
         ->and($list->last()->tax)->toBeNull()
         ->and($list->last()->price)->toBeNull()
@@ -183,21 +190,52 @@ test('maps a moloni tax by its configured tax id when finding items', function (
 
     $results = Item::find($this->filters)->execute();
 
-    expect($results->getList()->first()->tax)->toBe(ItemTax::EXEMPT);
+    expect($results->get()->first()->tax)->toBe(ItemTax::EXEMPT);
 });
 
 test('maps the tax exemption of exempt items when finding items', function (Provider $provider, string $fixtureName) {
     $response = fixtures()->response()->item()->files($fixtureName);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => $response[0] = [...$response[0], 'tax_id' => 'ISE', 'tax_exemption' => 'M01'],
+        Provider::VENDUS => $response[0] = [...$response[0], 'tax' => ['id' => 'ISE', 'exemption' => 'M01', 'exemption_law' => '']],
         Provider::MOLONI => $response[0] = [...$response[0], 'exemption_reason' => 'M01', 'taxes' => [[...$response[0]['taxes'][0], 'tax_id' => 5]]],
     };
 
     Http::fake(mockResponse($response));
 
-    $item = Item::find($this->filters)->execute()->getList()->first();
+    $item = Item::find($this->filters)->execute()->get()->first();
 
     expect($item->tax)->toBe(ItemTax::EXEMPT)
-        ->and($item->taxExemptionReason)->toBe(TaxExemptionReason::M01);
+        ->and($item->taxExemptionReason)->toBe('M01');
 })->with('providers', ['response_multiple']);
+
+test('returns an empty list when vendus finds no items', function () {
+    mockConfiguration(Provider::VENDUS);
+
+    Http::fake(mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404));
+
+    $results = Item::find(ItemData::make(['reference' => 'missing']))->execute();
+
+    expect($results->get())->toBeEmpty();
+});
+
+test('fails when vendus answers 404 with an error other than no data', function () {
+    mockConfiguration(Provider::VENDUS);
+
+    Http::fake(mockResponse(['errors' => [['code' => 'A002', 'message' => 'Not found']]], 404));
+
+    Item::find(ItemData::make(['reference' => 'missing']))->execute();
+})->throws(RequestFailedException::class);
+
+test('keeps the vendus total pages when a page request fails', function () {
+    mockConfiguration(Provider::VENDUS);
+
+    Http::fakeSequence()
+        ->push([], 200, $this->headers)
+        ->push([], 500);
+
+    $results = Item::find($this->filters)->execute();
+
+    expect(fn () => $results->next()->execute())->toThrow(FailedReachingProviderException::class)
+        ->and($results->getTotalPages())->toBe(5);
+});

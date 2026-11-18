@@ -1,0 +1,149 @@
+[
+    {
+        "id": 1001,
+        "order": 0,
+        "reference": "reference-1",
+        "barcode": "barcode-1",
+        "supplier_code": "",
+        "title": "Item Title",
+        "description": "Item Description",
+        "include_description": "",
+        "supply_price": "0.00",
+        "prices": {
+            "supply": "0.00",
+            "markup": 0,
+            "gross": "20.00",
+            "net": "20.00"
+        },
+        "unit_id": 19999,
+        "class_name": "",
+        "type_id": "P",
+        "compound": {
+            "stock": {
+                "stock": 1,
+                "store_id": 0,
+                "stock_alert": 0
+            }
+        },
+        "lot_control": 0,
+        "stock": {
+            "control": 1,
+            "type": "M",
+            "stores": [
+                {
+                    "store_id": 1,
+                    "stock": 40,
+                    "alert": 0
+                },
+                {
+                    "store_id": 2,
+                    "stock": 2.5,
+                    "alert": 0
+                }
+            ]
+        },
+        "tax": {
+            "id": "ISE",
+            "exemption": "M40",
+            "exemption_law": ""
+        },
+        "category_id": 0,
+        "brand_id": 0,
+        "status": "on",
+        "stores": {
+            "store": "",
+            "store_id": 0
+        }
+    },
+    {
+        "id": 1002,
+        "order": 0,
+        "reference": "reference-2",
+        "barcode": "barcode-2",
+        "supplier_code": "",
+        "title": "Another Item",
+        "description": "Another Description",
+        "include_description": "",
+        "supply_price": "0.00",
+        "prices": {
+            "supply": "0.00",
+            "markup": 0,
+            "gross": "45.00",
+            "net": "36.59"
+        },
+        "unit_id": 29999,
+        "class_name": "",
+        "type_id": "S",
+        "compound": {
+            "stock": {
+                "stock": 1,
+                "store_id": 0,
+                "stock_alert": 0
+            }
+        },
+        "lot_control": 0,
+        "stock": {
+            "control": 0,
+            "type": "M"
+        },
+        "tax": {
+            "id": "NOR",
+            "title": "IVA - Taxa Normal (23%)",
+            "rate": 23,
+            "type": "IVA",
+            "exemption": "",
+            "exemption_law": ""
+        },
+        "category_id": 0,
+        "brand_id": 0,
+        "status": "on",
+        "stores": {
+            "store": "",
+            "store_id": 0
+        }
+    },
+    {
+        "id": 1003,
+        "order": 0,
+        "reference": "reference-3",
+        "barcode": "barcode-3",
+        "supplier_code": "",
+        "title": "Third Item",
+        "description": "Third Description",
+        "include_description": "",
+        "supply_price": "0.00",
+        "prices": {
+            "supply": "0.00",
+            "markup": 0,
+            "gross": "10.50",
+            "net": "9.29"
+        },
+        "unit_id": 29999,
+        "class_name": "",
+        "type_id": "P",
+        "compound": {
+            "stock": {
+                "stock": 1,
+                "store_id": 0,
+                "stock_alert": 0
+            }
+        },
+        "lot_control": 0,
+        "stock": {
+            "control": 1,
+            "type": "M"
+        },
+        "tax": {
+            "id": "INT",
+            "exemption": "",
+            "exemption_law": ""
+        },
+        "category_id": 0,
+        "brand_id": 0,
+        "status": "off",
+        "stores": {
+            "store": "",
+            "store_id": 0
+        }
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "id": 29999,
+        "title": "Uni",
+        "decimal": 0,
+        "default": 1
+    },
+    {
+        "id": 19999,
+        "title": "Kg",
+        "decimal": 3,
+        "default": 0
+    }
+]

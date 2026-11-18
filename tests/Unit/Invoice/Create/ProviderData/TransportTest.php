@@ -10,7 +10,7 @@ use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\TransportData;
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Validation\ValidationException;
 
@@ -20,6 +20,8 @@ beforeEach(function () {
 
 it('transforms to provider payload with transport details', function (Provider $provider, string $fixtureName) {
     $data = fixtures()->request()->invoice()->files($fixtureName);
+
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
 
     $origin = AddressData::make([
         'dateTime' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025)->setHour(10)->setMinute(5),
@@ -34,7 +36,7 @@ it('transforms to provider payload with transport details', function (Provider $
         'address' => 'Rua dos Paninhos, 521',
         'city' => 'Porto',
         'postalCode' => '4410-100',
-        'country' => 'PT',
+        'country' => 'ES',
     ]);
 
     $transport = TransportData::make([
@@ -45,6 +47,7 @@ it('transforms to provider payload with transport details', function (Provider $
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'client' => ClientData::from(['name' => 'Client Name', 'vat' => '123456789']),
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'transport' => $transport,
@@ -54,7 +57,42 @@ it('transforms to provider payload with transport details', function (Provider $
     expect($invoice->getPayload())->toMatchArray($data);
 })->with('providers', ['transport']);
 
+it('does not send the transport countries when they are not set', function (Provider $provider) {
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+
+    $transport = TransportData::make([
+        'origin' => AddressData::make([
+            'dateTime' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025)->setHour(10)->setMinute(5),
+            'address' => 'Rua das Flores, 125',
+            'city' => 'Porto',
+            'postalCode' => '4410-200',
+        ]),
+        'destination' => AddressData::make([
+            'address' => 'Rua dos Paninhos, 521',
+            'city' => 'Porto',
+            'postalCode' => '4410-100',
+        ]),
+    ]);
+
+    $payload = Invoice::create(
+        InvoiceData::make([
+            'type' => InvoiceType::Transport,
+            'client' => ClientData::from(['name' => 'Client Name', 'vat' => '123456789']),
+            'items' => [ItemData::from(['reference' => 'reference-1'])],
+            'transport' => $transport,
+        ])
+    )->getPayload();
+
+    match ($provider) {
+        Provider::VENDUS => expect($payload->get('movement_of_goods')['loadpoint'])->not->toHaveKey('country')
+            ->and($payload->get('movement_of_goods')['landpoint'])->not->toHaveKey('country'),
+        Provider::MOLONI => expect($payload)->not->toHaveKeys(['delivery_departure_country', 'delivery_destination_country']),
+    };
+})->with('providers');
+
 it('only sends transport details on document types that accept them', function (Provider $provider) {
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+
     $origin = AddressData::make([
         'dateTime' => Carbon::now()->setDay(12)->setMonth(12)->setYear(2025)->setHour(10)->setMinute(5),
         'address' => 'Rua das Flores, 125',
@@ -88,7 +126,7 @@ it('only sends transport details on document types that accept them', function (
     $payload = $invoice->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload)->toHaveKey('movement_of_goods'),
+        Provider::VENDUS => expect($payload)->toHaveKey('movement_of_goods'),
         Provider::MOLONI => expect($payload)->not->toHaveKeys([
             'delivery_datetime',
             'delivery_departure_address',
@@ -121,6 +159,7 @@ it('fails when no client is provided with transport', function (Provider $provid
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'transport' => $transport,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
         ])
@@ -134,6 +173,8 @@ it('fails when no client is provided with transport', function (Provider $provid
     );
 
 it('fails when no load date is provided with transport', function (Provider $provider) {
+    fakeProviderClientByVat($provider, [['customer_id' => 12001, 'vat' => '123456789']]);
+
     $origin = AddressData::make([
         'address' => 'Rua das Flores, 125',
         'city' => 'Porto',
@@ -156,6 +197,7 @@ it('fails when no load date is provided with transport', function (Provider $pro
 
     $invoice = Invoice::create(
         InvoiceData::make([
+            'type' => InvoiceType::Invoice,
             'transport' => $transport,
             'items' => [ItemData::from(['reference' => 'reference-1'])],
             'client' => ClientData::from(['vat' => '123456789', 'name' => 'Client Name']),

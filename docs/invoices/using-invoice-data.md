@@ -3,7 +3,7 @@
 `InvoiceData` serves a dual role in this package:
 
 1. **Input DTO** — You populate it and pass it to `Invoice::create(InvoiceData $invoice)` to describe the invoice you want to issue (items, payments, client, output format, etc.).
-2. **Response object** — After calling `execute()->getInvoice()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcudHash`, and `output`).
+2. **Response object** — After calling `execute()->get()`, the same `InvoiceData` type is returned, now hydrated with the provider's response fields (`id`, `sequence`, `total`, `totalNet`, `atcud`, and `output`).
 
 This means you work with the same class on both sides of the HTTP boundary; there is no separate "response" type to import.
 
@@ -14,13 +14,15 @@ When you issue an invoice, you receive a hydrated `InvoiceData` containing the r
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [ItemData::make(['reference' => 'SKU-001'])],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Find the invoice sequence number (provider's reference)
 $sequence = $result->sequence; // e.g., "FT 01P2025/1"
@@ -40,7 +42,7 @@ $output = $result->output;
 | `id`        | `int`     | The provider's internal ID                         |
 | `total`     | `int`     | Total gross amount in cents                        |
 | `totalNet`  | `int`     | Net total amount in cents (excl. VAT)              |
-| `atcudHash` | `?string` | ATCUD hash (Portugal AT code); `null` if absent    |
+| `atcud`     | `?string` | ATCUD (AT unique document code); `null` if absent  |
 | `output`    | `?Output` | Output object, or `null` when no file is provided  |
 
 ## Working with the Sequence
@@ -48,7 +50,7 @@ $output = $result->output;
 The sequence number is the official invoice identifier used in Portugal:
 
 ```php
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 $sequence = $result->sequence;
 // Format: "{TYPE} {SERIES}/{NUMBER}"
@@ -61,18 +63,18 @@ $yourInvoiceRecord->save();
 
 ## Working with the ID
 
-The provider's internal ID is useful for API operations like creating receipts or credit notes:
+The provider's internal ID is useful for API operations like creating receipts or credit notes on Moloni. Vendus identifies the related invoice by its `sequence` instead:
 
 ```php
 use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
-$id = $result->id;
+$relatedDocument = $result->id; // Vendus: $result->sequence
 
 $receiptData = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => $id,
+    'relatedDocument' => $relatedDocument,
     'payments' => [...],
 ]);
 
@@ -82,12 +84,12 @@ Invoice::create($receiptData)->execute();
 ## Working with Output
 
 > [!NOTE]
-> `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. The methods you interact with (`save()`, `fileName()`, `content()`) are all on `OutputData` itself — there is no separate `Output` value object to import.
+> `InvoiceData::$output` is typed as `?OutputData`. When you build your input DTO you may set `output` to configure the preferred format (e.g., `OutputFormat::PDF_BASE64`). After `execute()` the same `$output` property on the returned `InvoiceData` is hydrated with the provider's file content and filename. Read `content`, `fileName` and `url` as properties and call `save()` on `OutputData` itself — there is no separate `Output` value object to import.
 
 The output object provides access to the generated document:
 
 ```php
-$result = $invoice->execute()->getInvoice();
+$result = $invoice->execute()->get();
 $output = $result->output;
 
 if ($output) {
@@ -107,10 +109,12 @@ if ($output) {
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\PaymentMethod;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'items' => [
         ItemData::make([
             'reference' => 'SKU-001',
@@ -125,7 +129,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 
 // Log the result
 logger()->info('Invoice issued', [
@@ -144,7 +148,7 @@ $pdfPath = null;
 
 if ($result->output) {
     $pdfPath = $result->output->save(
-        'invoices/' . $result->output->fileName()
+        'invoices/' . $result->output->fileName
     );
 
     $invoiceRecord->pdf_path = $pdfPath;
@@ -170,14 +174,14 @@ function processInvoiceResult($result): array
     return [
         'sequence' => $result->sequence,
         'id' => $result->id,
-        'filename' => $result->output?->fileName(),
+        'filename' => $result->output?->fileName,
     ];
 }
 ```
 
 ---
 
-Always store both `sequence` and `id` in your database. Use `sequence` for display and official references, and `id` when making related API calls (receipts, credit notes). The output object handles both PDF and ESC/POS formats transparently.
+Always store both `sequence` and `id` in your database. Use `sequence` for display and official references, and `id` when making related API calls (receipts, credit notes) on Moloni; Vendus uses `sequence` for them. The output object handles both PDF and ESC/POS formats transparently.
 
 ---
 

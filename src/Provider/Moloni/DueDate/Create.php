@@ -26,7 +26,12 @@ class Create extends DueDate implements ShouldCreateDueDate
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::DueDate);
     }
 
-    public function execute(): self
+    public function get(): DueDateData
+    {
+        return $this->data;
+    }
+
+    public function execute(): static
     {
         $response = Http::provider()->post('maturityDates/insert', $this->getPayload()->toArray());
 

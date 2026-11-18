@@ -1,45 +1,35 @@
 # TODO
 
-## Operations not supported by a provider
+## Quality of Life
 
-These operations throw `OperationNotSupportedException`. Their tests run on Moloni only. When a provider gains support for an operation, move that operation's tests to the `providers` dataset.
+1. Unit tests that fake the lookups a provider class sends while building its payload are a temporary exception. Replace them with a different approach.
+    - Moloni due dates (`maturityDates/getAll`): `tests/Unit/Client/Create/ProviderData/{PayloadTest,DefaultPayDueTest,CommercialTermsTest,CountryTest,LanguageTest,NumberTest}.php`, `tests/Unit/Client/Update/ProviderData/PayloadTest.php`, `tests/Unit/Invoice/Create/ProviderData/DueDateTest.php`
+    - Payment methods: `tests/Unit/Invoice/Create/ProviderData/{PaymentTest,DueDateTest,TypeTest,RelatedDocumentTest}.php`, `tests/Unit/Invoice/Create/ProviderData/CreditNote/CreditNoteReasonTest.php`
+    - Client by VAT: `tests/Unit/Invoice/Create/ProviderData/{ClientTest,TransportTest}.php`
+    - Stored Moloni product (`products/getOne`): `tests/Unit/Item/Update/ProviderData/{PayloadTest,TaxTest}.php`
+    - Moloni country, language, document set and OAuth grant: every Moloni unit test, through `mockConfiguration(Provider::MOLONI)` in `tests/Pest.php`
+    - Tests that assert the lookup itself:
+        - `tests/Unit/Invoice/Create/ProviderData/PaymentTest.php`: "fetches the provider payment methods once per invoice", "only sends payments on document types that accept them"
+        - `tests/Unit/Invoice/Create/ProviderData/DueDateTest.php`: "fetches the provider due dates in a single page", "does not fetch the provider due dates when no due date is set"
+        - `tests/Unit/Item/Update/ProviderData/PayloadTest.php`: "fails when no id is set, without any request", "fails when the unit is not mapped, without any request"
+        - `tests/Unit/Item/Update/ProviderData/TaxTest.php`: "fails when the moloni tax is not configured, without any request"
+2. .claude/rules/provider-operations.md contains a rule:
+    - - When a provider requires a value no DTO field carries, build it in the provider class (e.g. a random token) and keep it in the returned DTO's additional data. Never add a DTO field for one provider (see `.claude/rules/dtos.md`).
+    - This is incorrect. We cannot always default to a random string. We need to find a way to support these fields without breaking the rule of not inventing fields
+3. on Vendus, creating a wharehouse, in nowhere it is getting specified that the type is a wharehouse
+    - https://www.vendus.pt/ws/v1.2/#tag/Stores/paths/~1stores/post
+    - this is a problem because, stores in vendus, are registers and these registers are tied to the subscription
+        - this means that creating a register will create a new item for the subscription which will not work
+        - and this is a problem because the API is not stating the type of register anywhere - investigate if it accepts `type`
 
-| Operation | Provider | Provider endpoint | Status |
-| ----------------------- | ------------ | --------------------------------- | ------------------------------------------------- |
-| `PaymentMethod::create` | Cegid Vendus | `POST /documents/paymentmethods` | To implement |
-| `PaymentMethod::find` | Cegid Vendus | `GET /documents/paymentmethods` | To implement |
-| `DueDate::find` | Cegid Vendus | `GET /documents/duedates` | To implement |
-| `DueDate::create` | Cegid Vendus | None in `providers-docs/vendus/openapi.json` | Cannot implement until Vendus adds an endpoint |
+## Gaps
 
-## Moloni client create
+Operations one provider supports and the other does not expose yet.
 
-These required fields are sent as `0` until real values are defined:
-
-- `maturity_date_id`
-- `payment_method_id`
-- `country_id`
-- `language_id`
-
-## Moloni invoice create
-
-Sent as placeholders until real values are defined:
-
-- `document_set_id` is `0`
-
-`InvoiceData` inputs not sent:
-
-- transport origin / destination `country` (needs the Moloni country id) and destination `dateTime`
-- `output`: no PDF or ESC/POS is fetched (`documents/getPDFLink`)
-
-Response:
-
-- the ATCUD is not filled (`getOne` does not return it)
-
-To confirm against the live API:
-
-- GT and NC still send every field, whether or not their endpoint has it (e.g. `payments`, `expiration_date`)
-- `associated_documents.value` is sent as a gross amount
-- GT is mapped to `billsOfLading`
-- `sequence` is built as `{saft_code} {document set name}/{number}` from `documents/getOne`
-- `total` is `net_value` and `totalNet` is `net_value - taxes_value` from `documents/getOne`
-- validation errors come as a list of `code` and `description` entries with `human_errors=true`, and the HTTP status they use
+- Vendus has an endpoint, the package does not use it yet:
+    - `PaymentMethod::create`: `POST /documents/paymentmethods`
+    - `Tax::find`: `GET /taxes` (`providers-docs/vendus/openapi.json` line 3606)
+    - `Company::find`: `GET /account` (`providers-docs/vendus/openapi.json` line 1010), mapping unverified
+- Vendus has no endpoint, so these cannot be implemented until Vendus adds one:
+    - `DueDate::create`
+    - `Tax::create`

@@ -8,24 +8,20 @@ use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCrea
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\LanguageData;
-use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
 use CsarCrr\InvoicingIntegration\Enums\Property;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetCountryIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetLanguageIdException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\MissingClientDataException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
 use CsarCrr\InvoicingIntegration\Provider\Client;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Get as GetCountry;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Fetch as FetchCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
-use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Get as GetLanguage;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Language\Fetch as FetchLanguage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Spatie\LaravelData\Optional;
 
 use function collect;
-use function throw_if;
 
 class Create extends Client implements ShouldCreateClient
 {
@@ -39,12 +35,16 @@ class Create extends Client implements ShouldCreateClient
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
     }
 
+    public function get(): ClientData
+    {
+        return $this->data;
+    }
+
     /**
-     * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
      * @throws CouldNotGetLanguageIdException
      */
-    public function execute(): self
+    public function execute(): static
     {
         $payload = $this->getPayload();
 
@@ -53,7 +53,7 @@ class Create extends Client implements ShouldCreateClient
         Http::handleUnwantedFailures($response);
 
         $this->data = ClientData::from([
-            'id' => $payload->get('number'),
+            'id' => (string) $response->json('customer_id'),
         ] + $this->data->toArray());
 
         $this->fillAdditionalProperties($response->json());
@@ -64,14 +64,11 @@ class Create extends Client implements ShouldCreateClient
     /**
      * @return Collection<string, mixed>
      *
-     * @throws MissingClientDataException
      * @throws CouldNotGetCountryIdException
      * @throws CouldNotGetLanguageIdException
      */
     public function getPayload(): Collection
     {
-        $this->ensureRequiredData();
-
         $this->buildNumber();
         $this->buildName();
         $this->buildVat();
@@ -79,47 +76,40 @@ class Create extends Client implements ShouldCreateClient
         $this->buildCountry();
         $this->buildLanguage();
         $this->buildMaturityDate();
+        $this->buildPaymentMethod();
+        $this->buildPaymentDay();
+        $this->buildSalesman();
         $this->buildCommercialTerms();
         $this->buildContacts();
         $this->buildNotes();
-        $this->buildPendingIds();
 
         return $this->payload;
     }
 
-    /**
-     * @throws MissingClientDataException
-     */
-    protected function ensureRequiredData(): void
-    {
-        foreach (['name', 'vat', 'address', 'city'] as $field) {
-            throw_if(
-                Properties::isNotValid($this->data->{$field}),
-                MissingClientDataException::class,
-                "Moloni requires the {$field} to create a client."
-            );
-        }
-    }
-
     protected function buildNumber(): void
     {
-        /** @var string|int $vat */
-        $vat = $this->data->vat;
+        if (Properties::isNotValid($this->data->reference)) {
+            return;
+        }
 
-        $number = Properties::isValid($this->data->id)
-            ? $this->data->id
-            : $vat.Str::random(8);
-
-        $this->payload->put('number', $number);
+        $this->payload->put('number', $this->data->reference);
     }
 
     protected function buildName(): void
     {
+        if (Properties::isNotValid($this->data->name)) {
+            return;
+        }
+
         $this->payload->put('name', $this->data->name);
     }
 
     protected function buildVat(): void
     {
+        if (Properties::isNotValid($this->data->vat)) {
+            return;
+        }
+
         /** @var string|int $vat */
         $vat = $this->data->vat;
 
@@ -128,8 +118,13 @@ class Create extends Client implements ShouldCreateClient
 
     protected function buildAddress(): void
     {
-        $this->payload->put('address', $this->data->address);
-        $this->payload->put('city', $this->data->city);
+        if (Properties::isValid($this->data->address)) {
+            $this->payload->put('address', $this->data->address);
+        }
+
+        if (Properties::isValid($this->data->city)) {
+            $this->payload->put('city', $this->data->city);
+        }
 
         if (Properties::isNotValid($this->data->postalCode)) {
             return;
@@ -143,9 +138,11 @@ class Create extends Client implements ShouldCreateClient
      */
     protected function buildCountry(): void
     {
-        $iso = Properties::isValid($this->data->country) ? $this->data->country : 'PT';
+        if (Properties::isNotValid($this->data->country)) {
+            return;
+        }
 
-        $country = (new GetCountry(CountryData::from(['iso' => $iso])))->execute()->getCountry();
+        $country = (new FetchCountry(CountryData::from(['iso' => $this->data->country])))->execute()->get();
 
         $this->payload->put('country_id', $country->id);
     }
@@ -155,25 +152,48 @@ class Create extends Client implements ShouldCreateClient
      */
     protected function buildLanguage(): void
     {
-        $language = $this->data->language instanceof LanguageData
-            ? $this->data->language
-            : LanguageData::from(['code' => 'pt']);
+        if (! $this->data->language instanceof LanguageData) {
+            return;
+        }
 
-        $this->payload->put('language_id', (new GetLanguage($language))->execute()->getLanguage()->id);
+        $this->payload->put('language_id', (new FetchLanguage($this->data->language))->execute()->get()->id);
     }
 
     protected function buildMaturityDate(): void
     {
-        $term = $this->data->defaultPayDue instanceof Optional ? DueDateTerm::Days15 : $this->data->defaultPayDue;
+        if ($this->data->defaultPayDue instanceof Optional) {
+            return;
+        }
 
-        $this->payload->put('maturity_date_id', (new FindDueDate)->execute()->closestTo($term) ?? 0);
+        $maturityDateId = (new FindDueDate)->execute()->closestTo($this->data->defaultPayDue);
+
+        if (is_null($maturityDateId)) {
+            return;
+        }
+
+        $this->payload->put('maturity_date_id', $maturityDateId);
+    }
+
+    protected function buildPaymentMethod(): void
+    {
+        $this->data->paymentMethodId instanceof Optional || $this->payload->put('payment_method_id', $this->data->paymentMethodId);
+    }
+
+    protected function buildPaymentDay(): void
+    {
+        $this->data->paymentDay instanceof Optional || $this->payload->put('payment_day', $this->data->paymentDay);
+    }
+
+    protected function buildSalesman(): void
+    {
+        $this->data->salesmanId instanceof Optional || $this->payload->put('salesman_id', $this->data->salesmanId);
     }
 
     protected function buildCommercialTerms(): void
     {
-        $this->payload->put('discount', $this->data->discount instanceof Optional ? 0.0 : $this->data->discount);
-        $this->payload->put('credit_limit', $this->data->creditLimit instanceof Optional ? 0.0 : $this->data->creditLimit);
-        $this->payload->put('delivery_method_id', $this->data->deliveryMethodId instanceof Optional ? 0 : $this->data->deliveryMethodId);
+        $this->data->discount instanceof Optional || $this->payload->put('discount', $this->data->discount);
+        $this->data->creditLimit instanceof Optional || $this->payload->put('credit_limit', $this->data->creditLimit);
+        $this->data->deliveryMethodId instanceof Optional || $this->payload->put('delivery_method_id', $this->data->deliveryMethodId);
     }
 
     protected function buildContacts(): void
@@ -189,11 +209,5 @@ class Create extends Client implements ShouldCreateClient
         }
 
         $this->payload->put('notes', $this->data->notes);
-    }
-
-    protected function buildPendingIds(): void
-    {
-        $this->payload->put('payment_method_id', 0);
-        $this->payload->put('salesman_id', 0);
     }
 }

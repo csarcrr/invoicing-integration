@@ -3,6 +3,7 @@
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\OutputData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 use Illuminate\Support\Facades\Http;
@@ -12,10 +13,11 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $path = "invoices/{$data->output->fileName}";
 
@@ -24,7 +26,7 @@ test('can save the output to pdf', function (Provider $provider, string $fixture
     expect($output)->toBeString();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::VENDUS => Storage::disk('local')->assertExists($output),
         Provider::MOLONI => expect($output)->toBe(''),
     };
 })->with('providers', ['output_with_pdf']);
@@ -33,10 +35,11 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $path = "invoices/{$data->output->fileName}";
 
@@ -45,7 +48,7 @@ test('can output escpos', function (Provider $provider, string $fixtureName) {
     expect($output)->toBeString();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::VENDUS => Storage::disk('local')->assertExists($output),
         Provider::MOLONI => expect($output)->toBe(''),
     };
 })->with('providers', ['output_with_escpos']);
@@ -54,10 +57,11 @@ test('can save the output under a custom name and path', function (Provider $pro
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $path = 'invoices/custom-name.pdf';
 
@@ -66,7 +70,7 @@ test('can save the output under a custom name and path', function (Provider $pro
     expect($output)->toBeString();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => Storage::disk('local')->assertExists($output),
+        Provider::VENDUS => Storage::disk('local')->assertExists($output),
         Provider::MOLONI => expect($output)->toBe(''),
     };
 })->with('providers', ['output_with_pdf']);
@@ -80,15 +84,16 @@ test('is able to sanitize the path and filename when saving', function (
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     $savePath = $data->output->save($invalidPath);
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($savePath)->toBe($expectedPath)
+        Provider::VENDUS => expect($savePath)->toBe($expectedPath)
             ->and(Storage::disk('local')->exists($savePath))->toBeTrue(),
         Provider::MOLONI => expect($savePath)->toBe(''),
     };
@@ -120,10 +125,11 @@ test('outputs null when there is no invoice output provided', function (Provider
     Http::fake(mockResponse(fixtures()->response()->invoice()->output()->files($fixtureName)));
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::make(['reference' => 'item-1'])],
     ]));
 
-    $data = $invoice->execute()->getInvoice();
+    $data = $invoice->execute()->get();
 
     expect($data->output)->toBeInstanceOf(OutputData::class)->and($data->output->content)->toBeNull();
 })->with('providers', ['output_with_no_output']);

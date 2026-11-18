@@ -1,0 +1,62 @@
+[
+    {
+        "tax_id": 3951102,
+        "name": "IVA Normal",
+        "value": 23,
+        "type": 1,
+        "saft_type": 1,
+        "vat_type": "NOR",
+        "stamp_tax": "",
+        "exemption_reason": "",
+        "fiscal_zone": "PT",
+        "active_by_default": 1
+    },
+    {
+        "tax_id": 3951103,
+        "name": "IVA Reduzido",
+        "value": 6,
+        "type": 1,
+        "saft_type": 1,
+        "vat_type": "RED",
+        "stamp_tax": "",
+        "exemption_reason": "",
+        "fiscal_zone": "PT",
+        "active_by_default": 0
+    },
+    {
+        "tax_id": 3951762,
+        "name": "Normal (Açores)",
+        "value": 16,
+        "type": 1,
+        "saft_type": 1,
+        "vat_type": "NOR",
+        "stamp_tax": "",
+        "exemption_reason": "",
+        "fiscal_zone": "PT-AC",
+        "active_by_default": 0
+    },
+    {
+        "tax_id": 3951900,
+        "name": "Isento",
+        "value": 0,
+        "type": 1,
+        "saft_type": 1,
+        "vat_type": "ISE",
+        "stamp_tax": "",
+        "exemption_reason": "M07",
+        "fiscal_zone": "PT",
+        "active_by_default": 0
+    },
+    {
+        "tax_id": 3951901,
+        "name": "Selo",
+        "value": 10,
+        "type": 1,
+        "saft_type": 2,
+        "vat_type": "",
+        "stamp_tax": "1",
+        "exemption_reason": "",
+        "fiscal_zone": "PT",
+        "active_by_default": 0
+    }
+]

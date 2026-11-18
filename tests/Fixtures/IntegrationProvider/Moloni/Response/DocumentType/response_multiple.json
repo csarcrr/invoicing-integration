@@ -1,0 +1,12 @@
+[
+    {
+        "document_type_id": 1,
+        "saft_code": "FT",
+        "name": "Fatura"
+    },
+    {
+        "document_type_id": 3,
+        "saft_code": "NC",
+        "name": "Nota de Crédito"
+    }
+]

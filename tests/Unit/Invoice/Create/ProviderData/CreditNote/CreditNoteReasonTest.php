@@ -66,6 +66,7 @@ it('ignores credit note reason when invoice type is not credit note', function (
     $data = fixtures()->request()->invoice()->invoiceTypes()->files($fixtureName);
 
     $invoice = Invoice::create(InvoiceData::make([
+        'type' => InvoiceType::Invoice,
         'items' => [ItemData::from([
             'reference' => 'reference-1',
             'relatedDocument' => RelatedDocumentReferenceData::from([

@@ -21,7 +21,7 @@ use CsarCrr\InvoicingIntegration\Facades\PaymentMethod;
 $paymentMethod = PaymentMethod::create(PaymentMethodData::make([
     'name' => 'Multibanco',
     'type' => PaymentMethodEnum::MB,
-]))->execute()->getPaymentMethod();
+]))->execute()->get();
 
 echo $paymentMethod->id; // provider-assigned ID
 ```
@@ -35,11 +35,11 @@ echo $paymentMethod->id; // provider-assigned ID
 
 ## Provider support
 
-| Operation             | Cegid Vendus | Moloni | Invoice Express |
+| Operation             | Vendus | Moloni | Invoice Express |
 | --------------------- | ------------ | ------ | --------------- |
 | Create Payment Method | ❌           | ✅     | ❌              |
-| Find Payment Methods  | ❌           | ✅     | ❌              |
+| Find Payment Methods  | ✅           | ✅     | ❌              |
 
-On Cegid Vendus both operations throw `OperationNotSupportedException`.
+On Vendus `PaymentMethod::create()` throws `OperationNotSupportedException`.
 
 On Moloni, invoice payments use these records: each payment is sent with the ID of the first account payment method whose `type` matches its `method`. A payment with no matching record throws `CouldNotGetPaymentMethodIdException`.

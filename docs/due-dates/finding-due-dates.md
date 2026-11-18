@@ -9,33 +9,35 @@ use CsarCrr\InvoicingIntegration\Facades\DueDate;
 
 $results = DueDate::find()->execute();
 
-foreach ($results->getList() as $dueDate) {
+foreach ($results->get() as $dueDate) {
     $dueDate->id;
     $dueDate->name;
     $dueDate->days;
 }
 ```
 
-- `getList()` returns a `Collection` of `DueDateData` instances.
+- `get()` returns a `Collection` of `DueDateData` instances.
 - `DueDate::find()` takes no filters: the provider returns every due date of the account.
 
 ## Pagination
 
 `DueDate::find()` implements `next()`, `previous()` and `page()` through the `HasPaginator` trait.
 
+On Moloni, keep calling `next()` until a page comes back empty:
+
 ```php
 $results = DueDate::find()->execute();
 
-while ($results->getList()->isNotEmpty()) {
+while ($results->get()->isNotEmpty()) {
     // do stuff
 
     $results->next()->execute();
 }
 ```
 
-- Each page holds up to 50 due dates.
-- `getTotalPages()` returns `null`, because Moloni does not report a total: keep calling `next()` until a page comes back empty.
-- `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException`.
+- Moloni: each page holds up to 50 due dates. `getTotalPages()` returns `null`, because Moloni does not report a total.
+- Vendus: the provider returns every due date in one response, so `getTotalPages()` is `1` after `execute()`, and `next()` raises `NoMorePagesException`.
+- `previous()` before page 1, or `page()` with a value below 1, raises `NoMorePagesException` on both providers.
 
 ## Moloni
 
@@ -49,9 +51,17 @@ The request is sent to `maturityDates/getAll` with `qty` and `offset`. Each row 
 
 `associated_discount` is not mapped.
 
-## Cegid Vendus
+## Vendus
 
-Not supported: `DueDate::find()` throws `OperationNotSupportedException`.
+The request is sent to `GET documents/duedates`, with no parameters. The response is an object keyed by `now` or by a number of days, with the name as value. Each entry is mapped as:
+
+| Vendus field                          | `DueDateData`                                         |
+| ------------------------------------------- | ----------------------------------------------------- |
+| value                                       | `name`                                                |
+| key (`now` is `0`, otherwise the number)    | `days`                                                |
+| key                                         | additional data `key`, the raw key (`now`, `30`)      |
+
+Vendus has no due date ID, so `id` is `null`. Read the raw key with `getAdditionalData()['key']`. The rows keep the order the provider returns them.
 
 ## Reference
 

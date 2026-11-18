@@ -1,0 +1,12 @@
+[
+    {
+        "unit_id": 29999,
+        "name": "Uni",
+        "short_name": "Uni."
+    },
+    {
+        "unit_id": 19999,
+        "name": "Kg",
+        "short_name": "Kg"
+    }
+]

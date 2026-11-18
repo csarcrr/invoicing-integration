@@ -1,0 +1,20 @@
+[
+    {
+        "id": 29999,
+        "title": "Produtos",
+        "status": "on",
+        "order": 0,
+        "all_stores": "yes",
+        "products_order": "ukey_id",
+        "kitchen_request": "yes"
+    },
+    {
+        "id": 19999,
+        "title": "Serviços",
+        "status": "on",
+        "order": 0,
+        "all_stores": "yes",
+        "products_order": "ukey_id",
+        "kitchen_request": "yes"
+    }
+]

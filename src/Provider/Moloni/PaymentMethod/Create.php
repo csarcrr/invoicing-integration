@@ -27,7 +27,12 @@ class Create extends PaymentMethod implements ShouldCreatePaymentMethod
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::PaymentMethod);
     }
 
-    public function execute(): self
+    public function get(): PaymentMethodData
+    {
+        return $this->data;
+    }
+
+    public function execute(): static
     {
         $response = Http::provider()->post('paymentMethods/insert', $this->getPayload()->toArray());
 

@@ -19,6 +19,8 @@ Register clients in the invoicing provider to reuse their details across invoice
 ## Available Operations
 
 - [Creating a Client](creating-a-client.md) - Register new customers
+- [Updating a Client](updating-a-client.md) - Change a stored customer's details
+- [Deleting a Client](deleting-a-client.md) - Remove a stored customer
 - [Getting a Client](getting-a-client.md) - Retrieve existing customer information
 - [Finding Clients](finding-clients.md) - Search and paginate your customer base
 
@@ -32,7 +34,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 // Register the customer
 $clientData = ClientData::make([
     'name' => 'TechStore Portugal Lda',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
     'email' => 'invoices@techstore.pt',
     'address' => 'Zona Industrial do Porto, Lote 15',
     'city' => 'Porto',
@@ -43,7 +45,7 @@ $clientData = ClientData::make([
     'defaultPayDue' => DueDateTerm::Days30, // Payment due in 30 days
 ]);
 
-$client = Client::create($clientData)->execute()->getClient();
+$client = Client::create($clientData)->execute()->get();
 
 // Store their provider ID for future orders
 $customer->provider_client_id = $client->id;
@@ -56,7 +58,7 @@ Sample response (`$client->toArray()`):
 {
     "id": 98765,
     "name": "TechStore Portugal Lda",
-    "vat": "PT509876543",
+    "vat": "509876543",
     "email": "invoices@techstore.pt",
     "address": "Zona Industrial do Porto, Lote 15",
     "city": "Porto",
@@ -76,14 +78,16 @@ use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\DueDateTerm;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Retrieve the stored client
 $clientData = ClientData::make(['id' => $customer->provider_client_id]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [
         ItemData::make([
@@ -96,7 +100,7 @@ $invoiceData = InvoiceData::make([
     'dueDate' => DueDateTerm::Days30,
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 ## Inline vs. Registered Clients
@@ -106,9 +110,10 @@ You don't have to register every customer. Here's when to use each approach:
 ```php
 // Option 1: Inline client (for one-time purchases)
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => ClientData::make([
         'name' => 'Individual Buyer',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
     ]),
     'items' => [...],
 ]);
@@ -116,8 +121,9 @@ Invoice::create($invoiceData)->execute();
 // Client details are used once and not stored in the provider
 
 // Option 2: Registered client (for repeat customers)
-$client = Client::get(ClientData::make(['id' => $storedId]))->execute()->getClient();
+$client = Client::fetch(ClientData::make(['id' => $storedId]))->execute()->get();
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [...],
 ]);
@@ -130,11 +136,11 @@ Invoice::create($invoiceData)->execute();
 All DTOs expose **typed public properties**:
 
 ```php
-$client = Client::get(ClientData::make(['id' => 12345]))->execute()->getClient();
+$client = Client::fetch(ClientData::make(['id' => 12345]))->execute()->get();
 
 // Access values directly
 $client->name;             // "TechStore Portugal Lda"
-$client->vat;              // "PT509876543"
+$client->vat;              // "509876543"
 $client->email;            // "invoices@techstore.pt"
 $client->defaultPayDue;    // DueDateTerm::Days30
 $client->emailNotification; // true
@@ -161,22 +167,22 @@ $balance = $additional['balance'] ?? null;
 // Main office
 $headquarters = Client::create(ClientData::make([
     'name' => 'Empresa ABC - Sede',
-    'vat' => 'PT501234567',
+    'vat' => '501234567',
     'email' => 'finance@empresaabc.pt',
     'address' => 'Av. da Liberdade, 100',
     'city' => 'Lisboa',
     'notes' => 'Main corporate account - HQ',
-]))->execute()->getClient();
+]))->execute()->get();
 
 // Porto branch (same VAT, different billing address)
 $portoBranch = Client::create(ClientData::make([
     'name' => 'Empresa ABC - Porto',
-    'vat' => 'PT501234567',
+    'vat' => '501234567',
     'email' => 'porto@empresaabc.pt',
     'address' => 'Rua de Cedofeita, 200',
     'city' => 'Porto',
     'notes' => 'Porto branch office',
-]))->execute()->getClient();
+]))->execute()->get();
 ```
 
 ### Custom Payment Terms
@@ -184,12 +190,12 @@ $portoBranch = Client::create(ClientData::make([
 ```php
 $reseller = Client::create(ClientData::make([
     'name' => 'Distribuidor Norte Lda',
-    'vat' => 'PT509999888',
+    'vat' => '509999888',
     'email' => 'orders@distrinorte.pt',
     'defaultPayDue' => DueDateTerm::Days60, // 60 days payment terms
     'notes' => '60-day terms approved',
     'emailNotification' => true,
-]))->execute()->getClient();
+]))->execute()->get();
 ```
 
 ---

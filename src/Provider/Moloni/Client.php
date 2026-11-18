@@ -28,6 +28,7 @@ abstract class Client extends BaseClient
             'phone' => $client['phone'] ?? null,
             'notes' => $client['notes'] ?? null,
             'country' => Str::upper($client['country']['iso_3166_1'] ?? ''),
+            'reference' => $client['number'] ?? null,
         ])->filter()->toArray());
     }
 }

@@ -11,16 +11,18 @@ enum SupportedMoloniProperties: string
     case Invoice = 'invoice';
     case DueDate = 'due_date';
     case PaymentMethod = 'payment_method';
+    case Tax = 'tax';
 
     /** @return array<string> */
     public function properties(): array
     {
         return match ($this) {
-            self::Client => ['name', 'vat', 'address', 'city', 'zip_code', 'email', 'phone', 'notes'],
-            self::Invoice => ['document_id', 'number', 'net_value', 'taxes_value', 'products'],
+            self::Client => ['customer_id', 'number', 'name', 'vat', 'address', 'city', 'zip_code', 'email', 'phone', 'notes'],
+            self::Invoice => ['document_id', 'number', 'net_value', 'taxes_value', 'products', 'atcud'],
             self::DueDate => ['maturity_date_id', 'name', 'days'],
             self::PaymentMethod => ['payment_method_id', 'name', 'is_numerary', 'is_mb', 'is_credit'],
-            self::Item => ['product_id', 'category_id', 'type', 'name', 'summary', 'reference', 'ean', 'price', 'has_stock', 'visibility_id', 'taxes', 'exemption_reason', 'warehouses'],
+            self::Tax => ['tax_id', 'name', 'value', 'type', 'saft_type', 'vat_type', 'stamp_tax', 'exemption_reason', 'fiscal_zone', 'active_by_default'],
+            self::Item => ['product_id', 'category_id', 'type', 'name', 'summary', 'reference', 'ean', 'price', 'has_stock', 'visibility_id', 'unit_id', 'taxes', 'exemption_reason', 'warehouses'],
         };
     }
 }

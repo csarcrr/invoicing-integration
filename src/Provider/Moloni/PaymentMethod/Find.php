@@ -29,7 +29,7 @@ class Find implements ShouldFindPaymentMethod
         $this->perPage = 50;
     }
 
-    public function execute(): self
+    public function execute(): static
     {
         $request = Http::provider()->post('paymentMethods/getAll', $this->getPayload()->toArray());
 
@@ -43,7 +43,7 @@ class Find implements ShouldFindPaymentMethod
     /**
      * @return Collection<int, PaymentMethodData>
      */
-    public function getList(): Collection
+    public function get(): Collection
     {
         return $this->list;
     }

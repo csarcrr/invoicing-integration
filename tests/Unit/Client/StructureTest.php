@@ -1,8 +1,8 @@
 <?php
 
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldCreateClient;
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetchClient;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFindClient;
-use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldGetClient;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Facades\Client;
@@ -16,5 +16,5 @@ it('is an instance of the correct when finding a client', function (Provider $pr
 })->with('providers');
 
 it('is an instance of the correct when getting a client', function (Provider $provider) {
-    expect(Client::get(ClientData::from([])))->toBeInstanceOf(ShouldGetClient::class);
+    expect(Client::fetch(ClientData::from(['id' => '1'])))->toBeInstanceOf(ShouldFetchClient::class);
 })->with('providers');

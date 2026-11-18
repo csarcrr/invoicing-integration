@@ -34,7 +34,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Maria Silva',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
     ]),
     'items' => [
         ItemData::make([
@@ -56,7 +56,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Product arrived defective - customer return',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 ```
 
 Sample credit note response:
@@ -65,9 +65,9 @@ Sample credit note response:
 {
     "id": 222,
     "sequence": "NC 01P2025/1",
-    "total": -14999,
-    "totalNet": -12194,
-    "atcudHash": "NC 01P2025/1 XYZ999"
+    "total": 14999,
+    "totalNet": 12194,
+    "atcud": "NC 01P2025/1 XYZ999"
 }
 ```
 
@@ -89,7 +89,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Carlos Ferreira',
-        'vat' => 'PT567890123',
+        'vat' => '567890123',
     ]),
     'items' => [
         ItemData::make([
@@ -112,7 +112,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Customer return - item not needed',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 ```
 
 ## Multiple Items in One Credit Note
@@ -131,7 +131,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Ana Rodrigues',
-        'vat' => 'PT987654321',
+        'vat' => '987654321',
     ]),
     'items' => [
         ItemData::make([
@@ -164,7 +164,7 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Product quality issue - full return',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 ```
 
 ## Requirements
@@ -239,7 +239,7 @@ $creditNoteData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
     'client' => ClientData::make([
         'name' => 'Pedro Santos',
-        'vat' => 'PT234567890',
+        'vat' => '234567890',
         'email' => 'pedro.santos@email.pt',
     ]),
     'items' => [
@@ -263,10 +263,10 @@ $creditNoteData = InvoiceData::make([
     'creditNoteReason' => 'Customer return within 14-day cooling-off period',
 ]);
 
-$result = Invoice::create($creditNoteData)->execute()->getInvoice();
+$result = Invoice::create($creditNoteData)->execute()->get();
 
 if ($result->output) {
-    $result->output->save('credit-notes/' . $result->output->fileName());
+    $result->output->save('credit-notes/' . $result->output->fileName);
 }
 ```
 
@@ -276,18 +276,23 @@ Example credit note response:
 {
     "id": 333,
     "sequence": "NC 01P2025/1",
-    "total": -129900,
-    "totalNet": -105610,
-    "atcudHash": "NC 01P2025/1 XYZ999"
+    "total": 129900,
+    "totalNet": 105610,
+    "atcud": "NC 01P2025/1 XYZ999"
 }
 ```
 
 ---
 
-Always provide a clear, descriptive reason for the credit note. Each item must reference its line number on the original invoice, and the payment amount should match the total credit amount. Credit notes use the same payment method configuration as invoices. The `total` in the response will be negative, indicating a refund.
+Always provide a clear, descriptive reason for the credit note. Each item must reference its line number on the original invoice, and the payment amount should match the total credit amount. Credit notes use the same payment method configuration as invoices.
 
 > [!NOTE]
-> On Moloni, `documentId` must be the numeric `document_id` of the original document and `row` the `document_product_id` of the line being credited. The credited documents are sent as `associated_documents`, each with the gross total of its items, and `total` is not returned.
+> On Vendus, a credit note for an FR also issues a refund receipt (RG) for the credited amount, automatically. A credit note for an FT does not. Do not issue your own RG for a refund that Vendus already issued, or the refund is recorded twice.
+
+> [!NOTE]
+> On Moloni, `documentId` must be the numeric `document_id` of the original document and `row` the `document_product_id` of the line being credited. The credited documents are sent as `associated_documents`, each with the gross total of its items.
+>
+> Moloni credit notes have no payments. When the credit note has `payments`, the package issues a Payment Return (`paymentReturns/insert`) right after it, for the sum of the payments, linked to the credit note and closed. Its `document_id` is returned as `payment_return_id` in `getAdditionalData()`. A draft credit note gets no Payment Return, and its payments are not sent. If the Payment Return fails, the credit note is already created and the provider error is thrown as `RequestFailedException`; issue the refund in Moloni.
 
 ---
 

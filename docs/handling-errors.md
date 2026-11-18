@@ -21,14 +21,14 @@ These exceptions occur when something goes wrong with the provider API.
 
 **Common causes:**
 
-- Incorrect `CEGID_VENDUS_API_KEY` in your `.env`
+- Incorrect `VENDUS_API_KEY` in your `.env`
 - API key has expired or been revoked
 - Trailing spaces in the API key value
 - Copy/paste error when setting up credentials
 
 **How to fix:**
 
-1. Double-check your API key in the Cegid Vendus dashboard
+1. Double-check your API key in the Vendus dashboard
 2. Ensure there are no extra spaces in your `.env` file
 3. Verify the key matches the correct account/environment
 
@@ -36,7 +36,7 @@ These exceptions occur when something goes wrong with the provider API.
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 } catch (UnauthorizedException $e) {
     Log::error('Invalid API credentials', [
         'message' => $e->getMessage(),
@@ -71,7 +71,7 @@ try {
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\FailedReachingProviderException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 } catch (FailedReachingProviderException $e) {
     Log::warning('Provider temporarily unavailable', [
         'message' => $e->getMessage(),
@@ -105,7 +105,7 @@ try {
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 } catch (RequestFailedException $e) {
     Log::error('Provider rejected request', [
         'message' => $e->getMessage(),
@@ -138,10 +138,10 @@ try {
 ```
 
 ```php
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\CouldNotGetUnitIdException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\CouldNotGetUnitIdException;
 
 try {
-    Item::create($itemData)->execute()->getItem();
+    Item::create($itemData)->execute()->get();
 } catch (CouldNotGetUnitIdException $e) {
     // Missing unit mapping in config
     Log::error('Unit configuration missing', ['message' => $e->getMessage()]);
@@ -168,7 +168,7 @@ $client = ClientData::make([
 // Right: either provide VAT or don't set client
 $client = ClientData::make([
     'name' => 'TechStore',
-    'vat' => 'PT509876543',
+    'vat' => '509876543',
 ]);
 // Or for final consumer, leave the 'client' field unset on InvoiceData
 ```
@@ -186,7 +186,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::CreditNote,
 ]);
 
-Invoice::create($invoiceData)->execute()->getInvoice();
+Invoice::create($invoiceData)->execute()->get();
 // Throws CreditNoteReasonIsMissingException
 
 // Right: provide reason
@@ -195,7 +195,7 @@ $invoiceData = InvoiceData::make([
     'creditNoteReason' => 'Customer return - item defective',
 ]);
 
-Invoice::create($invoiceData)->execute()->getInvoice();
+Invoice::create($invoiceData)->execute()->get();
 ```
 
 ### Item Validation
@@ -212,7 +212,7 @@ $item = ItemData::make([
     'reference' => 'PRODUCT',
     'price' => 1000,
     'tax' => ItemTax::NORMAL,
-    'taxExemptionReason' => TaxExemptionReason::M04,  // Throws!
+    'taxExemptionReason' => 'M04',  // Throws!
 ]);
 
 // Right: use EXEMPT tax rate
@@ -220,8 +220,8 @@ $item = ItemData::make([
     'reference' => 'PRODUCT',
     'price' => 1000,
     'tax' => ItemTax::EXEMPT,
-    'taxExemptionReason' => TaxExemptionReason::M04,
-    'taxExemptionLaw' => TaxExemptionReason::M04->laws()[0],
+    'taxExemptionReason' => 'M04',
+    'taxExemptionLaw' => 'Artigo 13.º do CIVA',
 ]);
 ```
 
@@ -242,7 +242,7 @@ use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\UnauthorizedException;
 
 try {
-    $result = $invoice->execute()->getInvoice();
+    $result = $invoice->execute()->get();
 
     // Success - save the result
     $order->invoice_sequence = $result->sequence;
@@ -276,7 +276,7 @@ try {
 1. **Check the full error message** - Provider errors usually include specific details
 2. **Enable Laravel debug mode** temporarily to see stack traces
 3. **Use Laravel Ray or Telescope** to inspect the actual API request/response
-4. **Test in sandbox mode first** - Set `CEGID_VENDUS_MODE=tests` during development
+4. **Test in sandbox mode first** - Set `VENDUS_MODE=tests` during development
 
 ---
 

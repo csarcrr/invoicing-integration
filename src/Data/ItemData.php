@@ -8,7 +8,6 @@ use CsarCrr\InvoicingIntegration\Contracts\DataNeedsValidation;
 use CsarCrr\InvoicingIntegration\Contracts\ShouldBeUnit;
 use CsarCrr\InvoicingIntegration\Enums\ItemType;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionCanOnlyBeUsedWithExemptTaxException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\ExemptionLawCanOnlyBeUsedWithExemptionException;
 use CsarCrr\InvoicingIntegration\Exceptions\Items\UnsupportedQuantityException;
@@ -36,7 +35,7 @@ class ItemData extends Data implements DataNeedsValidation
         public null|int|float $quantity = null,
 
         public ?ItemTax $tax = null,
-        public ?TaxExemptionReason $taxExemptionReason = null,
+        public ?string $taxExemptionReason = null,
         public ?string $taxExemptionLaw = null,
 
         public ?ItemType $type = null,

@@ -20,7 +20,7 @@ test('creates a payment method', function () {
     $paymentMethod = PaymentMethod::create(PaymentMethodData::make([
         'name' => 'Multibanco',
         'type' => PaymentMethodEnum::MB,
-    ]))->execute()->getPaymentMethod();
+    ]))->execute()->get();
 
     expect($paymentMethod->id)->toBe(7002)
         ->and($paymentMethod->name)->toBe('Multibanco')

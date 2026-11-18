@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
-use CsarCrr\InvoicingIntegration\Enums\Tax\TaxExemptionReason;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Facades\Item;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +15,7 @@ it('sends a zero price', function (Provider $provider) {
     $payload = Item::update(ItemData::make(['id' => 1542, 'price' => 0]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('gross_price'))->toBe(0),
+        Provider::VENDUS => expect($payload->get('prices')['gross'])->toBe(0),
         Provider::MOLONI => expect($payload->get('price'))->toBe(0.0),
     };
 })->with('providers');
@@ -27,8 +26,8 @@ it('sends the price using the current tax', function (Provider $provider) {
     $payload = Item::update(ItemData::make(['id' => 1542, 'price' => 2460]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('gross_price'))->toBe(24.6)
-            ->and($payload->has('tax_id'))->toBeFalse(),
+        Provider::VENDUS => expect($payload->get('prices')['gross'])->toBe(24.6)
+            ->and($payload->has('tax'))->toBeFalse(),
         Provider::MOLONI => expect($payload->get('price'))->toBe(20.0)
             ->and($payload->get('taxes'))->toBe([['tax_id' => 1, 'value' => 4.6, 'order' => 0, 'cumulative' => 0]]),
     };
@@ -40,8 +39,8 @@ it('keeps the gross price when only the tax changes', function (Provider $provid
     $payload = Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::REDUCED]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('tax_id'))->toBe(ItemTax::REDUCED->vendus())
-            ->and($payload->has('gross_price'))->toBeFalse(),
+        Provider::VENDUS => expect($payload->get('tax')['id'])->toBe(ItemTax::REDUCED->vendus())
+            ->and($payload->has('prices'))->toBeFalse(),
         Provider::MOLONI => expect($payload->get('price'))->toBe(23.2075)
             ->and($payload->get('taxes'))->toBe([['tax_id' => 3, 'value' => 6.0, 'order' => 0, 'cumulative' => 0]]),
     };
@@ -53,7 +52,7 @@ it('keeps the gross price when the tax changes to exempt', function (Provider $p
     $payload = Item::update(ItemData::make(['id' => 1542, 'tax' => ItemTax::EXEMPT]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('tax_id'))->toBe('ISE'),
+        Provider::VENDUS => expect($payload->get('tax')['id'])->toBe('ISE'),
         Provider::MOLONI => expect($payload->get('price'))->toBe(24.6)
             ->and($payload->get('taxes'))->toBe([['tax_id' => 5, 'value' => 0.0, 'order' => 0, 'cumulative' => 0]]),
     };
@@ -65,8 +64,8 @@ it('sends the price with the new tax when both change', function (Provider $prov
     $payload = Item::update(ItemData::make(['id' => 1542, 'price' => 1060, 'tax' => ItemTax::REDUCED]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('gross_price'))->toBe(10.6)
-            ->and($payload->get('tax_id'))->toBe(ItemTax::REDUCED->vendus()),
+        Provider::VENDUS => expect($payload->get('prices')['gross'])->toBe(10.6)
+            ->and($payload->get('tax')['id'])->toBe(ItemTax::REDUCED->vendus()),
         Provider::MOLONI => expect($payload->get('price'))->toBe(10.0)
             ->and($payload->get('taxes'))->toBe([['tax_id' => 3, 'value' => 6.0, 'order' => 0, 'cumulative' => 0]]),
     };
@@ -85,18 +84,18 @@ it('sends the price without tax when both change to exempt', function () {
 it('sends the exemption reason', function (Provider $provider) {
     fakeItemUpdate($provider);
 
-    $law = TaxExemptionReason::M04->laws()[0];
+    $law = 'Artigo 13.º do CIVA';
 
     $payload = Item::update(ItemData::make([
         'id' => 1542,
         'tax' => ItemTax::EXEMPT,
-        'taxExemptionReason' => TaxExemptionReason::M04,
+        'taxExemptionReason' => 'M04',
         'taxExemptionLaw' => $law,
     ]))->getPayload();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($payload->get('tax_exemption'))->toBe('M04')
-            ->and($payload->get('tax_exemption_law'))->toBe($law),
+        Provider::VENDUS => expect($payload->get('tax')['exemption'])->toBe('M04')
+            ->and($payload->get('tax')['exemption_law'])->toBe($law),
         Provider::MOLONI => expect($payload->get('exemption_reason'))->toBe('M04')
             ->and($payload->has('tax_exemption_law'))->toBeFalse(),
     };
@@ -104,7 +103,7 @@ it('sends the exemption reason', function (Provider $provider) {
 
 it('resolves the moloni exemption reason from the tax', function (array $data, string $expected) {
     mockConfiguration(Provider::MOLONI);
-    fakeItemUpdate(Provider::MOLONI, 'get_with_relations');
+    fakeItemUpdate(Provider::MOLONI, 'fetch_with_relations');
 
     $payload = Item::update(ItemData::make(['id' => 1542, ...$data]))->getPayload();
 

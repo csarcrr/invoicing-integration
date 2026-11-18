@@ -5,6 +5,7 @@ declare(strict_types=1);
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Enums\Provider;
 use CsarCrr\InvoicingIntegration\Exceptions\Pagination\NoMorePagesException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Collection;
@@ -22,8 +23,8 @@ test('getting list of clients returns expected instances', function (Provider $p
 
     $results = Client::find($this->filters)->execute();
 
-    expect($results->getList())->toBeInstanceOf(Collection::class)
-        ->and($results->getList()->first())->toBeInstanceOf(ClientData::class);
+    expect($results->get())->toBeInstanceOf(Collection::class)
+        ->and($results->get()->first())->toBeInstanceOf(ClientData::class);
 })->with('providers', ['response_multiple']);
 
 test('automagically injects provider pagination details into the request', function (Provider $provider, string $fixtureName) {
@@ -37,7 +38,7 @@ test('automagically injects provider pagination details into the request', funct
 
     Http::assertSent(function (Request $request) use ($provider) {
         return match ($provider) {
-            Provider::CEGID_VENDUS => Str::contains($request->url(), 'page=1'),
+            Provider::VENDUS => Str::contains($request->url(), 'page=1'),
             Provider::MOLONI => Str::contains($request->body(), 'offset=0'),
         };
     });
@@ -49,7 +50,7 @@ test('reports the total pages the provider returns', function (Provider $provide
     $results = Client::find($this->filters)->execute();
 
     expect($results->getTotalPages())->toBe(match ($provider) {
-        Provider::CEGID_VENDUS => 5,
+        Provider::VENDUS => 5,
         Provider::MOLONI => null,
     });
 })->with('providers', ['response_multiple']);
@@ -67,7 +68,7 @@ test('can fetch the next page', function (Provider $provider, string $fixtureNam
     $results->next()->execute();
 
     expect($results->getCurrentPage())->toBe(2)
-        ->and($results->getList()->count())->toBe(2);
+        ->and($results->get()->count())->toBe(2);
 })->with('providers', ['response']);
 
 test('can go to the next page and then go back', function (Provider $provider, string $fixtureName) {
@@ -85,47 +86,45 @@ test('can go to the next page and then go back', function (Provider $provider, s
     $results->previous()->execute();
 
     expect($results->getCurrentPage())->toBe(1)
-        ->and($results->getList()->count())->toBe(5);
+        ->and($results->get()->count())->toBe(5);
 })->with('providers', ['response']);
 
 test('maps all response fields onto the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
-    $client = Client::find($this->filters)->execute()->getList()->first();
+    $client = Client::find($this->filters)->execute()->get()->first();
 
     expect($client->name)->toBe('Marta Silva')
         ->and($client->email)->toBe('marta.silva@example.com')
-        ->and($client->vat)->toBe('215783920');
+        ->and($client->vat)->toBe('215783920')
+        ->and($client->reference)->toBe('VEN-2024-001');
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($client->emailNotification)->toBeTrue()
+        Provider::VENDUS => expect($client->emailNotification)->toBeTrue()
             ->and($client->irsRetention)->toBeFalse(),
         Provider::MOLONI => expect($client->id)->toBe('12001')
             ->and($client->country)->toBe('PT'),
     };
 })->with('providers', ['response_multiple']);
 
-test('maps the client date onto the returned ClientData', function (Provider $provider, string $fixtureName) {
+test('the client date stays Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
-    $client = Client::find($this->filters)->execute()->getList()->first();
+    $client = Client::find($this->filters)->execute()->get()->first();
 
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($client->date->format('Y-m-d'))->toBe('2024-05-14'),
-        Provider::MOLONI => expect($client->date)->toBeInstanceOf(Optional::class),
-    };
+    expect($client->date)->toBeInstanceOf(Optional::class);
 })->with('providers', ['response_multiple']);
 
 test('absent response fields remain Optional on the returned ClientData', function (Provider $provider, string $fixtureName) {
     Http::fake(mockResponse(fixtures()->response()->client()->files($fixtureName)));
 
-    $client = Client::find($this->filters)->execute()->getList()->first();
+    $client = Client::find($this->filters)->execute()->get()->first();
 
     expect($client->id)->toBeInstanceOf(Optional::class)
         ->and($client->email)->toBeInstanceOf(Optional::class)
         ->and($client->vat)->toBeInstanceOf(Optional::class)
         ->and($client->city)->toBeInstanceOf(Optional::class)
-        ->and($client->externalReference)->toBeInstanceOf(Optional::class);
+        ->and($client->reference)->toBeInstanceOf(Optional::class);
 })->with('providers', ['response_sparse']);
 
 test('fails when attempting to go below the first page', function (Provider $provider) {
@@ -145,7 +144,7 @@ test('fails when attempting to go above the known total of pages', function (Pro
     $goAbove = fn () => $results->page(10)->execute();
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($goAbove)->toThrow(NoMorePagesException::class),
+        Provider::VENDUS => expect($goAbove)->toThrow(NoMorePagesException::class),
         Provider::MOLONI => expect($goAbove)->not->toThrow(NoMorePagesException::class),
     };
 })->with('providers');
@@ -173,6 +172,34 @@ test('searches moloni clients on the endpoint of the search field', function (ar
 })->with([
     'vat' => [['vat' => '215783920'], 'customers/getByVat', 'vat=215783920'],
     'email' => [['email' => 'marta@example.com'], 'customers/getByEmail', 'email=marta%40example.com'],
-    'number' => [['id' => '12001'], 'customers/getByNumber', 'number=12001'],
+    'number' => [['reference' => '12001'], 'customers/getByNumber', 'number=12001'],
     'name' => [['name' => 'Marta'], 'customers/getByName', 'name=Marta'],
 ]);
+
+test('returns an empty list when the provider finds no clients', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'A001', 'message' => 'No data']]], 404),
+        Provider::MOLONI => mockResponse([]),
+    });
+
+    $results = Client::find(ClientData::from(['name' => 'missing']))->execute();
+
+    expect($results->get())->toBeEmpty();
+})->with('providers');
+
+test('fails when vendus answers 404 with an error other than no data', function () {
+    mockConfiguration(Provider::VENDUS);
+
+    Http::fake(mockResponse(['errors' => [['code' => 'A002', 'message' => 'Not found']]], 404));
+
+    Client::find(ClientData::from(['name' => 'missing']))->execute();
+})->throws(RequestFailedException::class);
+
+test('fails when the provider rejects the search', function (Provider $provider) {
+    Http::fake(match ($provider) {
+        Provider::VENDUS => mockResponse(['errors' => [['code' => 'P005', 'message' => 'Allowed values for param status are active, inactive']]], 403),
+        Provider::MOLONI => mockResponse([['code' => 'invalid', 'description' => 'Invalid field']]),
+    });
+
+    Client::find(ClientData::from(['status' => 'unknown']))->execute();
+})->with('providers')->throws(RequestFailedException::class);

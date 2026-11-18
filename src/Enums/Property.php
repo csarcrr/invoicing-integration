@@ -11,4 +11,5 @@ enum Property: string
     case Invoice = 'invoice';
     case DueDate = 'due_date';
     case PaymentMethod = 'payment_method';
+    case Tax = 'tax';
 }

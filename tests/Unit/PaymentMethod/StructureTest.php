@@ -13,16 +13,11 @@ it('is an instance of the correct when creating a payment method', function (Pro
     $create = fn () => PaymentMethod::create(PaymentMethodData::make(['name' => 'Multibanco']));
 
     match ($provider) {
-        Provider::CEGID_VENDUS => expect($create)->toThrow(OperationNotSupportedException::class),
+        Provider::VENDUS => expect($create)->toThrow(OperationNotSupportedException::class),
         Provider::MOLONI => expect($create())->toBeInstanceOf(ShouldCreatePaymentMethod::class),
     };
 })->with('providers');
 
 it('is an instance of the correct when finding payment methods', function (Provider $provider) {
-    $find = fn () => PaymentMethod::find();
-
-    match ($provider) {
-        Provider::CEGID_VENDUS => expect($find)->toThrow(OperationNotSupportedException::class),
-        Provider::MOLONI => expect($find())->toBeInstanceOf(ShouldFindPaymentMethod::class),
-    };
+    expect(PaymentMethod::find())->toBeInstanceOf(ShouldFindPaymentMethod::class);
 })->with('providers');

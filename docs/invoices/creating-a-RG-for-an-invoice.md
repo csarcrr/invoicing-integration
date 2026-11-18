@@ -17,7 +17,7 @@ When you issue an FT invoice (deferred payment), the customer pays later. Once t
 
 ## Quick Example
 
-A customer just paid their outstanding invoice. Let's issue the receipt:
+A customer just paid their outstanding invoice. Let's issue the receipt. `relatedDocument` identifies the invoice the receipt settles: the invoice `sequence` on Vendus, its `id` on Moloni (see [Requirements](#requirements)).
 
 ```php
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
@@ -28,7 +28,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $receiptData = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => 99999999,
+    'relatedDocument' => 'FT 01P2025/1',
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::MONEY_TRANSFER,
@@ -37,7 +37,7 @@ $receiptData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($receiptData)->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->get();
 ```
 
 Sample receipt response:
@@ -67,7 +67,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::Invoice,
     'client' => ClientData::make([
         'name' => 'TechStore Portugal Lda',
-        'vat' => 'PT509876543',
+        'vat' => '509876543',
         'email' => 'accounts@techstore.pt',
     ]),
     'items' => [
@@ -82,15 +82,15 @@ $invoiceData = InvoiceData::make([
     'notes' => 'NET30 payment terms as agreed',
 ]);
 
-$invoiceResult = Invoice::create($invoiceData)->execute()->getInvoice();
-$invoiceId = $invoiceResult->id;
+$invoiceResult = Invoice::create($invoiceData)->execute()->get();
+$invoiceReference = $invoiceResult->sequence; // Moloni: $invoiceResult->id
 ```
 
 ```php
 // Step 2: 30 days later, the customer pays via bank transfer
 $receiptData = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => $invoiceId,
+    'relatedDocument' => $invoiceReference,
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::MONEY_TRANSFER,
@@ -99,10 +99,10 @@ $receiptData = InvoiceData::make([
     ],
 ]);
 
-$receiptResult = Invoice::create($receiptData)->execute()->getInvoice();
+$receiptResult = Invoice::create($receiptData)->execute()->get();
 
 if ($receiptResult->output) {
-    $receiptResult->output->save('receipts/' . $receiptResult->output->fileName());
+    $receiptResult->output->save('receipts/' . $receiptResult->output->fileName);
 }
 ```
 
@@ -113,7 +113,7 @@ Sometimes customers pay invoices in installments. Issue separate receipts for ea
 ```php
 $receipt1 = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => $invoiceId,
+    'relatedDocument' => $invoiceReference,
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::MONEY_TRANSFER,
@@ -126,7 +126,7 @@ Invoice::create($receipt1)->execute();
 
 $receipt2 = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => $invoiceId,
+    'relatedDocument' => $invoiceReference,
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::MONEY_TRANSFER,
@@ -145,7 +145,7 @@ Customers can pay a single receipt using multiple payment methods:
 ```php
 $receiptData = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => $invoiceId,
+    'relatedDocument' => $invoiceReference,
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::MONEY,
@@ -158,7 +158,7 @@ $receiptData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($receiptData)->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->get();
 ```
 
 ## Requirements
@@ -166,7 +166,7 @@ $result = Invoice::create($receiptData)->execute()->getInvoice();
 | Requirement      | Notes                                         |
 | ---------------- | --------------------------------------------- |
 | Document Type    | Must be `InvoiceType::Receipt`                |
-| Related Document | Required - the original invoice's provider ID |
+| Related Document | Required - the original invoice: its `sequence` on Vendus, its `id` on Moloni |
 | Payment          | Required - at least one payment               |
 | Items            | **Not required** for receipts                 |
 | Client           | **Not required** for receipts                 |
@@ -182,7 +182,7 @@ use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 $receiptData = InvoiceData::make([
     'type' => InvoiceType::Receipt,
-    'relatedDocument' => 99999999,
+    'relatedDocument' => 'FT 01P2025/1',
     'payments' => [
         PaymentData::make([
             'method' => PaymentMethod::CREDIT_CARD,
@@ -192,10 +192,10 @@ $receiptData = InvoiceData::make([
     'notes' => 'Thank you for your prompt payment!',
 ]);
 
-$result = Invoice::create($receiptData)->execute()->getInvoice();
+$result = Invoice::create($receiptData)->execute()->get();
 
 if ($result->output) {
-    $result->output->save('receipts/' . $result->output->fileName());
+    $result->output->save('receipts/' . $result->output->fileName);
 }
 ```
 
@@ -204,7 +204,9 @@ if ($result->output) {
 RG documents require the original invoice reference and at least one payment. No items or client details are needed. For full payment, the total should match the original invoice amount. For partial payments, issue separate receipts for each installment. Ensure payment method IDs are configured in your provider settings.
 
 > [!NOTE]
-> On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice.
+> On Vendus, `relatedDocument` must be the invoice number (`sequence`, e.g. `FT 01P2025/1`). It is sent as the `document_number` of the invoice in `invoices`.
+>
+> On Moloni, `relatedDocument` must be the numeric `document_id` of the invoice. The sum of the payments is sent as the receipt `net_value` and as the value settled on that invoice. Moloni names its receipts `RE` (Recibo), so the returned `sequence` starts with `RE` (e.g. `RE M/4`), not `RG`. It is the number Moloni shows and prints on the document.
 
 ---
 

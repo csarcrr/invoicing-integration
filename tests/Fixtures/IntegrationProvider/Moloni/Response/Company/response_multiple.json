@@ -1,0 +1,34 @@
+[
+    {
+        "company_id": 5,
+        "name": "Empresa Demonstração",
+        "email": "demo@moloni.com",
+        "vat": "508252252",
+        "address": "Av. José Malhoa, n 2",
+        "city": "Lisboa",
+        "zip_code": "1070-325",
+        "country_id": 1,
+        "image": "",
+        "country": {
+            "country_id": 1,
+            "iso_3166_1": "pt",
+            "name": "Portugal"
+        }
+    },
+    {
+        "company_id": 405823,
+        "name": "Second Company",
+        "email": "second@example.com",
+        "vat": "999999990",
+        "address": "Rua das Flores 125",
+        "city": "Porto",
+        "zip_code": "4050-262",
+        "country_id": 1,
+        "image": "",
+        "country": {
+            "country_id": 1,
+            "iso_3166_1": "pt",
+            "name": "Portugal"
+        }
+    }
+]

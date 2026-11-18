@@ -6,7 +6,7 @@
 
 **Invoicing Integration** is a Laravel package that aggregates invoicing software providers in Portugal. It offers a fluent, provider-agnostic API so you can issue compliant documents without re-learning each vendor's HTTP contract.
 
-> **Supported provider (today):** Cegid Vendus. The package architecture allows more providers to be added without changing your application code.
+> **Supported providers:** Vendus and Moloni. The package architecture allows more providers to be added without changing your application code.
 
 ## Why Invoicing Integration?
 
@@ -23,7 +23,7 @@ This package solves that by giving you:
 
 - Fluent builders for all fiscal document types (FT, FR, FS, RG, NC, GT)
 - DTO-first workflows via `InvoiceData`, so requests/responses share the same typed object
-- First-class client management via the `Client` facade (create, get, find)
+- First-class client management via the `Client` facade (create, get, update, delete, find)
 - Strongly typed DTOs powered by `spatie/laravel-data`
 - Built-in PDF / ESC/POS outputs with secure file persistence helpers
 - Centralized HTTP error handling and provider configuration facades
@@ -90,10 +90,10 @@ $config = ProviderConfiguration::getConfig();
 
 | Variable                         | Description                                                  |
 | -------------------------------- | ------------------------------------------------------------ |
-| `INVOICING_INTEGRATION_PROVIDER` | Provider key (`CegidVendus` for now)                         |
-| `CEGID_VENDUS_API_KEY`           | API token generated in Vendus                                |
-| `CEGID_VENDUS_MODE`              | `tests` (sandbox/training) or `production` (fiscal)          |
-| `CEGID_VENDUS_PAYMENT_*`         | Mapping between `PaymentMethod` enums and Vendus payment IDs |
+| `INVOICING_INTEGRATION_PROVIDER` | Provider key (`Vendus` for now)                         |
+| `VENDUS_API_KEY`           | API token generated in Vendus                                |
+| `VENDUS_MODE`              | `tests` (sandbox/training) or `production` (fiscal)          |
+| `VENDUS_PAYMENT_*`         | Mapping between `PaymentMethod` enums and Vendus payment IDs |
 
 > The package validates configuration lazily when you issue invoices or clients, so misconfigured payment IDs will raise descriptive exceptions before the HTTP call is sent.
 
@@ -117,7 +117,7 @@ $invoiceData = InvoiceData::make([
     'type' => InvoiceType::InvoiceReceipt,
     'client' => ClientData::make([
         'name' => 'Maria Silva',
-        'vat' => 'PT123456789',
+        'vat' => '123456789',
         'email' => 'maria.silva@email.pt',
         'address' => 'Rua Augusta, 25',
         'city' => 'Lisboa',
@@ -145,7 +145,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$invoice = Invoice::create($invoiceData)->execute()->getInvoice();
+$invoice = Invoice::create($invoiceData)->execute()->get();
 
 if ($invoice->output) {
     $invoice->output->save('invoices/' . $invoice->output->fileName());
@@ -160,7 +160,7 @@ The result contains everything you need:
     "sequence": "FR 01P2025/1",
     "total": 15498,
     "totalNet": 12600,
-    "atcudHash": "FR 01P2025/1 ABC123"
+    "atcud": "FR 01P2025/1 ABC123"
 }
 ```
 
@@ -172,7 +172,7 @@ The result contains everything you need:
 
 - At least one item is required for FT/FR/FS/NC documents
 - Payments are required for FR, FS, RG, and NC types
-- Tax exemptions require `ItemTax::EXEMPT` plus a valid `TaxExemptionReason`
+- Tax exemptions require `ItemTax::EXEMPT` plus a valid exemption reason code (see `TaxExemption::find()`)
 
 ### Manage clients via the facade
 
@@ -186,17 +186,17 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 $client = Client::create(
     ClientData::make([
         'name' => 'TechStore Portugal Lda',
-        'vat' => 'PT509876543',
+        'vat' => '509876543',
         'email' => 'invoices@techstore.pt',
         'address' => 'Zona Industrial do Porto, Lote 15',
         'city' => 'Porto',
         'postalCode' => '4100-000',
         'country' => 'PT',
     ])
-)->execute()->getClient();
+)->execute()->get();
 
 // Retrieve the customer later by their provider ID
-$fetched = Client::get(ClientData::make(['id' => $client->id]))->execute()->getClient();
+$fetched = Client::fetch(ClientData::make(['id' => $client->id]))->execute()->get();
 
 // Search for customers by email domain
 $filters = ClientData::make(['email' => 'techstore.pt']);

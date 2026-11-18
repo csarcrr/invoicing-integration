@@ -10,5 +10,5 @@ use CsarCrr\InvoicingIntegration\Data\PaymentMethodData;
 
 interface ShouldCreatePaymentMethod extends ShouldExecute, ShouldHavePayload
 {
-    public function getPaymentMethod(): PaymentMethodData;
+    public function get(): PaymentMethodData;
 }

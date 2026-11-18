@@ -1,0 +1,56 @@
+[
+    {
+        "id": 7001,
+        "title": "Numerário",
+        "change": 1,
+        "type": "NU",
+        "status": "on",
+        "order": 0,
+        "stores": []
+    },
+    {
+        "id": 7002,
+        "title": "Multibanco",
+        "change": 0,
+        "type": "CD",
+        "status": "on",
+        "order": 1,
+        "stores": []
+    },
+    {
+        "id": 7003,
+        "title": "Cartão de Crédito",
+        "change": 0,
+        "type": "CC",
+        "status": "on",
+        "order": 2,
+        "stores": []
+    },
+    {
+        "id": 7004,
+        "title": "Transferência Bancária",
+        "change": 0,
+        "type": "TB",
+        "status": "on",
+        "order": 3,
+        "stores": []
+    },
+    {
+        "id": 7005,
+        "title": "Cheque",
+        "change": 0,
+        "type": "CH",
+        "status": "on",
+        "order": 4,
+        "stores": []
+    },
+    {
+        "id": 7006,
+        "title": "Conta Corrente",
+        "change": 0,
+        "type": "DNP",
+        "status": "on",
+        "order": 5,
+        "stores": []
+    }
+]

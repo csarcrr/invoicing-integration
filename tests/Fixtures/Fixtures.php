@@ -99,6 +99,48 @@ class Fixtures
         return $this;
     }
 
+    public function company(): self
+    {
+        $this->path[] = 'Company';
+
+        return $this;
+    }
+
+    public function unit(): self
+    {
+        $this->path[] = 'Unit';
+
+        return $this;
+    }
+
+    public function category(): self
+    {
+        $this->path[] = 'Category';
+
+        return $this;
+    }
+
+    public function warehouse(): self
+    {
+        $this->path[] = 'Warehouse';
+
+        return $this;
+    }
+
+    public function taxExemption(): self
+    {
+        $this->path[] = 'TaxExemption';
+
+        return $this;
+    }
+
+    public function documentType(): self
+    {
+        $this->path[] = 'DocumentType';
+
+        return $this;
+    }
+
     public function paymentMethod(): self
     {
         $this->path[] = 'PaymentMethod';

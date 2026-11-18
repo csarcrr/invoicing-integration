@@ -1,0 +1,90 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
+
+use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Client\ShouldFetchClient;
+use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Enums\Property;
+use CsarCrr\InvoicingIntegration\Enums\Provider;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\RequestFailedException;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client;
+use CsarCrr\InvoicingIntegration\Traits\DetectsNoData;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
+
+use function collect;
+use function is_string;
+use function throw_if;
+
+class Fetch extends Client implements ShouldFetchClient
+{
+    use DetectsNoData;
+
+    /** @var Collection<string, mixed> */
+    protected Collection $payload;
+
+    public function __construct(protected ?ClientData $client)
+    {
+        $this->data = $client;
+        $this->payload = collect();
+        $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Client);
+
+        $this->buildUrl();
+        $this->buildPayload();
+    }
+
+    public function get(): ClientData
+    {
+        return $this->data;
+    }
+
+    public function execute(): static
+    {
+        $request = Http::provider()->post($this->getUrl(), $this->getPayload()->toArray());
+
+        Http::handleUnwantedFailures($request);
+
+        throw_if($this->hasNoData($request), RequestFailedException::class, 'Client not found.');
+
+        $data = $request->json();
+
+        $this->fillProperties($data);
+        $this->fillAdditionalProperties($data);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<string, mixed>
+     */
+    public function getPayload(): Collection
+    {
+        return $this->payload;
+    }
+
+    protected function buildUrl(): void
+    {
+        $this->url = 'customers/getOne';
+    }
+
+    protected function buildPayload(): void
+    {
+        throw_if(! is_string($this->data->id), InvalidArgumentException::class, 'Client ID is required.');
+
+        $this->payload->put('customer_id', $this->data->id);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function fillProperties(array $data): void
+    {
+        /** @var string $id */
+        $id = $this->data->id;
+
+        $this->data = $this->toClientData($id, $data);
+    }
+}

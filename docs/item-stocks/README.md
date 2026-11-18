@@ -13,7 +13,7 @@ $move = ItemStock::move(StockMovementData::make([
     'quantity' => -5,
 ]))->execute();
 
-echo $move->getMovement()->id;           // provider-assigned movement ID
+echo $move->get()->id;           // provider-assigned movement ID
 ```
 
 ## Available operations
@@ -24,8 +24,8 @@ echo $move->getMovement()->id;           // provider-assigned movement ID
 
 ## Provider support
 
-| Operation       | Cegid Vendus | Moloni | Invoice Express |
+| Operation       | Vendus | Moloni | Invoice Express |
 | --------------- | ------------ | ------ | --------------- |
 | Move Stock      | ✅           | ✅     | ❌              |
 
-To read the current stock, use `Item::get()`. See [Getting an Item](../items/getting-an-item.md#stock).
+To read the current stock, use `Item::fetch()`. See [Getting an Item](../items/getting-an-item.md#stock).

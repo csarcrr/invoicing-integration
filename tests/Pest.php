@@ -20,13 +20,13 @@ function fixtures(): Fixtures
 }
 
 dataset('providers', [
-    'vendus' => fn () => cegidVendusProvider(),
+    'vendus' => fn () => vendusProvider(),
     'moloni' => fn () => moloniProvider(),
 ]);
 
-function cegidVendusProvider(): Provider
+function vendusProvider(): Provider
 {
-    mockConfiguration(Provider::CEGID_VENDUS);
+    mockConfiguration(Provider::VENDUS);
 
     return ProviderConfiguration::getProvider();
 }
@@ -41,12 +41,16 @@ function moloniProvider(): Provider
 uses(TestCase::class)->in('Unit', 'Feature');
 
 uses()->group('ClientTestingGroup')->in('Unit/Client', 'Feature/Client');
+uses()->group('CompanyTestingGroup')->in('Unit/Company', 'Feature/Company');
 uses()->group('DueDateTestingGroup')->in('Unit/DueDate', 'Feature/DueDate');
 uses()->group('InvoiceTestingGroup')->in('Unit/Invoice', 'Feature/Invoice');
 uses()->group('ItemTestingGroup')->in('Unit/Item', 'Feature/Item');
 uses()->group('PaymentMethodTestingGroup')->in('Unit/PaymentMethod', 'Feature/PaymentMethod');
+uses()->group('TaxTestingGroup')->in('Unit/Tax', 'Feature/Tax');
+uses()->group('UnitTestingGroup')->in('Unit/Unit', 'Feature/Unit');
+uses()->group('SetupTestingGroup')->in('Feature/Setup');
 uses()->group('ItemStockTestingGroup')->in('Unit/ItemStock', 'Feature/ItemStock');
-uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Unit/HttpRequestTest.php');
+uses()->group('ProviderTestingGroup')->in('Unit/Providers', 'Feature/HttpRequestTest.php', 'Feature/Providers/RequestAuthenticationTest.php', 'Feature/Providers/Moloni/AuthenticationTest.php', 'Feature/Providers/Moloni/RequestTest.php');
 uses()->group('TraitTestingGroup')->in('Unit/Traits');
 uses()->group('ArchTestingGroup')->in('Arch');
 
@@ -92,7 +96,7 @@ function mockConfiguration(Provider $provider): void
         ]);
     }
 
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         config()->set('invoicing-integration.provider', $provider->value);
         config()->set('invoicing-integration.providers.'.$provider->value, [
             'key' => 'test-api-key',
@@ -123,6 +127,17 @@ function fakeProviderPaymentMethods(Provider $provider): void
     ]);
 }
 
+function fakeProviderClientByVat(Provider $provider, array $clients): void
+{
+    if ($provider !== Provider::MOLONI) {
+        return;
+    }
+
+    Http::fake([
+        '*customers/getByVat*' => mockResponse($clients),
+    ]);
+}
+
 function fakeProviderDueDates(Provider $provider): void
 {
     if ($provider !== Provider::MOLONI) {
@@ -134,11 +149,11 @@ function fakeProviderDueDates(Provider $provider): void
     ]);
 }
 
-function fakeItemUpdate(Provider $provider, string $currentFixture = 'get'): void
+function fakeItemUpdate(Provider $provider, string $currentFixture = 'fetch'): void
 {
     $update = mockResponse(fixtures()->response()->item()->files('update'));
 
-    if ($provider === Provider::CEGID_VENDUS) {
+    if ($provider === Provider::VENDUS) {
         Http::fake($update);
 
         return;
@@ -147,6 +162,19 @@ function fakeItemUpdate(Provider $provider, string $currentFixture = 'get'): voi
     Http::fakeSequence()
         ->pushResponse(mockResponse(fixtures()->response()->item()->files($currentFixture)))
         ->pushResponse($update);
+}
+
+function fakeItemCreate(Provider $provider, array $changes = []): void
+{
+    if ($provider === Provider::VENDUS) {
+        Http::fake(mockResponse([...fixtures()->response()->item()->files('create'), ...$changes]));
+
+        return;
+    }
+
+    Http::fakeSequence()
+        ->pushResponse(mockResponse(fixtures()->response()->item()->files('create')))
+        ->pushResponse(mockResponse([...fixtures()->response()->item()->files('fetch'), ...$changes]));
 }
 
 function mockResponse(

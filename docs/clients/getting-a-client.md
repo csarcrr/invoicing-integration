@@ -1,6 +1,6 @@
 # Getting a Client
 
-Retrieve an existing client from your invoicing provider using `Client::get()`.
+Retrieve an existing client from your invoicing provider using `Client::fetch()`.
 
 ## Basic Example
 
@@ -12,16 +12,16 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 $clientData = ClientData::make(['id' => 12345]);
 
 // Fetch the client from the provider
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // Access client data via public properties or $client->toArray()
 $payload = $client->toArray();
 ```
 
 > [!NOTE]
-> On Moloni, `id` is the `customer_id`. `irsRetention`, `emailNotification`,
-> `defaultPayDue`, `externalReference` and `status` are not returned; the
-> customer `number` is available in `getAdditionalData()`.
+> On Moloni, `id` is the `customer_id`, and the customer `number` is returned as
+> `reference`. `irsRetention`, `emailNotification`, `defaultPayDue`, `status` and
+> `date` are not returned.
 
 Example payload:
 
@@ -29,7 +29,7 @@ Example payload:
 {
     "id": 12345,
     "name": "John Doe",
-    "vat": "PT123456789",
+    "vat": "123456789",
     "email": "john@example.com"
 }
 ```
@@ -41,20 +41,20 @@ The `id` property is **required** when retrieving a client:
 ```php
 // This will throw an InvalidArgumentException
 $clientData = ClientData::make([]);
-Client::get($clientData)->execute()->getClient(); // Error: Client ID is required.
+Client::fetch($clientData)->execute()->get(); // Error: Client ID is required.
 
 // Correct usage
 $clientData = ClientData::make(['id' => 12345]);
-Client::get($clientData)->execute()->getClient(); // Works
+Client::fetch($clientData)->execute()->get(); // Works
 ```
 
 ## Retrieved Properties
 
-After calling `execute()->getClient()`, the `ClientData` object is populated with all available data from the provider:
+After calling `execute()->get()`, the `ClientData` object is populated with all available data from the provider:
 
 ```php
 $clientData = ClientData::make(['id' => 12345]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // All properties are now available via public attributes
 $client->id;               // "12345" (string)
@@ -70,19 +70,19 @@ $client->notes;            // Internal notes
 $client->irsRetention;     // IRS retention flag (bool)
 $client->emailNotification;// Email notification flag (bool)
 $client->defaultPayDue;    // Default payment due (DueDateTerm)
-$client->externalReference;// External reference
+$client->reference;        // Your own client code (external reference / number)
 $client->status;           // Client status
 $client->date;             // Creation date (Carbon)
 ```
 
 > [!NOTE]
-> Properties not set in the provider will return `null`.
+> Properties not set in the provider are `Spatie\LaravelData\Optional`, not `null`.
 >
-> `id` is always a string. On Cegid Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
-> returned as `Days0`) and
-> `externalReference`, `status` and `date` are mapped; Moloni does not return them.
+> `id` is always a string. On Vendus, `defaultPayDue` is a `DueDateTerm` (`now` is
+> returned as `Days0`) and `status` is mapped; `date` is not set. Moloni does not return `status` or `date`.
+> `reference` is mapped on both providers: Vendus `external_reference`, Moloni `number`.
 > Response fields the package does not map, such as `balance`, `mobile`,
-> `website` and `price_group` on Cegid Vendus, are available in
+> `website` and `price_group` on Vendus, are available in
 > `getAdditionalData()`.
 
 ## Complete Example
@@ -96,7 +96,7 @@ $storedClientId = 12345;
 
 // Retrieve the client
 $clientData = ClientData::make(['id' => $storedClientId]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // $client now holds the hydrated ClientData instance (see JSON example below)
 ```
@@ -107,7 +107,7 @@ Example provider payload (`$client->toArray()`):
 {
     "id": 12345,
     "name": "John Doe",
-    "vat": "PT123456789",
+    "vat": "123456789",
     "email": "john@example.com",
     "address": "Av. da Liberdade, 1",
     "city": "Lisbon",
@@ -123,15 +123,17 @@ You can use a retrieved client when creating invoices:
 use CsarCrr\InvoicingIntegration\Data\ClientData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
+use CsarCrr\InvoicingIntegration\Enums\InvoiceType;
 use CsarCrr\InvoicingIntegration\Facades\Client;
 use CsarCrr\InvoicingIntegration\Facades\Invoice;
 
 // Retrieve existing client
 $clientData = ClientData::make(['id' => 12345]);
-$client = Client::get($clientData)->execute()->getClient();
+$client = Client::fetch($clientData)->execute()->get();
 
 // Use client in invoice
 $invoiceData = InvoiceData::make([
+    'type' => InvoiceType::Invoice,
     'client' => $client,
     'items' => [
         ItemData::make([
@@ -141,7 +143,7 @@ $invoiceData = InvoiceData::make([
     ],
 ]);
 
-$result = Invoice::create($invoiceData)->execute()->getInvoice();
+$result = Invoice::create($invoiceData)->execute()->get();
 ```
 
 ## Error Handling
@@ -154,7 +156,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 
 try {
     $clientData = ClientData::make(['id' => 12345]);
-    $client = Client::get($clientData)->execute()->getClient();
+    $client = Client::fetch($clientData)->execute()->get();
 } catch (InvalidArgumentException $e) {
     // Client ID was not provided
 } catch (UnauthorizedException $e) {
@@ -164,9 +166,11 @@ try {
 }
 ```
 
+An unknown `id` throws `RequestFailedException` on both providers. Moloni answers an unknown `customer_id` with an empty response instead of an error, so the package throws `RequestFailedException` with the message `Client not found.`
+
 ---
 
-Always store the provider-assigned `id` when creating clients for later retrieval. The returned `ClientData` object is the same instance passed to `get()`, now populated with provider data. Use retrieved clients to ensure invoice data matches the provider's records.
+Always store the provider-assigned `id` when creating clients for later retrieval. `get()` returns a new `ClientData` object built from the provider data; the object you passed in is not changed. Use retrieved clients to ensure invoice data matches the provider's records.
 
 ---
 

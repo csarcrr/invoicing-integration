@@ -7,6 +7,7 @@ namespace CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use Carbon\Carbon;
 use CsarCrr\InvoicingIntegration\Contracts\IntegrationProvider\Invoice\ShouldCreateInvoice;
 use CsarCrr\InvoicingIntegration\Data\ClientData;
+use CsarCrr\InvoicingIntegration\Data\CountryData;
 use CsarCrr\InvoicingIntegration\Data\InvoiceData;
 use CsarCrr\InvoicingIntegration\Data\ItemData;
 use CsarCrr\InvoicingIntegration\Data\PaymentData;
@@ -18,14 +19,18 @@ use CsarCrr\InvoicingIntegration\Enums\Tax\ItemTax;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoice\Items\MissingRelatedDocumentException;
 use CsarCrr\InvoicingIntegration\Exceptions\InvoiceRequiresClientVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Invoices\CreditNote\CreditNoteReasonIsMissingException;
-use CsarCrr\InvoicingIntegration\Exceptions\Providers\CegidVendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Vendus\NeedsDateToSetLoadPointException;
+use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotFindCustomerByVatException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetPaymentMethodIdException;
 use CsarCrr\InvoicingIntegration\Exceptions\Providers\Moloni\CouldNotGetTaxIdException;
 use CsarCrr\InvoicingIntegration\Helpers\Properties;
-use CsarCrr\InvoicingIntegration\Provider\Invoice;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Client\Find as FindClient;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Country\Fetch as FetchCountry;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DocumentSeries\Find as FindDocumentSeries;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\DueDate\Find as FindDueDate;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\Invoice;
 use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentMethod\Find as FindPaymentMethod;
+use CsarCrr\InvoicingIntegration\Provider\Moloni\PaymentReturn\Create as CreatePaymentReturn;
 use CsarCrr\InvoicingIntegration\Traits\HasConfig;
 use Exception;
 use Illuminate\Support\Collection;
@@ -43,11 +48,19 @@ class Create extends Invoice implements ShouldCreateInvoice
     /** @var Collection<string, mixed> */
     protected Collection $payload;
 
+    /** @var array<int, array{payment_method_id: int, date: string, value: float|int}> */
+    protected array $refundPayments = [];
+
     public function __construct(protected InvoiceData $invoice)
     {
         $this->data = $invoice;
         $this->payload = collect();
         $this->supportedProperties = Provider::MOLONI->supportedProperties(Property::Invoice);
+    }
+
+    public function get(): InvoiceData
+    {
+        return $this->data;
     }
 
     /**
@@ -74,6 +87,7 @@ class Create extends Invoice implements ShouldCreateInvoice
             'sequence' => $this->sequence($data),
             'total' => $this->toCents($total),
             'totalNet' => $this->toCents($total - (float) ($data['taxes_value'] ?? 0)),
+            'atcud' => $this->atcud($data),
             'output' => $this->data->output,
             'items' => $this->data->items,
             'payments' => $this->data->payments,
@@ -82,19 +96,28 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         $this->fillAdditionalProperties($data);
 
+        $this->createPaymentReturn($id);
+
         return $this;
     }
 
-    /**
-     * @param  array<string, mixed>  $document
-     */
-    protected function sequence(array $document): string
+    protected function createPaymentReturn(int $creditNoteId): void
     {
-        $type = $document['document_type']['saft_code'] ?? '';
-        $set = $document['document_set']['name'] ?? '';
-        $number = $document['number'] ?? 0;
+        if ($this->refundPayments === []) {
+            return;
+        }
 
-        return "{$type} {$set}/{$number}";
+        $id = (new CreatePaymentReturn([
+            'date' => Carbon::now()->toDateString(),
+            'document_set_id' => $this->payload->get('document_set_id'),
+            'customer_id' => $this->payload->get('customer_id'),
+            'net_value' => $this->documentTotal(),
+            'associated_documents' => [['associated_id' => $creditNoteId, 'value' => $this->documentTotal()]],
+            'payments' => $this->refundPayments,
+            'status' => 1,
+        ]))->execute()->getId();
+
+        $this->data->additional(['payment_return_id' => $id]);
     }
 
     /**
@@ -120,6 +143,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     protected function endpoint(): string
     {
         return match ($this->data->type) {
+            null => 'documents/insert',
             InvoiceType::Invoice => 'invoices/insert',
             InvoiceType::InvoiceReceipt => 'invoiceReceipts/insert',
             InvoiceType::InvoiceSimple => 'simplifiedInvoices/insert',
@@ -137,7 +161,7 @@ class Create extends Invoice implements ShouldCreateInvoice
     }
 
     /**
-     * @throws InvoiceRequiresClientVatException|\Throwable
+     * @throws InvoiceRequiresClientVatException|CouldNotFindCustomerByVatException|\Throwable
      */
     protected function buildClient(): void
     {
@@ -153,7 +177,24 @@ class Create extends Invoice implements ShouldCreateInvoice
 
         if (is_string($client->id)) {
             $this->payload->put('customer_id', (int) $client->id);
+
+            return;
         }
+
+        /** @var string|int $vat */
+        $vat = $client->vat;
+
+        $client = (new FindClient(ClientData::from(['vat' => $vat])))
+            ->execute()
+            ->get()
+            ->first(fn (ClientData $found) => ! ($found->vat instanceof Optional) && (string) $found->vat === (string) $vat);
+
+        throw_if(is_null($client), CouldNotFindCustomerByVatException::class);
+
+        /** @var string $id */
+        $id = $client->id;
+
+        $this->payload->put('customer_id', (int) $id);
     }
 
     /**
@@ -217,7 +258,7 @@ class Create extends Invoice implements ShouldCreateInvoice
         }
 
         if ($item->taxExemptionReason) {
-            $product['exemption_reason'] = $item->taxExemptionReason->value;
+            $product['exemption_reason'] = $item->taxExemptionReason;
         }
 
         if ($this->data->type === InvoiceType::CreditNote) {
@@ -271,11 +312,15 @@ class Create extends Invoice implements ShouldCreateInvoice
             return;
         }
 
+        if ($this->data->type === InvoiceType::CreditNote && $this->draft) {
+            return;
+        }
+
         if (! ($this->data->payments instanceof Collection)) {
             return;
         }
 
-        $paymentMethods = (new FindPaymentMethod)->execute()->getList();
+        $paymentMethods = (new FindPaymentMethod)->execute()->get();
 
         $payments = $this->data->payments->map(function (PaymentData $payment) use ($paymentMethods): array {
             $method = $payment->method;
@@ -292,6 +337,12 @@ class Create extends Invoice implements ShouldCreateInvoice
                 'value' => ($payment->amount ?? 0) / 100,
             ];
         });
+
+        if ($this->data->type === InvoiceType::CreditNote) {
+            $this->refundPayments = $payments->values()->toArray();
+
+            return;
+        }
 
         $this->payload->put('payments', $payments->values()->toArray());
 
@@ -334,11 +385,18 @@ class Create extends Invoice implements ShouldCreateInvoice
             'vehicle_number_plate' => $transport->vehicleLicensePlate,
         ])->filter(fn (mixed $value) => Properties::isValid($value));
 
-        $this->payload = $this->payload->merge($delivery);
+        $countries = collect([
+            'delivery_departure_country' => $transport->origin->country,
+            'delivery_destination_country' => $transport->destination->country,
+        ])
+            ->filter(fn (?string $iso) => ! is_null($iso))
+            ->map(fn (string $iso) => (new FetchCountry(CountryData::from(['iso' => $iso])))->execute()->get()->id);
+
+        $this->payload = $this->payload->merge($delivery)->merge($countries);
     }
 
     /**
-     * @throws Exception|\Throwable
+     * @throws \Throwable
      */
     protected function buildDueDate(): void
     {
@@ -349,12 +407,6 @@ class Create extends Invoice implements ShouldCreateInvoice
         if (! ($this->data->dueDate instanceof DueDateTerm)) {
             return;
         }
-
-        throw_if(
-            $this->data->type !== InvoiceType::Invoice,
-            Exception::class,
-            'Due date can only be set for FT document types.'
-        );
 
         $this->payload->put('expiration_date', Carbon::now()->addDays($this->data->dueDate->value)->toDateString());
 
