@@ -8,7 +8,7 @@ use CsarCrr\InvoicingIntegration\Facades\Client;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\Optional;
 
-test('create client request is successful', function (Provider $provider, string $createFixture, $responseFixture) {
+test('create client request is successful', function (Provider $provider, string $responseFixture) {
     fakeProviderDueDates($provider);
 
     Http::fake(mockResponse(fixtures()->response()->client()->files($responseFixture)));
@@ -21,7 +21,7 @@ test('create client request is successful', function (Provider $provider, string
         ->and($data->vat)->toBeInt();
 
     Http::assertSentCount(1);
-})->with('providers', ['create'], ['response_simple']);
+})->with('providers', ['create']);
 
 test('unsupported properties are kept in additional data', function (Provider $provider, string $responseFixture) {
     fakeProviderDueDates($provider);
@@ -35,10 +35,7 @@ test('unsupported properties are kept in additional data', function (Provider $p
         Provider::VENDUS => expect($data->getAdditionalData())->toHaveKey('balance'),
         Provider::MOLONI => expect($data->getAdditionalData())->toHaveKey('valid'),
     };
-})->with([
-    'vendus' => [fn () => vendusProvider(), 'response'],
-    'moloni' => [fn () => moloniProvider(), 'response_simple'],
-]);
+})->with('providers', ['create']);
 
 test('client create returns the id as a string and the default pay due as a due date term', function (Provider $provider, string $responseFixture) {
     fakeProviderDueDates($provider);
@@ -54,10 +51,7 @@ test('client create returns the id as a string and the default pay due as a due 
         Provider::MOLONI => expect($data->id)->toBe('99999')
             ->and($data->defaultPayDue)->toBeInstanceOf(Optional::class),
     };
-})->with([
-    'vendus' => [fn () => vendusProvider(), 'response'],
-    'moloni' => [fn () => moloniProvider(), 'response_simple'],
-]);
+})->with('providers', ['create']);
 
 test('fails when the provider rejects the client', function (Provider $provider) {
     fakeProviderDueDates($provider);

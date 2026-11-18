@@ -25,10 +25,7 @@ test('returns the updated client', function (Provider $provider, string $respons
     expect($data->id)->toBe('99999')
         ->and($data->name)->toBe('Alberto Albertino')
         ->and($data->getAdditionalData())->not->toBeEmpty();
-})->with([
-    'vendus' => [fn () => vendusProvider(), 'response'],
-    'moloni' => [fn () => moloniProvider(), 'response_simple'],
-]);
+})->with('providers', ['update']);
 
 test('sends the update to the provider', function (Provider $provider, string $responseFixture) {
     fakeProviderDueDates($provider);
@@ -52,10 +49,7 @@ test('sends the update to the provider', function (Provider $provider, string $r
             && Str::contains($request->body(), 'number=CLIENT-1')
             && Str::contains($request->body(), 'company_id=123456'),
     });
-})->with([
-    'vendus' => [fn () => vendusProvider(), 'response'],
-    'moloni' => [fn () => moloniProvider(), 'response_simple'],
-]);
+})->with('providers', ['update']);
 
 test('fails when the client has no id', function (Provider $provider) {
     fakeProviderDueDates($provider);
