@@ -17,6 +17,7 @@ paths:
 - When every provider throws the same exception, write one test on the `providers` dataset and assert only the exception class, not the message
 - A test closure that does not use `$provider` omits the parameter; the `providers` dataset still configures the provider
 - Give both providers' fixtures the same values where the provider format allows it, so the expected values stay shared
+- Name response fixtures after the operation (`create.json`, `update.json`, `fetch.json`), each holding that provider's real reply, as in `tests/Fixtures/IntegrationProvider/*/Response/Item/`. Every provider gets the same file name, so the test runs on `->with('providers', ['create'])`. Never pair each provider with its own fixture name in a dataset (`'vendus' => [fn () => vendusProvider(), 'response']`): a new provider never runs that test
 - Every test runs on the `providers` dataset, so a new provider runs it by default. Outside the `Providers/<Provider>/` folders, never pin a test to one provider with `mockConfiguration(Provider::X)`
 - When a test does not apply to a provider (the operation or behaviour is not supported there), skip that provider at the top of the test with `$this->markTestSkipped('<reason>')`. Pest's `->skip()` condition cannot see the dataset provider
 - The structure test is the one place that asserts `OperationNotSupportedException`
